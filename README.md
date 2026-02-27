@@ -9,6 +9,7 @@
 - **Web 界面交互分析**：
   - 运行 `streamlit run app.py`，在浏览器中上传对话 JSON 文件，获得可视化的风险评估与画像结果。
 - **教材 / 问答数据构建（可选，高级用法）**：
+  - 使用 `scripts/social_data_gen/` 下的脚本构建社交对话数据集；
   - 使用 `generate_edu_dialogs.py` 从教材目录批量生成教育对话数据；
   - 使用 `qa_knowledge_calibrator.py` 与 `test_qa_knowledge_db.py` 构建和验证知识问答校准样本。
 
@@ -39,13 +40,23 @@
 ├── models.py                 # Pydantic 数据模型与枚举定义
 ├── user_profile.py           # 用户画像与未成年人概率更新逻辑
 ├── llm_service.py            # 与 Gemini(AiHubMix) 的 LLM 服务封装
-├── qa_knowledge_calibrator.py # 基于知识库构建在线校准参考样本
-├── test_qa_knowledge_db.py   # 使用知识问答数据库的功能测试脚本
+├── generate_edu_dialogs.py   # 从教材生成教育对话
+├── qa_knowledge_calibrator.py # 构建知识问答校准样本
+├── test_qa_knowledge_db.py   # 知识问答数据库功能测试
 ├── sample_conversation.json  # 示例对话文件
 ├── requirements.txt          # 依赖包列表
-└── data/                     # 教材与知识问答数据
-    ├── 教材目录/              # 小学/初中/高中各学科教材条目（txt）
-    └── 知识问答数据库/        # 按学段+学科划分的问答样本（json）
+├── data/                     # 数据集
+│   ├── 教材目录/              # 各学段教材知识点
+│   ├── 知识问答数据库/        # 基于教材生成的QA数据
+│   └── 社交问答/              # 社交对话相关数据
+│       ├── youth_seeds_v5.json      # 筛选出的原始求助文本种子
+│       └── semantic_data_v2.jsonl   # LLM生成的模拟对话数据
+└── scripts/
+    └── social_data_gen/      # 社交对话数据生成脚本
+        ├── README.md         # 该模块的详细说明
+        ├── get_seeds.py      # 筛选符合条件的求助文本作为种子
+        ├── batch_generate.py # 调用LLM批量生成对话
+        └── time.py           # (备用)将语义时间转换为精确时间
 ```
 
 ## 快速开始
@@ -148,15 +159,27 @@ streamlit run app.py
 - **学科**:
   - 语文、数学、英语、物理、化学、生物、历史、地理、政治 / 道德与法治、科学、通用技术等
 - **数据形式**:
-  - `data/教材目录/*.txt`：按学段+学科划分的教材目录与知识点条目
-  - `data/知识问答数据库/*.json`：基于教材构造的结构化问答样本
+  - `data/教材目录/*.txt`：按学段+学科划分的教材目录与知识点条目。
+  - `data/知识问答数据库/*.json`：基于教材构造的结构化问答样本。
 
-在实际分析过程中，系统会结合 LLM 的判断与教材知识库的结构化信息，对教育水平预测进行**验证与校正**，提升判定的鲁棒性。
+在分析知识型对话时，系统会结合 LLM 的判断与此知识库，对教育水平预测进行**验证与校正**。
 
 额外说明：
 
 - **`qa_knowledge_calibrator.py`**：从 `data/知识问答数据库/` 中抽取少量用户问句，构建在线校准用参考样本。
 - **`test_qa_knowledge_db.py`**：基于同一批问答数据做功能测试，同时避免直接复用校准样本，尽量减少“自测训练集”的风险。
+
+## 社交数据库
+
+为了精准识别青少年在社交和情感场景下的特征，我们构建了一个专门的社交对话数据库。
+
+- **数据来源**:
+  - 通过 `scripts/social_data_gen/get_seeds.py` 从公开心理咨询数据集中筛选（脚本+人工）出真实的青少年求助文本作为“种子”。
+- **生成方式**:
+  - 使用 `scripts/social_data_gen/batch_generate.py` 调用大语言模型，将“种子”演绎成符合青少年语言习惯和心理特征的多轮对话。
+- **数据形式**:
+  - `data/社交问答/semantic_data_v2.jsonl`：模拟的青少年社交、情感求助对话，每条数据都包含详细的ICBO（意图、认知、行为、时机）特征分析。
+
 
 ## Web 前端界面（功能还不完善，等加入社交数据集后再重写）
 

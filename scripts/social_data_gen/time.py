@@ -35,7 +35,7 @@ def parse_semantic_time(semantic_str):
     elif "中考" in semantic_str:
         base_date = datetime(year, 6, random.randint(10, 15))
     elif "高考" in semantic_str:
-        base_date = datetime(year, 6, random.randint(1, 6))
+        base_date = datetime(year, 6, random.randint(7, 9))
     elif "法定节假日" in semantic_str:
         # 随机选择一个节假日
         holidays = [(10,1), (5,1), (2,10)] # 国庆，五一，春节
@@ -91,17 +91,14 @@ def main():
                 data = json.loads(line)
                 
                 # --- 核心处理逻辑 ---
-                # 1. 替换 ID
-                # 使用 uuid 来生成一个绝对唯一的 ID，比时间戳更稳妥
-                data['dataset_id'] = f"Gen_Social_{str(uuid.uuid4())[:8]}"
                 
-                # 2. 解析并替换时间
+                # 1. 解析并替换时间
                 semantic_time = data['icbo_features'].get('opportunity_time', '')
                 if semantic_time:
                     precise_time = parse_semantic_time(semantic_time)
                     data['icbo_features']['opportunity_time'] = precise_time
                 
-                # 3. 写回新文件 (一行一个 JSON)
+                # 2. 写回新文件 (一行一个 JSON)
                 fout.write(json.dumps(data, ensure_ascii=False) + '\n')
                 processed_count += 1
                 

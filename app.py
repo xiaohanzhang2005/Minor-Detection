@@ -11,6 +11,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime
+import io
 
 # 导入系统模块
 from models import IntentType, KnowledgeAnalysis, SocialAnalysis
@@ -185,8 +186,9 @@ def main():
 
     if uploaded_file is not None:
         try:
-            # 读取并解析JSON文件
-            json_data = json.load(uploaded_file)
+            # 优化文件读取速度
+            uploaded_file.seek(0)  # 确保文件指针在文件开头
+            json_data = json.load(io.TextIOWrapper(uploaded_file, encoding='utf-8'))
 
             # 提取对话记录
             conversation = load_conversation_from_json(json_data)
@@ -415,7 +417,7 @@ def display_probability_chart(probability_history: List[float]):
     current_prob = probability_history[-1]
     st.metric(
         "当前未成年人概率",
-        f"{current_prob:.3f}",
+        f"{current_prob * 100:.1f}%",
         delta=f"{'高于' if current_prob > 0.65 else '低于'}阈值",
         delta_color="inverse" if current_prob > 0.65 else "normal"
     )
@@ -435,7 +437,7 @@ def display_statistics_summary(analysis_results: List[Dict[str, Any]]):
         with col1:
             total_rounds = len(analysis_results)
             success_rate = len(successful_analyses) / total_rounds * 100
-            st.metric("分析成功率", ".1f")
+            st.metric("分析成功率", f"{success_rate:.1f}%")
 
         with col2:
             intent_distribution = {}
@@ -448,7 +450,7 @@ def display_statistics_summary(analysis_results: List[Dict[str, Any]]):
 
         with col3:
             avg_probability = sum(r['minor_probability'] for r in successful_analyses) / len(successful_analyses)
-            st.metric("平均未成年人概率", ".3f")
+            st.metric("平均未成年人概率", f"{avg_probability * 100:.1f}%")
 
         # 意图分布图表
         st.subheader("意图分布")
@@ -469,7 +471,7 @@ def display_user_profile_analysis(analysis_results: List[Dict[str, Any]]):
 
         # 显示最终概率
         final_prob = latest_result['minor_probability']
-        st.metric("最终未成年人概率", ".3f")
+        st.metric("最终未成年人概率", f"{final_prob * 100:.1f}%")
 
         # 显示知识统计
         knowledge_stats = latest_result.get('knowledge_stats', {})
@@ -485,7 +487,9 @@ def display_user_profile_analysis(analysis_results: List[Dict[str, Any]]):
         history_summary = latest_result.get('history_summary', [])
         if history_summary:
             st.subheader("关键特征")
-            for feature in history_summary[-5:]:  # 显示最近5个特征
+            # 去重并保留顺序
+            unique_features = list(dict.fromkeys(history_summary[-5:]))
+            for feature in unique_features:
                 st.info(feature)
 
 

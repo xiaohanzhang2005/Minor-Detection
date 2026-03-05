@@ -13,6 +13,7 @@ from openai._exceptions import APIError, RateLimitError, APIConnectionError
 
 from models import IntentType, KnowledgeAnalysis, SocialAnalysis
 from qa_knowledge_calibrator import calibrate_knowledge_analysis
+from social_chat_calibrator import calibrate_social_analysis
 
 # 类型变量用于泛型函数
 T = TypeVar('T', bound=Union[IntentType, KnowledgeAnalysis, SocialAnalysis])
@@ -236,7 +237,16 @@ class LLMService:
             {"role": "user", "content": text}
         ]
 
-        return self._call_with_retry(messages, SocialAnalysis)
+        analysis = self._call_with_retry(messages, SocialAnalysis)
+
+        # 在线辅助判定：结合本地社交对话数据库做温和校准
+        try:
+            analysis = calibrate_social_analysis(analysis, text)
+        except Exception as e:
+            # 校准失败不影响主流程，仅记录信息
+            print(f"⚠️ 社交库校准失败，使用原始分析结果: {e}")
+
+        return analysis
 
 
 # 全局服务实例（可选使用）

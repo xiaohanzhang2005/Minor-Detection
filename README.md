@@ -12,6 +12,7 @@
   - 使用 `scripts/social_data_gen/` 下的脚本构建社交对话数据集；
   - 使用 `generate_edu_dialogs.py` 从教材目录批量生成教育对话数据；
   - 使用 `qa_knowledge_calibrator.py` 与 `test_qa_knowledge_db.py` 构建和验证知识问答校准样本。
+  - 使用 `social_chat_calibrator.py` 与 `test_social_chat_calibrator.py` 构建和验证社交对话校准样本。
 
 ### 模型与依赖
 
@@ -43,6 +44,8 @@
 ├── generate_edu_dialogs.py   # 从教材生成教育对话
 ├── qa_knowledge_calibrator.py # 构建知识问答校准样本
 ├── test_qa_knowledge_db.py   # 知识问答数据库功能测试
+├── social_chat_calibrator.py # 基于社交问答库的在线校准器
+├── test_social_chat_calibrator.py # 社交校准效果对比测试（原始 vs 校准后）
 ├── sample_conversation.json  # 示例对话文件
 ├── requirements.txt          # 依赖包列表
 ├── data/                     # 数据集
@@ -179,6 +182,11 @@ streamlit run app.py
   - 使用 `scripts/social_data_gen/batch_generate.py` 调用大语言模型，将“种子”演绎成符合青少年语言习惯和心理特征的多轮对话。
 - **数据形式**:
   - `data/社交问答/semantic_data_v2.jsonl`：模拟的青少年社交、情感求助对话，每条数据都包含详细的ICBO（意图、认知、行为、时机）特征分析。
+
+额外说明：
+
+- **`social_chat_calibrator.py`**：从 `data/社交问答/semantic_data_v2.jsonl` 抽取用户表达并检索 Top-K 相似样本，给出年龄/学段暗示作为在线校准证据。
+- **`test_social_chat_calibrator.py`**：对比“原始社交分析 vs 校准后 reasoning”，直观看到 `[社交库校准]` 增量信息。
 
 
 ## Web 前端界面（功能还不完善，等加入社交数据集后再重写）

@@ -132,7 +132,7 @@ def simulate_conversation(user_id: str, messages: list[str], scenario_name: str)
     print(f"\n🎬 ===== {scenario_name} =====")
 
     for i, message in enumerate(messages, 1):
-        print(f"\n📝 对话轮次 {i}/{len(messages)}")
+        print(f"\n📝 对话轮次 {i}/{len(messages)}")      
         process_user_message(user_id, message)
 
     # 显示最终画像

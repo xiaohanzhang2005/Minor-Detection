@@ -2,8 +2,8 @@
 知识问答数据库在线校准模块
 
 作用：
-- 利用 data/知识问答数据库 下的标注对话，作为“刻度尺”为 LLM 的
-  教育阶段预测和作业识别做轻量级在线校准
+- 利用 data/知识问答数据库 下的标注对话（支持单个 JSONL 或目录内多个 JSON），作为“刻度尺”为 LLM 的
+    教育阶段预测和作业识别做轻量级在线校准
 
 设计原则：
 - 只做“辅助判定”，不替代 LLM 主判断
@@ -43,12 +43,30 @@ class QAKnowledgeCalibrator:
     def __init__(
         self,
         data_dir: Optional[str] = None,
+        data_file: Optional[str] = None,
         max_examples_per_stage: int = 80,
     ) -> None:
-        # 默认数据目录：项目根目录下 data/知识问答数据库
+        # 默认数据路径：优先 JSONL，回退目录多 JSON
         root_dir = os.path.dirname(os.path.abspath(__file__))
         default_dir = os.path.join(root_dir, "data", "知识问答数据库")
+        default_file = os.path.join(default_dir, "knowledge_qa_semantic_v2_like.jsonl")
+
+        # 兼容参数：
+        # - data_file: 显式指定文件
+        # - data_dir: 目录或文件路径
+        # 运行时会优先尝试 JSONL，再回退到目录内多个 JSON
         self.data_dir = data_dir or default_dir
+        if data_file:
+            self.data_file = data_file
+        elif data_dir:
+            self.data_file = (
+                os.path.join(data_dir, "knowledge_qa_semantic_v2_like.jsonl")
+                if os.path.isdir(data_dir)
+                else data_dir
+            )
+        else:
+            self.data_file = default_file
+
         self.max_examples_per_stage = max_examples_per_stage
 
         self.examples_by_stage: Dict[str, List[QAExample]] = {
@@ -90,45 +108,94 @@ class QAKnowledgeCalibrator:
     # === 内部：加载与估计 ===
 
     def _load_examples_if_available(self) -> None:
-        """尝试从数据目录加载样本，失败时静默降级。"""
+        """尝试加载样本：优先 JSONL，回退目录多 JSON。"""
         if self._loaded:
             return
 
         try:
-            if not os.path.isdir(self.data_dir):
-                return
+            loaded_any = False
 
-            files = [f for f in os.listdir(self.data_dir) if f.endswith(".json")]
-            if not files:
-                return
+            # 1) 优先 JSONL
+            if os.path.isfile(self.data_file) and self.data_file.endswith(".jsonl"):
+                loaded_any = self._load_from_jsonl(self.data_file)
+                if loaded_any:
+                    print(f"[QAKnowledgeCalibrator] 加载源: jsonl -> {self.data_file}")
 
-            for filename in files:
-                # 所有学段配额满了就提前结束
+            # 2) 回退目录多 JSON
+            if not loaded_any:
+                candidate_dir = self.data_dir if os.path.isdir(self.data_dir) else os.path.dirname(self.data_file)
+                if os.path.isdir(candidate_dir):
+                    loaded_any = self._load_from_json_dir(candidate_dir)
+                    if loaded_any:
+                        print(f"[QAKnowledgeCalibrator] 加载源: json-dir -> {candidate_dir}")
+
+            # 至少加载到一个样本才算成功
+            if loaded_any and any(self.examples_by_stage.values()):
+                self._loaded = True
+        except Exception:
+            # 任何异常都不影响主流程，直接视为未加载
+            self._loaded = False
+
+    def _load_from_jsonl(self, path: str) -> bool:
+        """从 JSONL 加载样本。"""
+        loaded_any = False
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
                 if all(
                     len(v) >= self.max_examples_per_stage
                     for v in self.examples_by_stage.values()
                 ):
                     break
 
-                path = os.path.join(self.data_dir, filename)
-                self._try_load_file(path)
+                line = line.strip()
+                if not line:
+                    continue
 
-            # 至少加载到一个样本才算成功
-            if any(self.examples_by_stage.values()):
-                self._loaded = True
-        except Exception:
-            # 任何异常都不影响主流程，直接视为未加载
-            self._loaded = False
+                try:
+                    data = json.loads(line)
+                except Exception:
+                    continue
 
-    def _try_load_file(self, path: str) -> None:
-        """从单个 JSON 文件中抽取一条样本。失败静默跳过。"""
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except Exception:
+                if isinstance(data, dict):
+                    before = sum(len(v) for v in self.examples_by_stage.values())
+                    self._try_load_record(data)
+                    after = sum(len(v) for v in self.examples_by_stage.values())
+                    if after > before:
+                        loaded_any = True
+        return loaded_any
+
+    def _load_from_json_dir(self, directory: str) -> bool:
+        """从目录内多个 JSON 加载样本。"""
+        loaded_any = False
+        files = [f for f in os.listdir(directory) if f.endswith(".json")]
+        for filename in files:
+            if all(
+                len(v) >= self.max_examples_per_stage
+                for v in self.examples_by_stage.values()
+            ):
+                break
+
+            path = os.path.join(directory, filename)
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except Exception:
+                continue
+
+            if isinstance(data, dict):
+                before = sum(len(v) for v in self.examples_by_stage.values())
+                self._try_load_record(data)
+                after = sum(len(v) for v in self.examples_by_stage.values())
+                if after > before:
+                    loaded_any = True
+        return loaded_any
+
+    def _try_load_record(self, data: Dict[str, object]) -> None:
+        """从单条 JSON 记录中抽取样本。失败静默跳过。"""
+        meta = data.get("_meta", {})
+        if not isinstance(meta, dict):
             return
 
-        meta = data.get("_meta", {})
         stage = meta.get("_stage")
         subject = meta.get("_subject", "")
         if stage not in self.SUPPORTED_STAGES:
@@ -139,6 +206,9 @@ class QAKnowledgeCalibrator:
             return
 
         conversation = data.get("conversation", [])
+        if not isinstance(conversation, list):
+            return
+
         user_texts: List[str] = []
         for item in conversation:
             if isinstance(item, dict) and item.get("role") == "user":

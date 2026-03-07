@@ -10,6 +10,7 @@
   - 运行 `streamlit run app.py`，在浏览器中上传对话 JSON 文件，获得可视化的风险评估与画像结果。
 - **教材 / 问答数据构建（可选，高级用法）**：
   - 使用 `scripts/social_data_gen/` 下的脚本构建社交对话数据集；
+  - 使用 `scripts/knowledge_data_gen/merge_knowledge_json_to_jsonl.py` 将知识问答目录级 JSON 合并为 JSONL；
   - 使用 `generate_edu_dialogs.py` 从教材目录批量生成教育对话数据；
   - 使用 `qa_knowledge_calibrator.py` 与 `test_qa_knowledge_db.py` 构建和验证知识问答校准样本。
   - 使用 `social_chat_calibrator.py` 与 `test_social_chat_calibrator.py` 构建和验证社交对话校准样本。
@@ -50,16 +51,20 @@
 ├── requirements.txt          # 依赖包列表
 ├── data/                     # 数据集
 │   ├── 教材目录/              # 各学段教材知识点
-│   ├── 知识问答数据库/        # 基于教材生成的QA数据
+│   ├── 知识问答数据库/        # 知识问答校准数据
+│   │   └── knowledge_qa_semantic_v2_like.jsonl  # 合并后的知识问答样本（每行一条JSON）
 │   └── 社交问答/              # 社交对话相关数据
 │       ├── youth_seeds_v5.json      # 筛选出的原始求助文本种子
 │       └── semantic_data_v2.jsonl   # LLM生成的模拟对话数据
 └── scripts/
-    └── social_data_gen/      # 社交对话数据生成脚本
+    ├── knowledge_data_gen/   # 知识问答数据处理脚本
+    │   └── merge_knowledge_json_to_jsonl.py  # 目录级JSON合并为knowledge_qa_semantic_v2_like.jsonl
+    └── social_data_gen/      # 社交对话数据生成/处理脚本
         ├── README.md         # 该模块的详细说明
         ├── get_seeds.py      # 筛选符合条件的求助文本作为种子
         ├── batch_generate.py # 调用LLM批量生成对话
-        └── time.py           # (备用)将语义时间转换为精确时间
+        ├── time.py           # 语义时间映射为精确时间戳
+        └── merge_knowledge_json_to_jsonl.py  # （兼容）知识问答JSON合并脚本
 ```
 
 ## 快速开始
@@ -163,14 +168,14 @@ streamlit run app.py
   - 语文、数学、英语、物理、化学、生物、历史、地理、政治 / 道德与法治、科学、通用技术等
 - **数据形式**:
   - `data/教材目录/*.txt`：按学段+学科划分的教材目录与知识点条目。
-  - `data/知识问答数据库/*.json`：基于教材构造的结构化问答样本。
+  - `data/知识问答数据库/knowledge_qa_semantic_v2_like.jsonl`：基于教材构造并合并后的结构化问答样本（每行一条 JSON 记录）。
 
 在分析知识型对话时，系统会结合 LLM 的判断与此知识库，对教育水平预测进行**验证与校正**。
 
 额外说明：
 
-- **`qa_knowledge_calibrator.py`**：从 `data/知识问答数据库/` 中抽取少量用户问句，构建在线校准用参考样本。
-- **`test_qa_knowledge_db.py`**：基于同一批问答数据做功能测试，同时避免直接复用校准样本，尽量减少“自测训练集”的风险。
+- **`qa_knowledge_calibrator.py`**：从 `data/知识问答数据库/knowledge_qa_semantic_v2_like.jsonl` 中抽取少量用户问句，构建在线校准用参考样本。
+- **`test_qa_knowledge_db.py`**：基于同一 JSONL 数据做功能测试，同时避免直接复用校准样本，尽量减少“自测训练集”的风险。
 
 ## 社交数据库
 

@@ -2,8 +2,8 @@
 未成年人识别与保护系统 - 知识问答数据库测试脚本
 
 用途：
-- 从 data/知识问答数据库 中抽取测试文本
-- 明确避开在线校准器使用的那部分样本（校准器只用每个文件前 3 条用户话语的拼接）
+- 从 data/知识问答数据库 中抽取测试文本（支持单个 JSONL 或目录内多个 JSON）
+- 明确避开在线校准器使用的那部分样本（校准器只用每条记录前 3 条用户话语的拼接）
 - 通过主流程调用 LLM，观察知识塔分析与在线校准效果
 """
 
@@ -17,14 +17,48 @@ from user_profile import UserProfile
 
 
 def get_qa_data_dir() -> str:
-    """返回知识问答数据库的目录路径。"""
+    """返回知识问答数据库目录。"""
     root_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(root_dir, "data", "知识问答数据库")
 
 
-def load_qa_files() -> List[str]:
-    """列出知识问答数据库中的 JSON 文件路径。"""
+def get_qa_data_file() -> str:
+    """返回知识问答数据库 JSONL 文件路径（优先）。"""
     data_dir = get_qa_data_dir()
+    return os.path.join(
+        data_dir, "knowledge_qa_semantic_v2_like.jsonl"
+    )
+
+
+def load_qa_records() -> List[Dict[str, Any]]:
+    """读取知识问答数据库记录：JSONL 优先，回退目录多 JSON。"""
+    data_file = get_qa_data_file()
+    data_dir = get_qa_data_dir()
+
+    records: List[Dict[str, Any]] = []
+
+    # 1) 优先 JSONL
+    if os.path.isfile(data_file):
+        with open(data_file, "r", encoding="utf-8") as f:
+            for i, line in enumerate(f, start=1):
+                line = line.strip()
+                if not line:
+                    continue
+
+                try:
+                    obj = json.loads(line)
+                except Exception:
+                    print(f"⚠️ JSONL 第 {i} 行解析失败，已跳过")
+                    continue
+
+                if isinstance(obj, dict):
+                    records.append(obj)
+
+            print(f"ℹ️ 加载源: jsonl -> {data_file}")
+        print(f"✅ 在 {data_file} 中读取到 {len(records)} 条记录")
+        return records
+
+    # 2) 回退目录多 JSON
     if not os.path.isdir(data_dir):
         print(f"❌ 找不到目录: {data_dir}")
         return []
@@ -35,11 +69,21 @@ def load_qa_files() -> List[str]:
         if f.endswith(".json")
     ]
     if not files:
-        print(f"❌ 目录下没有 JSON 文件: {data_dir}")
+        print(f"❌ 未找到 JSONL，也未找到 .json 文件: {data_dir}")
         return []
 
-    print(f"✅ 在 {data_dir} 中找到 {len(files)} 个 JSON 文件")
-    return sorted(files)
+    for path in sorted(files):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                obj = json.load(f)
+            if isinstance(obj, dict):
+                records.append(obj)
+        except Exception:
+            print(f"⚠️ 解析失败，已跳过: {path}")
+
+    print(f"ℹ️ 加载源: json-dir -> {data_dir}")
+    print(f"✅ 在 {data_dir} 中回退读取到 {len(records)} 条 JSON 记录")
+    return records
 
 
 def extract_test_text_from_conversation(
@@ -49,7 +93,7 @@ def extract_test_text_from_conversation(
     从单个对话样本中抽取测试文本。
 
     关键约束：避免与在线校准器使用的文本“完全相同”。
-    - 在线校准器只用：每个文件中前几轮 user 消息（最多 3 条），纯文本拼接，中间用换行分隔
+    - 在线校准器只用：每条记录中前几轮 user 消息（最多 3 条），纯文本拼接，中间用换行分隔
     - 这里优先选择：第 4 条及之后的 user 消息（以及后续 AI 回复），并添加「用户: / AI:」前缀
     - 如果对话中 user 消息少于 4 条，则使用整段对话的带前缀拼接文本（同样不会与校准器文本完全一致）
     """
@@ -97,33 +141,31 @@ def extract_test_text_from_conversation(
 
 def iter_qa_test_samples() -> List[Dict[str, Any]]:
     """
-    将知识问答数据库中的每个文件转成一个“测试样本”：
-    - id: 文件名
+    将知识问答数据库中的每条记录转成一个“测试样本”：
+    - id: dataset_id（缺失则使用行号）
     - stage / subject: 来自 _meta 元信息（如果有）
     - text: 按上面的规则抽取的测试文本
     """
-    files = load_qa_files()
+    records = load_qa_records()
     samples: List[Dict[str, Any]] = []
 
-    for path in files:
-        try:
-            with open(path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except Exception as e:
-            print(f"⚠️ 解析文件失败，已跳过 {path}: {e}")
-            continue
-
+    for idx, data in enumerate(records, start=1):
         meta = data.get("_meta", {})
+        if not isinstance(meta, dict):
+            meta = {}
+
         stage = meta.get("_stage")
         subject = meta.get("_subject")
         conversation = data.get("conversation") or []
+        if not isinstance(conversation, list):
+            continue
 
         text = extract_test_text_from_conversation(conversation)
         if not text:
-            print(f"⚠️ 文件中未找到可用对话文本，已跳过 {path}")
+            print(f"⚠️ 第 {idx} 条记录未找到可用对话文本，已跳过")
             continue
 
-        sample_id = os.path.basename(path)
+        sample_id = str(data.get("dataset_id") or f"line_{idx}")
         samples.append(
             {
                 "id": sample_id,

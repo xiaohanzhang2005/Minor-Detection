@@ -22,7 +22,7 @@ data_dir = os.path.join(project_root, "data", "社交问答")
 
 # 定义最终的输入输出路径
 INPUT_FILE = os.path.join(data_dir, "youth_seeds_v5.json")
-OUTPUT_FILE = os.path.join(data_dir, "semantic_data_v2.jsonl")
+OUTPUT_FILE = os.path.join(data_dir, "youth_dialogs.jsonl")
 
 # --- 提速配置---
 MAX_WORKERS = 10  # 线程数：建议设置 3-10 之间。太高会触发 API 限流 (429报错)

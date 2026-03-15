@@ -1,0 +1,7 @@
+{
+  "baseline": {
+    "selected_eval": {
+      "dataset": "../../data/benchmark/val.jsonl"
+    }
+  }
+}

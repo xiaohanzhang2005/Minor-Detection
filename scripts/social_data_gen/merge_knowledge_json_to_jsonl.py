@@ -77,7 +77,7 @@ def main() -> None:
     current_dir = Path(__file__).resolve().parent
     project_root = current_dir.parent.parent
     source_dir = project_root / "data" / "知识问答数据库"
-    output_file = source_dir / "knowledge_qa_semantic_v2_like.jsonl"
+    output_file = source_dir / "youth_knowledge_qa.jsonl"
 
     files = sorted(source_dir.glob("*.json"))
     if not files:

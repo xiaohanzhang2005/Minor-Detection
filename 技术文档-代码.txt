@@ -1,0 +1,385 @@
+### **青少年AI安全监测 Skill 技术文档 V1.0**
+
+#### **1. 项目根目录文件结构**
+
+```
+/minor-protection-system/
+|
+├── 📂 data/                    # 1. 数据基座
+│   ├── 📂 benchmark/
+│   │   ├── train.jsonl
+│   │   ├── val.jsonl
+│   │   └── test.jsonl
+│   └── 📂 retrieval_db/         # RAG 校准库（由 train.jsonl 生成）
+│       └── social_db.faiss     # 社交对话向量索引
+│
+├── 📂 skills/                  # 2. Skill 定义与进化
+│   └── 📂 teen_detector_v1/
+│       ├── skill.md            # Prompt V1.0 (可被进化)
+│       └── assets/
+│           └── few_shot_examples.jsonl
+│
+├── 📂 src/                     # 3. 核心源代码
+│   ├── __init__.py
+│   ├── config.py             # 全局配置（API Key, 模型名, 路径）
+│   ├── models.py             # Pydantic 数据模型 (ICBO, SocialAnalysis)
+│   ├── user_memory.py        # 长期记忆模块 (借鉴 MemSkill)
+│   ├── executor.py           # 在线执行体 (Skill + Memory + RAG)
+│   ├── 📂 evolution_engine/    # 离线进化引擎
+│   │   ├── __init__.py
+│   │   ├── evaluator.py      # 裁判 Agent
+│   │   └── optimizer.py      # 优化师 Agent
+│   └── 📂 utils/
+│       ├── __init__.py
+│       └── rag.py            # RAG 检索器实现
+│
+├── 📂 scripts/                 # 4. 周边工具脚本
+│   ├── run_evolution.py      # 启动自进化循环的入口
+│   ├── run_evaluation.py     # 对指定 Skill 版本进行一次性评测
+│   └── build_rag_db.py       # 将 train.jsonl 制作成向量数据库
+│
+└── 📄 requirements.txt         # Python 依赖
+```
+
+---
+
+#### **2. 核心模块与文件详解**
+
+##### **2.1 `src/config.py` - 全局配置文件**
+*   **功能**：集中管理所有配置项，方便切换模型、API Key。
+*   **代码骨架**:
+```python
+# src/config.py
+import os
+
+# --- API & Model Config ---
+API_KEY = os.getenv("AIHUBMIX_API_KEY", "YOUR_API_KEY_HERE")
+API_BASE_URL = "https://api.aihubmix.com/v1"
+
+# 分层模型选择
+EXECUTOR_MODEL = "gemini-2.0-flash-exp" # 在线执行体，要快要便宜
+EVALUATOR_MODEL = "gpt-4o-mini"        # 裁判，要稳定
+OPTIMIZER_MODEL = "claude-3-5-sonnet-20240620" # 优化师，要聪明
+
+# --- Path Config ---
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(ROOT_DIR, "data")
+SKILLS_DIR = os.path.join(ROOT_DIR, "skills")
+BENCHMARK_TRAIN_PATH = os.path.join(DATA_DIR, "benchmark", "train.jsonl")
+BENCHMARK_VAL_PATH = os.path.join(DATA_DIR, "benchmark", "val.jsonl")
+BENCHMARK_TEST_PATH = os.path.join(DATA_DIR, "benchmark", "test.jsonl")
+RAG_DB_PATH = os.path.join(DATA_DIR, "retrieval_db")
+
+# --- Logic Config ---
+RAG_TOP_K = 3 # RAG 校准时检索3个最相似样本
+```
+
+##### **2.2 `src/models.py` - Pydantic 数据模型**
+*   **功能**：定义所有结构化数据的格式，确保 LLM 输出可被程序解析。
+*   **代码骨架**:
+```python
+# src/models.py
+from pydantic import BaseModel, Field
+from typing import List, Dict
+
+class ICBOFeatures(BaseModel):
+    intention: str = Field(description="用户意图 (I)")
+    cognition: str = Field(description="认知特征 (C)")
+    behavior_style: str = Field(description="语言风格 (B)")
+    opportunity_time: str = Field(description="语义时间 (O)")
+
+class UserPersona(BaseModel):
+    age: int
+    gender: str
+
+class SkillOutput(BaseModel):
+    risk_label: str = Field(enum=["High", "Medium", "Low"])
+    is_minor: bool
+    icbo_features: ICBOFeatures
+    user_persona: UserPersona
+    reasoning: str = Field(description="判定的详细理由")
+```
+
+##### **2.3 `src/user_memory.py` - 长期记忆模块 (借鉴 MemSkill)**
+*   **功能**：负责单个用户的历史 ICBO 画像的读、写、和综合。
+*   **代码骨架**:
+```python
+# src/user_memory.py
+import sqlite3
+from typing import Optional
+
+# 使用 SQLite 做一个简单的本地 K-V 数据库
+class UserMemory:
+    def __init__(self, db_path="data/user_memory.db"):
+        self.conn = sqlite3.connect(db_path)
+        self._create_table()
+
+    def _create_table(self):
+        # 存储压缩后的历史画像摘要
+        self.conn.execute("CREATE TABLE IF NOT EXISTS user_profiles (user_id TEXT PRIMARY KEY, profile_summary TEXT)")
+
+    def read(self, user_id: str) -> Optional[str]:
+        """读取用户的历史画像摘要"""
+        cursor = self.conn.execute("SELECT profile_summary FROM user_profiles WHERE user_id = ?", (user_id,))
+        row = cursor.fetchone()
+        return row[0] if row else None
+
+    def write(self, user_id: str, new_icbo: 'ICBOFeatures', current_dialogue: str):
+        """将新的交互信息更新到历史画像中"""
+        # (这里未来可以调用一个 LLM 来做“记忆总结”)
+        # 简单版：直接拼接
+        old_summary = self.read(user_id) or ""
+        new_summary = old_summary + f"\n- Time: {new_icbo.opportunity_time}, Behavior: {new_icbo.behavior_style}"
+        self.conn.execute(
+            "INSERT OR REPLACE INTO user_profiles (user_id, profile_summary) VALUES (?, ?)",
+            (user_id, new_summary)
+        )
+        self.conn.commit()
+```
+
+##### **2.4 `src/utils/rag.py` - RAG 检索器**
+*   **功能**：从训练集构建的向量数据库中，检索相似案例。
+*   **代码骨架**:
+```python
+# src/utils/rag.py
+# (需要安装 sentence-transformers 和 faiss-cpu)
+from sentence_transformers import SentenceTransformer
+import faiss
+from typing import List
+
+class RAGCalibrator:
+    def __init__(self, db_path: str):
+        self.model = SentenceTransformer('shibing624/text2vec-base-chinese')
+        self.index = faiss.read_index(os.path.join(db_path, "social_db.faiss"))
+        # 还需要加载原始文本，这里省略
+
+    def retrieve(self, query_text: str, k: int) -> List[str]:
+        """检索 Top-K 相似案例的文本"""
+        # 伪代码
+        query_embedding = self.model.encode([query_text])
+        distances, indices = self.index.search(query_embedding, k)
+        # 根据 indices 查找原始文本并返回
+        return ["参考案例1...", "参考案例2..."]
+```
+
+---
+好的，我们继续技术文档的第二部分。
+
+---
+
+#### **2.5 `src/executor.py` - 在线执行体 (Online Executor Skill)**
+这是整个系统的“前台服务员”，负责接收实时请求并快速响应。
+
+*   **功能**：整合记忆、RAG 和 LLM 推理，完成一次完整的识别任务。
+*   **代码骨架**:
+```python
+# src/executor.py
+from .config import EXECUTOR_MODEL, RAG_TOP_K
+from .models import SkillOutput
+from .user_memory import UserMemory
+from .utils.rag import RAGCalibrator
+from openai import OpenAI
+import os
+
+class ExecutorSkill:
+    def __init__(self, skill_path: str):
+        self.client = OpenAI(api_key=os.getenv("AIHUBMIX_API_KEY"), base_url="https://api.aihubmix.com/v1")
+        self.memory = UserMemory()
+        self.rag = RAGCalibrator(db_path="data/retrieval_db")
+        
+        with open(os.path.join(skill_path, "skill.md"), "r", encoding="utf-8") as f:
+            self.system_prompt = f.read()
+
+    def run(self, user_id: str, current_dialogue: str) -> SkillOutput:
+        """
+        执行一次完整的识别流程
+        """
+        # 1. 记忆检索 (MemSkill)
+        historical_summary = self.memory.read(user_id) or "该用户无历史记录。"
+        
+        # 2. RAG 校准
+        rag_examples = self.rag.retrieve(current_dialogue, k=RAG_TOP_K)
+        rag_context = "\n".join([f"参考案例{i+1}: {ex}" for i, ex in enumerate(rag_examples)])
+
+        # 3. 构建最终 Prompt
+        final_prompt = f"""
+        # 历史画像摘要
+        {historical_summary}
+
+        # 相似参考案例 (来自训练集)
+        {rag_context}
+
+        # 当前待分析对话
+        {current_dialogue}
+
+        ---
+        请基于以上所有信息，完成分析。
+        """
+
+        # 4. LLM 推理
+        response = self.client.chat.completions.create(
+            model=EXECUTOR_MODEL,
+            messages=[
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": final_prompt}
+            ],
+            response_format={"type": "json_object"}
+        )
+        
+        # 5. 解析并更新记忆
+        result_json = json.loads(response.choices[0].message.content)
+        skill_output = SkillOutput(**result_json)
+        
+        self.memory.write(user_id, skill_output.icbo_features, current_dialogue)
+        
+        return skill_output
+```
+
+##### **2.6 `src/evolution_engine/evaluator.py` - 裁判 Agent**
+*   **功能**：在离线环境下，用验证集（Val Set）给指定的 Skill 打分。
+*   **代码骨架**:
+```python
+# src/evolution_engine/evaluator.py
+import json
+from sklearn.metrics import f1_score, precision_score, recall_score
+from ..executor import ExecutorSkill # 假设可以这样导入
+from ..config import BENCHMARK_VAL_PATH
+
+class Evaluator:
+    def __init__(self, skill_version_path: str):
+        self.skill = ExecutorSkill(skill_version_path)
+        self.val_set = self._load_dataset(BENCHMARK_VAL_PATH)
+
+    def _load_dataset(self, path):
+        # 从 jsonl 加载验证集
+        pass
+
+    def run_evaluation(self) -> dict:
+        """
+        运行完整评估流程
+        """
+        predictions = []
+        ground_truths = []
+        failed_cases = []
+
+        for item in self.val_set:
+            user_id = item["user_id"] # 假设数据中有 user_id
+            dialogue = item["conversation_text"]
+            true_label = item["is_minor"] # 真实标签
+
+            try:
+                # 调用 Skill 进行预测
+                prediction = self.skill.run(user_id, dialogue).is_minor
+                
+                predictions.append(prediction)
+                ground_truths.append(true_label)
+
+                if prediction != true_label:
+                    failed_cases.append({
+                        "dialogue": dialogue,
+                        "predicted": prediction,
+                        "actual": true_label
+                    })
+            except Exception as e:
+                # 记录失败案例
+                pass
+        
+        # 计算指标
+        f1 = f1_score(ground_truths, predictions)
+        # ... 计算其他指标
+        
+        report = {
+            "f1_score": f1,
+            # ... 其他指标
+            "failed_cases": failed_cases
+        }
+        
+        return report
+```
+
+##### **2.7 `src/evolution_engine/optimizer.py` - 优化师 Agent**
+*   **功能**：读取评估报告和错题集，调用强模型自动重写 `skill.md`。
+*   **代码骨架**:
+```python
+# src/evolution_engine/optimizer.py
+from ..config import OPTIMIZER_MODEL
+from openai import OpenAI
+import os
+
+class Optimizer:
+    def __init__(self):
+        self.client = OpenAI(api_key=os.getenv("AIHUBMIX_API_KEY"), base_url="https://api.aihubmix.com/v1")
+        self.meta_prompt_template = """
+        你是一个顶级的 Prompt 工程师，负责优化一个用于青少年识别的 AI Skill。
+
+        这是当前版本的 Skill 说明书 (skill.md):
+        ---
+        {current_skill_md}
+        ---
+
+        这是它在一批测试数据上的错误分析报告:
+        ---
+        {evaluation_report}
+        ---
+        
+        你的任务是：深入分析这些错误，并重写一份改进版的 skill.md。
+        新版本必须修复报告中指出的缺陷，同时不能影响原有的正确判断。
+        请仅返回新版 skill.md 的完整内容。
+        """
+
+    def refine(self, current_skill_path: str, eval_report: dict) -> str:
+        """
+        执行一次 Prompt 优化
+        """
+        with open(os.path.join(current_skill_path, "skill.md"), "r", encoding="utf-8") as f:
+            current_md = f.read()
+            
+        prompt = self.meta_prompt_template.format(
+            current_skill_md=current_md,
+            evaluation_report=json.dumps(eval_report, ensure_ascii=False, indent=2)
+        )
+        
+        response = self.client.chat.completions.create(
+            model=OPTIMIZER_MODEL,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        
+        new_skill_md = response.choices[0].message.content
+        return new_skill_md
+```
+
+---
+
+#### **3. 脚本与启动顺序**
+
+1.  **`scripts/build_rag_db.py`**:
+    *   **何时运行**：**只需运行一次**，或在 `train.jsonl` 更新后运行。
+    *   **作用**：读取 `train.jsonl`，将其向量化并构建 FAISS 索引，保存到 `data/retrieval_db/`。
+2.  **`scripts/run_evolution.py` (主循环脚本)**:
+    *   **何时运行**：当你想让 Skill **自我进化**时。
+    *   **内部逻辑**:
+        ```python
+        # 伪代码
+        current_skill_path = "skills/teen_detector_v1/"
+        for i in range(10): # 比如迭代10轮
+            print(f"--- Evolution Round {i+1} ---")
+            
+            # 1. 评估当前版本
+            evaluator = Evaluator(current_skill_path)
+            report = evaluator.run_evaluation()
+            print(f"F1 Score: {report['f1_score']}")
+            
+            # 2. 优化
+            optimizer = Optimizer()
+            new_md_content = optimizer.refine(current_skill_path, report)
+            
+            # 3. 创建新版本
+            new_skill_path = f"skills/teen_detector_v{i+2}/"
+            # ... 创建文件夹，保存新的 skill.md
+            current_skill_path = new_skill_path
+        ```
+3.  **`scripts/run_evaluation.py` (最终评测脚本)**:
+    *   **何时运行**：当自进化循环结束，你得到了一个最终版的 Skill（比如 `teen_detector_v10`）。
+    *   **作用**：加载 **Test Set (`test.jsonl`)**，用最终版的 Skill 跑一遍，输出论文里要报告的最终成绩。
+
+这份技术文档为你提供了从数据到代码、从在线到离线的完整“施工蓝图”。你可以直接把这些骨架代码和设计思路交给代码 AI，让它帮你填充具体的实现细节。

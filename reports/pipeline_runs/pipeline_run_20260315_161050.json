@@ -1,0 +1,143 @@
+{
+  "timestamp": "2026-03-15T14:22:46.447664",
+  "status": "success",
+  "config": {
+    "requested_mode": "full",
+    "quick_n": 50,
+    "seed": 42,
+    "skill_version_start": "teen_detector_v1",
+    "baseline_rag_mode": "compare",
+    "evolution_rag": "on",
+    "test_rag_mode": "match-evolution",
+    "run_test_final": false,
+    "baseline_max_eval": 200,
+    "evolution_max_eval": null,
+    "test_max_eval": null,
+    "max_rounds": 0,
+    "patience": 2,
+    "min_improvement": 0.001,
+    "rebuild_data": false,
+    "repair_benchmark_manifest": false,
+    "rebuild_index": false
+  },
+  "assets": {
+    "benchmark_reused": true,
+    "benchmark_verified": true,
+    "benchmark_manifest_repaired": false,
+    "rag_index_reused": true,
+    "manifest": {
+      "benchmark": {
+        "timestamp": "2026-03-15T14:20:28.608574",
+        "mode": "full",
+        "quick_n": null,
+        "seed": 42,
+        "statistics": {
+          "total": 8328,
+          "by_source": {
+            "knowledge_neg": 1986,
+            "knowledge_pos": 2004,
+            "social_neg": 1735,
+            "social_pos": 2603
+          },
+          "by_is_minor": {
+            "minor": 4607,
+            "adult": 3721
+          }
+        },
+        "splits": {
+          "train": 5828,
+          "val": 831,
+          "test": 1669
+        },
+        "paths": {
+          "train": "../../data/benchmark/train.jsonl",
+          "val": "../../data/benchmark/val.jsonl",
+          "test": "../../data/benchmark/test.jsonl"
+        },
+        "provenance": "repaired_from_existing_splits"
+      },
+      "rag": {
+        "built_at": "2026-03-15T13:48:36.982267",
+        "source_data_path": "../../data/benchmark/train.jsonl",
+        "index_path": "../../data/retrieval_db/index.pkl",
+        "corpus_path": "../../data/retrieval_corpus/cases_v1.jsonl",
+        "embedding_model": "text-embedding-3-small",
+        "text_template_version": "user_only_v1",
+        "preprocess_version": "basic_whitespace_v1",
+        "sample_count": 5828,
+        "dataset_hash": "63cca08232ef7d7008bca1af9615c17f6da90f456c16cb59835b35a3e3cf7109"
+      }
+    }
+  },
+  "baseline": {
+    "selected_mainline": "on",
+    "selected_eval": {
+      "dataset": "../../data/benchmark/val.jsonl",
+      "total_samples": 200,
+      "accuracy": 0.99,
+      "precision": 0.9826086956521739,
+      "recall": 1.0,
+      "f1_score": 0.9912280701754386,
+      "true_positive": 113,
+      "true_negative": 85,
+      "false_positive": 2,
+      "false_negative": 0,
+      "error_count": 2
+    },
+    "rag_eval": {
+      "dataset": "../../data/benchmark/val.jsonl",
+      "total_samples": 200,
+      "accuracy": 0.99,
+      "precision": 0.9826086956521739,
+      "recall": 1.0,
+      "f1_score": 0.9912280701754386,
+      "true_positive": 113,
+      "true_negative": 85,
+      "false_positive": 2,
+      "false_negative": 0,
+      "error_count": 2
+    },
+    "no_rag_eval": {
+      "dataset": "../../data/benchmark/val.jsonl",
+      "total_samples": 200,
+      "accuracy": 0.995,
+      "precision": 0.9912280701754386,
+      "recall": 1.0,
+      "f1_score": 0.9955947136563876,
+      "true_positive": 113,
+      "true_negative": 86,
+      "false_positive": 1,
+      "false_negative": 0,
+      "error_count": 1
+    },
+    "rag_minus_no_rag_f1": -0.004366643480949062
+  },
+  "evolution": {
+    "round_history": [],
+    "created_versions": [],
+    "accepted_versions": [],
+    "rollback_count": 0,
+    "stop_reason": "manual_zero_rounds",
+    "best_version": "teen_detector_v1",
+    "best_f1": 0.9912280701754386,
+    "rounds_executed": 0
+  },
+  "cleanup": {
+    "performed": false,
+    "removed_benchmark": [],
+    "removed_generated_skills": [],
+    "restored_active_version": null,
+    "errors": [],
+    "skipped": true
+  },
+  "summary": {
+    "baseline_f1": 0.9912280701754386,
+    "best_val_f1": 0.9912280701754386,
+    "final_test_f1": null,
+    "f1_trend": "unchanged",
+    "skill_version_final": "teen_detector_v1",
+    "accepted_count": 0,
+    "rollback_count": 0
+  },
+  "elapsed_seconds": 6483.74
+}

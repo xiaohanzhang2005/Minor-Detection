@@ -1,0 +1,211 @@
+{
+  "timestamp": "2026-03-15T17:03:05.869572",
+  "status": "success",
+  "config": {
+    "requested_mode": "full",
+    "quick_n": 50,
+    "seed": 42,
+    "skill_version_start": "teen_detector_v1",
+    "baseline_rag_mode": "off",
+    "evolution_rag": "off",
+    "test_rag_mode": "match-evolution",
+    "run_test_final": false,
+    "baseline_max_eval": 300,
+    "evolution_max_eval": 300,
+    "test_max_eval": null,
+    "max_rounds": 3,
+    "patience": 2,
+    "min_improvement": 0.001,
+    "rebuild_data": false,
+    "repair_benchmark_manifest": false,
+    "rebuild_index": false
+  },
+  "assets": {
+    "benchmark_reused": true,
+    "benchmark_verified": true,
+    "benchmark_manifest_repaired": false,
+    "rag_index_reused": null,
+    "manifest": {
+      "benchmark": {
+        "timestamp": "2026-03-15T14:20:28.608574",
+        "mode": "full",
+        "quick_n": null,
+        "seed": 42,
+        "statistics": {
+          "total": 8328,
+          "by_source": {
+            "knowledge_neg": 1986,
+            "knowledge_pos": 2004,
+            "social_neg": 1735,
+            "social_pos": 2603
+          },
+          "by_is_minor": {
+            "minor": 4607,
+            "adult": 3721
+          }
+        },
+        "splits": {
+          "train": 5828,
+          "val": 831,
+          "test": 1669
+        },
+        "paths": {
+          "train": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\data\\benchmark\\train.jsonl",
+          "val": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\data\\benchmark\\val.jsonl",
+          "test": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\data\\benchmark\\test.jsonl"
+        },
+        "provenance": "repaired_from_existing_splits"
+      },
+      "rag": null
+    }
+  },
+  "baseline": {
+    "selected_mainline": "off",
+    "selected_eval": {
+      "dataset": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\data\\benchmark\\val.jsonl",
+      "total_samples": 300,
+      "accuracy": 0.9933333333333333,
+      "precision": 0.9885057471264368,
+      "recall": 1.0,
+      "f1_score": 0.9942196531791908,
+      "true_positive": 172,
+      "true_negative": 126,
+      "false_positive": 2,
+      "false_negative": 0,
+      "error_count": 2
+    },
+    "no_rag_eval": {
+      "dataset": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\data\\benchmark\\val.jsonl",
+      "total_samples": 300,
+      "accuracy": 0.9933333333333333,
+      "precision": 0.9885057471264368,
+      "recall": 1.0,
+      "f1_score": 0.9942196531791908,
+      "true_positive": 172,
+      "true_negative": 126,
+      "false_positive": 2,
+      "false_negative": 0,
+      "error_count": 2
+    }
+  },
+  "evolution": {
+    "round_history": [
+      {
+        "round": 1,
+        "version_before": "teen_detector_v1",
+        "success": true,
+        "message": "",
+        "baseline_f1": 0.9942196531791908,
+        "new_f1": 0.9852507374631269,
+        "f1_delta": -0.008968915716063952,
+        "new_version": "teen_detector_v2_20260315_181758",
+        "rolled_back": true,
+        "baseline_report_reused": true,
+        "accepted": false,
+        "version_after": "teen_detector_v1",
+        "active_version_after": "teen_detector_v1",
+        "baseline_eval": {
+          "dataset": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\data\\benchmark\\val.jsonl",
+          "total_samples": 300,
+          "accuracy": 0.9933333333333333,
+          "precision": 0.9885057471264368,
+          "recall": 1.0,
+          "f1_score": 0.9942196531791908,
+          "true_positive": 172,
+          "true_negative": 126,
+          "false_positive": 2,
+          "false_negative": 0,
+          "error_count": 2
+        },
+        "new_eval": {
+          "dataset": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\data\\benchmark\\val.jsonl",
+          "total_samples": 300,
+          "accuracy": 0.9833333333333333,
+          "precision": 1.0,
+          "recall": 0.9709302325581395,
+          "f1_score": 0.9852507374631269,
+          "true_positive": 167,
+          "true_negative": 128,
+          "false_positive": 0,
+          "false_negative": 5,
+          "error_count": 5
+        },
+        "no_improvement_streak_before": 0,
+        "diagnosis": "new version was evaluated and rolled back",
+        "no_improvement_streak_after": 1
+      },
+      {
+        "round": 2,
+        "version_before": "teen_detector_v1",
+        "success": true,
+        "message": "",
+        "baseline_f1": 0.9942196531791908,
+        "new_f1": 0.9941860465116279,
+        "f1_delta": -3.3606667562913195e-05,
+        "new_version": "teen_detector_v2_20260315_194447",
+        "rolled_back": true,
+        "baseline_report_reused": true,
+        "accepted": false,
+        "version_after": "teen_detector_v1",
+        "active_version_after": "teen_detector_v1",
+        "baseline_eval": {
+          "dataset": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\data\\benchmark\\val.jsonl",
+          "total_samples": 300,
+          "accuracy": 0.9933333333333333,
+          "precision": 0.9885057471264368,
+          "recall": 1.0,
+          "f1_score": 0.9942196531791908,
+          "true_positive": 172,
+          "true_negative": 126,
+          "false_positive": 2,
+          "false_negative": 0,
+          "error_count": 2
+        },
+        "new_eval": {
+          "dataset": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\data\\benchmark\\val.jsonl",
+          "total_samples": 300,
+          "accuracy": 0.9933333333333333,
+          "precision": 0.9941860465116279,
+          "recall": 0.9941860465116279,
+          "f1_score": 0.9941860465116279,
+          "true_positive": 171,
+          "true_negative": 127,
+          "false_positive": 1,
+          "false_negative": 1,
+          "error_count": 2
+        },
+        "no_improvement_streak_before": 1,
+        "diagnosis": "new version was evaluated and rolled back",
+        "no_improvement_streak_after": 2
+      }
+    ],
+    "created_versions": [
+      "teen_detector_v2_20260315_181758",
+      "teen_detector_v2_20260315_194447"
+    ],
+    "accepted_versions": [],
+    "rollback_count": 2,
+    "stop_reason": "patience_exhausted",
+    "best_version": "teen_detector_v1",
+    "best_f1": 0.9942196531791908,
+    "rounds_executed": 2
+  },
+  "cleanup": {
+    "performed": false,
+    "removed_benchmark": [],
+    "removed_generated_skills": [],
+    "restored_active_version": null,
+    "errors": [],
+    "skipped": true
+  },
+  "summary": {
+    "baseline_f1": 0.9942196531791908,
+    "best_val_f1": 0.9942196531791908,
+    "final_test_f1": null,
+    "f1_trend": "unchanged",
+    "skill_version_final": "teen_detector_v1",
+    "accepted_count": 0,
+    "rollback_count": 2
+  },
+  "elapsed_seconds": 14296.97
+}

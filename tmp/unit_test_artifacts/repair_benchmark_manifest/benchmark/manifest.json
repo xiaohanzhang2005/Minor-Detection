@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-03-15T19:23:41.151958",
+  "mode": "full",
+  "quick_n": null,
+  "seed": 42,
+  "statistics": {
+    "total": 4,
+    "by_source": {
+      "knowledge_neg": 1,
+      "knowledge_pos": 1,
+      "social_neg": 1,
+      "social_pos": 1
+    },
+    "by_is_minor": {
+      "minor": 2,
+      "adult": 2
+    }
+  },
+  "splits": {
+    "train": 2,
+    "val": 1,
+    "test": 1
+  },
+  "paths": {
+    "train": "train.jsonl",
+    "val": "val.jsonl",
+    "test": "test.jsonl"
+  },
+  "provenance": "repaired_from_existing_splits"
+}

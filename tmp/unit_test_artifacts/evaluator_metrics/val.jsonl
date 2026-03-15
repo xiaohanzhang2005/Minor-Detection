@@ -1,0 +1,4 @@
+{"sample_id": "s1", "is_minor": true, "conversation": [{"role": "user", "content": "1"}]}
+{"sample_id": "s2", "is_minor": true, "conversation": [{"role": "user", "content": "2"}]}
+{"sample_id": "s3", "is_minor": false, "conversation": [{"role": "user", "content": "3"}]}
+{"sample_id": "s4", "is_minor": false, "conversation": [{"role": "user", "content": "4"}]}

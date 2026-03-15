@@ -30,11 +30,11 @@
     ```bash
     python batch_generate.py
     ```
-    -   脚本会读取种子，并发调用 API 生成对话。最终结果会以 JSONL 格式追加保存在 `data/社交问答/semantic_data_v2.jsonl` 文件中。
+    -   脚本会读取种子，并发调用 API 生成对话。最终结果会以 JSONL 格式追加保存在 `data/社交问答/youth_dialogs.jsonl` 文件中。
 
 ## 数据说明
 
-最终输出的文件为 `semantic_data_v2.jsonl`，每一行都是一个独立的 JSON 对象，其核心结构如下：
+最终输出的文件为 `youth_dialogs.jsonl`，每一行都是一个独立的 JSON 对象，其核心结构如下：
 
 ```json
 {

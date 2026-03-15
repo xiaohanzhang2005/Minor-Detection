@@ -1,0 +1,296 @@
+{
+  "timestamp": "2026-03-14T19:33:31.408329",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "quick_n": 100,
+  "runs": [
+    {
+      "seed": 42,
+      "sample_total": 400,
+      "train_size": 280,
+      "val_size": 40,
+      "test_size": 80,
+      "rag_f1": 0.975609756097561,
+      "no_rag_f1": 0.9743589743589743,
+      "rag_accuracy": 0.975,
+      "no_rag_accuracy": 0.975,
+      "structured_metrics": {
+        "structured_calls": 40,
+        "structured_validation_failures": 1,
+        "structured_local_repairs": 1,
+        "structured_unrecovered_failures": 0,
+        "api_retries": 0,
+        "validation_failure_rate_per_100": 2.5,
+        "unrecovered_failure_rate_per_100": 0.0
+      },
+      "iteration_summary": {
+        "success": true,
+        "message": "no errors to optimize",
+        "new_version": null,
+        "rolled_back": false,
+        "baseline_f1": null,
+        "new_f1": null,
+        "f1_delta": null
+      },
+      "memory_summary": {
+        "tested": true,
+        "db_path": "../data/user_memory_acceptance_seed_42.db",
+        "user_id": "acceptance_user_seed_42",
+        "profile_exists": true,
+        "total_sessions": 2
+      },
+      "gates": [
+        {
+          "name": "split_disjoint",
+          "passed": true,
+          "details": "train/val/test (source,sample_id) 完全隔离",
+          "level": "info"
+        },
+        {
+          "name": "exact_overlap_train_val",
+          "passed": true,
+          "details": "val 中与 train 完全相同文本数量: 0",
+          "level": "info"
+        },
+        {
+          "name": "near_duplicate_train_val",
+          "passed": true,
+          "details": "近重复阈值=0.96, 抽样上限=300, 命中数量=0",
+          "level": "info"
+        },
+        {
+          "name": "confusion_matrix_consistency",
+          "passed": true,
+          "details": "CM=40, total=40",
+          "level": "fail"
+        },
+        {
+          "name": "confusion_matrix_consistency",
+          "passed": true,
+          "details": "CM=40, total=40",
+          "level": "fail"
+        },
+        {
+          "name": "iteration_cycle_executable",
+          "passed": true,
+          "details": "success=True, new_version=None, rolled_back=False, f1_delta=None",
+          "level": "info"
+        },
+        {
+          "name": "memory_cross_session_update",
+          "passed": true,
+          "details": "profile_exists=True, total_sessions=2",
+          "level": "info"
+        },
+        {
+          "name": "structured_validation_failure_rate",
+          "passed": true,
+          "details": "rate=2.5000/100, threshold=5.0000/100",
+          "level": "fail"
+        },
+        {
+          "name": "structured_unrecovered_failure_rate",
+          "passed": true,
+          "details": "rate=0.0000/100, threshold=0.5000/100",
+          "level": "fail"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "sample_total": 400,
+      "train_size": 280,
+      "val_size": 40,
+      "test_size": 80,
+      "rag_f1": 0.975609756097561,
+      "no_rag_f1": 1.0,
+      "rag_accuracy": 0.975,
+      "no_rag_accuracy": 1.0,
+      "structured_metrics": {
+        "structured_calls": 40,
+        "structured_validation_failures": 2,
+        "structured_local_repairs": 2,
+        "structured_unrecovered_failures": 0,
+        "api_retries": 0,
+        "validation_failure_rate_per_100": 5.0,
+        "unrecovered_failure_rate_per_100": 0.0
+      },
+      "iteration_summary": {
+        "success": true,
+        "message": "no errors to optimize",
+        "new_version": null,
+        "rolled_back": false,
+        "baseline_f1": null,
+        "new_f1": null,
+        "f1_delta": null
+      },
+      "memory_summary": {
+        "tested": true,
+        "db_path": "../data/user_memory_acceptance_seed_43.db",
+        "user_id": "acceptance_user_seed_43",
+        "profile_exists": true,
+        "total_sessions": 2
+      },
+      "gates": [
+        {
+          "name": "split_disjoint",
+          "passed": true,
+          "details": "train/val/test (source,sample_id) 完全隔离",
+          "level": "info"
+        },
+        {
+          "name": "exact_overlap_train_val",
+          "passed": true,
+          "details": "val 中与 train 完全相同文本数量: 0",
+          "level": "info"
+        },
+        {
+          "name": "near_duplicate_train_val",
+          "passed": true,
+          "details": "近重复阈值=0.96, 抽样上限=300, 命中数量=0",
+          "level": "info"
+        },
+        {
+          "name": "confusion_matrix_consistency",
+          "passed": true,
+          "details": "CM=40, total=40",
+          "level": "fail"
+        },
+        {
+          "name": "confusion_matrix_consistency",
+          "passed": true,
+          "details": "CM=40, total=40",
+          "level": "fail"
+        },
+        {
+          "name": "iteration_cycle_executable",
+          "passed": true,
+          "details": "success=True, new_version=None, rolled_back=False, f1_delta=None",
+          "level": "info"
+        },
+        {
+          "name": "memory_cross_session_update",
+          "passed": true,
+          "details": "profile_exists=True, total_sessions=2",
+          "level": "info"
+        },
+        {
+          "name": "structured_validation_failure_rate",
+          "passed": true,
+          "details": "rate=5.0000/100, threshold=5.0000/100",
+          "level": "fail"
+        },
+        {
+          "name": "structured_unrecovered_failure_rate",
+          "passed": true,
+          "details": "rate=0.0000/100, threshold=0.5000/100",
+          "level": "fail"
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "sample_total": 400,
+      "train_size": 280,
+      "val_size": 40,
+      "test_size": 80,
+      "rag_f1": 1.0,
+      "no_rag_f1": 1.0,
+      "rag_accuracy": 1.0,
+      "no_rag_accuracy": 1.0,
+      "structured_metrics": {
+        "structured_calls": 40,
+        "structured_validation_failures": 0,
+        "structured_local_repairs": 0,
+        "structured_unrecovered_failures": 0,
+        "api_retries": 0,
+        "validation_failure_rate_per_100": 0.0,
+        "unrecovered_failure_rate_per_100": 0.0
+      },
+      "iteration_summary": {
+        "success": true,
+        "message": "no errors to optimize",
+        "new_version": null,
+        "rolled_back": false,
+        "baseline_f1": null,
+        "new_f1": null,
+        "f1_delta": null
+      },
+      "memory_summary": {
+        "tested": true,
+        "db_path": "../data/user_memory_acceptance_seed_44.db",
+        "user_id": "acceptance_user_seed_44",
+        "profile_exists": true,
+        "total_sessions": 2
+      },
+      "gates": [
+        {
+          "name": "split_disjoint",
+          "passed": true,
+          "details": "train/val/test (source,sample_id) 完全隔离",
+          "level": "info"
+        },
+        {
+          "name": "exact_overlap_train_val",
+          "passed": true,
+          "details": "val 中与 train 完全相同文本数量: 0",
+          "level": "info"
+        },
+        {
+          "name": "near_duplicate_train_val",
+          "passed": true,
+          "details": "近重复阈值=0.96, 抽样上限=300, 命中数量=0",
+          "level": "info"
+        },
+        {
+          "name": "confusion_matrix_consistency",
+          "passed": true,
+          "details": "CM=40, total=40",
+          "level": "fail"
+        },
+        {
+          "name": "confusion_matrix_consistency",
+          "passed": true,
+          "details": "CM=40, total=40",
+          "level": "fail"
+        },
+        {
+          "name": "iteration_cycle_executable",
+          "passed": true,
+          "details": "success=True, new_version=None, rolled_back=False, f1_delta=None",
+          "level": "info"
+        },
+        {
+          "name": "memory_cross_session_update",
+          "passed": true,
+          "details": "profile_exists=True, total_sessions=2",
+          "level": "info"
+        },
+        {
+          "name": "structured_validation_failure_rate",
+          "passed": true,
+          "details": "rate=0.0000/100, threshold=5.0000/100",
+          "level": "fail"
+        },
+        {
+          "name": "structured_unrecovered_failure_rate",
+          "passed": true,
+          "details": "rate=0.0000/100, threshold=0.5000/100",
+          "level": "fail"
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "rag_f1_mean": 0.983739837398374,
+    "rag_f1_std": 0.01149767123880566,
+    "no_rag_f1_mean": 0.9914529914529915,
+    "no_rag_f1_std": 0.012087295404898257,
+    "elapsed_seconds": 5791.3,
+    "gate_fail_count": 0,
+    "gate_warn_count": 0
+  }
+}

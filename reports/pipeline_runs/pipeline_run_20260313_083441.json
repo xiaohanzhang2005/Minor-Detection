@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-03-13T08:34:41.242811",
+  "mode": "quick",
+  "quick_n": 100,
+  "seed": 42,
+  "skip_rag": false,
+  "no_rag_eval": false,
+  "rag_used_in_eval": true,
+  "rounds": 0,
+  "max_eval": 100,
+  "skill_version_start": "teen_detector_v1",
+  "skill_version_final": "teen_detector_v1",
+  "baseline_f1": 1.0,
+  "baseline_accuracy": 1.0,
+  "elapsed_seconds": 25785.52
+}

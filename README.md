@@ -1,288 +1,187 @@
-## 未成年人识别与保护系统
+## 未成年人识别与保护系统 V2
 
-基于 LLM 的智能未成年人识别与保护系统，通过分析用户对话的认知水平和社交特征，动态评估「未成年人概率」，为在线业务提供安全分流与保护能力。
+基于 **ICBO 理论框架** + **RAG 语义校准** + **长期记忆** + **自演化引擎** 的智能青少年识别系统。
 
-### 如何使用本项目（整体概览）
+> ICBO = Intention (意图) + Cognition (认知) + Behavior (行为) + Opportunity-time (机会时间)
 
-- **命令行快速评估单个对话**：
-  - 安装依赖并配置好 `AIHUBMIX_API_KEY` 后，运行 `python main.py`，根据提示输入或加载对话，查看未成年人概率与详细分析过程。
-- **Web 界面交互分析**：
-  - 运行 `streamlit run app.py`，在浏览器中上传对话 JSON 文件，获得可视化的风险评估与画像结果。
-- **教材 / 问答数据构建（可选，高级用法）**：
-  - 使用 `scripts/social_data_gen/` 下的脚本构建社交对话数据集；
-  - 使用 `scripts/knowledge_data_gen/merge_knowledge_json_to_jsonl.py` 将知识问答目录级 JSON 合并为 JSONL；
-  - 使用 `generate_edu_dialogs.py` 从教材目录批量生成教育对话数据；
-  - 使用 `qa_knowledge_calibrator.py` 与 `test_qa_knowledge_db.py` 构建和验证知识问答校准样本。
-  - 使用 `social_chat_calibrator.py` 与 `test_social_chat_calibrator.py` 构建和验证社交对话校准样本。
+### 核心特性
+
+- **ICBO 框架分析**：从四个维度全面刻画用户特征，输出结构化判定结果
+- **RAG 语义校准**：检索相似案例辅助判断，提升边界场景准确率
+- **长期记忆**：跨会话累积用户画像，置信度指数加权融合
+- **自演化引擎**：Evaluator 评估 + Optimizer 优化，Skill Prompt 持续迭代
+
+### 快速开始
+
+```bash
+# 1. 安装依赖
+pip install -r requirements.txt
+
+# 2. 配置 API 密钥
+$env:AIHUBMIX_API_KEY="your-api-key"  # Windows PowerShell
+export AIHUBMIX_API_KEY="your-api-key"  # Linux/macOS
+
+# 3. 启动 Web 界面
+streamlit run app_v2.py
+
+# 或运行 MVP 测试
+python test_mvp_demo.py
+```
 
 ### 模型与依赖
 
 - **LLM 模型**: Gemini-3-Flash-Preview（通过 AiHubMix 兼容 OpenAI 接口）
+- **Embedding 模型**: text-embedding-3-small（用于 RAG 检索）
 - **Python 版本**: 3.10+
 - **依赖管理**: `requirements.txt`
-- **API 密钥**:
-  - 默认内置测试用密钥（仅用于本地体验）
-  - 推荐通过环境变量 `AIHUBMIX_API_KEY` 配置自己的密钥
 
-### 系统架构
+### 系统架构 V2
 
 ```
-用户消息 → 分流器 → 双塔分析 → 动态画像 → 决策引擎
-    ↓         ↓         ↓         ↓         ↓
-  classify    知识塔    社交塔    更新概率   拦截 / 放行
-  _intent   analyze_  analyze_
-             knowledge social
+                    ┌─────────────────────────────────────────┐
+                    │           Evolution Engine              │
+                    │  ┌───────────┐    ┌──────────────┐     │
+                    │  │ Evaluator │───▶│  Optimizer   │     │
+                    │  └───────────┘    └──────────────┘     │
+                    │         ▲               │               │
+                    │         │               ▼               │
+                    │    benchmark      skill.md v(n+1)       │
+                    └─────────────────────────────────────────┘
+                                      │
+        ┌─────────────────────────────┼─────────────────────────────┐
+        │                             ▼                             │
+        │  ┌─────────┐    ┌──────────────────┐    ┌───────────┐   │
+        │  │   RAG   │───▶│    Executor      │◀───│  Memory   │   │
+        │  │Retriever│    │  (skill.md v1)   │    │ (SQLite)  │   │
+        │  └─────────┘    └──────────────────┘    └───────────┘   │
+        │       ▲                   │                    ▲         │
+        │       │                   ▼                    │         │
+        │  embedding        SkillOutput              UserProfile   │
+        │    index       (ICBO + 判定结果)           (累积画像)     │
+        └─────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+                              用户对话输入
 ```
 
 ### 项目结构
 
 ```text
-├── main.py                   # 命令行入口：读取对话 → 分析 → 输出结果
-├── app.py                    # Streamlit Web 前端
-├── models.py                 # Pydantic 数据模型与枚举定义
-├── user_profile.py           # 用户画像与未成年人概率更新逻辑
-├── llm_service.py            # 与 Gemini(AiHubMix) 的 LLM 服务封装
-├── generate_edu_dialogs.py   # 从教材生成教育对话
-├── qa_knowledge_calibrator.py # 构建知识问答校准样本
-├── test_qa_knowledge_db.py   # 知识问答数据库功能测试
-├── social_chat_calibrator.py # 基于社交问答库的在线校准器
-├── test_social_chat_calibrator.py # 社交校准效果对比测试（原始 vs 校准后）
-├── sample_conversation.json  # 示例对话文件
-├── requirements.txt          # 依赖包列表
-├── data/                     # 数据集
+├── app_v2.py                 # Streamlit Web 前端 V2
+├── test_mvp_demo.py          # MVP 验证脚本
+├── test_rag_demo.py          # RAG 功能测试
+├── requirements.txt
+│
+├── src/                      # 核心模块
+│   ├── config.py             # 全局配置（API、路径、模型）
+│   ├── models.py             # ICBO + SkillOutput Pydantic 模型
+│   │
+│   ├── executor/             # 在线执行体
+│   │   └── executor.py       # analyze_conversation / with_rag / with_memory
+│   │
+│   ├── retriever/            # RAG 语义检索
+│   │   └── semantic_retriever.py
+│   │
+│   ├── memory/               # 长期记忆
+│   │   └── user_memory.py    # SQLite 用户画像存储
+│   │
+│   ├── evolution/            # 演化引擎
+│   │   ├── evaluator.py      # Skill 评估器
+│   │   └── optimizer.py      # Skill 优化器
+│   │
+│   └── utils/
+│       └── llm_client.py     # LLM API 封装
+│
+├── skills/                   # Skill Prompt 版本管理
+│   └── teen_detector_v1/
+│       ├── skill.md          # ICBO 框架 Prompt
+│       └── config.yaml       # 版本元信息
+│
+├── scripts/
+│   ├── prepare_data.py       # 数据基座：benchmark 划分
+│   └── social_data_gen/      # 社交数据生成脚本
+│
+├── data/
+│   ├── benchmark/            # train/val/test.jsonl
+│   ├── retrieval_db/         # RAG 索引 (index.pkl)
 │   ├── 教材目录/              # 各学段教材知识点
-│   ├── 知识问答数据库/        # 知识问答校准数据
-│   │   └── knowledge_qa_semantic_v2_like.jsonl  # 合并后的知识问答样本（每行一条JSON）
-│   └── 社交问答/              # 社交对话相关数据
-│       ├── youth_seeds_v5.json      # 筛选出的原始求助文本种子
-│       └── semantic_data_v2.jsonl   # LLM生成的模拟对话数据
-└── scripts/
-    ├── knowledge_data_gen/   # 知识问答数据处理脚本
-    │   └── merge_knowledge_json_to_jsonl.py  # 目录级JSON合并为knowledge_qa_semantic_v2_like.jsonl
-    └── social_data_gen/      # 社交对话数据生成/处理脚本
-        ├── README.md         # 该模块的详细说明
-        ├── get_seeds.py      # 筛选符合条件的求助文本作为种子
-        ├── batch_generate.py # 调用LLM批量生成对话
-        ├── time.py           # 语义时间映射为精确时间戳
-        └── merge_knowledge_json_to_jsonl.py  # （兼容）知识问答JSON合并脚本
+│   ├── 知识问答数据库/        # youth_knowledge_qa.jsonl
+│   └── 社交问答/              # youth_dialogs.jsonl
+│
+└── [旧版文件]                 # 兼容保留
+    ├── app.py / main.py / models.py / llm_service.py / user_profile.py
+    └── ...
 ```
 
-## 快速开始
 
-### 1. 安装依赖
+### 数据集说明
+
+| 数据集 | 路径 | 说明 |
+|--------|------|------|
+| 社交问答 | `data/社交问答/youth_dialogs.jsonl` | 青少年社交/情感对话，含 ICBO 标注 |
+| 知识问答 | `data/知识问答数据库/youth_knowledge_qa.jsonl` | 教育场景问答，含学段/科目标注 |
+| 教材目录 | `data/教材目录/*.txt` | 小学到高中各科教材知识点 |
+
+### 开发指南
 
 ```bash
-pip install -r requirements.txt
+# 准备 benchmark 数据集 (70% train / 10% val / 20% test)
+python scripts/prepare_data.py --full
+
+# 构建 RAG 索引
+python src/retriever/semantic_retriever.py --build
+
+# 运行评估
+python src/evolution/evaluator.py --max-samples 50
+
+# 查看 skill 版本
+python src/evolution/optimizer.py --list
 ```
 
-### 2. 配置 API 密钥（可选但推荐）
+### API 接口
 
-系统默认内置测试用密钥，但**强烈建议**在生产或长期使用时配置自己的 AiHubMix 密钥：
+```python
+from src.executor import analyze_conversation, analyze_with_rag, analyze_with_memory
+from src.retriever import SemanticRetriever
+from src.memory import UserMemory
 
-```bash
-export AIHUBMIX_API_KEY="your-aihublmix-api-key-here"   # macOS / Linux
-# 或在 Windows PowerShell 中：
-$env:AIHUBMIX_API_KEY="your-aihublmix-api-key-here"
+# 基础分析
+result = analyze_conversation([
+    {"role": "user", "content": "明天数学考试好烦啊"},
+])
+print(result.is_minor, result.minor_confidence)
+
+# 带 RAG 校准
+retriever = SemanticRetriever()
+result = analyze_with_rag(conversation, retriever=retriever)
+
+# 带用户记忆
+memory = UserMemory()
+result = analyze_with_memory(conversation, user_id="user_001", memory=memory)
 ```
 
-### 3. 命令行模式运行
-
-```bash
-python main.py
-```
-
-- 读取内置示例或自定义对话
-- 自动完成意图分类、知识分析、社交分析
-- 更新用户画像并输出完整分析过程及最终未成年人概率
-
-### 4. 启动 Web 前端界面
-
-```bash
-streamlit run app.py
-```
-
-在浏览器中打开提示的 URL，可进行交互式分析。
-
-## 核心功能
-
-### 分流器（Router）
-
-- **`classify_intent()`**：判断用户当前消息是：
-  - **knowledge_qa**：知识问答 / 学习相关
-  - **social_chat**：社交聊天 / 情绪表达 / 求助
-
-### 双塔分析（Two-Tower Analysis）
-
-#### 知识塔
-
-- **`analyze_knowledge()`**：分析对话的认知深度与教育水平
-  - 预测教育阶段：`小学 / 初中 / 高中 / 大学 / 成人专业`
-  - 判断是否为作业 / 学习任务（`is_homework`）
-  - 输出详细的推理过程（reasoning）
-
-#### 社交塔
-
-- **`analyze_social()`**：分析用户在对话中的社交与心理特征
-  - `emotional_score`：情绪波动（0.0–1.0）
-  - `logic_score`：逻辑性与表达条理（0.0–1.0）
-  - `minor_tendency_score`：未成年人倾向评分（0.0–1.0）
-  - 输出完整推理说明（reasoning）
-
-### 动态画像（User Profiling）
-
-- **`UserProfile`**：
-  - 维护用户历史对话特征
-  - 累积知识水平与社交行为特征
-  - 动态更新「未成年人概率」，并记录变化过程
-
-### 决策逻辑
-
-- **未成年人概率 > 0.8**：判定为高风险，进入保护 / 拦截模式
-- **未成年人概率 ≤ 0.8**：正常放行，但持续监测后续对话
-
-### 概率更新机制（示例策略）
-
-#### 知识问答场景
-
-- **小学知识**：显著提高未成年人概率
-- **初中知识**：提高未成年人概率
-- **高中知识**：小幅提高未成年人概率（高中生也可能是未成年人）
-- **大学 / 成人专业知识**：降低未成年人概率
-- **作业相关内容**：在以上基础上进一步提高未成年人概率
-
-#### 社交聊天场景
-
-- 根据 `minor_tendency_score` 与 `emotional_score` 联合调整：
-  - 情绪极端 + 逻辑较弱 + 高未成年人倾向 → 概率明显上调
-  - 情绪稳定 + 逻辑严谨 + 低未成年人倾向 → 概率下调或保持
-
-## 教材知识库
-
-系统内置一个基于小学一年级到高中阶段教材的知识库，用于更精确地判断教育水平：
-
-- **覆盖范围**:
-  - 小学 1–6 年级
-  - 初中 1–3 年级
-  - 高中 1–3 年级
-- **学科**:
-  - 语文、数学、英语、物理、化学、生物、历史、地理、政治 / 道德与法治、科学、通用技术等
-- **数据形式**:
-  - `data/教材目录/*.txt`：按学段+学科划分的教材目录与知识点条目。
-  - `data/知识问答数据库/knowledge_qa_semantic_v2_like.jsonl`：基于教材构造并合并后的结构化问答样本（每行一条 JSON 记录）。
-
-在分析知识型对话时，系统会结合 LLM 的判断与此知识库，对教育水平预测进行**验证与校正**。
-
-额外说明：
-
-- **`qa_knowledge_calibrator.py`**：从 `data/知识问答数据库/knowledge_qa_semantic_v2_like.jsonl` 中抽取少量用户问句，构建在线校准用参考样本。
-- **`test_qa_knowledge_db.py`**：基于同一 JSONL 数据做功能测试，同时避免直接复用校准样本，尽量减少“自测训练集”的风险。
-
-## 社交数据库
-
-为了精准识别青少年在社交和情感场景下的特征，我们构建了一个专门的社交对话数据库。
-
-- **数据来源**:
-  - 通过 `scripts/social_data_gen/get_seeds.py` 从公开心理咨询数据集中筛选（脚本+人工）出真实的青少年求助文本作为“种子”。
-- **生成方式**:
-  - 使用 `scripts/social_data_gen/batch_generate.py` 调用大语言模型，将“种子”演绎成符合青少年语言习惯和心理特征的多轮对话。
-- **数据形式**:
-  - `data/社交问答/semantic_data_v2.jsonl`：模拟的青少年社交、情感求助对话，每条数据都包含详细的ICBO（意图、认知、行为、时机）特征分析。
-
-额外说明：
-
-- **`social_chat_calibrator.py`**：从 `data/社交问答/semantic_data_v2.jsonl` 抽取用户表达并检索 Top-K 相似样本，给出年龄/学段暗示作为在线校准证据。
-- **`test_social_chat_calibrator.py`**：对比“原始社交分析 vs 校准后 reasoning”，直观看到 `[社交库校准]` 增量信息。
-
-
-## Web 前端界面（功能还不完善，等加入社交数据集后再重写）
-
-系统提供基于 Streamlit 的 Web 界面，便于运营和策略人员直观观察分析结果。
-
-### 功能特性
-
-- **文件上传**：上传 JSON 格式的对话记录
-- **实时分析**：对每轮对话进行意图分类 + 双塔分析
-- **动态图表**：展示未成年人概率随轮次变化的折线图
-- **详细报告**：展示每轮推理过程与用户画像要点
-- **统计汇总**：各类意图分布、风险对话比例等
-
-### 使用步骤
-
-1. 启动 Web 界面：
-
-   ```bash
-   streamlit run app.py
-   ```
-
-2. 在浏览器中打开显示的本地 URL
-3. 上传对话记录 JSON 文件（格式见下文）
-4. 点击「开始分析」
-5. 查看每轮分析详情与整体统计结果
-
-### 对话文件格式
+### 输出示例
 
 ```json
 {
-  "conversation": [
-    {"role": "user", "content": "用户消息内容"},
-    {"role": "assistant", "content": "AI 回复内容"}
-  ]
+  "is_minor": true,
+  "minor_confidence": 0.92,
+  "risk_level": "Low",
+  "icbo_features": {
+    "intention": "宣泄学业压力，寻求情感支持",
+    "cognition": "对考试有焦虑，认知较为短期化",
+    "behavior_style": "口语化表达，情绪外显",
+    "opportunity_time": "考试前夕"
+  },
+  "user_persona": {
+    "age_range": "14-16岁",
+    "education_stage": "初中/高中",
+    "identity_markers": ["学生", "有考试"]
+  },
+  "reasoning": "用户提到数学考试，符合在校学生特征..."
 }
 ```
 
-示例文件：
+### License
 
-- `sample_conversation.json`
-
-## 输出示例
-
-```text
-🔍 处理用户消息: user_minor
-💬 消息内容: 烦死了，明天的数学作业还没写完。
-
-🤔 步骤1: 意图分类
-🎯 识别意图: social_chat
-
-🧠 步骤2: 深度分析
-💭 执行社交分析...
-👥 社交分析结果:
-   - 情绪波动: 0.850
-   - 逻辑性: 0.250
-   - 未成年人倾向: 0.780
-   - 推理过程: 用户表达了强烈的负面情绪...
-
-📊 步骤3: 更新用户画像
-📈 旧概率: 0.500
-📈 新概率: 0.578
-📈 概率变化: +0.078
-
-⚖️ 步骤4: 安全决策
-✅ 正常放行
-```
-
-## 安全与工程特性
-
-- **结构化输出**：统一采用 Pydantic 模型约束 LLM 返回格式
-- **重试机制**：内置指数退避重试，缓解限流与瞬时网络错误
-- **异常处理**：对 API 错误、解析错误等进行捕获与降级输出
-- **边界检查**：所有概率值严格限制在 $[0.0, 1.0]$ 范围内
-- **可扩展性**：便于替换底层 LLM 或接入其它特征源（日志、画像系统等）
-
-## 系统特性概览
-
-- **意图分类**：区分知识问答与社交聊天
-- **双塔分析**：同时从「教育认知水平」与「社交 / 心理特征」两个维度刻画用户
-- **动态画像**：按对话轮次逐步修正未成年人概率，而非单轮即决
-- **教材知识库**：结合真实教材目录与知识点，提高教育阶段判断可靠性
-- **可视化前端**：提供可视化分析与运营支持能力
-- **样本数据**：内置对话样本，方便快速验证与二次开发
-
-## 后续扩展方向
-
-- **支持更多 LLM 模型**（如 GPT-4、Claude 等），实现多模型策略与对比
-- **引入持久化存储**（SQLite / MySQL / PostgreSQL），保存长期用户画像与风险日志
-- **构建实时监控与运营看板**，支持业务方进行策略运营与审计
-- **增加多语言支持**，覆盖更多语言环境下的未成年人保护场景
-- **引入 A/B 测试与在线评估**，持续优化规则与模型策略
-- **扩展教材与知识库覆盖范围**，支持更多地区与版本的教材数据
-
+MIT

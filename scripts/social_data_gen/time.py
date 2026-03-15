@@ -26,7 +26,7 @@ PROJECT_ROOT = CURRENT_DIR.parent.parent
 DATA_DIR = PROJECT_ROOT / "data" / "社交问答"
 INPUT_FILE = DATA_DIR / "semantic_data_v1.jsonl"
 # 处理后输出文件
-OUTPUT_FILE = DATA_DIR / "semantic_data_v2.jsonl"
+OUTPUT_FILE = DATA_DIR / "youth_dialogs.jsonl"
 
 # 固定映射年份范围：仅允许 2024-2025
 YEAR_CANDIDATES = (2024, 2025)

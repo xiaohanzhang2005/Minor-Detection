@@ -1,0 +1,15 @@
+雅思 -- 听力 -- 个人信息登记(Name, Address, Date, Number);租房与旅游咨询;学术场景(Seminar, Tutorial);环境与社会热点讨论
+雅思 -- 听力 -- 填空题(Gap Filling);多项选择题(Multiple Choice);匹配题(Matching);地图/图表题(Labelling Diagram/Map/Plan);短答案题(Short Answer Questions)
+雅思 -- 阅读 -- 同义替换(Paraphrasing);关键词定位(Scanning);主旨大意理解(Skimming);长难句逻辑分析;段落与标题匹配
+雅思 -- 阅读 -- 判断题(True/False/Not Given, Yes/No/Not Given);多项选择题(Multiple Choice);摘要填空(Summary Completion);段落信息匹配(Matching Information);标题对应(List of Headings)
+雅思 -- 写作 -- 小作文线图(Line Graph);柱状图(Bar Chart);饼图(Pie Chart);表格(Table);流程图(Flow Chart);地图(Map)
+雅思 -- 写作 -- 大作文议论文(Agree/Disagree);双边讨论(Discuss Both Views);利弊分析(Advantages/Disadvantages);报告类(Problem/Solution, Cause/Effect)
+雅思 -- 口语 -- Part 1 基础信息问答(Hometown, Study, Work, Hobbies);Part 2 话题陈述(Describe a Person/Place/Object/Event);Part 3 深入讨论与抽象逻辑分析
+托福 -- 听力 -- 复句逻辑听力;语气与态度判断(Pragmatic Understanding);学术讲座叙事流(Lecture Narrative);主旨题;细节题;推断题
+托福 -- 听力 -- 校园对话场景(Office Hours, Service Encounter);学术讲座场景(Biology, Arts, Geology, Social Science)
+托福 -- 阅读 -- 词汇题(Vocabulary Questions);指代关系题(Reference Questions);句子简化题(Sentence Simplification);插入句子题(Insert Sentence Questions)
+托福 -- 阅读 -- 修辞目的题(Rhetorical Purpose);推理题(Inference Questions);文章总结题(Prose Summary);表格分类题(Fill in a Table)
+托福 -- 写作 -- 综合写作(Integrated Writing: Reading vs Listening);学术讨论写作(Writing for an Academic Discussion);驳论技巧;论据展开与逻辑衔接
+托福 -- 口语 -- 任务1 独立口语(Academic Discussion/Personal Preference);任务2 综合口语(Announcement & Conversation);任务3 综合口语(Lecture Topic);任务4 综合口语(Academic Lecture Summary)
+留学英语 -- 词汇与语法 -- 核心学术词汇(Academic Word List);常见近义词辨析;谓语缺失与时态错误纠正;从句嵌套逻辑(Relative/Adverbial Clauses)
+留学英语 -- 考试技巧 -- 逻辑连接词运用(Cohesive Devices);连接副词(Therefore, However, Moreover);观点陈述(In my opinion, From my perspective);论据转换技巧

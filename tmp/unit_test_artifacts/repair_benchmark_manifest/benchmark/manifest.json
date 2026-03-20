@@ -1,8 +1,46 @@
 {
-  "timestamp": "2026-03-15T19:23:41.151958",
+  "timestamp": "2026-03-19T19:12:54.291369",
   "mode": "full",
   "quick_n": null,
   "seed": 42,
+  "stratification": {
+    "strategy": "source_age_bucket_v1",
+    "unit": "source+age_bucket",
+    "minor_age_buckets": [
+      {
+        "name": "minor_07_12",
+        "min_age": 7,
+        "max_age": 12
+      },
+      {
+        "name": "minor_13_15",
+        "min_age": 13,
+        "max_age": 15
+      },
+      {
+        "name": "minor_16_17",
+        "min_age": 16,
+        "max_age": 17
+      }
+    ],
+    "adult_age_buckets": [
+      {
+        "name": "adult_18_22",
+        "min_age": 18,
+        "max_age": 22
+      },
+      {
+        "name": "adult_23_26",
+        "min_age": 23,
+        "max_age": 26
+      },
+      {
+        "name": "adult_27_plus",
+        "min_age": 27,
+        "max_age": null
+      }
+    ]
+  },
   "statistics": {
     "total": 4,
     "by_source": {
@@ -14,6 +52,10 @@
     "by_is_minor": {
       "minor": 2,
       "adult": 2
+    },
+    "by_age_bucket": {
+      "adult_unknown": 2,
+      "minor_unknown": 2
     }
   },
   "splits": {

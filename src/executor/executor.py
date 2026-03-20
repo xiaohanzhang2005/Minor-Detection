@@ -1,16 +1,28 @@
 """
 在线执行体 (Online Executor Skill)
 负责接收对话输入，调用 LLM 进行 ICBO 分析，返回结构化判定结果
-
-MVP 版本：仅包含 Skill Prompt + LLM 调用
-后续版本将集成：Memory（长期记忆）+ RAG（参考案例校准）
 """
 
+from pathlib import Path
 from typing import Optional, List, Dict, Any
 import json
+import re
 
 from src.config import get_active_skill_path
-from src.models import SkillOutput, ICBOFeatures, UserPersona, RiskLevel
+from src.models import (
+    SkillOutput,
+    ICBOFeatures,
+    UserPersona,
+    RiskLevel,
+    AnalysisPayload,
+    FormalSkillOutput,
+    FormalDecision,
+    FormalUserProfile,
+    FormalEvidence,
+    FormalTrend,
+    formal_to_legacy_output,
+    normalize_formal_skill_output,
+)
 from src.utils.llm_client import LLMClient
 
 
@@ -19,7 +31,7 @@ class ExecutorSkill:
     青少年识别 Skill 执行器
 
     核心职责：
-    1. 加载 skill.md 中的 Prompt
+    1. 加载技能 markdown（优先 SKILL.md，兼容旧版 skill.md）
     2. 将用户对话转换为 LLM 输入
     3. 调用 LLM 获取 ICBO 分析结果
     4. 解析并返回结构化输出
@@ -35,7 +47,7 @@ class ExecutorSkill:
         初始化执行器
 
         Args:
-            skill_path: skill.md 文件路径，默认使用当前活跃版本
+            skill_path: 技能 markdown 文件路径，默认使用当前活跃版本
             llm_client: LLM 客户端实例，默认自动创建
             inference_temperature: 结构化推理温度，默认 0.2 以提升 JSON 稳定性
         """
@@ -45,17 +57,31 @@ class ExecutorSkill:
 
         # 加载 Skill Prompt
         self.system_prompt = self._load_skill_prompt()
+        self.skill_stem = Path(self.skill_path).stem.lower()
+        self.skill_dir_name = Path(self.skill_path).parent.name.lower()
+        self.skill_name = self._infer_skill_name()
 
     def _load_skill_prompt(self) -> str:
-        """加载 skill.md 作为 system prompt"""
+        """加载技能 markdown 作为 system prompt"""
         try:
             with open(self.skill_path, "r", encoding="utf-8") as f:
                 return f.read()
         except FileNotFoundError:
             raise FileNotFoundError(
                 f"Skill 文件未找到: {self.skill_path}\n"
-                f"请确保 skills/teen_detector_v1/skill.md 存在"
+                f"请确保对应目录中存在 SKILL.md 或 skill.md"
             )
+
+    def _infer_skill_name(self) -> str:
+        """优先从 frontmatter 读取 skill name，回退到目录名。"""
+        lines = self.system_prompt.splitlines()
+        if len(lines) >= 3 and lines[0].strip() == "---":
+            for line in lines[1:20]:
+                if line.strip() == "---":
+                    break
+                if line.lower().startswith("name:"):
+                    return line.split(":", 1)[1].strip().strip('"').strip("'").lower()
+        return self.skill_dir_name
 
     def run(
         self,
@@ -74,26 +100,45 @@ class ExecutorSkill:
         Returns:
             SkillOutput: 结构化分析结果
         """
-        # 构建用户输入
-        user_content = self._format_conversation(conversation, context)
+        payload = AnalysisPayload(
+            mode="single_session",
+            conversation=conversation,
+        )
+        if user_id:
+            payload.meta.user_id = user_id
+        if context:
+            payload.context.prior_profile = {"summary": context}
+        return self.run_payload(payload)
 
-        # 构建消息
-        messages = [
-            {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": user_content},
-        ]
+    def run_payload(self, payload: AnalysisPayload) -> SkillOutput:
+        """运行正式分析 payload，并在必要时将正式输出适配为旧版 SkillOutput。"""
+        messages = self._build_messages(payload)
 
-        # 调用 LLM
-        try:
-            result = self.llm_client.chat(
-                messages=messages,
-                response_model=SkillOutput,
-                temperature=self.inference_temperature,
-            )
-            return result
-        except Exception as e:
-            # 解析失败时尝试更宽松的解析
-            return self._fallback_parse(messages, e)
+        response_model = FormalSkillOutput if self._uses_formal_output() else SkillOutput
+
+        result = self._chat_with_fallback(
+            messages=messages,
+            response_model=response_model,
+            payload=payload,
+        )
+        if isinstance(result, FormalSkillOutput):
+            return formal_to_legacy_output(result)
+        return result
+
+    def run_formal_payload(self, payload: AnalysisPayload) -> FormalSkillOutput:
+        """运行 formal skill payload，并返回规范化后的正式输出。"""
+        if not self._uses_formal_output():
+            raise RuntimeError("当前 skill 未启用 formal output，无法返回 FormalSkillOutput。")
+
+        messages = self._build_messages(payload)
+        result = self._chat_with_fallback(
+            messages=messages,
+            response_model=FormalSkillOutput,
+            payload=payload,
+        )
+        if not isinstance(result, FormalSkillOutput):
+            raise RuntimeError("formal payload 返回了非 FormalSkillOutput 结果。")
+        return result
 
     def get_llm_metrics(self) -> Dict[str, float]:
         """返回 LLM 结构化输出稳定性指标。"""
@@ -115,40 +160,154 @@ class ExecutorSkill:
         conversation = [{"role": "user", "content": text}]
         return self.run(conversation, user_id)
 
-    def _format_conversation(
+    def _uses_formal_output(self) -> bool:
+        if self.skill_name == "minor-detection" or self.skill_dir_name == "minor-detection":
+            return True
+
+        skill_dir = Path(self.skill_path).parent
+        return (skill_dir / "references" / "output-schema.md").exists()
+
+    def _build_messages(self, payload: AnalysisPayload) -> List[Dict[str, str]]:
+        user_content = self._format_payload(payload)
+        return [
+            {"role": "system", "content": self.system_prompt},
+            {"role": "user", "content": user_content},
+        ]
+
+    def _format_payload(self, payload: AnalysisPayload) -> str:
+        payload_dict = payload.model_dump() if hasattr(payload, "model_dump") else payload.dict()
+        return (
+            "下面给出标准化分析输入 analysis_payload。"
+            "请严格依据输入内容完成未成年人识别分析，并只输出符合技能要求的 JSON。\n\n"
+            f"{json.dumps(payload_dict, ensure_ascii=False, indent=2)}"
+        )
+
+    def _chat_with_fallback(
         self,
-        conversation: List[Dict[str, str]],
-        context: Optional[str] = None,
-    ) -> str:
-        """
-        将对话列表格式化为 LLM 输入
+        *,
+        messages: List[Dict[str, str]],
+        response_model: Any,
+        payload: Optional[AnalysisPayload] = None,
+    ) -> Any:
+        try:
+            result = self.llm_client.chat(
+                messages=messages,
+                response_model=response_model,
+                temperature=self.inference_temperature,
+            )
+            if isinstance(result, FormalSkillOutput):
+                return self._normalize_formal_output(result, payload=payload)
+            return result
+        except Exception as e:
+            return self._fallback_parse(
+                messages,
+                e,
+                response_model=response_model,
+                payload=payload,
+            )
 
-        Args:
-            conversation: 对话列表
-            context: 额外上下文
+    def _normalize_formal_output(
+        self,
+        output: FormalSkillOutput,
+        *,
+        payload: Optional[AnalysisPayload] = None,
+    ) -> FormalSkillOutput:
+        normalized = output
+        if self._needs_formal_language_repair(output):
+            repaired = self._repair_formal_output_language(output)
+            if repaired is not None:
+                normalized = repaired
 
-        Returns:
-            格式化的输入字符串
-        """
-        parts = []
+        raw_time_hint = ""
+        time_features: Dict[str, Any] = {}
+        conversation: List[Dict[str, Any]] = []
+        if payload is not None:
+            raw_time_hint = payload.context.raw_time_hint or ""
+            time_features = payload.context.time_features or {}
+            conversation = payload.conversation or []
+            if not conversation and payload.sessions:
+                for session in payload.sessions:
+                    if hasattr(session, "conversation"):
+                        conversation.extend(session.conversation or [])
 
-        # 添加额外上下文（如 RAG 检索结果、历史画像）
-        if context:
-            parts.append(f"# 参考信息\n{context}\n")
+        return normalize_formal_skill_output(
+            normalized,
+            raw_time_hint=raw_time_hint,
+            time_features=time_features,
+            conversation=conversation,
+        )
 
-        # 格式化对话
-        parts.append("# 待分析对话\n")
-        for msg in conversation:
-            role = msg.get("role", "user")
-            content = msg.get("content", "")
-            role_label = "用户" if role == "user" else "AI助手"
-            parts.append(f"[{role_label}]: {content}")
+    def _needs_formal_language_repair(self, output: FormalSkillOutput) -> bool:
+        text_fields: List[str] = [
+            output.user_profile.age_range,
+            output.user_profile.education_stage,
+            output.icbo_features.intention,
+            output.icbo_features.cognition,
+            output.icbo_features.behavior_style,
+            output.icbo_features.opportunity_time,
+            output.reasoning_summary,
+            output.trend.trend_summary,
+            output.recommended_next_step,
+            *output.user_profile.identity_markers,
+            *output.evidence.direct_evidence,
+            *output.evidence.historical_evidence,
+            *output.evidence.time_evidence,
+            *output.evidence.conflicting_signals,
+            *output.uncertainty_notes,
+        ]
+        english_only_count = 0
+        for value in text_fields:
+            text = str(value or "").strip()
+            if not text:
+                continue
+            if re.search(r"[A-Za-z]", text) and not re.search(r"[\u4e00-\u9fff]", text):
+                english_only_count += 1
+        return english_only_count >= 2
 
-        parts.append("\n---\n请基于以上对话，按照 ICBO 框架进行分析，输出 JSON 格式结果。")
+    def _repair_formal_output_language(self, output: FormalSkillOutput) -> Optional[FormalSkillOutput]:
+        try:
+            output_dict = output.model_dump() if hasattr(output, "model_dump") else output.dict()
+            messages = [
+                {
+                    "role": "system",
+                    "content": (
+                        "你是 formal minor-detection 输出规范化助手。"
+                        "请把输入 JSON 中所有自然语言说明字段改写为简体中文，"
+                        "同时严格保持 JSON 结构、字段名、布尔值、数值不变。"
+                        "不要新增字段，不要删除字段。"
+                        "`decision.confidence_band` 必须保持 low/medium/high。"
+                        "`decision.risk_level` 必须保持 High/Medium/Low。"
+                        "`recommended_next_step` 必须保持既有枚举值。"
+                        "`evidence.retrieval_evidence` 中的 sample_id、score、来源前缀等检索标识尽量原样保留。"
+                        "如果是 single_session 且没有趋势，就让 `trend.trend_summary` 为空字符串。"
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        "请规范化下面的 FormalSkillOutput JSON，只返回修复后的 JSON：\n\n"
+                        f"{json.dumps(output_dict, ensure_ascii=False, indent=2)}"
+                    ),
+                },
+            ]
+            repaired = self.llm_client.chat(
+                messages=messages,
+                response_model=FormalSkillOutput,
+                temperature=0.0,
+            )
+            if isinstance(repaired, FormalSkillOutput):
+                return repaired
+        except Exception:
+            return None
+        return None
 
-        return "\n".join(parts)
-
-    def _fallback_parse(self, messages: list, original_error: Exception) -> SkillOutput:
+    def _fallback_parse(
+        self,
+        messages: list,
+        original_error: Exception,
+        response_model: Any = SkillOutput,
+        payload: Optional[AnalysisPayload] = None,
+    ) -> Any:
         """
         当标准解析失败时的降级处理
 
@@ -160,64 +319,55 @@ class ExecutorSkill:
         # 重新调用但不强制 JSON 格式
         try:
             raw_response = self.llm_client.chat(messages=messages, temperature=0.5)
-
-            # 尝试从响应中提取 JSON
-            import re
-            json_match = re.search(r'\{[\s\S]*\}', raw_response)
-            if json_match:
-                data = json.loads(json_match.group())
-
-                # 安全提取嵌套字段
-                icbo_data = data.get("icbo_features", {})
-                if not isinstance(icbo_data, dict):
-                    icbo_data = {}
-                
-                persona_data = data.get("user_persona", {})
-                if not isinstance(persona_data, dict):
-                    persona_data = {}
-                
-                key_evidence = data.get("key_evidence", [])
-                if not isinstance(key_evidence, list):
-                    key_evidence = [key_evidence] if key_evidence else []
-
-                # 手动构建 SkillOutput
-                return SkillOutput(
-                    is_minor=data.get("is_minor", True),
-                    minor_confidence=float(data.get("minor_confidence", 0.5)),
-                    risk_level=RiskLevel(data.get("risk_level", "Medium")),
-                    icbo_features=ICBOFeatures(
-                        intention=icbo_data.get("intention", "无法解析"),
-                        cognition=icbo_data.get("cognition", "无法解析"),
-                        behavior_style=icbo_data.get("behavior_style", "无法解析"),
-                        opportunity_time=icbo_data.get("opportunity_time", "未知"),
-                    ),
-                    user_persona=UserPersona(
-                        age=persona_data.get("age"),
-                        age_range=persona_data.get("age_range", "未知"),
-                        gender=persona_data.get("gender"),
-                        education_stage=persona_data.get("education_stage", "未知"),
-                        identity_markers=persona_data.get("identity_markers", []) if isinstance(persona_data.get("identity_markers"), list) else [],
-                    ),
-                    reasoning=data.get("reasoning", "解析异常，使用降级结果"),
-                    key_evidence=key_evidence,
-                )
+            coerced = self.llm_client.coerce_structured_response(raw_response, response_model)
+            if isinstance(coerced, FormalSkillOutput):
+                return self._normalize_formal_output(coerced, payload=payload)
+            return coerced
         except Exception as e:
             print(f"[WARN] 降级解析也失败: {e}")
 
         # 最终降级：返回保守的默认值
+        if response_model is FormalSkillOutput:
+            return self._normalize_formal_output(
+                FormalSkillOutput(
+                    decision=FormalDecision(
+                        is_minor=False,
+                        minor_confidence=0.5,
+                        confidence_band="medium",
+                        risk_level=RiskLevel.MEDIUM,
+                    ),
+                    user_profile=FormalUserProfile(
+                        age_range="未明确",
+                        education_stage="未明确",
+                        identity_markers=[],
+                    ),
+                    icbo_features=ICBOFeatures(
+                        intention="解析失败",
+                        cognition="解析失败",
+                        behavior_style="解析失败",
+                        opportunity_time="未明确",
+                    ),
+                    evidence=FormalEvidence(),
+                    reasoning_summary=f"LLM 响应解析失败: {original_error}",
+                    trend=FormalTrend(trajectory=[], trend_summary=""),
+                    uncertainty_notes=[],
+                    recommended_next_step="collect_more_context",
+                ),
+                payload=payload,
+            )
         return SkillOutput(
-            is_minor=True,  # 保守判定
+            is_minor=False,
             minor_confidence=0.5,
             risk_level=RiskLevel.MEDIUM,
             icbo_features=ICBOFeatures(
                 intention="解析失败",
                 cognition="解析失败",
                 behavior_style="解析失败",
-                opportunity_time="未知",
+                opportunity_time="未明确提及",
             ),
             user_persona=UserPersona(
-                age_range="未知",
-                education_stage="未知",
+                age_range="未明确",
+                education_stage="未明确",
             ),
             reasoning=f"LLM 响应解析失败: {original_error}",
             key_evidence=[],
@@ -252,6 +402,11 @@ def analyze_conversation(
         SkillOutput: 分析结果
     """
     return get_executor().run(conversation, user_id)
+
+
+def analyze_payload(payload: Dict[str, Any]) -> SkillOutput:
+    """正式 payload 入口，供后续运行时系统逐步迁移。"""
+    return get_executor().run_payload(AnalysisPayload(**payload))
 
 
 def analyze_text(text: str, user_id: Optional[str] = None) -> SkillOutput:

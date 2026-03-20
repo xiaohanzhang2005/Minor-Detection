@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT_DIR))
 from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
 
 BENCHMARK_MANIFEST_PATH = ROOT_DIR / "data" / "benchmark" / "manifest.json"
+FORMAL_SKILL_VERSION = "minor-detection"
 
 
 def _save_run_report(payload: Dict[str, Any]) -> Path:
@@ -61,6 +62,7 @@ def _load_benchmark_manifest() -> Optional[Dict[str, Any]]:
 
 
 def _summarize_benchmark_files() -> Dict[str, Any]:
+    from scripts.prepare_data import DataPreparer
     from src.config import BENCHMARK_TEST_PATH, BENCHMARK_TRAIN_PATH, BENCHMARK_VAL_PATH
 
     split_paths = {
@@ -71,6 +73,7 @@ def _summarize_benchmark_files() -> Dict[str, Any]:
     split_counts: Dict[str, int] = {}
     by_source: Dict[str, int] = {}
     by_is_minor = {"minor": 0, "adult": 0}
+    by_age_bucket: Dict[str, int] = {}
 
     for split_name, path in split_paths.items():
         if not path.exists():
@@ -93,6 +96,9 @@ def _summarize_benchmark_files() -> Dict[str, Any]:
                 else:
                     by_is_minor["adult"] += 1
 
+                age_bucket = DataPreparer.resolve_age_bucket_from_record(sample)
+                by_age_bucket[age_bucket] = by_age_bucket.get(age_bucket, 0) + 1
+
         split_counts[split_name] = count
 
     return {
@@ -100,6 +106,7 @@ def _summarize_benchmark_files() -> Dict[str, Any]:
             "total": sum(split_counts.values()),
             "by_source": dict(sorted(by_source.items())),
             "by_is_minor": by_is_minor,
+            "by_age_bucket": dict(sorted(by_age_bucket.items())),
         },
         "splits": split_counts,
         "paths": {
@@ -114,6 +121,8 @@ def repair_benchmark_manifest(
     max_per_source: Optional[int],
     seed: Optional[int],
 ) -> Dict[str, Any]:
+    from scripts.prepare_data import ADULT_AGE_BUCKETS, MINOR_AGE_BUCKETS, STRATIFICATION_STRATEGY
+
     print("\n" + "=" * 60)
     print("[STEP 0] Repair benchmark manifest")
     print("=" * 60)
@@ -131,6 +140,18 @@ def repair_benchmark_manifest(
         "mode": requested_mode,
         "quick_n": max_per_source,
         "seed": seed,
+        "stratification": {
+            "strategy": STRATIFICATION_STRATEGY,
+            "unit": "source+age_bucket",
+            "minor_age_buckets": [
+                {"name": name, "min_age": lower, "max_age": upper}
+                for name, lower, upper in MINOR_AGE_BUCKETS
+            ],
+            "adult_age_buckets": [
+                {"name": name, "min_age": lower, "max_age": upper}
+                for name, lower, upper in ADULT_AGE_BUCKETS
+            ],
+        },
         "statistics": summary["statistics"],
         "splits": summary["splits"],
         "paths": summary["paths"],
@@ -152,6 +173,7 @@ def _build_eval_snapshot(report) -> Dict[str, Any]:
     metrics = report.metrics
     return {
         "dataset": report.dataset,
+        "sampling": getattr(report, "sampling", {}),
         "total_samples": metrics.total_samples,
         "accuracy": metrics.accuracy,
         "precision": metrics.precision,
@@ -172,9 +194,15 @@ def _benchmark_files_exist() -> bool:
 
 
 def _rag_assets_exist() -> bool:
-    from src.config import RETRIEVAL_DB_DIR
+    from src.config import RETRIEVAL_CORPUS_DIR, RETRIEVAL_DB_DIR
 
-    return (RETRIEVAL_DB_DIR / "index.pkl").exists()
+    return all(
+        [
+            (RETRIEVAL_DB_DIR / "index.pkl").exists(),
+            (RETRIEVAL_DB_DIR / "manifest.json").exists(),
+            (RETRIEVAL_CORPUS_DIR / "cases_v1.jsonl").exists(),
+        ]
+    )
 
 
 def _load_rag_manifest() -> Optional[Dict[str, Any]]:
@@ -213,14 +241,54 @@ def _resolve_test_rag_mode(test_rag_mode: str, evolution_rag: str) -> str:
     return test_rag_mode
 
 
+def _resolve_test_memory_mode(test_memory_mode: str, evolution_memory: str) -> str:
+    if test_memory_mode == "match-evolution":
+        return evolution_memory
+    return test_memory_mode
+
+
+def _argv_has_option(argv: Optional[List[str]], option_name: str) -> bool:
+    if not argv:
+        return False
+    return any(token == option_name or token.startswith(f"{option_name}=") for token in argv)
+
+
+def _resolve_skill_selection(args: argparse.Namespace, argv: Optional[List[str]]) -> argparse.Namespace:
+    effective_argv = list(argv) if argv is not None else sys.argv[1:]
+    explicit_skill_version = _argv_has_option(effective_argv, "--skill-version")
+
+    if args.formal_skill:
+        if explicit_skill_version and args.skill_version != FORMAL_SKILL_VERSION:
+            raise ValueError(
+                f"--formal-skill cannot be combined with --skill-version={args.skill_version}; "
+                f"use --skill-version {FORMAL_SKILL_VERSION} or omit --skill-version."
+            )
+        args.skill_version = FORMAL_SKILL_VERSION
+        args.skill_mode = "formal"
+        return args
+
+    args.skill_mode = "custom" if explicit_skill_version else "active"
+    return args
+
+
 def _validate_pipeline_config(
     baseline_rag_mode: str,
     evolution_rag: str,
+    baseline_memory_mode: str,
+    evolution_memory: str,
 ) -> None:
     if evolution_rag == "on" and baseline_rag_mode == "off":
         raise ValueError("baseline-rag-mode=off cannot feed evolution-rag=on; use --baseline-rag-mode on|compare")
     if evolution_rag == "off" and baseline_rag_mode == "on":
         raise ValueError("baseline-rag-mode=on cannot feed evolution-rag=off; use --baseline-rag-mode off|compare")
+    if evolution_memory == "on" and baseline_memory_mode == "off":
+        raise ValueError(
+            "baseline-memory-mode=off cannot feed evolution-memory=on; use --baseline-memory-mode on|compare"
+        )
+    if evolution_memory == "off" and baseline_memory_mode == "on":
+        raise ValueError(
+            "baseline-memory-mode=on cannot feed evolution-memory=off; use --baseline-memory-mode off|compare"
+        )
 
 
 def _needs_rag_assets(
@@ -249,10 +317,17 @@ def _validate_asset_mode(
 
     manifest_mode = manifest.get("mode")
     manifest_quick_n = manifest.get("quick_n")
+    manifest_strategy = ((manifest.get("stratification") or {}).get("strategy"))
     if manifest_mode != requested_mode:
         return False, f"manifest mode mismatch: have={manifest_mode}, need={requested_mode}", True
     if requested_mode == "quick" and manifest_quick_n != max_per_source:
         return False, f"manifest quick_n mismatch: have={manifest_quick_n}, need={max_per_source}", True
+    if manifest_strategy != "source_age_bucket_v1":
+        return (
+            False,
+            f"manifest stratification mismatch: have={manifest_strategy}, need=source_age_bucket_v1",
+            True,
+        )
     return True, None, True
 
 
@@ -291,6 +366,7 @@ def _cleanup_pipeline_artifacts(
                 BENCHMARK_MANIFEST_PATH,
                 DATA_DIR / "retrieval_db" / "index.pkl",
                 DATA_DIR / "retrieval_db" / "manifest.json",
+                DATA_DIR / "retrieval_corpus" / "cases_v1.jsonl",
             ]:
                 if artifact.exists():
                     summary["removed_benchmark"].append(str(artifact))
@@ -337,18 +413,9 @@ def step_prepare_data(max_per_source: Optional[int], seed: int = 42) -> Dict[str
     preparer = DataPreparer(random_seed=seed)
     result = preparer.run(max_per_source=max_per_source, save=True)
     if result.get("success", False):
-        mode = "full" if max_per_source is None else "quick"
-        _save_benchmark_manifest(
-            {
-                "timestamp": datetime.now().isoformat(),
-                "mode": mode,
-                "quick_n": max_per_source,
-                "seed": seed,
-                "statistics": result.get("statistics", {}),
-                "splits": result.get("splits", {}),
-                "paths": result.get("paths", {}),
-            }
-        )
+        manifest = result.get("manifest")
+        if manifest:
+            _save_benchmark_manifest(manifest)
         result["manifest_path"] = to_relative_posix_path(BENCHMARK_MANIFEST_PATH, ROOT_DIR)
     return result
 
@@ -486,8 +553,11 @@ def step_evaluate(
     max_samples: Optional[int],
     retriever=None,
     dataset: str = "val",
+    use_memory: bool = False,
+    sample_strategy: str = "stratified",
+    sample_seed: int = 42,
 ) -> Optional[Dict[str, Any]]:
-    from src.config import BENCHMARK_TEST_PATH, BENCHMARK_VAL_PATH, SKILLS_DIR
+    from src.config import BENCHMARK_TEST_PATH, BENCHMARK_VAL_PATH, SKILLS_DIR, resolve_skill_markdown_path
     from src.executor import ExecutorSkill
     from src.evolution.evaluator import SkillEvaluator
 
@@ -495,15 +565,27 @@ def step_evaluate(
     print(f"[STEP 3] Evaluate {skill_version} ({dataset})")
     print("=" * 60)
 
-    skill_path = SKILLS_DIR / skill_version / "skill.md"
-    if not skill_path.exists():
-        print(f"[ERROR] Skill not found: {skill_path}")
+    try:
+        skill_path = resolve_skill_markdown_path(SKILLS_DIR / skill_version)
+    except FileNotFoundError:
+        print(f"[ERROR] Skill not found: {SKILLS_DIR / skill_version}")
         return None
 
     dataset_path = str(BENCHMARK_TEST_PATH if dataset == "test" else BENCHMARK_VAL_PATH)
     executor = ExecutorSkill(skill_path=str(skill_path))
-    evaluator = SkillEvaluator(executor=executor, skill_version=skill_version, retriever=retriever)
-    report = evaluator.evaluate(dataset_path=dataset_path, max_samples=max_samples, use_test_set=(dataset == "test"))
+    evaluator = SkillEvaluator(
+        executor=executor,
+        skill_version=skill_version,
+        retriever=retriever,
+        use_memory=use_memory,
+    )
+    report = evaluator.evaluate(
+        dataset_path=dataset_path,
+        max_samples=max_samples,
+        sample_strategy=sample_strategy,
+        sample_seed=sample_seed,
+        use_test_set=(dataset == "test"),
+    )
     return {
         "report": report,
         "snapshot": _build_eval_snapshot(report),
@@ -519,43 +601,82 @@ def evaluate_rag_mode(
     mainline_mode: str,
     dataset: str,
     retriever=None,
+    memory_mode: str = "off",
+    mainline_memory: str = "off",
+    sample_strategy: str = "stratified",
+    sample_seed: int = 42,
 ) -> Dict[str, Any]:
     if rag_mode not in {"on", "off", "compare"}:
         raise ValueError(f"Unsupported rag_mode: {rag_mode}")
     if mainline_mode not in {"on", "off"}:
         raise ValueError(f"Unsupported mainline_mode: {mainline_mode}")
+    if memory_mode not in {"on", "off", "compare"}:
+        raise ValueError(f"Unsupported memory_mode: {memory_mode}")
+    if mainline_memory not in {"on", "off"}:
+        raise ValueError(f"Unsupported mainline_memory: {mainline_memory}")
 
-    rag_eval = None
-    no_rag_eval = None
+    rag_options = [True] if rag_mode == "on" else [False] if rag_mode == "off" else [True, False]
+    memory_options = [True] if memory_mode == "on" else [False] if memory_mode == "off" else [True, False]
 
-    if rag_mode in {"on", "compare"}:
-        if retriever is None:
+    evaluations: Dict[tuple[bool, bool], Dict[str, Any]] = {}
+    snapshot_map: Dict[str, Dict[str, Any]] = {}
+    for rag_enabled in rag_options:
+        if rag_enabled and retriever is None:
             raise RuntimeError("RAG evaluation requested but no retriever is available")
-        rag_eval = step_evaluate(skill_version, max_samples=max_samples, retriever=retriever, dataset=dataset)
 
-    if rag_mode in {"off", "compare"}:
-        no_rag_eval = step_evaluate(skill_version, max_samples=max_samples, retriever=None, dataset=dataset)
+        for memory_enabled in memory_options:
+            evaluation = step_evaluate(
+                skill_version,
+                max_samples=max_samples,
+                retriever=retriever if rag_enabled else None,
+                dataset=dataset,
+                use_memory=memory_enabled,
+                sample_strategy=sample_strategy,
+                sample_seed=sample_seed,
+            )
+            label = f"rag_{'on' if rag_enabled else 'off'}_memory_{'on' if memory_enabled else 'off'}"
+            evaluations[(rag_enabled, memory_enabled)] = evaluation
+            snapshot_map[label] = evaluation["snapshot"]
 
-    selected = rag_eval if mainline_mode == "on" else no_rag_eval
+    selected_key = (mainline_mode == "on", mainline_memory == "on")
+    selected = evaluations.get(selected_key)
     if selected is None:
-        raise RuntimeError(f"Selected mainline '{mainline_mode}' was not evaluated")
+        raise RuntimeError(
+            f"Selected mainline rag={mainline_mode}, memory={mainline_memory} was not evaluated"
+        )
 
     payload: Dict[str, Any] = {
-        "selected_mainline": mainline_mode,
+        "selected_mainline": {"rag": mainline_mode, "memory": mainline_memory},
         "selected_eval": selected["snapshot"],
         "selected_f1": selected["f1"],
         "selected_accuracy": selected["accuracy"],
         "selected_report": selected["report"],
+        "evaluations": snapshot_map,
     }
 
-    if rag_eval is not None:
-        payload["rag_eval"] = rag_eval["snapshot"]
-        payload["rag_report"] = rag_eval["report"]
-    if no_rag_eval is not None:
-        payload["no_rag_eval"] = no_rag_eval["snapshot"]
-        payload["no_rag_report"] = no_rag_eval["report"]
-    if rag_eval is not None and no_rag_eval is not None:
-        payload["rag_minus_no_rag_f1"] = rag_eval["f1"] - no_rag_eval["f1"]
+    if memory_mode == "off":
+        rag_eval = evaluations.get((True, False))
+        no_rag_eval = evaluations.get((False, False))
+        if rag_eval is not None:
+            payload["rag_eval"] = rag_eval["snapshot"]
+            payload["rag_report"] = rag_eval["report"]
+        if no_rag_eval is not None:
+            payload["no_rag_eval"] = no_rag_eval["snapshot"]
+            payload["no_rag_report"] = no_rag_eval["report"]
+        if rag_eval is not None and no_rag_eval is not None:
+            payload["rag_minus_no_rag_f1"] = rag_eval["f1"] - no_rag_eval["f1"]
+
+    if rag_mode == "off":
+        memory_eval = evaluations.get((False, True))
+        no_memory_eval = evaluations.get((False, False))
+        if memory_eval is not None:
+            payload["memory_eval"] = memory_eval["snapshot"]
+            payload["memory_report"] = memory_eval["report"]
+        if no_memory_eval is not None:
+            payload["no_memory_eval"] = no_memory_eval["snapshot"]
+            payload["no_memory_report"] = no_memory_eval["report"]
+        if memory_eval is not None and no_memory_eval is not None:
+            payload["memory_minus_no_memory_f1"] = memory_eval["f1"] - no_memory_eval["f1"]
 
     return payload
 
@@ -565,14 +686,23 @@ def step_evolution(
     max_rounds: int,
     max_eval_samples: Optional[int],
     retriever=None,
+    use_memory: bool = False,
     baseline_report=None,
     patience: int = 2,
     min_improvement: float = 0.001,
+    optimization_max_errors: Optional[int] = None,
+    sample_strategy: str = "stratified",
+    sample_seed: int = 42,
 ) -> Dict[str, Any]:
-    from src.evolution.optimizer import run_optimization_cycle
+    from src.config import SKILLS_DIR
+    from src.evolution.optimizer import SkillOptimizer, run_optimization_cycle
 
     if baseline_report is None:
         raise ValueError("baseline_report is required for evolution")
+
+    initial_version = current_version
+    initial_skill_dir = SKILLS_DIR / initial_version
+    formal_review_required = (initial_skill_dir / "references" / "output-schema.md").exists()
 
     if max_rounds <= 0:
         return {
@@ -586,6 +716,10 @@ def step_evolution(
             "best_version": current_version,
             "best_f1": baseline_report.metrics.f1_score,
             "stop_reason": "manual_zero_rounds",
+            "review_required": False,
+            "review_status": "not_required",
+            "review_artifact": None,
+            "adopted_version": current_version,
         }
 
     print("\n" + "=" * 60)
@@ -613,11 +747,16 @@ def step_evolution(
         result = run_optimization_cycle(
             current_version=version,
             max_samples=max_eval_samples,
+            optimization_max_errors=optimization_max_errors,
+            sample_strategy=sample_strategy,
+            sample_seed=sample_seed,
             dry_run=False,
             auto_rollback=True,
             min_f1_improvement=min_improvement,
             retriever=retriever,
+            use_memory=use_memory,
             baseline_report=current_report,
+            activate_accepted_version=not formal_review_required,
         )
 
         round_info: Dict[str, Any] = {
@@ -637,6 +776,8 @@ def step_evolution(
             "baseline_eval": _build_eval_snapshot(current_report),
             "new_eval": _build_eval_snapshot(result["_new_report"]) if result.get("_new_report") is not None else None,
             "no_improvement_streak_before": no_improvement_streak,
+            "review_required": bool(result.get("review_required", False)),
+            "adoption_status": result.get("adoption_status", "accepted"),
         }
 
         if result.get("new_version"):
@@ -648,6 +789,10 @@ def step_evolution(
         if result.get("rolled_back"):
             rollback_rounds += 1
             no_improvement_streak += 1
+            round_info["adoption_status"] = "rolled_back"
+            round_info["accepted"] = False
+            round_info["version_after"] = version
+            round_info["active_version_after"] = version
             round_info["diagnosis"] = "new version was evaluated and rolled back"
             print(f"[ROLLBACK] {result.get('rollback_reason', 'unknown reason')}")
         elif result.get("new_version"):
@@ -669,6 +814,7 @@ def step_evolution(
             )
         else:
             no_improvement_streak += 1
+            round_info["adoption_status"] = result.get("adoption_status", "skipped")
             round_info["diagnosis"] = result.get("message") or "no new version generated"
             print(f"[SKIP] {round_info['diagnosis']}")
             if round_index == 1 and result.get("message") == "no errors to optimize":
@@ -685,6 +831,18 @@ def step_evolution(
             break
 
     final_report = best_report
+    review_artifact = None
+    review_status = "not_required"
+    adopted_version = best_version
+
+    if formal_review_required and best_version != initial_version:
+        review_artifact = SkillOptimizer().create_formal_skill_review_artifact(
+            base_version=initial_version,
+            candidate_version=best_version,
+        )
+        review_status = "pending"
+        adopted_version = initial_version
+
     return {
         "final_version": best_version,
         "final_report": final_report,
@@ -696,6 +854,10 @@ def step_evolution(
         "best_version": best_version,
         "best_f1": best_f1,
         "stop_reason": stop_reason,
+        "review_required": review_artifact is not None,
+        "review_status": review_status,
+        "review_artifact": review_artifact,
+        "adopted_version": adopted_version,
     }
 
 
@@ -708,6 +870,50 @@ def _trend_label(start_f1: Optional[float], end_f1: Optional[float]) -> str:
     if delta < 0:
         return "regressed"
     return "unchanged"
+
+
+def _build_review_summary(
+    *,
+    base_version: str,
+    final_version: str,
+    adopted_version: str,
+    review_required: bool,
+    review_status: str,
+    review_artifact: Optional[Dict[str, Any]],
+    baseline_f1: Optional[float],
+    best_val_f1: Optional[float],
+) -> Dict[str, Any]:
+    if not review_required:
+        return {
+            "needs_human_review": False,
+            "current_status": "无需人工审核",
+            "base_version": base_version,
+            "candidate_version": final_version,
+            "adopted_version": adopted_version,
+            "f1_change": None if baseline_f1 is None or best_val_f1 is None else round(best_val_f1 - baseline_f1, 4),
+            "review_diff_path": None,
+            "review_summary_path": None,
+            "boss_recommendation": "可直接采用当前最终版本。",
+            "next_action": "无需额外审核动作。",
+        }
+
+    review_diff_path = None if not review_artifact else review_artifact.get("review_diff_path")
+    review_summary_path = None if not review_artifact else review_artifact.get("review_summary_path")
+    f1_change = None if baseline_f1 is None or best_val_f1 is None else round(best_val_f1 - baseline_f1, 4)
+
+    return {
+        "needs_human_review": True,
+        "current_status": "候选版本已生成，等待人工审核",
+        "base_version": base_version,
+        "candidate_version": final_version,
+        "adopted_version": adopted_version,
+        "f1_change": f1_change,
+        "review_status": review_status,
+        "review_diff_path": review_diff_path,
+        "review_summary_path": review_summary_path,
+        "boss_recommendation": "先审阅 formal skill 差异，再决定 approve 或 reject。",
+        "next_action": "若审核通过则采纳 candidate_version；若未通过则保留 base_version。",
+    }
 
 
 def parse_pipeline_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
@@ -740,21 +946,47 @@ def parse_pipeline_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         default=get_active_skill_version(),
         help="Starting skill version. Defaults to the active skill.",
     )
+    parser.add_argument(
+        "--formal-skill",
+        action="store_true",
+        help=f"Run the pipeline against the formal bundled Skill package ({FORMAL_SKILL_VERSION}) without manually switching active_version.txt.",
+    )
 
     parser.add_argument("--baseline-rag-mode", choices=["on", "off", "compare"], default="on")
     parser.add_argument("--evolution-rag", choices=["on", "off"], default="on")
+    parser.add_argument("--baseline-memory-mode", choices=["on", "off", "compare"], default="off")
+    parser.add_argument("--evolution-memory", choices=["on", "off"], default="off")
     parser.add_argument("--run-test-final", action="store_true")
     parser.add_argument("--test-rag-mode", choices=["match-evolution", "on", "off", "compare"], default="match-evolution")
+    parser.add_argument("--test-memory-mode", choices=["match-evolution", "on", "off", "compare"], default="match-evolution")
 
     parser.add_argument("--baseline-max-eval", type=int, default=None)
     parser.add_argument("--evolution-max-eval", type=int, default=None)
     parser.add_argument("--test-max-eval", type=int, default=None)
     parser.add_argument("--max-eval", type=int, default=None, help="Compatibility alias for all evaluation stages.")
+    parser.add_argument(
+        "--sample-strategy",
+        choices=["sequential", "random", "stratified"],
+        default="stratified",
+        help="Subset selection strategy when max-eval limits evaluation data.",
+    )
+    parser.add_argument(
+        "--sample-seed",
+        type=int,
+        default=None,
+        help="Random seed for evaluation subset selection. Defaults to --seed.",
+    )
 
     parser.add_argument("--max-rounds", type=int, default=10)
     parser.add_argument("--rounds", type=int, default=None, help="Compatibility alias for --max-rounds.")
     parser.add_argument("--patience", type=int, default=2)
     parser.add_argument("--min-improvement", type=float, default=0.001)
+    parser.add_argument(
+        "--optimizer-max-errors",
+        type=int,
+        default=None,
+        help="Cap optimizer error examples. Defaults to auto sizing based on eval slice size.",
+    )
 
     parser.add_argument("--no-save-report", action="store_true", help="Do not persist the JSON run report.")
     parser.add_argument(
@@ -779,6 +1011,11 @@ def parse_pipeline_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         if args.test_max_eval is None:
             args.test_max_eval = args.max_eval
 
+    if args.sample_seed is None:
+        args.sample_seed = args.seed
+
+    args = _resolve_skill_selection(args, argv)
+
     return args
 
 
@@ -787,6 +1024,8 @@ def main(argv: Optional[List[str]] = None):
     _validate_pipeline_config(
         baseline_rag_mode=args.baseline_rag_mode,
         evolution_rag=args.evolution_rag,
+        baseline_memory_mode=args.baseline_memory_mode,
+        evolution_memory=args.evolution_memory,
     )
     requested_mode = _resolve_requested_mode(args)
     max_per_source = args.quick_n if requested_mode == "quick" else None
@@ -804,17 +1043,24 @@ def main(argv: Optional[List[str]] = None):
             "requested_mode": requested_mode,
             "quick_n": args.quick_n,
             "seed": args.seed,
+            "skill_mode": args.skill_mode,
             "skill_version_start": args.skill_version,
             "baseline_rag_mode": args.baseline_rag_mode,
             "evolution_rag": args.evolution_rag,
+            "baseline_memory_mode": args.baseline_memory_mode,
+            "evolution_memory": args.evolution_memory,
             "test_rag_mode": args.test_rag_mode,
+            "test_memory_mode": args.test_memory_mode,
             "run_test_final": args.run_test_final,
             "baseline_max_eval": args.baseline_max_eval,
             "evolution_max_eval": args.evolution_max_eval,
             "test_max_eval": args.test_max_eval,
+            "sample_strategy": args.sample_strategy,
+            "sample_seed": args.sample_seed,
             "max_rounds": args.max_rounds,
             "patience": args.patience,
             "min_improvement": args.min_improvement,
+            "optimizer_max_errors": args.optimizer_max_errors,
             "rebuild_data": args.rebuild_data,
             "repair_benchmark_manifest": args.repair_benchmark_manifest,
             "rebuild_index": args.rebuild_index,
@@ -838,8 +1084,9 @@ def main(argv: Optional[List[str]] = None):
     print("Pipeline started")
     print("=" * 60)
     print(
-        f"mode={requested_mode} skill={args.skill_version} "
-        f"baseline_rag={args.baseline_rag_mode} evolution_rag={args.evolution_rag}"
+        f"mode={requested_mode} skill_mode={args.skill_mode} skill={args.skill_version} "
+        f"baseline_rag={args.baseline_rag_mode} evolution_rag={args.evolution_rag} "
+        f"baseline_memory={args.baseline_memory_mode} evolution_memory={args.evolution_memory}"
     )
     if args.keep_artifacts:
         print("[INFO] --keep-artifacts is redundant now; artifacts are kept by default.")
@@ -893,30 +1140,49 @@ def main(argv: Optional[List[str]] = None):
             mainline_mode=args.evolution_rag,
             dataset="val",
             retriever=retriever,
+            memory_mode=args.baseline_memory_mode,
+            mainline_memory=args.evolution_memory,
+            sample_strategy=args.sample_strategy,
+            sample_seed=args.sample_seed,
         )
         report_payload["baseline"] = {
             "selected_mainline": baseline_result["selected_mainline"],
             "selected_eval": baseline_result["selected_eval"],
         }
+        if "evaluations" in baseline_result:
+            report_payload["baseline"]["evaluations"] = baseline_result["evaluations"]
         if "rag_eval" in baseline_result:
             report_payload["baseline"]["rag_eval"] = baseline_result["rag_eval"]
         if "no_rag_eval" in baseline_result:
             report_payload["baseline"]["no_rag_eval"] = baseline_result["no_rag_eval"]
         if "rag_minus_no_rag_f1" in baseline_result:
             report_payload["baseline"]["rag_minus_no_rag_f1"] = baseline_result["rag_minus_no_rag_f1"]
+        if "memory_eval" in baseline_result:
+            report_payload["baseline"]["memory_eval"] = baseline_result["memory_eval"]
+        if "no_memory_eval" in baseline_result:
+            report_payload["baseline"]["no_memory_eval"] = baseline_result["no_memory_eval"]
+        if "memory_minus_no_memory_f1" in baseline_result:
+            report_payload["baseline"]["memory_minus_no_memory_f1"] = baseline_result["memory_minus_no_memory_f1"]
 
         baseline_report = baseline_result["selected_report"]
         baseline_f1 = baseline_result["selected_f1"]
-        print(f"[BASELINE] selected_mainline={args.evolution_rag} F1={baseline_f1:.4f}")
+        print(
+            f"[BASELINE] selected_mainline=rag:{args.evolution_rag},"
+            f"memory:{args.evolution_memory} F1={baseline_f1:.4f}"
+        )
 
         evolution_result = step_evolution(
             current_version=args.skill_version,
             max_rounds=args.max_rounds,
             max_eval_samples=args.evolution_max_eval,
             retriever=(retriever if args.evolution_rag == "on" else None),
+            use_memory=(args.evolution_memory == "on"),
             baseline_report=baseline_report,
             patience=args.patience,
             min_improvement=args.min_improvement,
+            optimization_max_errors=args.optimizer_max_errors,
+            sample_strategy=args.sample_strategy,
+            sample_seed=args.sample_seed,
         )
 
         created_versions = evolution_result["created_versions"]
@@ -931,29 +1197,50 @@ def main(argv: Optional[List[str]] = None):
             "best_version": evolution_result["best_version"],
             "best_f1": evolution_result["best_f1"],
             "rounds_executed": len(evolution_result["round_history"]),
+            "review_required": evolution_result["review_required"],
+            "review_status": evolution_result["review_status"],
+            "review_artifact": evolution_result["review_artifact"],
+            "adopted_version": evolution_result["adopted_version"],
         }
 
         final_test_f1 = None
         if args.run_test_final:
             resolved_test_mode = _resolve_test_rag_mode(args.test_rag_mode, args.evolution_rag)
+            resolved_test_memory_mode = _resolve_test_memory_mode(args.test_memory_mode, args.evolution_memory)
+            final_test_mainline_rag = args.evolution_rag if resolved_test_mode == "compare" else resolved_test_mode
+            final_test_mainline_memory = (
+                args.evolution_memory if resolved_test_memory_mode == "compare" else resolved_test_memory_mode
+            )
             final_test_result = evaluate_rag_mode(
                 skill_version=final_version,
                 max_samples=args.test_max_eval,
                 rag_mode=resolved_test_mode,
-                mainline_mode=args.evolution_rag,
+                mainline_mode=final_test_mainline_rag,
                 dataset="test",
                 retriever=retriever,
+                memory_mode=resolved_test_memory_mode,
+                mainline_memory=final_test_mainline_memory,
+                sample_strategy=args.sample_strategy,
+                sample_seed=args.sample_seed,
             )
             final_test_payload: Dict[str, Any] = {
                 "selected_mainline": final_test_result["selected_mainline"],
                 "selected_eval": final_test_result["selected_eval"],
             }
+            if "evaluations" in final_test_result:
+                final_test_payload["evaluations"] = final_test_result["evaluations"]
             if "rag_eval" in final_test_result:
                 final_test_payload["rag_eval"] = final_test_result["rag_eval"]
             if "no_rag_eval" in final_test_result:
                 final_test_payload["no_rag_eval"] = final_test_result["no_rag_eval"]
             if "rag_minus_no_rag_f1" in final_test_result:
                 final_test_payload["rag_minus_no_rag_f1"] = final_test_result["rag_minus_no_rag_f1"]
+            if "memory_eval" in final_test_result:
+                final_test_payload["memory_eval"] = final_test_result["memory_eval"]
+            if "no_memory_eval" in final_test_result:
+                final_test_payload["no_memory_eval"] = final_test_result["no_memory_eval"]
+            if "memory_minus_no_memory_f1" in final_test_result:
+                final_test_payload["memory_minus_no_memory_f1"] = final_test_result["memory_minus_no_memory_f1"]
             report_payload["final_test"] = final_test_payload
             final_test_f1 = final_test_result["selected_f1"]
 
@@ -963,9 +1250,22 @@ def main(argv: Optional[List[str]] = None):
             "final_test_f1": final_test_f1,
             "f1_trend": _trend_label(baseline_f1, best_val_f1),
             "skill_version_final": final_version,
+            "skill_version_adopted": evolution_result["adopted_version"],
+            "review_required": evolution_result["review_required"],
+            "review_status": evolution_result["review_status"],
             "accepted_count": len(evolution_result["accepted_versions"]),
             "rollback_count": evolution_result["rollback_count"],
         }
+        report_payload["review_summary"] = _build_review_summary(
+            base_version=args.skill_version,
+            final_version=final_version,
+            adopted_version=evolution_result["adopted_version"],
+            review_required=evolution_result["review_required"],
+            review_status=evolution_result["review_status"],
+            review_artifact=evolution_result["review_artifact"],
+            baseline_f1=baseline_f1,
+            best_val_f1=best_val_f1,
+        )
         report_payload["status"] = "success"
 
     except Exception as exc:
@@ -985,6 +1285,8 @@ def main(argv: Optional[List[str]] = None):
 
         if report_payload.get("summary") is not None and report_payload["cleanup"].get("restored_active_version"):
             report_payload["summary"]["active_version_restored_to"] = report_payload["cleanup"]["restored_active_version"]
+            if report_payload.get("review_summary") is not None:
+                report_payload["review_summary"]["active_version_restored_to"] = report_payload["cleanup"]["restored_active_version"]
 
         if not args.no_save_report:
             report_path = _save_run_report(report_payload)
@@ -1002,7 +1304,21 @@ def main(argv: Optional[List[str]] = None):
             print(f"final_test_f1={summary['final_test_f1']:.4f}")
         print(f"trend={summary['f1_trend']}")
         print(f"final_version={summary['skill_version_final']}")
+        if summary.get("skill_version_adopted") is not None:
+            print(f"adopted_version={summary['skill_version_adopted']}")
         print(f"accepted={summary['accepted_count']} rollback={summary['rollback_count']}")
+    if report_payload.get("review_summary"):
+        review_summary = report_payload["review_summary"]
+        print("review_summary:")
+        print(f"  needs_human_review={review_summary['needs_human_review']}")
+        print(f"  current_status={review_summary['current_status']}")
+        print(f"  base_version={review_summary['base_version']}")
+        print(f"  candidate_version={review_summary['candidate_version']}")
+        print(f"  adopted_version={review_summary['adopted_version']}")
+        if review_summary.get("f1_change") is not None:
+            print(f"  f1_change={review_summary['f1_change']:+.4f}")
+        if review_summary.get("review_diff_path"):
+            print(f"  review_diff_path={review_summary['review_diff_path']}")
     print(f"cleanup_performed={report_payload['cleanup'].get('performed', False)}")
 
     if exit_code != 0:

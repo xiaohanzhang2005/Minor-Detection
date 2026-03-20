@@ -26,6 +26,11 @@ from src.config import (
     RETRIEVAL_CORPUS_DIR,
     RETRIEVAL_DB_DIR,
 )
+from src.retriever.retrieval_text_builder import (
+    build_case_retrieval_artifacts,
+    build_query_retrieval_text,
+    conversation_to_user_only_text,
+)
 from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
 
 
@@ -46,18 +51,20 @@ class SemanticRetriever:
     def __init__(
         self,
         index_path: Optional[str] = None,
+        corpus_path: Optional[str] = None,
+        manifest_path: Optional[str] = None,
         embedding_model: str = EMBEDDING_MODEL,
         api_key: Optional[str] = None,
         base_url: str = AIHUBMIX_BASE_URL,
     ):
         self.index_path = Path(index_path) if index_path else RETRIEVAL_DB_DIR / "index.pkl"
-        self.corpus_path = RETRIEVAL_CORPUS_DIR / "cases_v1.jsonl"
-        self.manifest_path = RETRIEVAL_DB_DIR / "manifest.json"
+        self.corpus_path = Path(corpus_path) if corpus_path else RETRIEVAL_CORPUS_DIR / "cases_v1.jsonl"
+        self.manifest_path = Path(manifest_path) if manifest_path else RETRIEVAL_DB_DIR / "manifest.json"
         self.embedding_model = embedding_model
         self.api_key = api_key or AIHUBMIX_API_KEY
         self.base_url = base_url.rstrip("/")
-        self.text_template_version = "user_only_v1"
-        self.preprocess_version = "basic_whitespace_v1"
+        self.text_template_version = "user_only_with_time_scene_v2"
+        self.preprocess_version = "basic_whitespace_time_tags_v2"
 
         self.embeddings: Optional[np.ndarray] = None
         self.samples: List[Dict[str, Any]] = []
@@ -152,34 +159,13 @@ class SemanticRetriever:
 
         raise RuntimeError(f"Embedding request failed at offset={start_index}: {last_error}")
 
-    def _normalize_text(self, text: str) -> str:
-        if not isinstance(text, str):
-            return ""
-        return " ".join(text.split()).strip()
-
     def _conversation_to_text(self, conversation: List[Dict[str, str]]) -> str:
-        parts = []
-        for turn in conversation:
-            if turn.get("role", "user") != "user":
-                continue
-            content = self._normalize_text(turn.get("content", ""))
-            if content:
-                parts.append(content)
-
-        if parts:
-            return "\n".join(parts)
-
-        # Fallback for malformed data that has no user turns.
-        fallback_parts = []
-        for turn in conversation:
-            content = self._normalize_text(turn.get("content", ""))
-            if content:
-                fallback_parts.append(content)
-        return "\n".join(fallback_parts)
+        return conversation_to_user_only_text(conversation)
 
     def _build_case_metadata(self, sample: Dict[str, Any]) -> Dict[str, Any]:
         conversation = sample.get("conversation", [])
         user_persona = sample.get("user_persona", {})
+        retrieval_artifacts = build_case_retrieval_artifacts(sample)
         user_turn_count = sum(1 for turn in conversation if turn.get("role") == "user")
         return {
             "source": sample.get("source", "unknown"),
@@ -190,11 +176,17 @@ class SemanticRetriever:
             "age_range": user_persona.get("age_range"),
             "education_stage": user_persona.get("education_stage"),
             "identity_markers": user_persona.get("identity_markers", []),
+            "raw_time_hint": retrieval_artifacts["raw_time_hint"],
+            "time_features": retrieval_artifacts["time_features"],
         }
 
     def _build_case_record(self, sample: Dict[str, Any]) -> Dict[str, Any]:
         record = dict(sample)
-        record["_embedding_text"] = self._conversation_to_text(sample.get("conversation", []))
+        retrieval_artifacts = build_case_retrieval_artifacts(sample)
+        record["_embedding_text"] = retrieval_artifacts["embedding_text"]
+        record["_time_features"] = retrieval_artifacts["time_features"]
+        record["_raw_time_hint"] = retrieval_artifacts["raw_time_hint"]
+        record["_scene_tags"] = retrieval_artifacts["scene_tags"]
         record["_metadata"] = self._build_case_metadata(sample)
         return record
 
@@ -222,6 +214,7 @@ class SemanticRetriever:
                         "is_minor": record.get("is_minor"),
                         "conversation": record.get("conversation", []),
                         "icbo_features": record.get("icbo_features", {}),
+                        "time_features": record.get("_time_features", {}),
                         "user_persona": record.get("user_persona", {}),
                     },
                 }
@@ -357,12 +350,18 @@ class SemanticRetriever:
         conversation: List[Dict[str, str]],
         top_k: int = 3,
         threshold: float = 0.0,
+        raw_time_hint: str = "",
+        time_features: Optional[Dict[str, Any]] = None,
     ) -> List[RetrievalResult]:
         if self.embeddings is None or len(self.samples) == 0:
             print("Warning: retrieval index is empty")
             return []
 
-        query_text = self._conversation_to_text(conversation)
+        query_text = build_query_retrieval_text(
+            conversation,
+            raw_time_hint=raw_time_hint,
+            time_features=time_features,
+        )
         if not query_text:
             return []
 

@@ -1,0 +1,1584 @@
+# Skills 教学资料
+
+# 阅读指南
+
+**必读章节**（建议按顺序阅读）：
+
+| 章节 | 一句话概括 |
+| --- | --- |
+| **Skills 概括** | 什么是 Skill、它长什么样、怎么运行——建立全局认知 |
+| **Skill 详解** | SKILL.md 的完整规范、目录结构、渐进式披露机制, 掌握技术细节 |
+| **技能创建方法** | 从零到一创建 Skill 的最佳实践、描述优化、评估与脚本使用——学会动手做 |
+| **为 Agent 客户端添加 Skills 支持** | 站在框架开发者视角，理解 Skill 的发现、解析、披露、激活、上下文管理全流程 |
+
+# 参考项目 (选读)
+
+[**skills](https://github.com/anthropics/skills) (Anthropic出品)： 包含展示 Claude 技能系统可能性的技能**
+
+[**agentskills](https://github.com/agentskills/agentskills)(Anthropic出品)： Agent 技能的规范和文档**
+
+# Skills 概括 (必读)
+
+## [官方定义](https://agentskills.io/home)
+
+> **"A simple, open format for giving agents new capabilities and expertise."**
+一个为 Agent 赋予新能力和专业知识的简单、开放的格式
+> 
+
+根据官方的 Overview，Agent Skills 旨在实现四个核心目标：
+
+1. **领域知识封装**：将极其专业的知识（如复杂的法律审查流程、精细的数据分析管道）无缝打包成可重用的指令。
+2. **能力拓展**：赋予最初只有聊天能力的 Agent 全新的执行能力（例如可以自己制作 PPT、自己构建数据看板）。
+3. **可重复的工作流**：这是工程化的核心。将多步骤的复杂任务转化为**稳定、一致且可审**的标准工作流，告别大模型“随机开盲盒”的产出。
+4. **互操作性**：由于它是一种**开放格式**，你写好的一个 Skill，能够在任何兼容该格式的不同 AI 产品中复用，而不再被单一模型厂商锁死。
+
+## **Skills = “岗位操作手册（SOP）”+“专用工具箱”**
+
+**Skills 是把“人类专家的隐形经验”打包成“AI 可插拔的技能包”。**
+
+**只要存在‘输入 → 转换 → 输出’的过程，无论是对外部环境施加真实改变，还是在大脑内部进行状态重塑与认知提取，都可以被封装为一个 Skill**
+
+如果把刚出厂的 AI 比作一个高智商但没有任何工作经验的应届生员工：
+
+1. **它是什么（结构层）**：
+它是一个标准化的文件夹，里面装着三样东西：
+    - **说明书 (`SKILL.md`)**：告诉 AI 第一步做什么、第二步做什么（即 SOP）。
+    - **工具 (`scripts`)**：干活用的 Python 脚本或代码。
+    - **资料 (`assets/references`)**：参考文档或模板。
+    
+    ![image.png](image.png)
+    
+    ```markdown
+    my-skill/
+    ├── [SKILL.md](http://skill.md/)          # 必备: 说明 + 元数据
+    ├── scripts/          # 可选: 可执行码
+    ├── references/       # 可选: 证明文件
+    └── assets/           # 可选: 模板、资源
+    ```
+    
+2. **它如何工作（运行层）**：
+    
+    Agent 并不会一股脑把所有 Skill 的内容全部读入脑子，而是遵循三步走的"渐进式披露"机制：
+    
+    - **发现（Discovery）**：启动时，Agent **只**加载每个 Skill 的名字和简介（极小的记忆开销），就像扫一眼工具箱外面贴的标签。
+    - **激活（Activation）**：当用户的任务与某个 Skill 的简介匹配时，Agent 才把那份完整的 `SKILL.md` 读入上下文，相当于"打开工具箱，翻开操作手册"。
+    - **执行（Execution）**：Agent 按照手册里的步骤干活，按需调用 `scripts/` 里的代码或引用 `references/` 里的资料，完成任务。
+3. **它解决了什么（价值层）**：
+    - **省脑子（节省上下文）**：AI 不用把所有知识都死记硬背（放在 Prompt 里），而是接到任务后，再去翻看对应的“手册”，按需加载。
+    - **克隆专家（能力封装）**：把公司里老师傅的经验、流程、直觉，封装成一个可以复制的数字组件，让 AI 也能像专家一样标准化作业。
+
+# Skill 详解 (必读)
+
+## [SKILL.md 文件规范](https://agentskills.io/what-are-skills)
+
+每个 Skill 的核心就是一个 `SKILL.md` 文件。它由两部分组成：**YAML 前置元数据（Frontmatter）** + **Markdown 正文指令**。
+
+### 基本结构示例
+
+```yaml
+---
+name: pdf-processing
+description: Extract PDF text, fill forms, merge files. Use when handling PDFs.
+---
+
+# PDF Processing
+
+## When to use this skill
+Use this skill when the user needs to work with PDF files...
+
+## How to extract text
+1. Use pdfplumber for text extraction...
+
+## How to fill forms
+...
+```
+
+### 必填字段
+
+| 字段 | 说明 | 要求 |
+| --- | --- | --- |
+| **`name`** | 技能的短标识符 | 1-64 个字符，只能使用小写字母和连字符 `a-z, -`，不能以连字符开头或结尾，不能出现连续连字符 `--`，且**必须与父文件夹同名** |
+| **`description`** | 何时使用此技能 | 1-1024 个字符。这不仅仅是描述，更是 Agent 在**Discovery 阶段**用来判断"要不要激活这个 Skill"的**触发器（Trigger）**。必须写清楚"做什么"以及"什么时候用"，并包含能被大模型精准命中的关键词 |
+
+> **`description` 好坏对比：**
+> 
+> - ✅ 好：`"从 PDF 文件中提取文本和表格，自动填写 PDF 表单，并合并多个 PDF 文件。适用于处理 PDF 文档或用户提及 PDF、表单或文档提取等情况。."`
+> - ❌ 差：`"Helps with PDFs."`（太模糊，Agent 难以精准匹配任务）
+
+### 可选字段
+
+| 字段 | 说明 |
+| --- | --- |
+| **`license`** | 技能的许可证（如 `Apache-2.0`） |
+| **`compatibility`** | 环境要求（如 `Requires git, docker, jq, and access to the internet`） |
+| **`metadata`** | 自定义的键值对，如 `author`, `version` |
+| **`allowed-tools`** | 预授权的工具列表（实验性功能），如 `Bash(git:*) Bash(jq:*) Read` |
+
+### Markdown 正文
+
+YAML 分隔符 `---` 之后的部分就是正文，即给 Agent 看的**操作指令**。正文对结构和内容没有硬性限制，但建议包含：
+
+- 分步骤的操作说明（SOP）
+- 输入输出的预期示例
+- 常见边界情况的处理方式
+
+### 这种格式的三大优势
+
+1. **自文档化（Self-documenting）**：无论是 Skill 的作者还是使用者，打开 `SKILL.md` 就能看懂它是干什么的，便于审计和持续改进。
+2. **可扩展（Extensible）**：Skill 的复杂度可以从"一段纯文本指令"到"包含可执行代码、模板资源的完整工具包"自由伸缩。
+3. **便携（Portable）**：Skill 本质上就是文件，天然支持 Git 版本控制、团队共享与跨项目复用。
+
+## [目录结构规范](https://agentskills.io/specification)
+
+一个 Skill 是一个**至少包含 `SKILL.md` 文件的目录**：
+
+```
+skill-name/
+├── SKILL.md          # **必备**：元数据 + 操作指令
+├── scripts/          # 可选：可执行代码
+├── references/       # 可选：参考文档
+├── assets/           # 可选：模板、资源
+└── ...               # 可按需添加其他文件或子目录
+```
+
+### `scripts/` 目录
+
+存放 Agent 可以直接运行的可执行代码。编写脚本时应注意：
+
+- **自包含**或明确记录外部依赖
+- 包含**清晰的报错信息**，方便 Agent 自行诊断
+- **优雅地处理边界情况**，不要让脚本在异常输入下直接崩溃
+
+> 支持的语言取决于具体的 Agent 实现
+> 
+> 
+> 常见选项包括 **Python、Bash 和 JavaScript**。
+> 
+
+### `references/` 目录
+
+存放 Agent 按需读取的补充文档：
+
+- `REFERENCE.md`：详细的技术参考手册
+- `FORMS.md`：表单模板或结构化数据格式
+- 特定领域文件（如 `finance.md`、`legal.md` 等）
+
+> **关键原则：保持单个参考文件的聚焦性。**
+> 
+> 
+>  Agent 按需加载这些文件，文件越小，消耗的上下文越少，检索越精准。
+> 
+
+### `assets/` 目录
+
+存放静态资源文件：
+
+- **模板**（文档模板、配置文件模板）
+- **图片**（流程图、示例截图）
+- **数据文件**（查找表、Schema 定义）
+
+## 渐进式披露
+
+Skills 的目录结构天然服务于**分层加载、按需披露**的设计理念：
+
+| 加载阶段 | 加载内容 | Token 预算 |
+| --- | --- | --- |
+| **启动时（Discovery）** | 所有 Skill 的 `name` 和 `description` | 每个 Skill 约**100 tokens** |
+| **激活时（Activation）** | 完整的 `SKILL.md` 正文 | 建议控制在 **< 5000 tokens** |
+| **执行时（Execution）** | `scripts/`、`references/`、`assets/` 中的文件 | **按需加载**，仅在需要时读取 |
+
+> **最佳实践：** 保持 `SKILL.md` 正文在 **500 行以内**。
+> 
+> 
+> 如果内容过长，应当将详细的参考资料拆分到 `references/` 目录下的独立文件中，让 Agent 在需要时再去读取。
+> 
+
+## 文件引用规范
+
+在 `SKILL.md` 中引用同目录下的其他文件时，使用**相对路径**：
+
+```markdown
+详细技术细节请参阅 [参考手册](references/REFERENCE.md)。
+
+运行数据提取脚本：
+scripts/extract.py
+```
+
+> **注意：** 保持文件引用层级尽量扁平（与 `SKILL.md` 相隔一层即可），避免深层嵌套的引用链，否则 Agent 在跟踪文件时容易迷失上下文。
+> 
+
+### 拆解实例-**"学术论文审查"** 的 Skill。
+
+## **❌ 反面教材：全塞进 `SKILL.md`（800+ 行，上下文爆炸）**
+
+```
+yaml
+---
+name:paper-review
+description:审查学术论文的结构、逻辑和引用规范。当用户提交论文草稿并要求审查时使用。
+---
+
+# 论文审查技能
+
+## 何时使用
+当用户提交论文草稿（PDF/Markdown）并要求审查结构、逻辑或引用时……
+
+## 第一步：结构审查
+检查以下 12 项标准：
+1. 标题是否精准反映研究内容……
+2. 摘要是否包含目的、方法、结果、结论四要素……
+3. 引言是否遵循"倒三角"叙事……
+（此处展开 80 行详细标准……）
+
+## 第二步：逻辑链审查
+检查论证逻辑是否存在以下 15 种常见谬误：
+1. 循环论证……
+2. 稻草人谬误……
+3. 滑坡谬误……
+（此处展开 120 行逻辑谬误详解与示例……）
+
+## 第三步：引用规范审查
+### APA 第 7 版格式
+-期刊引用格式：作者, A. A., & 作者, B. B. (年份). 标题. 期刊名, 卷(期), 页码.
+-书籍引用格式：……
+-网页引用格式：……
+（此处展开 150 行 APA/IEEE/GB-T7714 三套引用规范详解……）
+
+## 第四步：图表审查
+……（又是 100 行）
+
+## 附录：常见学科特殊要求
+### 计算机科学
+……（50 行）
+### 经济学
+……（50 行）
+```
+
+**问题**：Agent 激活这个 Skill 时，一次性读入 800+ 行（可能超过 8000 tokens），其中大部分内容与当前任务无关（比如用户只需要查引用格式，但 Agent 被迫同时消化了逻辑谬误和图表审查的全部细节），导致注意力分散、推理质量下降。
+
+---
+
+## **✅ 正确做法：拆解为主文件 + 按需引用**
+
+**先给目录，按需翻书**
+
+### **目录结构**
+
+```
+paper-review/
+├── SKILL.md                       # 主文件：精简的调度指令（< 200 行）
+├── scripts/
+│   └── check_citations.py         # 自动校验引用格式的脚本
+├── references/
+│   ├── STRUCTURE_CHECKLIST.md      # 结构审查的 12 项详细标准
+│   ├── LOGIC_FALLACIES.md          # 15 种逻辑谬误详解与示例
+│   ├── CITATION_APA7.md            # APA 第 7 版完整规范
+│   ├── CITATION_IEEE.md            # IEEE 引用规范
+│   └── CITATION_GBT7714.md         # GB/T 7714 中文引用规范
+└── assets/
+    └── review_report_template.md   # 审查报告的输出模板
+```
+
+### **精简后的 `SKILL.md`（核心调度文件，约 100 行）**
+
+```
+yaml
+---
+name:paper-review
+description:审查学术论文的结构、逻辑和引用规范。当用户提交论文草稿并要求审查时使用。
+---
+
+# 论文审查技能
+
+## 何时使用
+当用户提交论文草稿（PDF/Markdown）并要求结构、逻辑或引用审查时激活本技能。
+
+## 审查流程（四步走）
+
+### 第一步：结构审查
+按照 [结构审查清单](references/STRUCTURE_CHECKLIST.md) 中的 12 项标准，
+逐一检查论文的标题、摘要、引言、方法、结果、讨论、结论等章节。
+
+### 第二步：逻辑链审查
+参照 [逻辑谬误手册](references/LOGIC_FALLACIES.md)，
+检查论文的论证链条中是否存在循环论证、稻草人谬误等常见问题。
+
+### 第三步：引用规范审查
+1. 先确认用户要求的引用格式（APA / IEEE / GB/T 7714）。
+2. 根据格式加载对应的参考文件：
+   -APA 第 7 版 → [CITATION_APA7.md](references/CITATION_APA7.md)
+   -IEEE → [CITATION_IEEE.md](references/CITATION_IEEE.md)
+   -GB/T 7714 → [CITATION_GBT7714.md](references/CITATION_GBT7714.md)
+3. 运行 `scripts/check_citations.py` 进行自动格式校验。
+
+### 第四步：图表审查
+检查所有图表是否：标题完整、有序号引用、分辨率达标、数据与正文一致。
+
+## 输出要求
+使用 [审查报告模板](assets/review_report_template.md) 生成最终报告。
+报告须包含：总评、各步骤发现的问题列表、修改建议优先级排序。
+```
+
+---
+
+## **对比一下发生了什么？**
+
+| **维度** | **全塞一个文件** | **拆解后** |
+| --- | --- | --- |
+| **`SKILL.md` 体量** | 800+ 行（~8000 tokens） | ~100 行（~1000 tokens） |
+| **激活时的上下文消耗** | 全量加载，不管用不用 | 只加载调度指令，精准导航 |
+| **用户只需查引用格式时** | Agent 被迫消化逻辑谬误、图表规范等 400 行无关内容 | Agent 只读取对应的 `CITATION_APA7.md` 一个文件 |
+| **维护成本** | 改一处引用规范要在 800 行大文件里翻找 | 直接打开 `references/CITATION_APA7.md` 单独修改 |
+
+**核心思想**：`SKILL.md` 只做"**指挥官**"，告诉 Agent 做事的顺序和在哪里找详细资料；`references/` 里的文件才是"**百科全书**"，Agent 只在需要时才翻开对应的那一页。
+
+## 验证工具
+
+官方提供了 `skills-ref` 引用库来验证你编写的 Skill 是否符合规范：
+
+```bash
+skills-ref validate ./my-skill
+```
+
+该命令会检查：`SKILL.md` 的 YAML 前置元数据是否合法、`name` 是否符合命名规范且与父目录一致等。
+
+> **参考地址：** [skills-ref 验证库（GitHub）](https://github.com/agentskills/agentskills/tree/main/skills-ref)
+> 
+
+# 技能创建方法 (必读)
+
+# [Skills 设计实践流程](https://agentskills.io/skill-creation/best-practices)
+
+## 从真实专业经验出发
+
+Skill 不是凭空编造的，它必须源自**真实的、经过验证的工作经验**。
+
+> **实践是检验真理的唯一标准**
+> 
+
+官方推荐两条路径来提炼 Skill：
+
+### 路径 A：从实操任务中提取
+
+当你亲自（或与 Agent 协同）完成一项复杂任务后，回顾并记录以下四类关键信息：
+
+1. **成功步骤（Steps that worked）**：哪些操作顺序最终跑通了？
+2. **纠偏记录（Corrections you made）**：你在哪里纠正了 Agent 的方向？（如"用库 X 而不是库 Y"、"注意边界情况 Z"）
+3. **输入/输出格式（I/O formats）**：数据进出的样子是什么？
+4. **你提供的上下文（Context you provided）**：哪些项目特有的事实、**惯例或约束是 Agent 本来不知道的**？
+
+### 路径 B：从已有项目资料中综合
+
+不必从零开始。以下已有资料都是 Skill 的绝佳"原料"：
+
+- 内部文档、运维手册、代码风格指南
+- API 规范、Schema 定义、配置文件
+- Code Review 评论和 Issue Tracker（捕捉反复出现的关注点和审查者的期望）
+- Git 提交历史，尤其是补丁和修复记录（通过"实际改了什么"来揭示模式）
+- 真实的故障案例及其解决方案
+
+### 用真实执行来打磨
+
+Skill 写完不是终点。你必须让 Agent **实际跑一遍**，观察它在哪里卡住、在哪里偏离预期，然后迭代修改 `SKILL.md` 的指令。
+
+> 参考：[评估技能输出质量](https://agentskills.io/skill-creation/evaluating-skills)
+> > ## Documentation Index
+> Fetch the complete documentation index at: https://agentskills.io/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# Evaluating skill output quality
+
+> How to test whether your skill produces good outputs using eval-driven iteration.
+
+You wrote a skill, tried it on a prompt, and it seemed to work. But does it work reliably — across varied prompts, in edge cases, better than no skill at all? Running structured evaluations (evals) answers these questions and gives you a feedback loop for improving the skill systematically.
+
+## Designing test cases
+
+A test case has three parts:
+
+* **Prompt**: a realistic user message — the kind of thing someone would actually type.
+* **Expected output**: a human-readable description of what success looks like.
+* **Input files** (optional): files the skill needs to work with.
+
+Store test cases in `evals/evals.json` inside your skill directory:
+
+```json evals/evals.json theme={null}
+{
+  "skill_name": "csv-analyzer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a CSV of monthly sales data in data/sales_2025.csv. Can you find the top 3 months by revenue and make a bar chart?",
+      "expected_output": "A bar chart image showing the top 3 months by revenue, with labeled axes and values.",
+      "files": ["evals/files/sales_2025.csv"]
+    },
+    {
+      "id": 2,
+      "prompt": "there's a csv in my downloads called customers.csv, some rows have missing emails — can you clean it up and tell me how many were missing?",
+      "expected_output": "A cleaned CSV with missing emails handled, plus a count of how many were missing.",
+      "files": ["evals/files/customers.csv"]
+    }
+  ]
+}
+```
+
+**Tips for writing good test prompts:**
+
+* **Start with 2-3 test cases.** Don't over-invest before you've seen your first round of results. You can expand the set later.
+* **Vary the prompts.** Use different phrasings, levels of detail, and formality. Some prompts should be casual ("hey can you clean up this csv"), others precise ("Parse the CSV at data/input.csv, drop rows where column B is null, and write the result to data/output.csv").
+* **Cover edge cases.** Include at least one prompt that tests a boundary condition — a malformed input, an unusual request, or a case where the skill's instructions might be ambiguous.
+* **Use realistic context.** Real users mention file paths, column names, and personal context. Prompts like "process this data" are too vague to test anything useful.
+
+Don't worry about defining specific pass/fail checks yet — just the prompts and expected outputs. You'll add detailed checks (called assertions) after you see what the first run produces.
+
+## Running evals
+
+The core pattern is to run each test case twice: once **with the skill** and once **without it** (or with a previous version). This gives you a baseline to compare against.
+
+### Workspace structure
+
+Organize eval results in a workspace directory alongside your skill directory. Each pass through the full eval loop gets its own `iteration-N/` directory. Within that, each test case gets an eval directory with `with_skill/` and `without_skill/` subdirectories:
+
+```
+csv-analyzer/
+├── SKILL.md
+└── evals/
+    └── evals.json
+csv-analyzer-workspace/
+└── iteration-1/
+    ├── eval-top-months-chart/
+    │   ├── with_skill/
+    │   │   ├── outputs/       # Files produced by the run
+    │   │   ├── timing.json    # Tokens and duration
+    │   │   └── grading.json   # Assertion results
+    │   └── without_skill/
+    │       ├── outputs/
+    │       ├── timing.json
+    │       └── grading.json
+    ├── eval-clean-missing-emails/
+    │   ├── with_skill/
+    │   │   ├── outputs/
+    │   │   ├── timing.json
+    │   │   └── grading.json
+    │   └── without_skill/
+    │       ├── outputs/
+    │       ├── timing.json
+    │       └── grading.json
+    └── benchmark.json         # Aggregated statistics
+```
+
+The main file you author by hand is `evals/evals.json`. The other JSON files (`grading.json`, `timing.json`, `benchmark.json`) are produced during the eval process — by the agent, by scripts, or by you.
+
+### Spawning runs
+
+Each eval run should start with a clean context — no leftover state from previous runs or from the skill development process. This ensures the agent follows only what the `SKILL.md` tells it. In environments that support subagents (Claude Code, for example), this isolation comes naturally: each child task starts fresh. Without subagents, use a separate session for each run.
+
+For each run, provide:
+
+* The skill path (or no skill for the baseline)
+* The test prompt
+* Any input files
+* The output directory
+
+Here's an example of the instructions you'd give the agent for a single with-skill run:
+
+```
+Execute this task:
+- Skill path: /path/to/csv-analyzer
+- Task: I have a CSV of monthly sales data in data/sales_2025.csv.
+  Can you find the top 3 months by revenue and make a bar chart?
+- Input files: evals/files/sales_2025.csv
+- Save outputs to: csv-analyzer-workspace/iteration-1/eval-top-months-chart/with_skill/outputs/
+```
+
+For the baseline, use the same prompt but without the skill path, saving to `without_skill/outputs/`.
+
+When improving an existing skill, use the previous version as your baseline. Snapshot it before editing (`cp -r <skill-path> <workspace>/skill-snapshot/`), point the baseline run at the snapshot, and save to `old_skill/outputs/` instead of `without_skill/`.
+
+### Capturing timing data
+
+Timing data lets you compare how much time and tokens the skill costs relative to the baseline — a skill that dramatically improves output quality but triples token usage is a different trade-off than one that's both better and cheaper. When each run completes, record the token count and duration:
+
+```json timing.json theme={null}
+{
+  "total_tokens": 84852,
+  "duration_ms": 23332
+}
+```
+
+<Tip>
+  In Claude Code, when a subagent task finishes, the [task completion notification](https://platform.claude.com/docs/en/agent-sdk/typescript#sdk-task-notification-message) includes `total_tokens` and `duration_ms`. Save these values immediately — they aren't persisted anywhere else.
+</Tip>
+
+## Writing assertions
+
+Assertions are verifiable statements about what the output should contain or achieve. Add them after you see your first round of outputs — you often don't know what "good" looks like until the skill has run.
+
+Good assertions:
+
+* `"The output file is valid JSON"` — programmatically verifiable.
+* `"The bar chart has labeled axes"` — specific and observable.
+* `"The report includes at least 3 recommendations"` — countable.
+
+Weak assertions:
+
+* `"The output is good"` — too vague to grade.
+* `"The output uses exactly the phrase 'Total Revenue: $X'"` — too brittle; correct output with different wording would fail.
+
+Not everything needs an assertion. Some qualities — writing style, visual design, whether the output "feels right" — are hard to decompose into pass/fail checks. These are better caught during [human review](#reviewing-results-with-a-human). Reserve assertions for things that can be checked objectively.
+
+Add assertions to each test case in `evals/evals.json`:
+
+```json evals/evals.json highlight={9-14} theme={null}
+{
+  "skill_name": "csv-analyzer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a CSV of monthly sales data in data/sales_2025.csv. Can you find the top 3 months by revenue and make a bar chart?",
+      "expected_output": "A bar chart image showing the top 3 months by revenue, with labeled axes and values.",
+      "files": ["evals/files/sales_2025.csv"],
+      "assertions": [
+        "The output includes a bar chart image file",
+        "The chart shows exactly 3 months",
+        "Both axes are labeled",
+        "The chart title or caption mentions revenue"
+      ]
+    }
+  ]
+}
+```
+
+## Grading outputs
+
+Grading means evaluating each assertion against the actual outputs and recording **PASS** or **FAIL** with specific evidence. The evidence should quote or reference the output, not just state an opinion.
+
+The simplest approach is to give the outputs and assertions to an LLM and ask it to evaluate each one. For assertions that can be checked by code (valid JSON, correct row count, file exists with expected dimensions), use a verification script — scripts are more reliable than LLM judgment for mechanical checks and reusable across iterations.
+
+```json grading.json theme={null}
+{
+  "assertion_results": [
+    {
+      "text": "The output includes a bar chart image file",
+      "passed": true,
+      "evidence": "Found chart.png (45KB) in outputs directory"
+    },
+    {
+      "text": "The chart shows exactly 3 months",
+      "passed": true,
+      "evidence": "Chart displays bars for March, July, and November"
+    },
+    {
+      "text": "Both axes are labeled",
+      "passed": false,
+      "evidence": "Y-axis is labeled 'Revenue ($)' but X-axis has no label"
+    },
+    {
+      "text": "The chart title or caption mentions revenue",
+      "passed": true,
+      "evidence": "Chart title reads 'Top 3 Months by Revenue'"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}
+```
+
+### Grading principles
+
+* **Require concrete evidence for a PASS.** Don't give the benefit of the doubt. If an assertion says "includes a summary" and the output has a section titled "Summary" with one vague sentence, that's a FAIL — the label is there but the substance isn't.
+* **Review the assertions themselves, not just the results.** While grading, notice when assertions are too easy (always pass regardless of skill quality), too hard (always fail even when the output is good), or unverifiable (can't be checked from the output alone). Fix these for the next iteration.
+
+<Tip>
+  For comparing two skill versions, try **blind comparison**: present both outputs to an LLM judge without revealing which came from which version. The judge scores holistic qualities — organization, formatting, usability, polish — on its own rubric, free from bias about which version "should" be better. This complements assertion grading: two outputs might both pass all assertions but differ significantly in overall quality.
+</Tip>
+
+## Aggregating results
+
+Once every run in the iteration is graded, compute summary statistics per configuration and save them to `benchmark.json` alongside the eval directories (e.g., `csv-analyzer-workspace/iteration-1/benchmark.json`):
+
+```json benchmark.json theme={null}
+{
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": { "mean": 0.83, "stddev": 0.06 },
+      "time_seconds": { "mean": 45.0, "stddev": 12.0 },
+      "tokens": { "mean": 3800, "stddev": 400 }
+    },
+    "without_skill": {
+      "pass_rate": { "mean": 0.33, "stddev": 0.10 },
+      "time_seconds": { "mean": 32.0, "stddev": 8.0 },
+      "tokens": { "mean": 2100, "stddev": 300 }
+    },
+    "delta": {
+      "pass_rate": 0.50,
+      "time_seconds": 13.0,
+      "tokens": 1700
+    }
+  }
+}
+```
+
+The `delta` tells you what the skill costs (more time, more tokens) and what it buys (higher pass rate). A skill that adds 13 seconds but improves pass rate by 50 percentage points is probably worth it. A skill that doubles token usage for a 2-point improvement might not be.
+
+<Note>
+  Standard deviation (`stddev`) is only meaningful with multiple runs per eval. In early iterations with just 2-3 test cases and single runs, focus on the raw pass counts and the delta — the statistical measures become useful as you expand the test set and run each eval multiple times.
+</Note>
+
+## Analyzing patterns
+
+Aggregate statistics can hide important patterns. After computing the benchmarks:
+
+* **Remove or replace assertions that always pass in both configurations.** These don't tell you anything useful — the model handles them fine without the skill. They inflate the with-skill pass rate without reflecting actual skill value.
+* **Investigate assertions that always fail in both configurations.** Either the assertion is broken (asking for something the model can't do), the test case is too hard, or the assertion is checking for the wrong thing. Fix these before the next iteration.
+* **Study assertions that pass with the skill but fail without.** This is where the skill is clearly adding value. Understand *why* — which instructions or scripts made the difference?
+* **Tighten instructions when results are inconsistent across runs.** If the same eval passes sometimes and fails others (reflected as high `stddev` in the benchmark), the eval may be flaky (sensitive to model randomness), or the skill's instructions may be ambiguous enough that the model interprets them differently each time. Add examples or more specific guidance to reduce ambiguity.
+* **Check time and token outliers.** If one eval takes 3x longer than the others, read its execution transcript (the full log of what the model did during the run) to find the bottleneck.
+
+## Reviewing results with a human
+
+Assertion grading and pattern analysis catch a lot, but they only check what you thought to write assertions for. A human reviewer brings a fresh perspective — catching issues you didn't anticipate, noticing when the output is technically correct but misses the point, or spotting problems that are hard to express as pass/fail checks. For each test case, review the actual outputs alongside the grades.
+
+Record specific feedback for each test case and save it in the workspace (e.g., as a `feedback.json` alongside the eval directories):
+
+```json feedback.json theme={null}
+{
+  "eval-top-months-chart": "The chart is missing axis labels and the months are in alphabetical order instead of chronological.",
+  "eval-clean-missing-emails": ""
+}
+```
+
+"The chart is missing axis labels" is actionable; "looks bad" is not. Empty feedback means the output looked fine — that test case passed your review. During the [iteration step](#iterating-on-the-skill), focus your improvements on the test cases where you had specific complaints.
+
+## Iterating on the skill
+
+After grading and reviewing, you have three sources of signal:
+
+* **Failed assertions** point to specific gaps — a missing step, an unclear instruction, or a case the skill doesn't handle.
+* **Human feedback** points to broader quality issues — the approach was wrong, the output was poorly structured, or the skill produced a technically correct but unhelpful result.
+* **Execution transcripts** reveal *why* things went wrong. If the agent ignored an instruction, the instruction may be ambiguous. If the agent spent time on unproductive steps, those instructions may need to be simplified or removed.
+
+The most effective way to turn these signals into skill improvements is to give all three — along with the current `SKILL.md` — to an LLM and ask it to propose changes. The LLM can synthesize patterns across failed assertions, reviewer complaints, and transcript behavior that would be tedious to connect manually. When prompting the LLM, include these guidelines:
+
+* **Generalize from feedback.** The skill will be used across many different prompts, not just the test cases. Fixes should address underlying issues broadly rather than adding narrow patches for specific examples.
+* **Keep the skill lean.** Fewer, better instructions often outperform exhaustive rules. If transcripts show wasted work (unnecessary validation, unneeded intermediate outputs), remove those instructions. If pass rates plateau despite adding more rules, the skill may be over-constrained — try removing instructions and see if results hold or improve.
+* **Explain the why.** Reasoning-based instructions ("Do X because Y tends to cause Z") work better than rigid directives ("ALWAYS do X, NEVER do Y"). Models follow instructions more reliably when they understand the purpose.
+* **Bundle repeated work.** If every test run independently wrote a similar helper script (a chart builder, a data parser), that's a signal to bundle the script into the skill's `scripts/` directory. See [Using scripts](/skill-creation/using-scripts) for how to do this.
+
+### The loop
+
+1. Give the eval signals and current `SKILL.md` to an LLM and ask it to propose improvements.
+2. Review and apply the changes.
+3. Rerun all test cases in a new `iteration-<N+1>/` directory.
+4. Grade and aggregate the new results.
+5. Review with a human. Repeat.
+
+Stop when you're satisfied with the results, feedback is consistently empty, or you're no longer seeing meaningful improvement between iterations.
+
+<Tip>
+  The [`skill-creator`](https://github.com/anthropics/skills/tree/main/skills/skill-creator) Skill automates much of this workflow — running evals, grading assertions, aggregating benchmarks, and presenting results for human review.
+</Tip>
+
+
+Built with [Mintlify](https://mintlify.com).
+
+## 精打细算地使用上下文
+
+`SKILL.md` 的每一行都在消耗 Agent 宝贵的上下文窗口（Context Window）。写得越精炼，Agent 的注意力越集中、推理越精准。
+
+### 原则 1：只写 Agent 不知道的，省掉它已经知道的
+
+Agent（大模型）天生就懂很多通用知识。**你不需要在 Skill 里教它"什么是 PDF"。**
+
+```markdown
+<!-- ❌ 冗余：Agent 已经知道什么是 PDF -->
+## 提取 PDF 文本
+PDF（Portable Document Format）是一种常见的文件格式，包含文本、图片……
+要提取文本，你需要用一个库。推荐 pdfplumber……
+
+<!-- ✅ 精炼：直接告诉它"不知道的" -->
+## 提取 PDF 文本
+使用 pdfplumber 进行文本提取。对于扫描件，降级使用 pdf2image + pytesseract 做 OCR。
+```
+
+### 原则 2：设计内聚的单元
+
+一个 Skill 应当聚焦于**一个连贯的能力域**。
+
+如果你发现一个 Skill 同时在教 Agent 做数据清洗、写报告、还要发邮件，那你应该把它拆成三个独立的 Skill。
+
+### 原则 3：瞄准适度的细节量
+
+- **太粗**：Agent 缺乏指导，开始"自由发挥"（幻觉）。
+- **太细**：挤占上下文空间，Agent 反而注意力分散。
+- **刚好**：提供**关键步骤**、**决策点**和**边界情况**即可。
+
+### 原则 4：大型 Skill 必须用渐进式披露拆解
+
+当 Skill 内容超过 500 行时，将详细资料移至 `references/` 目录，在 `SKILL.md` 中只保留索引和导航。
+
+> 参考：[渐进式披露规范](https://agentskills.io/specification#progressive-disclosure)
+> 
+
+## 校准控制力度
+
+写 Skill 不是"管得越死越好"。核心原则是：**控制力度应与出错代价成正比。**
+
+### 原则 1：控制精度匹配脆弱性
+
+- 低风险操作（如代码审查）→ 给方向性指南，让 Agent 灵活判断：
+
+```markdown
+## 代码审查流程
+1. 检查所有数据库查询是否存在 SQL 注入（使用参数化查询）
+2. 验证每个端点是否有身份认证检查
+3. 排查并发代码路径中的竞态条件
+4. 确认错误信息不会泄露内部细节
+```
+
+- 高风险操作（如数据库迁移）→ 给精确命令，禁止自由发挥：
+
+```markdown
+## 数据库迁移
+严格按以下命令执行：
+python scripts/migrate.py --verify --backup
+不要修改命令参数或添加额外标志。
+```
+
+### 原则 2：提供默认方案，而非选项菜单
+
+```markdown
+<!-- ❌ 选择困难症 -->
+你可以用 pypdf、pdfplumber、PyMuPDF 或 pdf2image……
+
+<!-- ✅ 明确默认值 + 兜底方案 -->
+使用 pdfplumber 进行文本提取。
+对于需要 OCR 的扫描件 PDF，改用 pdf2image + pytesseract。
+```
+
+### 原则 3：教方法，而非教答案
+
+```markdown
+<!-- ❌ 只能用于一个特定查询任务 -->
+将 orders 表与 customers 表通过 customer_id 连接，
+筛选 region = 'EMEA'，然后对 amount 列求和。
+
+<!-- ✅ 可复用的通用方法 -->
+1. 读取 references/schema.yaml 中的表结构，找到相关表
+2. 通过 _id 外键约定进行表连接
+3. 将用户请求中的筛选条件作为 WHERE 子句
+4. 按需对数值列进行聚合，并格式化为 Markdown 表格
+```
+
+## 高效指令的设计模式
+
+### 模式 1：输出模板
+
+当你需要 Agent 产出特定格式的报告时，直接在 `SKILL.md` 中嵌入模板，或引用 `assets/` 中的模板文件：
+
+```markdown
+## 报告结构
+使用以下模板，根据具体分析调整各部分内容：
+
+# [分析标题]
+
+## 摘要
+[用一段文字概述核心发现]
+
+## 关键发现
+- 发现 1 及支撑数据
+- 发现 2 及支撑数据
+
+## 建议
+1. 具体可执行的建议
+2. 具体可执行的建议
+```
+
+### 模式 2：多步工作流清单
+
+用 **Checkbox** 清单让 Agent 逐步打勾，防止跳步：
+
+```markdown
+## 表单处理工作流
+进度追踪：
+- [ ] 第 1 步：分析表单（运行 scripts/analyze_form.py）
+- [ ] 第 2 步：创建字段映射（编辑 fields.json）
+- [ ] 第 3 步：验证映射（运行 scripts/validate_fields.py）
+- [ ] 第 4 步：填写表单（运行 scripts/fill_form.py）
+- [ ] 第 5 步：校验输出（运行 scripts/verify_output.py）
+```
+
+### 模式 3：验证循环
+
+让 Agent 在继续下一步之前，**必须先通过校验**：
+
+```markdown
+## 编辑工作流
+1. 执行编辑
+2. 运行校验：python scripts/validate.py output/
+3. 如果校验失败：
+   - 查看报错信息
+   - 修复问题
+   - 重新运行校验
+4. 只有校验通过后才能继续
+```
+
+### 模式 4：计划-验证-执行
+
+这是验证循环的升级版，适用于不可逆操作。在真正执行之前，先生成一份"计划"供人类或脚本审核：
+
+```markdown
+## PDF 表单填写
+1. 提取表单字段：python scripts/analyze_form.py input.pdf → form_fields.json
+2. 创建 field_values.json，将每个字段名映射到其预期值
+3. 验证：python scripts/validate_fields.py form_fields.json field_values.json
+   （检查字段名是否存在、类型是否兼容、必填项是否缺失）
+4. 如果验证失败，修改 field_values.json 并重新验证
+5. 填写表单：python scripts/fill_form.py input.pdf field_values.json output.pdf
+```
+
+### 模式 5：打包可复用脚本
+
+将 Skill 中反复使用的操作封装为 `scripts/` 目录下的独立脚本，而不是在 `SKILL.md` 中内联大段代码。这样做的好处：
+
+- 脚本有**确定性**（不依赖大模型的生成质量）
+- 脚本可以独立测试和迭代
+- 减少 `SKILL.md` 的体量
+
+> 参考：[在 Skill 中使用脚本](https://agentskills.io/skill-creation/using-scripts) | [迭代与评估技能](https://agentskills.io/skill-creation/evaluating-skills)
+> 
+
+# [优化技能描述](https://agentskills.io/skill-creation/optimizing-descriptions)
+
+**`description` 字段是 Skill 能否被正确激活的生命线。**
+
+如果描述写得不好，Agent 要么"该用的时候不用"，要么"不该用的时候乱用"。
+
+## 从基本规则了解 `description`
+
+### 触发机制回顾
+
+在渐进式披露机制下：
+
+1. Agent 启动时，**只加载**每个 Skill 的 `name` 和 `description`
+2. 当用户输入的意图与某个 Skill 的 `description` 匹配时，Agent 才激活该 Skill 并加载完整的 `SKILL.md`
+
+**因此，`description` 本质上是 Agent 的触发器（Trigger）**
+
+它决定了 Skill 在何时被唤醒。
+
+### 编写高效描述的四条原则
+
+1. **用祈使句**：用"**当**用户……时使用此技能"而非"此技能用于……"。Agent 在做的是"决定要不要行动"，所以要告诉它**何时行动**。
+2. **聚焦用户意图，而非实现细节**：描述用户想达成什么目标，而不是技能的内部机制。**Agent 匹配的是用户的需求**。
+    
+    > SKills目的是需求的稳定实现
+    > 
+3. **宁可"强势"一些**：明确列出技能适用的场景，包括用户没有直接点名相关领域的隐性情况。例如：`"即使用户没有明确提到'CSV'或'分析'也应使用"`。
+4. **保持简洁**：几句话到一小段即可，覆盖技能的适用范围，同时不要让 Agent 在加载多个 Skill 描述时上下文膨胀。硬性上限为 **1024 个字符**。
+
+## 设计触发评估用例
+
+要系统性地测试 `description` 的质量，需要构建**正反两类测试用例**：
+
+```json
+[
+  {
+    "query": "我有一个 ~/data/q4_results.xlsx 的表格，C 列是收入，D 列是支出——能加一列利润率并把低于 10% 的项高亮吗？",
+    "should_trigger": true
+  },
+  {
+    "query": "怎么最快把这个 JSON 文件转成 YAML？",
+    "should_trigger": false
+  }
+]
+```
+
+### 正向用例的设计要点
+
+- **措辞多样性**：有正式的、有口语的、有带错别字或缩写的
+- **显隐结合**：有的直接点名领域（"分析这个 CSV"），有的间接描述需求（"老板要我把这个数据文件做成图表"）
+- **详略混搭**：从简短的一句话到附带文件路径、列名、背景故事的长消息
+- **复杂度分级**：单步任务和多步工作流都要覆盖
+
+### 反向用例的设计要点
+
+**关键：反向用例不能太简单，要有迷惑性！上难题才能区分学生质量**
+
+- ❌ 太简单（毫无价值）：`"写一个斐波那契函数"` — 完全无关，测不出任何东西
+- ✅ 有迷惑性（高价值）：`"我需要更新 Excel 预算表里的公式"` — 与"表格""数据"有关键词重叠，但实际需求是 Excel 编辑而非 CSV 分析
+- ✅ 有迷惑性（高价值）：`"写一个 Python 脚本读 CSV 然后把每行上传到 Postgres"` — 涉及 CSV，但任务本质是数据库 ETL
+
+### 增加真实感的技巧
+
+- 包含文件路径（如 `~/Downloads/report_final_v2.xlsx`）
+- 加入个人上下文（"我主管让我……"）
+- 带上具体细节（列名、公司名、数据值）
+- 使用口语化表达、缩写，偶尔有错别字
+
+## 基于数据集优化 `description`
+
+### 测试触发率
+
+编写好正反用例后，需要**多次运行**以得到统计性的触发率（因为大模型输出具有随机性）。官方建议每个 query 至少跑 **3 次**，计算触发率。
+
+判定标准：
+
+- `should_trigger: true` 的用例被激活 → ✅ 通过
+- `should_trigger: false` 的用例未被激活 → ✅ 通过
+- 反之 → ❌ 失败
+
+### 避免过拟合：训练集/验证集拆分
+
+将你的测试用例拆为两组：
+
+- **训练集（~60%）**：用来发现问题并指导修改
+- **验证集（~40%）**：留作旁观，仅用于检验改进是否具有泛化能力
+
+> 修改 `description` 时，**只看训练集的失败案例**。验证集的结果只用于最终选择最佳版本，绝不用于指导修改过程。
+> 
+
+### 优化循环
+
+1. 用训练集和验证集分别评估当前 `description` 的触发准确率
+2. 分析训练集中的失败案例：
+    - 哪些**应该触发的没有触发**？→ 描述可能**太窄**，需要拓宽适用范围
+    - 哪些**不该触发的误触发了**？→ 描述可能**太宽**，需要增加边界说明（"此技能不适用于……"）
+3. 修改 `description`，注意：
+    - **不要直接抄失败 query 中的关键词，**那是过拟合。应该找到这些 query 代表的通用类别或概念
+    - 如果多轮微调后停滞不前，尝试**换一种完全不同的句式结构**，而非继续修修补补
+    - 确保修改后不超过 **1024 字符**上限（描述在优化过程中往往越改越长）
+4. 重复步骤 1-3，直到训练集全部通过或不再有显著改善
+5. **按验证集的通过率选择最佳版本**——注意：最好的版本未必是最后一个，早期的迭代版本可能验证集通过率更高
+
+> **自动化工具参考**：[skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) — Anthropic 官方提供的 Skill 自动创建/优化工具
+> 
+
+### 应用优化结果
+
+优化完成后：
+
+1. 将最佳 `description` 更新到 `SKILL.md` 的 YAML frontmatter 中
+2. 确认长度不超过 1024 字符
+3. 用 **5-10 条全新的 query**（从未出现在训练/验证集中）做最终的冒烟测试
+    
+    ```yaml
+    # 优化前
+    description: 处理 CSV 文件。
+    
+    # 优化后
+    description: >
+      分析 CSV 及表格数据文件——计算汇总统计、添加派生列、生成图表、清洗脏数据。
+      当用户有 CSV、TSV 或 Excel 文件并希望探索、转换或可视化数据时使用此技能，
+      即使用户没有明确提及"CSV"或"分析"。
+    ```
+    
+
+# [评估技能输出质量](https://agentskills.io/skill-creation/evaluating-skills)
+
+Skill 写出来之后，怎么知道它"好不好用"？不能靠感觉，要靠 **系统化的评估（Eval）**。
+
+要基于完整的**"写用例 → 跑测试 → 打分 → 分析 → 迭代"**流程实现Skills的评估
+
+## 第一步：设计测试用例
+
+每个测试用例包含三个要素：
+
+- **Prompt（提示词）**：一条真实的用户消息——用户实际会怎么说
+- **Expected Output（预期输出）**：用人话描述"成功长什么样"
+- **Input Files（输入文件）**：技能需要处理的文件（可选）
+
+```json
+{
+  "skill_name": "csv-analyzer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我有一个 data/sales_2025.csv 的月度销售数据，能找出收入最高的 3 个月并生成柱状图吗？",
+      "expected_output": "一张柱状图，显示收入最高的 3 个月，坐标轴有标签，标注了数值。",
+      "files": ["evals/files/sales_2025.csv"]
+    },
+    {
+      "id": 2,
+      "prompt": "我下载目录里有个 customers.csv，有些行的邮箱字段是空的——能清洗一下并告诉我有多少条缺失吗？",
+      "expected_output": "一份清洗后的 CSV（缺失邮箱已处理），外加缺失数量统计。",
+      "files": ["evals/files/customers.csv"]
+    }
+  ]
+}
+```
+
+### 设计测试用例的原则
+
+- **从 2-3 个用例起步**，不要在看到第一轮结果之前过度投入，后续再扩展
+- **变换提示词风格**：有的随意（"帮我清一下这个 csv"），有的精确（"解析 data/input.csv，删除 B 列为空的行，写入 data/output.csv"）
+- **覆盖边界情况**：至少包含一个测试异常输入、罕见请求或指令模糊的用例
+- **使用真实上下文**：包含文件路径、列名、个人背景，像 `"处理这个数据"` 这种过于笼统的 prompt 测不出任何东西
+
+## 第二步：运行评估
+
+核心思路：对**同一组 prompt**，分别在"有 Skill"和"无 Skill"两种条件下运行，形成**对照实验**。
+
+### 工作区目录结构
+
+```
+csv-analyzer-workspace/
+└── iteration-1/
+    ├── eval-top-months-chart/
+    │   ├── with_skill/          # 有 Skill 的运行结果
+    │   │   ├── outputs/         # 产出文件
+    │   │   ├── timing.json      # Token 消耗和耗时
+    │   │   └── grading.json     # 断言评分结果
+    │   └── without_skill/       # 无 Skill 的基线对照
+    │       ├── outputs/
+    │       ├── timing.json
+    │       └── grading.json
+    ├── eval-clean-missing-emails/
+    │   ├── with_skill/
+    │   └── without_skill/
+    └── benchmark.json           # 汇总统计
+```
+
+### 记录性能数据
+
+每次运行后记录 Token 消耗和耗时：
+
+```json
+{
+  "total_tokens": 84852,
+  "duration_ms": 23332
+}
+```
+
+这些数据用于后续分析 Skill 带来的"质量提升"是否以"性能下降"为代价。
+
+## 第三步：编写断言
+
+断言是将"预期输出"拆解为**可验证的具体条件**。**好的断言必须具体、可观测**：
+
+- ✅ `"输出文件是合法的 JSON"` — 可编程验证
+- ✅ `"柱状图有坐标轴标签"` — 具体且可观测
+- ✅ `"报告包含至少 3 条建议"` — 可量化
+- ❌ `"输出质量好"` — 太模糊，无法评分
+- ❌ `"输出必须包含'总收入: $X'这个精确表述"` — 太脆弱，正确但措辞不同的输出会被判为失败
+
+```json
+{
+  "assertions": [
+    "输出包含一个柱状图文件",
+    "图表恰好显示 3 个月",
+    "两条坐标轴都有标签",
+    "图表标题或说明中提到了收入"
+  ]
+}
+```
+
+## 第四步：评分
+
+逐个断言检查输出，生成评分报告：
+
+```json
+{
+  "assertion_results": [
+    {
+      "text": "输出包含一个柱状图文件",
+      "passed": true,
+      "evidence": "在 outputs 目录下发现 chart.png（45KB）"
+    },
+    {
+      "text": "两条坐标轴都有标签",
+      "passed": false,
+      "evidence": "Y 轴标注了 'Revenue ($)'，但 X 轴没有标签"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}
+```
+
+### 评分原则
+
+- **要求有具体证据才能判 PASS**：不能"给面子"。如果断言要求"包含摘要"，而输出只有一个标题为"摘要"的空段落——那是 FAIL
+- **同时审视断言本身**：在评分过程中，注意识别"太容易"的断言（有没有 Skill 都通过）、"太难"的断言（有 Skill 也总是失败）、以及"不可验证"的断言（从输出中无法检查），并在下一轮迭代中修正
+
+## 第五步：汇总与分析
+
+将所有评估结果汇总为 `benchmark.json`：
+
+```json
+{
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": { "mean": 0.83, "stddev": 0.06 },
+      "time_seconds": { "mean": 45.0, "stddev": 12.0 },
+      "tokens": { "mean": 3800, "stddev": 400 }
+    },
+    "without_skill": {
+      "pass_rate": { "mean": 0.33, "stddev": 0.10 },
+      "time_seconds": { "mean": 32.0, "stddev": 8.0 },
+      "tokens": { "mean": 2100, "stddev": 300 }
+    },
+    "delta": {
+      "pass_rate": 0.50,
+      "time_seconds": 13.0,
+      "tokens": 1700
+    }
+  }
+}
+```
+
+### 分析模式
+
+- **删除或替换"双通过"的断言**：两种配置都总是通过的断言没有区分度，它们虚增了有 Skill 的通过率
+- **调查"双失败"的断言**：要么断言本身有问题，要么用例太难，要么检查的方向不对
+- **研究"有 Skill 才通过"的断言**：这些是 Skill 真正创造价值的地方——分析哪些指令或脚本起了关键作用
+- **当结果跨运行不一致时收紧指令**：高 `stddev` 说明指令可能有歧义，Agent 每次理解不同，需要补充示例或更明确的指导
+- **检查时间和 Token 异常值**：如果某个 eval 耗时是其他的 3 倍，读它的执行日志找到瓶颈
+
+### 人工审查
+
+自动评分无法捕捉所有质量问题。让人类审查员浏览输出并写反馈：
+
+```json
+{
+  "eval-top-months-chart": "图表缺少坐标轴标签，月份按字母顺序排列而非时间顺序。",
+  "eval-clean-missing-emails": ""
+}
+```
+
+空字符串表示"该项无需额外反馈"。
+
+## 第六步：迭代改进 Skill
+
+三个信号源指导你修改 `SKILL.md`：
+
+1. **失败的断言** → 指向具体缺陷：某个步骤遗漏、某条指令不清、某个情况没覆盖
+2. **人工反馈** → 指向宏观质量问题：方法方向错误、输出结构混乱、技术正确但不实用
+3. **执行日志** → 揭示"为什么出错"：如果 Agent 忽略了指令，说明指令可能有歧义；如果 Agent 在无用步骤上浪费时间，说明那些指令应该被简化或删除
+
+### 迭代修改的原则
+
+- **从反馈中提炼通用改进**：Skill 会被用于各种各样的 prompt，不仅仅是测试用例。修复应解决根本问题，而非为特定样例打补丁
+- **保持精简**：更少但更好的指令通常优于面面俱到的规则。如果通过率在不断加规则后趋于平台期，Skill 可能已经**过度约束**了——尝试删除一些指令看看结果是否保持或改善
+- **解释"为什么"**：带推理的指令（"做 X 是因为 Y 容易导致 Z"）比刚性指令（"必须做 X，绝不做 Y"）效果更好。模型在理解目的后执行更可靠
+- **打包重复性工作**：如果每次运行 Agent 都独立写了类似的辅助脚本（图表生成器、数据解析器），说明应该把它封装到 `scripts/` 目录中
+
+### 完整迭代循环
+
+1. 将评估信号和当前 `SKILL.md` 交给 LLM，让它提出改进方案
+2. 审查并应用修改
+3. 在新的 `iteration-<N+1>/` 目录中重新运行所有测试用例
+4. 评分并汇总新一轮结果
+5. 人工审查。重复以上步骤
+
+> **自动化工具**：[skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) 可以辅助自动化这个迭代循环
+> 
+
+# [在 Skill 中使用脚本](https://agentskills.io/skill-creation/using-scripts)
+
+脚本是 Skill 的"确定性引擎"。大模型擅长推理和编排，但对于**格式转换、数据校验、文件处理**这类有明确逻辑的操作，预写好的脚本比让 Agent 现场生成代码更可靠、更快、更可复现。
+
+## 一次性命令
+
+对于简单的工具调用，不必打包成 `scripts/` 目录下的文件，直接在 `SKILL.md` 中用**包管理器运行器**即可：
+
+| 运行器 | 生态 | 示例 |
+| --- | --- | --- |
+| `uvx` | Python（推荐） | `uvx ruff@0.8.0 check .` |
+| `pipx` | Python（备选） | `pipx run 'black==24.10.0' .` |
+| `npx` | Node.js | `npx eslint@9 --fix .` |
+| `bunx` | Bun | `bunx create-vite@6 my-app` |
+| `deno run` | Deno | `deno run npm:eslint@9 -- --fix .` |
+| `go run` | Go | `go run golang.org/x/tools/cmd/goimports@v0.28.0 .` |
+
+### 使用一次性命令的注意事项
+
+- **锁定版本**（如 `npx eslint@9.0.0`），确保行为可复现
+- 在 `SKILL.md` 中**声明前置条件**（如"需要 Node.js 18+"），或使用 `compatibility` 字段
+- 当命令**复杂到难以一次写对**时，应转为 `scripts/` 中的独立脚本
+
+## 在 SKILL.md 中引用脚本
+
+两种引用方式：
+
+**列清单**：让 Agent 知道有哪些工具可用
+
+```markdown
+## 可用脚本
+- **`scripts/validate.sh`** — 校验配置文件
+- **`scripts/process.py`** — 处理输入数据
+```
+
+**嵌入工作流**：在步骤中直接调用
+
+```markdown
+## 工作流
+1. 运行校验脚本：
+   bash scripts/validate.sh "$INPUT_FILE"
+2. 处理结果：
+   python3 scripts/process.py --input results.json
+```
+
+## 自包含脚本
+
+核心理念：**脚本自身声明依赖，运行时自动安装**，无需事先配置环境。
+
+### Python：PEP 723 内联元数据
+
+```python
+# /// script
+# dependencies = [
+#     "beautifulsoup4",
+# ]
+# ///
+from bs4 import BeautifulSoup
+
+html = '<html><body><h1>Welcome</h1><p class="info">This is a test.</p></body></html>'
+print(BeautifulSoup(html, "html.parser").select_one("p.info").get_text())
+```
+
+运行方式：`uv run scripts/extract.py`（uv 自动读取内联依赖并安装）
+
+**版本锁定技巧**：
+
+- 用 PEP 508 语法锁定版本：`"beautifulsoup4>=4.12,<5"`
+- 用 `requires-python` 约束 Python 版本
+- 用 `uv lock --script` 生成锁文件实现完全可复现
+
+### Deno / Bun / Ruby
+
+各语言都有类似的"自包含"机制：
+
+- **Deno**：直接在 import 中指定 `npm:cheerio@1.0.0`，运行 `deno run scripts/extract.ts`
+- **Bun**：import 中指定 `cheerio@1.0.0`，运行 `bun run scripts/extract.ts`，无需 `package.json`
+- **Ruby**：使用 `bundler/inline` 内联声明 gem，运行 `ruby scripts/extract.rb`
+
+## 为 Agent 设计脚本的四条铁律
+
+### 铁律 1：禁止交互式提示
+
+Agent 无法手动输入。如果脚本等待用户输入，它会卡死。
+
+```bash
+# ❌ 卡住等输入
+$ python scripts/deploy.py
+Target environment: _
+
+# ✅ 缺参数时给出清晰的错误和用法
+$ python scripts/deploy.py
+Error: --env is required. Options: development, staging, production.
+Usage: python scripts/deploy.py --env staging --tag v1.2.3
+```
+
+### 铁律 2：用 `-help` 自文档化
+
+Agent 可以通过运行 `--help` 来学习脚本的用法：
+
+```
+Usage: scripts/process.py [OPTIONS] INPUT_FILE
+
+处理输入数据并生成汇总报告。
+
+Options:
+  --format FORMAT   输出格式: json, csv, table（默认: json）
+  --output FILE     将输出写入文件而非 stdout
+  --verbose         在 stderr 输出进度
+
+Examples:
+  scripts/process.py data.csv
+  scripts/process.py --format csv --output report.csv data.csv
+```
+
+### 铁律 3：写有用的错误信息
+
+错误信息应包含：**哪里错了 + 合法的选项是什么**
+
+```
+Error: --format must be one of: json, csv, table. Received: "xml"
+```
+
+### 铁律 4：使用结构化输出
+
+Agent 擅长解析 JSON，不擅长解析对齐的表格文本：
+
+```
+# ❌ 空格对齐——解析困难
+NAME          STATUS    CREATED
+my-service    running   2025-01-15
+
+# ✅ JSON——字段边界清晰
+{"name": "my-service", "status": "running", "created": "2025-01-15"}
+```
+
+## 进一步考量
+
+- **幂等性**：Agent 可能会重试命令。**"如果不存在则创建"比"创建，存在则报错"**更安全
+- **输入约束**：对模糊输入应直接报错拒绝，而非猜测。尽量使用枚举和封闭集合
+- **Dry-run 支持**：**对破坏性或有状态的操作**，提供 `-dry-run` 标志让 Agent 预览结果
+- **有意义的退出码**：不同失败类型使用不同的退出码（未找到、参数无效、认证失败），并在 `-help` 中说明
+- **安全默认值**：破坏性操作应要求显式确认标志（`-confirm`、`-force`）
+- **可预测的输出大小**：许多 Agent 框架会自动截断超过阈值（如 10-30K 字符）的输出。如果脚本可能产生大量输出，默认输出摘要或合理限制，并支持 `-offset` 分页；或者要求 Agent 传入 `-output` 指定输出文件
+
+# [为 Agent 客户端添加 Skills 支持](https://agentskills.io/client-implementation/adding-skills-support)  (必读)
+
+如果你是 **Agent 客户端/框架的开发者**，如何让你的 Agent 能够发现、加载并执行 Skill？
+
+## 核心原则：渐进式披露
+
+Skill 系统的设计基于一个核心洞察：**不要一次性把所有 Skill 的完整内容塞进上下文**。
+
+渐进式披露分为两个层次：
+
+| 层次 | 时机 | 加载内容 | Token 成本 |
+| --- | --- | --- | --- |
+| **第一层：目录披露** | Agent 启动时 | 每个 Skill 的 `name` + `description` | 极低（每个 Skill 几十 Token） |
+| **第二层：完整激活** | 匹配到具体任务时 | 完整的 `SKILL.md` 正文 | 中等（按需加载） |
+
+## 步骤一：发现 Skill
+
+### 扫描位置
+
+Agent 客户端应在两个级别扫描 Skill：
+
+- **项目级**（相对于工作目录）：特定项目/仓库专属的 Skill
+    - `<project>/.agents/skills/`（跨客户端通用）
+    - `<project>/.<your-client>/skills/`（客户端专属）
+- **用户级**（相对于 home 目录）：用户所有项目共享的 Skill
+    - `~/.agents/skills/`（跨客户端通用）
+    - `~/.<your-client>/skills/`（客户端专属）
+
+> 例如：Claude Code 的用户级 Skill 位于 `~/.claude/skills/`，同时也会扫描通用的 `~/.agents/skills/`
+> 
+
+### 扫描什么
+
+在上述目录中查找包含 `SKILL.md` 文件的子目录：
+
+```
+~/.agents/skills/
+├── pdf-processing/
+│   ├── SKILL.md         ← 发现！
+│   └── scripts/
+│       └── extract.py
+├── data-analysis/
+│   └── SKILL.md         ← 发现！
+└── README.md            ← 忽略（不是 Skill 目录）
+```
+
+**扫描注意事项**：
+
+- 跳过 `.git/`、`node_modules/` 等不会包含 Skill 的目录
+- 可选择遵守 `.gitignore` 以避免扫描构建产物
+- 设置合理边界（如最大深度 4-6 层，最多 2000 个目录），防止大型目录树中扫描失控
+
+### 处理名称冲突
+
+当项目级和用户级存在同名 Skill 时，**项目级优先**（近者优先原则）。
+
+### 信任考量
+
+Skill 本质上是**注入到 Agent 上下文中的指令**，因此存在安全风险。客户端应：
+
+- 区分"可信来源"（用户自己创建的 Skill）和"不可信来源"（从外部仓库引入的 Skill）
+- 对不可信 Skill 提供审查机制或沙箱隔离
+
+### 云托管与沙箱化 Agent
+
+- **项目级 Skill**：通常最简单——如果 Agent 在克隆的仓库中运行，Skill 随代码一起存在
+- **用户级/组织级 Skill**：沙箱中不存在，需要从外部源注入（克隆配置仓库、通过设置接受 Skill URL、或让用户通过 Web UI 上传）
+- **内置 Skill**：作为静态资产打包在 Agent 部署包中，无需外部获取
+
+## 步骤二：解析 SKILL.md 文件
+
+### Frontmatter 提取
+
+1. 找到文件开头的 `--` 和之后的 `--`
+2. 解析两者之间的 YAML 块，提取 `name` 和 `description`（必需），以及可选字段
+3. 闭合 `--` 之后的内容，trim 后即为 Skill 的正文
+
+### 处理格式错误的 YAML
+
+实际场景中会遇到：
+
+```yaml
+# 技术上不合法的 YAML——冒号破坏了解析
+description: Use this skill when: the user asks about PDFs
+```
+
+客户端应尽量**容错**，而非严格拒绝。
+
+### 宽松校验策略
+
+| 情况 | 处理 |
+| --- | --- |
+| `name` 与父目录名不匹配 | ⚠️ 警告，正常加载 |
+| `name` 超过 64 字符 | ⚠️ 警告，正常加载 |
+| `description` 为空或缺失 | ❌ 跳过该 Skill（description 是触发的生命线），记录错误 |
+| YAML 完全无法解析 | ❌ 跳过该 Skill，记录错误 |
+
+### 存储什么
+
+解析后，为每个 Skill 至少存储三个字段：
+
+- `name`：Skill 标识符
+- `description`：触发描述
+- `location`：`SKILL.md` 文件的绝对路径（用于后续激活时读取）
+
+## 步骤三：向模型披露可用 Skill（Disclosure）
+
+这是渐进式披露的**第一层**：只把 Skill 的"目录信息"注入系统提示词。
+
+## 构建 Skill 目录
+
+将所有已发现的 Skill 拼接为结构化目录：
+
+```xml
+<available_skills>
+  <skill>
+    <name>pdf-processing</name>
+    <description>Extract PDF text, fill forms, merge files. Use when handling PDFs.</description>
+    <location>/home/user/.agents/skills/pdf-processing/SKILL.md</location>
+  </skill>
+  <skill>
+    <name>data-analysis</name>
+    <description>Analyze datasets, generate charts, and create summary reports.</description>
+    <location>/home/user/project/.agents/skills/data-analysis/SKILL.md</location>
+  </skill>
+</available_skills>
+```
+
+> `location` 字段是关键——它告诉模型在激活时去哪里读取完整指令。
+> 
+
+### 放置位置
+
+Skill 目录应作为**系统提示词的一部分**注入，确保模型在每轮对话开始时就知道有哪些 Skill 可用。
+
+### 行为指令
+
+在目录之前或之后附上行为指令，告诉模型如何使用 Skill。两种常见模式：
+
+**读取文件模式**（Agent 有文件读取工具时）：
+
+```
+以下技能为特定任务提供专业指令。当任务匹配某个技能的描述时，
+使用文件读取工具加载该位置的 SKILL.md，然后再开始执行。
+当技能引用相对路径时，将其解析为技能目录的绝对路径。
+```
+
+**专用工具模式**（Agent 有 `activate_skill` 工具时）：
+
+```
+以下技能为特定任务提供专业指令。当任务匹配某个技能的描述时，
+调用 activate_skill 工具并传入技能名称以加载完整指令。
+```
+
+### 过滤
+
+以下情况不应出现在目录中：
+
+- 用户在设置中禁用了该 Skill
+- 权限系统拒绝访问
+- Skill 通过 `disable-model-invocation` 标志禁止了模型自动激活
+
+### 无可用 Skill 时
+
+不注入任何 Skill 相关内容（`<available_skills/>`），避免浪费 Token。
+
+## 步骤四：激活 Skill（Activation）
+
+这是渐进式披露的**第二层**：当模型判断某个 Skill 与当前任务匹配时，加载完整的 `SKILL.md` 正文。
+
+### 模型驱动激活
+
+模型根据步骤三的目录自行判断是否需要激活某个 Skill，然后：
+
+- 使用文件读取工具读取 `SKILL.md`，或
+- 调用 `activate_skill` 工具
+
+使用专用工具的优势：
+
+- 可控制返回内容（如剥离 YAML frontmatter）
+- 可用结构化标签包裹，方便后续上下文管理
+- 可列出随附的资源文件
+- 可执行权限检查或请求用户授权
+- 可追踪激活数据用于分析
+
+### 用户显式激活
+
+允许用户通过 slash 命令或特殊语法直接激活：`/skill-name` 或 `$skill-name`
+
+### 模型接收到什么
+
+激活后，模型接收到 `SKILL.md` 的 **Markdown 正文**（不含 YAML frontmatter）。客户端可选择保留或剥离 frontmatter 中的  `name` 和 `description`（模型已经在目录中见过它们）。
+
+### 结构化包裹
+
+用 XML 标签包裹 Skill 内容，便于后续识别和管理：
+
+```xml
+<skill_content name="pdf-processing">
+# PDF Processing
+
+## When to use this skill
+Use this skill when the user needs to work with PDF files...
+
+[SKILL.md 正文的其余部分]
+
+Skill directory: /home/user/.agents/skills/pdf-processing
+Relative paths in this skill are relative to the skill directory.
+
+<skill_resources>
+  <file>scripts/extract.py</file>
+  <file>scripts/merge.py</file>
+  <file>references/pdf-spec-summary.md</file>
+</skill_resources>
+</skill_content>
+```
+
+这样做的好处：
+
+- 模型能清晰区分 Skill 指令与其他对话内容
+- 框架在上下文压缩时能识别并保护 Skill 内容
+- 随附资源被暴露给模型但不急于加载
+
+### 列出随附资源
+
+在激活时列出 Skill 目录中的 `scripts/`、`references/` 等文件，告知模型这些工具可用，由模型按需读取。
+
+### 权限白名单
+
+`SKILL.md` 中可通过 `allowed-tools` 字段声明需要的工具权限，客户端可据此进行权限管理。
+
+## 步骤五：管理 Skill 上下文
+
+长对话中，上下文窗口会逐渐变满。如何处理已加载的 Skill 内容？
+
+### 保护 Skill 内容不被压缩
+
+当上下文压缩（compaction）算法运行时，Skill 内容应被**优先保留**：
+
+- 将 Skill 工具输出标记为"受保护"，让裁剪算法跳过
+- 利用步骤四中的结构化标签（`<skill_content>`）识别 Skill 内容并在压缩时保留
+
+### 去重激活
+
+如果模型在同一对话中多次激活同一个 Skill，第二次及以后应直接复用已加载的内容，而非重复注入。
+
+### 子 Agent 委派（可选）
+
+对于复杂任务，可将激活的 Skill 连同任务一起委派给子 Agent。子 Agent 在独立的上下文中执行 Skill，完成后将结果返回主 Agent。
+
+这样做的好处：
+
+- 主 Agent 的上下文不会被 Skill 内容"污染"
+- 子 Agent 有完整的上下文窗口专门执行 Skill
+- 天然实现了 Skill 执行的隔离性

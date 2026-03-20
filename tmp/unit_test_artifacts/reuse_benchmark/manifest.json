@@ -1,1 +1,1 @@
-{"mode": "full", "quick_n": null, "seed": 42}
+{"mode": "full", "quick_n": null, "seed": 42, "stratification": {"strategy": "source_age_bucket_v1"}}

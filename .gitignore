@@ -1,0 +1,11 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+
+# Test and pytest artifacts
+.pytest_cache/
+pytest-cache-files-*/
+
+# Local temporary artifacts
+tmp/unit_test_artifacts/
+minor_protection_eval_memory_*/

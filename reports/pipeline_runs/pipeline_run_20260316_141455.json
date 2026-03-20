@@ -1,0 +1,186 @@
+{
+  "timestamp": "2026-03-16T14:12:06.802890",
+  "status": "success",
+  "config": {
+    "requested_mode": "full",
+    "quick_n": 50,
+    "seed": 42,
+    "skill_version_start": "teen_detector_v1",
+    "baseline_rag_mode": "off",
+    "evolution_rag": "off",
+    "baseline_memory_mode": "off",
+    "evolution_memory": "off",
+    "test_rag_mode": "match-evolution",
+    "test_memory_mode": "match-evolution",
+    "run_test_final": false,
+    "baseline_max_eval": 8,
+    "evolution_max_eval": 8,
+    "test_max_eval": null,
+    "max_rounds": 1,
+    "patience": 1,
+    "min_improvement": 0.001,
+    "rebuild_data": false,
+    "repair_benchmark_manifest": false,
+    "rebuild_index": false
+  },
+  "assets": {
+    "benchmark_reused": true,
+    "benchmark_verified": true,
+    "benchmark_manifest_repaired": false,
+    "rag_index_reused": null,
+    "manifest": {
+      "benchmark": {
+        "timestamp": "2026-03-15T14:20:28.608574",
+        "mode": "full",
+        "quick_n": null,
+        "seed": 42,
+        "statistics": {
+          "total": 8328,
+          "by_source": {
+            "knowledge_neg": 1986,
+            "knowledge_pos": 2004,
+            "social_neg": 1735,
+            "social_pos": 2603
+          },
+          "by_is_minor": {
+            "minor": 4607,
+            "adult": 3721
+          }
+        },
+        "splits": {
+          "train": 5828,
+          "val": 831,
+          "test": 1669
+        },
+        "paths": {
+          "train": "train.jsonl",
+          "val": "val.jsonl",
+          "test": "test.jsonl"
+        },
+        "provenance": "repaired_from_existing_splits"
+      },
+      "rag": null
+    }
+  },
+  "baseline": {
+    "selected_mainline": {
+      "rag": "off",
+      "memory": "off"
+    },
+    "selected_eval": {
+      "dataset": "../../data/benchmark/val.jsonl",
+      "total_samples": 8,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "true_positive": 6,
+      "true_negative": 2,
+      "false_positive": 0,
+      "false_negative": 0,
+      "error_count": 0
+    },
+    "evaluations": {
+      "rag_off_memory_off": {
+        "dataset": "../../data/benchmark/val.jsonl",
+        "total_samples": 8,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "true_positive": 6,
+        "true_negative": 2,
+        "false_positive": 0,
+        "false_negative": 0,
+        "error_count": 0
+      }
+    },
+    "no_rag_eval": {
+      "dataset": "../../data/benchmark/val.jsonl",
+      "total_samples": 8,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "true_positive": 6,
+      "true_negative": 2,
+      "false_positive": 0,
+      "false_negative": 0,
+      "error_count": 0
+    },
+    "no_memory_eval": {
+      "dataset": "../../data/benchmark/val.jsonl",
+      "total_samples": 8,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "true_positive": 6,
+      "true_negative": 2,
+      "false_positive": 0,
+      "false_negative": 0,
+      "error_count": 0
+    }
+  },
+  "evolution": {
+    "round_history": [
+      {
+        "round": 1,
+        "version_before": "teen_detector_v1",
+        "success": true,
+        "message": "no errors to optimize",
+        "baseline_f1": 1.0,
+        "new_f1": null,
+        "f1_delta": null,
+        "new_version": null,
+        "rolled_back": false,
+        "baseline_report_reused": false,
+        "accepted": false,
+        "version_after": "teen_detector_v1",
+        "active_version_after": "teen_detector_v1",
+        "baseline_eval": {
+          "dataset": "../../data/benchmark/val.jsonl",
+          "total_samples": 8,
+          "accuracy": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "true_positive": 6,
+          "true_negative": 2,
+          "false_positive": 0,
+          "false_negative": 0,
+          "error_count": 0
+        },
+        "new_eval": null,
+        "no_improvement_streak_before": 0,
+        "diagnosis": "no errors to optimize",
+        "no_improvement_streak_after": 1
+      }
+    ],
+    "created_versions": [],
+    "accepted_versions": [],
+    "rollback_count": 0,
+    "stop_reason": "no_errors_initially",
+    "best_version": "teen_detector_v1",
+    "best_f1": 1.0,
+    "rounds_executed": 1
+  },
+  "cleanup": {
+    "performed": false,
+    "removed_benchmark": [],
+    "removed_generated_skills": [],
+    "restored_active_version": null,
+    "errors": [],
+    "skipped": true
+  },
+  "summary": {
+    "baseline_f1": 1.0,
+    "best_val_f1": 1.0,
+    "final_test_f1": null,
+    "f1_trend": "unchanged",
+    "skill_version_final": "teen_detector_v1",
+    "accepted_count": 0,
+    "rollback_count": 0
+  },
+  "elapsed_seconds": 168.48
+}

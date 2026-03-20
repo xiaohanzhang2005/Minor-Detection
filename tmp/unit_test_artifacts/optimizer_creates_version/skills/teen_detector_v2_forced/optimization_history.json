@@ -1,7 +1,12 @@
 {
   "parent_version": "teen_detector_v1",
-  "optimization_time": "2026-03-15T19:23:41.006159",
-  "error_analysis": {
+  "optimization_time": "2026-03-19T19:12:54.180019",
+  "target_file": "SKILL.md",
+  "edited_files": [
+    "SKILL.md"
+  ],
+  "readonly_reference_files": [],
+  "optimization_packet": {
     "total_errors": 1,
     "fp_count": 1,
     "fn_count": 0
@@ -11,5 +16,6 @@
     "precision": 0.5,
     "recall": 0.5,
     "f1": 0.5
-  }
+  },
+  "rule_promotion_suggestions": []
 }

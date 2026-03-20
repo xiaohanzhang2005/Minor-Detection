@@ -31,9 +31,10 @@ import sys
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 sys.path.insert(0, str(ROOT_DIR))
+FORMAL_SKILL_VERSION = "minor-detection"
 
 from scripts.prepare_data import DataPreparer
-from src.config import BENCHMARK_TRAIN_PATH, BENCHMARK_VAL_PATH, BENCHMARK_TEST_PATH, SKILLS_DIR
+from src.config import BENCHMARK_TRAIN_PATH, BENCHMARK_VAL_PATH, BENCHMARK_TEST_PATH, SKILLS_DIR, resolve_skill_markdown_path
 from src.executor import ExecutorSkill, analyze_with_memory
 from src.evolution.evaluator import SkillEvaluator
 from src.evolution.optimizer import run_optimization_cycle
@@ -335,7 +336,7 @@ def _run_memory_gate(
 
 
 def _evaluate(skill_version: str, max_eval: int | None, retriever=None):
-    skill_path = SKILLS_DIR / skill_version / "skill.md"
+    skill_path = resolve_skill_markdown_path(SKILLS_DIR / skill_version)
     executor = ExecutorSkill(skill_path=str(skill_path), inference_temperature=0.2)
     evaluator = SkillEvaluator(executor=executor, skill_version=skill_version, retriever=retriever)
     report = evaluator.evaluate(max_samples=max_eval, verbose=False, use_test_set=False)
@@ -449,6 +450,11 @@ def main():
     parser.add_argument("--quick-n", type=int, default=50, help="每源采样数量 (default: 50)")
     parser.add_argument("--seeds", type=str, default="42,43,44", help="多个随机种子，逗号分隔")
     parser.add_argument("--skill-version", type=str, default="teen_detector_v1")
+    parser.add_argument(
+        "--formal-skill",
+        action="store_true",
+        help=f"直接使用正式 Skill 包 {FORMAL_SKILL_VERSION} 作为验收目标。",
+    )
     parser.add_argument("--max-eval", type=int, default=None, help="评估时最大样本数")
     parser.add_argument("--near-threshold", type=float, default=0.96, help="近重复阈值")
     parser.add_argument("--near-pair-cap", type=int, default=300, help="近重复抽样上限")
@@ -472,6 +478,14 @@ def main():
     )
 
     args = parser.parse_args()
+
+    if args.formal_skill:
+        if args.skill_version != "teen_detector_v1" and args.skill_version != FORMAL_SKILL_VERSION:
+            raise ValueError(
+                f"--formal-skill cannot be combined with --skill-version={args.skill_version}; "
+                f"use --skill-version {FORMAL_SKILL_VERSION} or omit --skill-version."
+            )
+        args.skill_version = FORMAL_SKILL_VERSION
 
     seeds = [int(x.strip()) for x in args.seeds.split(",") if x.strip()]
     if not seeds:

@@ -1,0 +1,36 @@
+{
+  "parent_version": "minor-detection-20260319_212354",
+  "optimization_time": "2026-03-19T21:49:40.700342",
+  "target_file": "SKILL.md",
+  "edited_files": [
+    "SKILL.md",
+    "references/evidence-rules.md"
+  ],
+  "readonly_reference_files": [
+    "references/icbo-guidelines.md",
+    "references/output-schema.md"
+  ],
+  "optimization_packet": {
+    "total_errors": 2,
+    "fp_count": 0,
+    "fn_count": 2
+  },
+  "parent_metrics": {
+    "accuracy": 0.9666666666666667,
+    "precision": 1.0,
+    "recall": 0.9393939393939394,
+    "f1": 0.96875
+  },
+  "rule_promotion_suggestions": [
+    {
+      "candidate_rule": "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人、青少年、中学生、高中生，或需要对单会话、多会话历史做年龄倾向、校园倾向、学生画像、未成年人风险与证据分析时使用此技能。即使用户没有直接说\"未成年人识别\"，但需求本质上是判断\"像不像未成年用户\"、输出未成年人概率、画像、趋势、风险等级或结构化证据，也应激活此技能。特别关注以下未成年人特征：极端情绪表达、学业压力相关崩溃、社交挫败的灾难化思维、对同伴压力的过度敏感、对新型风险的恐慌性反应、认知跳跃性（如从具体问题突然转向抽象困惑）、对专业术语的过度简化理解。",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    },
+    {
+      "candidate_rule": "忽视专业概念理解深度这一成年人强反证。",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    }
+  ]
+}

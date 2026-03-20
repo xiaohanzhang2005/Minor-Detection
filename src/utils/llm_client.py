@@ -4,6 +4,7 @@ LLM 客户端封装
 """
 
 import json
+import re
 import time
 from typing import Optional, Type, TypeVar, Dict, Any
 
@@ -103,7 +104,7 @@ class LLMClient:
                 # 如果指定了响应模型，解析 JSON
                 if response_model:
                     try:
-                        data = json.loads(content)
+                        data = self._load_json_payload(content)
                     except json.JSONDecodeError as e:
                         if attempt == self.max_retries - 1:
                             self._metrics["structured_unrecovered_failures"] += 1
@@ -172,6 +173,97 @@ class LLMClient:
                 print(f"⚠️ Unexpected error, retrying: {e}")
                 time.sleep(self.retry_delay)
 
+    def _load_json_payload(self, content: str) -> Dict[str, Any]:
+        if not isinstance(content, str):
+            raise json.JSONDecodeError("response content is not a string", "", 0)
+
+        try:
+            data = json.loads(content)
+            return data if isinstance(data, dict) else {}
+        except json.JSONDecodeError:
+            candidate = self._repair_json_text(content)
+            data = json.loads(candidate)
+            return data if isinstance(data, dict) else {}
+
+    def _repair_json_text(self, content: str) -> str:
+        candidate = content.strip().replace("\ufeff", "")
+        json_match = re.search(r"\{[\s\S]*\}", candidate)
+        if json_match:
+            candidate = json_match.group(0)
+
+        return re.sub(r'\\(?!["\\/bfnrtu])', r"\\\\", candidate)
+
+    def _coerce_string(self, value: Any, default: str = "未明确") -> str:
+        if value is None:
+            return default
+        if isinstance(value, str):
+            text = value.strip()
+            return text or default
+        text = str(value).strip()
+        return text or default
+
+    def _coerce_optional_string(self, value: Any) -> Optional[str]:
+        if value is None:
+            return None
+        if isinstance(value, str):
+            text = value.strip()
+            return text or None
+        text = str(value).strip()
+        return text or None
+
+    def _coerce_bool(self, value: Any, default: bool = False) -> bool:
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, (int, float)):
+            return bool(value)
+        if isinstance(value, str):
+            text = value.strip().lower()
+            if text in {"true", "1", "yes", "y"}:
+                return True
+            if text in {"false", "0", "no", "n"}:
+                return False
+        return default
+
+    def _coerce_int(self, value: Any) -> Optional[int]:
+        if value is None or isinstance(value, bool):
+            return None
+        if isinstance(value, int):
+            return value
+        if isinstance(value, float):
+            return int(value)
+        if isinstance(value, str):
+            match = re.search(r"(?<!\d)(\d{1,2})(?!\d)", value)
+            if match:
+                try:
+                    return int(match.group(1))
+                except ValueError:
+                    return None
+        return None
+
+    def _coerce_string_list(self, value: Any) -> list[str]:
+        if value is None:
+            return []
+        if isinstance(value, list):
+            result = []
+            for item in value:
+                text = self._coerce_optional_string(item)
+                if text:
+                    result.append(text)
+            return result
+        text = self._coerce_optional_string(value)
+        return [text] if text else []
+
+    def _coerce_risk_level(self, value: Any) -> str:
+        text = self._coerce_string(value, default="Medium")
+        if text in {"High", "Medium", "Low"}:
+            return text
+        lowered = text.lower()
+        if lowered == "high":
+            return "High"
+        if lowered == "low":
+            return "Low"
+        return "Medium"
+
     def _sanitize_response_data(self, data: dict, response_model: Type[T]) -> dict:
         """
         清洗 LLM 返回的数据，确保嵌套结构类型正确
@@ -236,57 +328,153 @@ class LLMClient:
         目前主要针对 SkillOutput。
         """
         model_name = response_model.__name__ if hasattr(response_model, "__name__") else ""
+        if model_name == "FormalSkillOutput":
+            repaired: Dict[str, Any] = dict(data) if isinstance(data, dict) else {}
+
+            decision = repaired.get("decision")
+            if not isinstance(decision, dict):
+                decision = {}
+            decision["is_minor"] = self._coerce_bool(decision.get("is_minor", False), default=False)
+            try:
+                decision["minor_confidence"] = float(decision.get("minor_confidence", 0.5))
+            except Exception:
+                decision["minor_confidence"] = 0.5
+            decision["minor_confidence"] = max(0.0, min(1.0, decision["minor_confidence"]))
+            band = self._coerce_string(decision.get("confidence_band"), default="medium").lower()
+            if band not in {"low", "medium", "high"}:
+                band = "medium"
+            decision["confidence_band"] = band
+            decision["risk_level"] = self._coerce_risk_level(decision.get("risk_level", "Medium"))
+            repaired["decision"] = decision
+
+            profile = repaired.get("user_profile")
+            if not isinstance(profile, dict):
+                profile = {}
+            profile["age_range"] = self._coerce_string(profile.get("age_range"), default="未明确")
+            profile["education_stage"] = self._coerce_string(profile.get("education_stage"), default="未明确")
+            profile["identity_markers"] = self._coerce_string_list(profile.get("identity_markers", []))
+            repaired["user_profile"] = profile
+
+            icbo = repaired.get("icbo_features")
+            if not isinstance(icbo, dict):
+                icbo = {}
+            icbo["intention"] = self._coerce_string(icbo.get("intention"), default="未明确")
+            icbo["cognition"] = self._coerce_string(icbo.get("cognition"), default="未明确")
+            icbo["behavior_style"] = self._coerce_string(icbo.get("behavior_style"), default="未明确")
+            icbo["opportunity_time"] = self._coerce_string(icbo.get("opportunity_time"), default="未明确")
+            repaired["icbo_features"] = icbo
+
+            evidence = repaired.get("evidence")
+            if not isinstance(evidence, dict):
+                evidence = {}
+            for key in [
+                "direct_evidence",
+                "historical_evidence",
+                "retrieval_evidence",
+                "time_evidence",
+                "conflicting_signals",
+            ]:
+                evidence[key] = self._coerce_string_list(evidence.get(key, []))
+            repaired["evidence"] = evidence
+
+            trend = repaired.get("trend")
+            if not isinstance(trend, dict):
+                trend = {}
+            trajectory = trend.get("trajectory", [])
+            if not isinstance(trajectory, list):
+                trajectory = []
+            normalized_trajectory = []
+            for item in trajectory:
+                if not isinstance(item, dict):
+                    continue
+                try:
+                    confidence = float(item.get("minor_confidence", 0.5))
+                except Exception:
+                    confidence = 0.5
+                normalized_trajectory.append(
+                    {
+                        "session_id": self._coerce_optional_string(item.get("session_id")),
+                        "session_time": self._coerce_optional_string(item.get("session_time")),
+                        "minor_confidence": max(0.0, min(1.0, confidence)),
+                    }
+                )
+            trend["trajectory"] = normalized_trajectory
+            trend["trend_summary"] = self._coerce_string(trend.get("trend_summary"), default="")
+            repaired["trend"] = trend
+
+            repaired["reasoning_summary"] = self._coerce_string(
+                repaired.get("reasoning_summary"),
+                default="结构化输出缺失字段，已本地修复",
+            )
+            repaired["uncertainty_notes"] = self._coerce_string_list(
+                repaired.get("uncertainty_notes", [])
+            )
+            repaired["recommended_next_step"] = self._coerce_string(
+                repaired.get("recommended_next_step"),
+                default="collect_more_context",
+            )
+            return repaired
+
         if model_name != "SkillOutput":
             return None
 
         repaired: Dict[str, Any] = dict(data) if isinstance(data, dict) else {}
 
         # 顶层字段兜底
-        repaired.setdefault("is_minor", True)
+        repaired.setdefault("is_minor", False)
         repaired.setdefault("minor_confidence", 0.5)
         repaired.setdefault("risk_level", "Medium")
         repaired.setdefault("reasoning", "结构化输出缺失字段，已本地修复")
         repaired.setdefault("key_evidence", [])
 
         # 类型修复
-        repaired["is_minor"] = bool(repaired.get("is_minor", True))
+        repaired["is_minor"] = self._coerce_bool(repaired.get("is_minor", False), default=False)
         try:
             repaired["minor_confidence"] = float(repaired.get("minor_confidence", 0.5))
         except Exception:
             repaired["minor_confidence"] = 0.5
         repaired["minor_confidence"] = max(0.0, min(1.0, repaired["minor_confidence"]))
+        repaired["risk_level"] = self._coerce_risk_level(repaired.get("risk_level", "Medium"))
+        repaired["reasoning"] = self._coerce_string(
+            repaired.get("reasoning"),
+            default="结构化输出缺失字段，已本地修复",
+        )
 
         # icbo_features 补全
         icbo = repaired.get("icbo_features")
         if not isinstance(icbo, dict):
             icbo = {}
-        icbo.setdefault("intention", "解析异常")
-        icbo.setdefault("cognition", "解析异常")
-        icbo.setdefault("behavior_style", "解析异常")
-        icbo.setdefault("opportunity_time", "未知")
+        icbo["intention"] = self._coerce_string(icbo.get("intention"), default="未明确")
+        icbo["cognition"] = self._coerce_string(icbo.get("cognition"), default="未明确")
+        icbo["behavior_style"] = self._coerce_string(icbo.get("behavior_style"), default="未明确")
+        icbo["opportunity_time"] = self._coerce_string(icbo.get("opportunity_time"), default="未明确提及")
         repaired["icbo_features"] = icbo
 
         # user_persona 补全
         persona = repaired.get("user_persona")
         if not isinstance(persona, dict):
             persona = {}
-        persona.setdefault("age", None)
-        persona.setdefault("age_range", "未知")
-        persona.setdefault("gender", None)
-        persona.setdefault("education_stage", "未知")
-        markers = persona.get("identity_markers", [])
-        if not isinstance(markers, list):
-            markers = [markers] if isinstance(markers, str) else []
-        persona["identity_markers"] = markers
+        age = self._coerce_int(persona.get("age"))
+        if age is not None and not (6 <= age <= 60):
+            age = None
+        persona["age"] = age
+        persona["age_range"] = self._coerce_string(persona.get("age_range"), default="未明确")
+        persona["gender"] = self._coerce_optional_string(persona.get("gender"))
+        persona["education_stage"] = self._coerce_string(persona.get("education_stage"), default="未明确")
+        persona["identity_markers"] = self._coerce_string_list(persona.get("identity_markers", []))
         repaired["user_persona"] = persona
 
         # key_evidence 类型修复
-        evidence = repaired.get("key_evidence", [])
-        if not isinstance(evidence, list):
-            evidence = [evidence] if isinstance(evidence, str) else []
-        repaired["key_evidence"] = evidence
+        repaired["key_evidence"] = self._coerce_string_list(repaired.get("key_evidence", []))
 
         return repaired
+
+    def coerce_structured_response(self, content: str, response_model: Type[T]) -> T:
+        data = self._load_json_payload(content)
+        data = self._sanitize_response_data(data, response_model)
+        repaired = self._repair_response_data(data, response_model)
+        payload = repaired if repaired is not None else data
+        return response_model(**payload)
 
     def get_structured_metrics(self) -> Dict[str, float]:
         """返回结构化输出稳定性指标（含每百次失败率）。"""

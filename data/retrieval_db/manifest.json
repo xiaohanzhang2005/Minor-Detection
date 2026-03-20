@@ -1,11 +1,11 @@
 {
-  "built_at": "2026-03-15T13:48:36.982267",
+  "built_at": "2026-03-19T20:06:55.993905",
   "source_data_path": "../benchmark/train.jsonl",
   "index_path": "index.pkl",
   "corpus_path": "../retrieval_corpus/cases_v1.jsonl",
   "embedding_model": "text-embedding-3-small",
-  "text_template_version": "user_only_v1",
-  "preprocess_version": "basic_whitespace_v1",
-  "sample_count": 5828,
-  "dataset_hash": "63cca08232ef7d7008bca1af9615c17f6da90f456c16cb59835b35a3e3cf7109"
+  "text_template_version": "user_only_with_time_scene_v2",
+  "preprocess_version": "basic_whitespace_time_tags_v2",
+  "sample_count": 5829,
+  "dataset_hash": "0fde91c1b74d147613adbf243e881ec3831ff446e78fd6891d4073893bea4605"
 }

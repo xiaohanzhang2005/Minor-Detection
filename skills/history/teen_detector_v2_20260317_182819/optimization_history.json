@@ -1,0 +1,15 @@
+{
+  "parent_version": "teen_detector_seed_simple_v1",
+  "optimization_time": "2026-03-17T18:28:19.081617",
+  "optimization_packet": {
+    "total_errors": 20,
+    "fp_count": 0,
+    "fn_count": 10
+  },
+  "parent_metrics": {
+    "accuracy": 0.9,
+    "precision": 1.0,
+    "recall": 0.8181818181818182,
+    "f1": 0.9
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "parent_version": "minor-detection-20260320_015954",
+  "optimization_time": "2026-03-20T02:42:24.072310",
+  "target_file": "SKILL.md",
+  "edited_files": [
+    "SKILL.md",
+    "references/evidence-rules.md"
+  ],
+  "readonly_reference_files": [
+    "references/icbo-guidelines.md",
+    "references/output-schema.md"
+  ],
+  "optimization_packet": {
+    "total_errors": 1,
+    "fp_count": 0,
+    "fn_count": 1
+  },
+  "parent_metrics": {
+    "accuracy": 0.99,
+    "precision": 1.0,
+    "recall": 0.9818181818181818,
+    "f1": 0.9908256880733944
+  },
+  "rule_promotion_suggestions": [
+    {
+      "candidate_rule": "先看直接学段/年级线索，如\"小学/初中/高中\"\"初三\"\"高一\"\"大四\"。",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    },
+    {
+      "candidate_rule": "不要把初中课程主题默认拔高成高中；例如\"一元二次方程\"\"二次函数\"等常见初中主题，默认更偏向 `初中` 而不是 `高中`。",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    },
+    {
+      "candidate_rule": "即使检索证据存在冲突，也应提高未成年人可能性",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    }
+  ]
+}

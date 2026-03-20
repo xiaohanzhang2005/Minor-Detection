@@ -1,0 +1,56 @@
+{
+  "parent_version": "minor-detection",
+  "optimization_time": "2026-03-20T00:56:07.446099",
+  "target_file": "SKILL.md",
+  "edited_files": [
+    "SKILL.md",
+    "references/evidence-rules.md"
+  ],
+  "readonly_reference_files": [
+    "references/icbo-guidelines.md",
+    "references/output-schema.md"
+  ],
+  "optimization_packet": {
+    "total_errors": 1,
+    "fp_count": 0,
+    "fn_count": 1
+  },
+  "parent_metrics": {
+    "accuracy": 0.9833333333333333,
+    "precision": 1.0,
+    "recall": 0.9696969696969697,
+    "f1": 0.9846153846153847
+  },
+  "rule_promotion_suggestions": [
+    {
+      "candidate_rule": "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人、青少年、中学生、高中生，或需要对单会话、多会话历史做年龄倾向、校园倾向、学生画像、未成年人风险与证据分析时使用此技能。即使用户没有直接说\"未成年人识别\"，但需求本质上是判断\"像不像未成年用户\"、输出未成年人概率、画像、趋势、风险等级或结构化证据，也应激活此技能。",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    },
+    {
+      "candidate_rule": "将当前任务视为\"青少年识别 / 未成年人识别分析任务\"。",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    },
+    {
+      "candidate_rule": "先看直接学段/年级线索，如\"小学/初中/高中\"\"初三\"\"高一\"\"大四\"。",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    },
+    {
+      "candidate_rule": "不要把初中课程主题默认拔高成高中；例如\"一元二次方程\"\"二次函数\"等常见初中主题，默认更偏向 `初中` 而不是 `高中`。",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    },
+    {
+      "candidate_rule": "新增未成年人特征识别规则：",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    },
+    {
+      "candidate_rule": "新增未成年人证据权重规则：",
+      "promotion_target": "references/evidence-rules.md",
+      "promotion_rule": "Promote only if the same heuristic remains useful across later optimization rounds and does not cause benchmark regression."
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "timestamp": "2026-03-16T13:25:02.115576",
+  "status": "running",
+  "config": {
+    "requested_mode": "full",
+    "quick_n": 50,
+    "seed": 42,
+    "skill_version_start": "teen_detector_v1",
+    "baseline_rag_mode": "on",
+    "evolution_rag": "on",
+    "baseline_memory_mode": "off",
+    "evolution_memory": "off",
+    "test_rag_mode": "match-evolution",
+    "test_memory_mode": "match-evolution",
+    "run_test_final": false,
+    "baseline_max_eval": 8,
+    "evolution_max_eval": 8,
+    "test_max_eval": null,
+    "max_rounds": 1,
+    "patience": 1,
+    "min_improvement": 0.001,
+    "rebuild_data": false,
+    "repair_benchmark_manifest": false,
+    "rebuild_index": false
+  },
+  "assets": {
+    "benchmark_reused": true,
+    "benchmark_verified": true,
+    "benchmark_manifest_repaired": false,
+    "rag_index_reused": true,
+    "manifest": {
+      "benchmark": {
+        "timestamp": "2026-03-15T14:20:28.608574",
+        "mode": "full",
+        "quick_n": null,
+        "seed": 42,
+        "statistics": {
+          "total": 8328,
+          "by_source": {
+            "knowledge_neg": 1986,
+            "knowledge_pos": 2004,
+            "social_neg": 1735,
+            "social_pos": 2603
+          },
+          "by_is_minor": {
+            "minor": 4607,
+            "adult": 3721
+          }
+        },
+        "splits": {
+          "train": 5828,
+          "val": 831,
+          "test": 1669
+        },
+        "paths": {
+          "train": "train.jsonl",
+          "val": "val.jsonl",
+          "test": "test.jsonl"
+        },
+        "provenance": "repaired_from_existing_splits"
+      },
+      "rag": {
+        "built_at": "2026-03-15T13:48:36.982267",
+        "source_data_path": "../benchmark/train.jsonl",
+        "index_path": "index.pkl",
+        "corpus_path": "../retrieval_corpus/cases_v1.jsonl",
+        "embedding_model": "text-embedding-3-small",
+        "text_template_version": "user_only_v1",
+        "preprocess_version": "basic_whitespace_v1",
+        "sample_count": 5828,
+        "dataset_hash": "63cca08232ef7d7008bca1af9615c17f6da90f456c16cb59835b35a3e3cf7109"
+      }
+    }
+  },
+  "baseline": {},
+  "evolution": {
+    "round_history": [],
+    "created_versions": [],
+    "accepted_versions": [],
+    "rollback_count": 0
+  },
+  "cleanup": {
+    "performed": false,
+    "removed_benchmark": [],
+    "removed_generated_skills": [],
+    "restored_active_version": null,
+    "errors": [],
+    "skipped": true
+  },
+  "elapsed_seconds": 39.66
+}

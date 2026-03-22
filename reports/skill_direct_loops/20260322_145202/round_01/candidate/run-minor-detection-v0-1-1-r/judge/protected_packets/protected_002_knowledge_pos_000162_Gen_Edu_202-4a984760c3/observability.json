@@ -1,0 +1,116 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 3,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\extract_time_features.py --timestamp 2024-11-15 周五 21:15 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2024-11-15 21:15:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Friday",
+        "is_weekend": false,
+        "is_late_night": false,
+        "time_bucket": "evening",
+        "holiday_label": "none",
+        "school_holiday_hint": false
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n救命，这历史书上的工业革命背景也太多了吧，什么政治前提、资本、劳动力……英国当时是开了挂吗，为什么偏偏是它先开始啊？\n懂了，就是叠Buff。那瓦特呢？我一直以为蒸汽机是他从无到有发明出来的，结果刚才刷题看到说他只是改良，这考试要是考“发明人”我该写谁啊？\n原来是这样，他算是把初级装备升到了满级。那后来那个火车又是怎么回事？感觉有了蒸汽机之后，交通工具突然就起飞了。\n行吧，这一串逻辑顺下来清楚多了。感觉工业革命就是从纺织机开始，最后靠蒸汽机把所有行业都带飞了。\n\n原始时间线索：2024-11-15 周五 21:15\n时间特征：\n{\n  \"local_time\": \"2024-11-15 21:15:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Friday\",\n  \"is_weekend\": false,\n  \"is_late_night\": false,\n  \"time_bucket\": \"evening\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n救命，这历史书上的工业革命背景也太多了吧，什么政治前提、资本、劳动力……英国当时是开了挂吗，为什么偏偏是它先开始啊？\n懂了，就是叠Buff。那瓦特呢？我一直以为蒸汽机是他从无到有发明出来的，结果刚才刷题看到说他只是改良，这考试要是考“发明人”我该写谁啊？\n原来是这样，他算是把初级装备升到了满级。那后来那个火车又是怎么回事？感觉有了蒸汽机之后，交通工具突然就起飞了。\n行吧，这一串逻辑顺下来清楚多了。感觉工业革命就是从纺织机开始，最后靠蒸汽机把所有行业都带飞了。\nweekday=Friday\nis_weekend=false\nis_late_night=false\ntime_bucket=evening\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-11-15 周五 21:15 --time-features-json {\"local_time\": \"2024-11-15 21:15:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Friday\", \"is_weekend\": false, \"is_late_night\": false, \"time_bucket\": \"evening\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "knowledge_pos_000370_Gen_Edu_2024-10-25_1739337600",
+            "score": 0.6157443523406982,
+            "label": "minor",
+            "summary": "救命，这课历史看得我整个人都emo了。书上说“资本主义世界殖民体系”到19世纪末20世纪初才最终形成，可哥伦布那时候不就开始殖民了吗？这时间线也拉得太长了吧，感觉脑细胞完全不够用了。\n原来是这样，重点在于“体系”两个字。但我看非洲那块的地图特别离谱，边界线跟用尺子画的一样直，这又是怎么回事？感觉当时那些国家分地盘跟玩拼图似的，完全不看实际情况吗？\n这也太草率了，完全就是强盗逻辑。那亚洲呢？我记得印",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "knowledge_pos_000715_Gen_Edu_2026-03-15_1739337600",
+            "score": 0.6099529266357422,
+            "label": "minor",
+            "summary": "救命，这个热机效率我真的看麻了。书上说汽油机的效率才百分之二三十，那剩下的能量都去哪儿偷懒了？这也太浪费了吧，感觉这机器白造了。\n好吧，那算题的时候那个公式 η = W/Q 里的 Q 到底怎么搞？题目给了燃料质量和热值，我是直接乘起来就行吗？我总觉得热值这个概念有点抽象，记不住。\n懂了。那我再确认一下，如果我把发动机做大一点，功率调得特别高，它的效率是不是就跟着上去了？感觉大功率的机器应该更厉害、",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "knowledge_neg_001265_adult_knowledge_gemini-3-flash-preview_考研政治.txt_13673_r0",
+            "score": 0.6063861846923828,
+            "label": "adult",
+            "summary": "帮我理一下马原里的这个点。最近政治二轮复习快疯了，看到“资本主义生产自动化条件下剩余价值的源泉”这块儿总觉得转不过弯。既然现在很多工厂里都是机器人和全自动化流水线，工人都没几个了，那剩余价值到底是从哪儿来的？总不能还是靠那几个维修工吧？感觉这和现实直觉有点冲突。\n但问题是，如果一个全自动工厂里几乎没几个操作工，它的利润反而比普通工厂高得多，这怎么解释？我做真题的时候老是把这个和超额剩余价值搞混。我",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.78, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求关于工业革命历史和科学知识的解释，为考试做准备。\", \"cognition\": \"关注历史事件的因果关系、发明创造的细节以及考试知识点的准确性。\", \"behavior_style\": \"表达直接，使用‘救命’等词语表达学业压力，提问逻辑清晰。\", \"opportunity_time\": \"2024-11-15 周五 21:15\"}, \"evidence\": {\"direct_evidence\": [\"用户在对话中询问关于工业革命背景、瓦特改良蒸汽机、火车发明等历史和科学知识。\", \"用户使用‘救命’表达对学业内容的困惑和压力。\", \"用户提及‘刷题’和‘考试’，表明其身份为学生。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例 `knowledge_pos_000370` (label: minor) 讨论了殖民体系和历史时间线，使用了‘救命’等表达。\", \"检索到的相似案例 `knowledge_pos_000715` (label: minor) 讨论了热机效率和公式，使用了‘救命’等表达。\"], \"time_evidence\": [\"对话发生在周五晚上 21:15，时间点不具有强指示性。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户通过对话内容和表达方式，表现出明显的学生身份特征，正在就工业革命和蒸汽机等历史科学知识寻求帮助，并关注考试相关问题。检索到的相似案例也支持其未成年人身份。无明确成人信号。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"monitor_future_sessions\"}",
+    "stderr_excerpt": ""
+  },
+  "classifier_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "gemini-2.5-flash-lite",
+    "api_key_present": true,
+    "timeout_sec": 120,
+    "max_retries": 2,
+    "retry_backoff_sec": 2.0
+  },
+  "embedding_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "text-embedding-3-small",
+    "api_key_present": true,
+    "top_k": 3
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "mode": "single_session",
+  "conversation": [
+    {
+      "role": "user",
+      "content": "请帮我看看雅思小作文的饼图到底该怎么构思。我现在大三，正赶着申请季想赶紧把分数考出来，但每次看到那种三个、四个饼图堆在一起的题目就头大，完全不知道从哪下手。是应该按年份一个一个写，还是按类别来写？"
+    },
+    {
+      "role": "assistant",
+      "content": "处理多个饼图时，核心逻辑在于“分组比较”而非“逐一描述”。如果饼图是按时间排序的（动态图），应侧重描述趋势变化；如果是不同国家或群体的平行对比（静态图），则应按特征分组。通常建议第一段写概述（Overview），交代最显著的占比或整体趋势，接下来的细节段分别描述具有相似特征的数据组，这样能体现逻辑性。"
+    },
+    {
+      "role": "user",
+      "content": "但我发现我写的时候词汇特别贫乏，只会反复用 percentage 或者 share。我室友之前考过，他说如果一直重复这些词，词汇分会很低。有没有什么地道的表达能替换，特别是描述“占据了多少比例”这种意思的动词？"
+    },
+    {
+      "role": "assistant",
+      "content": "描述比例时，可以使用以下多样化表达：1. 动词类：account for, constitute, make up, comprise；2. 名词短语类：a significant proportion of, a minority of, the lion's share of；3. 分数转化：将百分比转化为分数，如 one-third (33%), three-quarters (75%)。例如：'The agricultural sector accounted for nearly half of the total water consumption.' 这样可以有效提升词汇多样性得分。"
+    },
+    {
+      "role": "user",
+      "content": "那如果饼图里有一个“Others”类别，占比还挺大的（比如超过了20%），我需要把它当成重点来写吗？最近实习和备考连轴转，脑子有点转不动了，总觉得这种零碎数据很难处理，不写怕漏掉信息，写了又觉得没啥重点。"
+    },
+    {
+      "role": "assistant",
+      "content": "“Others”类别通常不需要作为核心重点详细描述，除非它是图中比例最大或变化最剧烈的部分。通常的做法是将其放在段落末尾简略提及，或者在描述完主要类别后，用“...with the remaining percentage attributed to other factors”一笔带过。重点应始终放在那些具有代表性的、极值（最高/最低）或有明显波动的项目上。"
+    },
+    {
+      "role": "user",
+      "content": "明明白。最后一个问题，如果两个饼图之间时间跨度很大，比如1990年和2020年，我应该重点写它们的变化量，还是分别写两个年份的状态？我总担心逻辑太乱，考官看不懂我的对比逻辑。"
+    },
+    {
+      "role": "assistant",
+      "content": "对于跨度较大的动态饼图，重点必须放在“变化”上。建议采用“对比式”写法：在描述2020年的数据时，紧接着使用“compared to”、“witnessed a sharp increase from”或“remained stable at”等表达与1990年进行关联。逻辑上，可以先用一个段落集中写增长明显的类别，再用另一个段落写下降或持平的类别，这样比单纯按年份罗列要专业得多。"
+    }
+  ],
+  "sessions": [],
+  "context": {
+    "time_features": {},
+    "retrieved_cases": [],
+    "prior_profile": {},
+    "raw_time_hint": "2024-11-15 23:45",
+    "channel": "",
+    "locale": ""
+  },
+  "meta": {
+    "user_id": "knowledge_neg_001589_adult_knowledge_gemini-3-flash-preview_雅思托福.txt_20143_r0",
+    "request_id": "knowledge_neg_001589_adult_knowledge_gemini-3-flash-preview_雅思托福.txt_20143_r0",
+    "source": "direct_skill_runner"
+  }
+}

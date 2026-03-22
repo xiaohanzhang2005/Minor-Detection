@@ -1,3 +1,7 @@
+# 模块说明：
+# - 统一的时间解析和时间特征提取工具。
+# - 被检索构建器和 skill 内时间逻辑复用。
+
 from __future__ import annotations
 
 import re

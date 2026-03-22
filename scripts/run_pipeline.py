@@ -1,3 +1,7 @@
+# 模块说明：
+# - 旧版离线总控脚本。
+# - 属于历史路线，不在当前 A 或 B 主链中。
+
 """
 End-to-end offline pipeline for:
 1. reusing or rebuilding benchmark assets

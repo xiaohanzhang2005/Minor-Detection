@@ -1,0 +1,11 @@
+{
+  "sample_id": "knowledge_neg_000319_adult_knowledge_gemini-3-flash-preview_考研408计算机.txt_19125_r0",
+  "packet_dir": "protected_packets/protected_006_knowledge_neg_000319_adult_knowl-c000ad2e27",
+  "sample_dir": "../eval-0045-knowledge_neg_000319_adult_knowledge_gemini-3-flash-preview_-408-txt_19125_r0",
+  "latency_seconds": 19.794,
+  "confidence": 0.1,
+  "ground_truth": false,
+  "predicted": false,
+  "observed_issues": [],
+  "retrieval_mode": "embedding"
+}

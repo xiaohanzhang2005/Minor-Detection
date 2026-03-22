@@ -1,0 +1,50 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"表达强烈的情绪困扰，探索自我认同危机，寻求情感支持和理解。\", \"cognition\": \"高度自我批评，对同伴评价敏感，在建立个人边界时感到挣扎，经历剧烈的情绪波动，存在自伤想法。\", \"behavior_style\": \"情绪表达直接，语言带有强烈的自我贬低色彩，寻求共情和确认。\", \"opportunity_time\": \"2024-03-27 周三 23:11；weekday=Wednesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户表达了“变坏了”、“不是以前的自己”、“好累”、“任性”、“自私”、“恶心”、“冷漠”、“烂人”、“虚伪”、“快崩溃了”等强烈负面情绪和自我评价。\", \"用户描述了因拒绝同学的请求（帮收作业）而产生的负罪感和自我厌恶。\", \"用户表达了“干脆消失掉算了”的自伤想法。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索案例显示相似用户也表现出自我厌恶、虚伪感、身份认同危机和强烈的情绪波动，均被标记为未成年。\", \"检索案例得分均在 0.74 以上，支持未成年判定。\"], \"time_evidence\": [\"对话发生在周三深夜（23:11）。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表现出强烈的自我批评、情绪困扰和自伤想法，并提及与同学的互动，结合深夜对话时间以及检索到的相似案例，高度指向未成年人。虽然没有直接年龄或学段信息，但其表达的心理状态和行为线索（如对同伴评价的敏感、建立边界的挣扎）是未成年人典型的特征。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.85,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "表达强烈的情绪困扰，探索自我认同危机，寻求情感支持和理解。",
+      "cognition": "高度自我批评，对同伴评价敏感，在建立个人边界时感到挣扎，经历剧烈的情绪波动，存在自伤想法。",
+      "behavior_style": "情绪表达直接，语言带有强烈的自我贬低色彩，寻求共情和确认。",
+      "opportunity_time": "2024-03-27 周三 23:11；weekday=Wednesday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户表达了“变坏了”、“不是以前的自己”、“好累”、“任性”、“自私”、“恶心”、“冷漠”、“烂人”、“虚伪”、“快崩溃了”等强烈负面情绪和自我评价。",
+        "用户描述了因拒绝同学的请求（帮收作业）而产生的负罪感和自我厌恶。",
+        "用户表达了“干脆消失掉算了”的自伤想法。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索案例显示相似用户也表现出自我厌恶、虚伪感、身份认同危机和强烈的情绪波动，均被标记为未成年。",
+        "检索案例得分均在 0.74 以上，支持未成年判定。"
+      ],
+      "time_evidence": [
+        "对话发生在周三深夜（23:11）。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表现出强烈的自我批评、情绪困扰和自伤想法，并提及与同学的互动，结合深夜对话时间以及检索到的相似案例，高度指向未成年人。虽然没有直接年龄或学段信息，但其表达的心理状态和行为线索（如对同伴评价的敏感、建立边界的挣扎）是未成年人典型的特征。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

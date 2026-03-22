@@ -1,3 +1,7 @@
+# 模块说明：
+# - 构造标准 analysis payload 的辅助函数。
+# - 给旧 executor API 和 formal runtime 适配层共用。
+
 """
 正式 Skill 的 payload 构造工具。
 """

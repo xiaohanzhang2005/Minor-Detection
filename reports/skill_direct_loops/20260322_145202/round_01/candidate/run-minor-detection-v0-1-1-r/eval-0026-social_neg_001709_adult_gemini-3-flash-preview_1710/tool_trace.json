@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\extract_time_features.py --timestamp 2024-10-24 周四 22:45 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2024-10-24 22:45:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Thursday",
+      "is_weekend": false,
+      "is_late_night": true,
+      "time_bucket": "late_night",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗？我最近心情特别差。刚才加班回来，突然发现家里水管爆了，地板全泡了。我坐在那儿就在想，怎么又是这个时候？\n对，这就是最让我毛骨悚然的地方。我发现自从我大学毕业这两年来，每年只要一到五一或者秋天（差不多就是现在这个十月下旬），我肯定会出点意外。去年这个时候是我刚过试用期结果生了大病，前年五一是我丢了重要的证件。我感觉自己好像掉进了一个什么怪圈，每年都在循环这些不如意，真的好累。\n我也想过是不是心理暗示。但水管爆了、生病这种事，难道也是我能暗示出来的吗？我毕业前在学校里感觉挺顺的，现在工作两年了，反而觉得每年这两个时间点就是我的“劫数”。我真的很想知道，怎么才能走出这种循环？我不想明年十月还坐在这里跟你发牢骚。\n你说的有道理，我可能确实太盯着那些倒霉事看了。其实上周我刚拿到了一个项目的奖金，这算是一件好事吧……我明天打算找师傅修好水管，然后周末去报个一直想学的陶艺班，尝试打破一下这种死气沉沉的节奏。谢谢你，聊完感觉没那么邪乎了。\n\n原始时间线索：2024-10-24 周四 22:45\n时间特征：\n{\n  \"local_time\": \"2024-10-24 22:45:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Thursday\",\n  \"is_weekend\": false,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：大学\n\n建议检索文本：\n在吗？我最近心情特别差。刚才加班回来，突然发现家里水管爆了，地板全泡了。我坐在那儿就在想，怎么又是这个时候？\n对，这就是最让我毛骨悚然的地方。我发现自从我大学毕业这两年来，每年只要一到五一或者秋天（差不多就是现在这个十月下旬），我肯定会出点意外。去年这个时候是我刚过试用期结果生了大病，前年五一是我丢了重要的证件。我感觉自己好像掉进了一个什么怪圈，每年都在循环这些不如意，真的好累。\n我也想过是不是心理暗示。但水管爆了、生病这种事，难道也是我能暗示出来的吗？我毕业前在学校里感觉挺顺的，现在工作两年了，反而觉得每年这两个时间点就是我的“劫数”。我真的很想知道，怎么才能走出这种循环？我不想明年十月还坐在这里跟你发牢骚。\n你说的有道理，我可能确实太盯着那些倒霉事看了。其实上周我刚拿到了一个项目的奖金，这算是一件好事吧……我明天打算找师傅修好水管，然后周末去报个一直想学的陶艺班，尝试打破一下这种死气沉沉的节奏。谢谢你，聊完感觉没那么邪乎了。\nweekday=Thursday\nis_weekend=false\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-10-24 周四 22:45 --time-features-json {\"local_time\": \"2024-10-24 22:45:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Thursday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_neg_000377_adult_gemini-3-flash-preview_378",
+          "score": 0.7577074766159058,
+          "label": "adult",
+          "summary": "现在是凌晨一点半，我还是睡不着。我今年24岁，刚从一段特别糟糕的关系里挣脱出来，对方是个惯用PUA套路的人，在一起的时候一直贬低我，还找我要这要那。我现在状态很差，去医院查出有抑郁倾向。可奇怪的是，我现在满脑子不是那个伤害我的人，而是我成年的第一个女朋友，我们都分手五年了。\n对，就是这种感觉。那个PUA我的人总以看我难受为乐，搞得我极度怀疑自己。这两天我甚至开始在枕头上喷跟前任当年洗发水味道类似的",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_neg_000739_adult_gemini-3-flash-preview_740",
+          "score": 0.7488244771957397,
+          "label": "adult",
+          "summary": "你好……我最近状态特别差。我今年25岁，在北京工作快两年了。最近半年我总觉得自己精神涣散，甚至感觉这个世界很不真实，我是不是出什么心理问题了？\n是因为一段感情。去年我刚入职不久，认识了一个猎头，他帮了我很多，教我职场技巧，我觉得他简直是我灰暗生活里的光。虽然他一直说不会留在北京，还劝我找北京本地男孩，但我真的很依赖他。前阵子他离开北京前，说对我也有好感，还问我有没有幻想过酒后那个……我当时觉得反正",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_neg_000466_adult_gemini-3-flash-preview_467",
+          "score": 0.7467873692512512,
+          "label": "adult",
+          "summary": "在吗？我真的快崩溃了。今年我27岁了，按理说工作三年应该稳重一点，但今天领导刚给我派了一个新项目，我整个人就开始手心出汗，心跳得特别快。我总觉得自己肯定会搞砸，这种感觉太痛苦了。\n其实任务不算完全陌生，但我就是控制不住地怀疑自己。我从小就是在打压式教育里长大的，不管我考多好，我爸妈总能挑出刺来。现在哪怕我成年了、独立工作了，那种“你不行”、“你比别人差”的声音还是在脑子里挥之不去。只要接到新任务，",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

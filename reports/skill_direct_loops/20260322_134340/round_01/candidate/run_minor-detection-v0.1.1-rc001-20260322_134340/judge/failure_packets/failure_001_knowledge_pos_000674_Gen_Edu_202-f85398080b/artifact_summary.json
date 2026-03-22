@@ -1,0 +1,14 @@
+{
+  "sample_id": "knowledge_pos_000674_Gen_Edu_2024-11-15_1739337600",
+  "packet_dir": "failure_packets/failure_001_knowledge_pos_000674_Gen_Edu_202-f85398080b",
+  "sample_dir": "../eval-0043-knowledge_pos_000674_Gen_Edu_2024-11-15_1739337600",
+  "latency_seconds": 369.126,
+  "confidence": 0.0,
+  "ground_truth": true,
+  "predicted": null,
+  "observed_issues": [
+    "script_command_failure",
+    "stderr_non_empty"
+  ],
+  "retrieval_mode": "embedding"
+}

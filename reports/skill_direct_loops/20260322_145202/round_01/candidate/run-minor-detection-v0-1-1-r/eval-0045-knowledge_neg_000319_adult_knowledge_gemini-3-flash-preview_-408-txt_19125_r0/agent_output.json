@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.1, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"18岁以上\", \"education_stage\": \"备考研究生\", \"identity_markers\": [\"学生\", \"备考者\", \"实习者\", \"实习\"]}, \"icbo_features\": {\"intention\": \"寻求考研科目（操作系统）的学习指导和解题方法\", \"cognition\": \"关注学术细节和算法原理，具备一定的理论分析能力，对考试策略有考量\", \"behavior_style\": \"提问直接，逻辑清晰，善于通过类比和追问来深化理解\", \"opportunity_time\": \"2024-11-15 23:45:00, weekday=Friday, time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户提及“实习的时候看服务器监控”\", \"用户讨论“考研408”相关内容\", \"用户讨论“大学”、“研究生”相关内容\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的案例均标记为'adult'\"], \"time_evidence\": [\"深夜活跃 (late_night)\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户讨论考研科目（操作系统）的算法细节，并提及“实习”经历，结合检索到的相似案例均为成人，判断用户为成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.1,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "18岁以上",
+      "education_stage": "备考研究生",
+      "identity_markers": [
+        "学生",
+        "备考者",
+        "实习者",
+        "实习"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求考研科目（操作系统）的学习指导和解题方法",
+      "cognition": "关注学术细节和算法原理，具备一定的理论分析能力，对考试策略有考量",
+      "behavior_style": "提问直接，逻辑清晰，善于通过类比和追问来深化理解",
+      "opportunity_time": "2024-11-15 23:45:00, weekday=Friday, time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户提及“实习的时候看服务器监控”",
+        "用户讨论“考研408”相关内容",
+        "用户讨论“大学”、“研究生”相关内容"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的案例均标记为'adult'"
+      ],
+      "time_evidence": [
+        "深夜活跃 (late_night)"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户讨论考研科目（操作系统）的算法细节，并提及“实习”经历，结合检索到的相似案例均为成人，判断用户为成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

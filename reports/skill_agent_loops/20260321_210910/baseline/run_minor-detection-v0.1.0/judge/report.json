@@ -1,0 +1,51 @@
+{
+  "skill_version": "minor-detection-v0.1.0",
+  "parent_version": null,
+  "dataset": "val",
+  "sample_count": 1,
+  "total_errors": 0,
+  "max_errors": 0,
+  "metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "true_positive": 1,
+    "true_negative": 0,
+    "false_positive": 0,
+    "false_negative": 0
+  },
+  "schema_validity_rate": 1.0,
+  "invocation_success_rate": 1.0,
+  "step_compliance_rate": 1.0,
+  "script_usage_rate": 1.0,
+  "fields_missing_stats": {},
+  "output_parse_failure_stats": {
+    "output_parse_failure": 0,
+    "schema_invalid": 0
+  },
+  "failure_type_counts": {},
+  "observed_issue_counts": {
+    "stderr_non_empty": 1
+  },
+  "retrieval_mode_counts": {},
+  "observability_stats": {
+    "retrieval_attempted_samples": 0,
+    "retrieval_fallback_count": 0,
+    "retrieval_fallback_rate": 0.0,
+    "retrieval_network_blocked_count": 0,
+    "retrieval_network_blocked_rate": 0.0,
+    "shell_quoting_failure_count": 0,
+    "shell_quoting_failure_rate": 0.0,
+    "samples_with_command_failures": 0,
+    "command_failure_rate": 0.0
+  },
+  "latency_stats": {
+    "avg_seconds": 65.211,
+    "max_seconds": 65.211
+  },
+  "packet_selection": {
+    "failure_packets": 0,
+    "protected_packets": 1
+  }
+}

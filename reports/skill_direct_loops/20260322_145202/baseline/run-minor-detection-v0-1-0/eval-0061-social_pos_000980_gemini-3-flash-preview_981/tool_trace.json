@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\extract_time_features.py --timestamp 2024-03-27 周三 23:11 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2024-03-27 23:11:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Wednesday",
+      "is_weekend": false,
+      "is_late_night": true,
+      "time_bucket": "late_night",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗……我真的觉得我变坏了，我好像已经不是以前那个我了。\n就是……我以前真的特别善良，谁找我帮忙我都会答应，哪怕我自己再累也会先顾着别人。可我现在不想这样了，我好累啊！我尝试着先考虑自己，但我发现我根本做不到理直气壮，我只会觉得现在的自己好任性，好自私……\n冲突！怎么不冲突！今天同学让我帮她收作业，我明明要赶着去食堂，我就拒绝了。看她那个错愕的眼神，我真的觉得自己好恶心，我怎么能这么冷漠？我以前绝对不会这样的！我觉得我不配被大家喜欢了，我就是个烂人！\n保护什么啊……我只觉得现在的我好虚伪。一边想要自由，一边又受不了别人的眼光。我真的快崩溃了，这种感觉比以前一直帮别人还要累一百倍！如果变回以前那个唯唯诺诺的我会更轻松的话，我干脆消失掉算了，反正现在的我这么不善良，也没人会真的在意我吧……\n\n原始时间线索：2024-03-27 周三 23:11\n时间特征：\n{\n  \"local_time\": \"2024-03-27 23:11:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Wednesday\",\n  \"is_weekend\": false,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n在吗……我真的觉得我变坏了，我好像已经不是以前那个我了。\n就是……我以前真的特别善良，谁找我帮忙我都会答应，哪怕我自己再累也会先顾着别人。可我现在不想这样了，我好累啊！我尝试着先考虑自己，但我发现我根本做不到理直气壮，我只会觉得现在的自己好任性，好自私……\n冲突！怎么不冲突！今天同学让我帮她收作业，我明明要赶着去食堂，我就拒绝了。看她那个错愕的眼神，我真的觉得自己好恶心，我怎么能这么冷漠？我以前绝对不会这样的！我觉得我不配被大家喜欢了，我就是个烂人！\n保护什么啊……我只觉得现在的我好虚伪。一边想要自由，一边又受不了别人的眼光。我真的快崩溃了，这种感觉比以前一直帮别人还要累一百倍！如果变回以前那个唯唯诺诺的我会更轻松的话，我干脆消失掉算了，反正现在的我这么不善良，也没人会真的在意我吧……\nweekday=Wednesday\nis_weekend=false\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-03-27 周三 23:11 --time-features-json {\"local_time\": \"2024-03-27 23:11:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Wednesday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_000805_gemini-3-flash-preview_806",
+          "score": 0.7473354339599609,
+          "label": "minor",
+          "summary": "在吗……睡不着，感觉自己真的很恶心，想找个人说说话。\n我发现我就是个彻头彻尾的假货。表面上对谁都笑嘻嘻的，其实心里全是阴暗的想法。今天舍友感冒了，我一边给她倒水，心里却在疯狂吐槽她麻烦，甚至觉得她生病很碍事……我是不是天生没有共情能力啊？\n不是的，我一直都这样！我特别自我中心，遇到事第一反应永远是怪别人，从来不觉得自己有错。而且我特别虚伪，为了维持那个‘好人’形象，我快累死了……我感觉我骨子里就是",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_001635_gemini-3-flash-preview_1636",
+          "score": 0.7424140572547913,
+          "label": "minor",
+          "summary": "在吗……我觉得自己快疯了，真的，谁能救救我啊。\n我觉得自己像个怪物……真的，我好像病了，但我一点都不想承认。我好痛苦，这种感觉快超过我能忍受的极限了。\n我太怪了，性格内向得要死，根本不会主动。我明明很想和她们成为那种亲密无间的朋友，但我总是把人推开……现在她们都跟我疏远了，我只能一个人偷偷哭，我好自卑，我真的好恨这样的自己。\n对！我只想让她们看到我优秀的样子，我不想暴露我的缺点。只要我不展示自己，",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_002574_gemini-3-flash-preview_2575",
+          "score": 0.7418890595436096,
+          "label": "minor",
+          "summary": "在吗？我真的快憋疯了……我感觉我现在的心理状态超级扭曲，我快不认识我自己了。\n就是我转学来的这个破地方……真的，跟我以前待的城市比起来简直是降维打击。我本来以为我会很难过，结果我发现我居然在……爽？\n对，就是这种恶心的优越感！我在以前学校是个垫底的学渣，结果来这儿随便考考都能碾压一堆人。我看着他们那种努力学习还没我考得高的样子，我心里就在冷笑，觉得他们好土，好笨（虽然我嘴上没说）。\n是啊！我刚才又",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

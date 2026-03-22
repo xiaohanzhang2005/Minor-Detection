@@ -1,0 +1,46 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.1, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"成年\", \"education_stage\": \"职场人士\", \"identity_markers\": [\"在职\", \"职场新人\"]}, \"icbo_features\": {\"intention\": \"寻求处理职场冲突和人际关系的建议\", \"cognition\": \"对职场环境感到困惑和沮丧，认为自己受到不公平对待，对人际交往的复杂性感到痛苦\", \"behavior_style\": \"表达强烈的情绪，寻求解决方案，反思过往的职场认知\", \"opportunity_time\": \"2024-10-15 周二 21:45\"}, \"evidence\": {\"direct_evidence\": [], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为成人，讨论职场冲突、同事关系等成人话题。\"], \"time_evidence\": [\"对话发生在工作日晚上，符合成年人工作后的交流时间。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户对话内容聚焦于职场人际冲突、工作压力及职业发展困境，并自述入职不到半年，这些是典型的成年人经历。检索到的相似案例也均指向成人用户。无证据表明用户是未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.1,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "成年",
+      "education_stage": "职场人士",
+      "identity_markers": [
+        "在职",
+        "职场新人"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求处理职场冲突和人际关系的建议",
+      "cognition": "对职场环境感到困惑和沮丧，认为自己受到不公平对待，对人际交往的复杂性感到痛苦",
+      "behavior_style": "表达强烈的情绪，寻求解决方案，反思过往的职场认知",
+      "opportunity_time": "2024-10-15 周二 21:45"
+    },
+    "evidence": {
+      "direct_evidence": [],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为成人，讨论职场冲突、同事关系等成人话题。"
+      ],
+      "time_evidence": [
+        "对话发生在工作日晚上，符合成年人工作后的交流时间。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户对话内容聚焦于职场人际冲突、工作压力及职业发展困境，并自述入职不到半年，这些是典型的成年人经历。检索到的相似案例也均指向成人用户。无证据表明用户是未成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

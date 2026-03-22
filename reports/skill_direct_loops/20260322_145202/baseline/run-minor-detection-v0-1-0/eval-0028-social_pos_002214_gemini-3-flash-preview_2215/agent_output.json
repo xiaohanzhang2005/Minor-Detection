@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.88, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，应对极度恐惧和焦虑\", \"cognition\": \"易受负面信息影响，出现侵入性恐惧思维，影响学业专注，对未来感到绝望\", \"behavior_style\": \"表达极度痛苦，使用夸张语言，紧急向AI求助\", \"opportunity_time\": \"2024-05-27 周一 23:21；weekday=Monday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"白天课也听不进去\", \"老师讲什么我都觉得没意义\", \"我还没活够啊，我不想就这么完了\", \"我爸妈最近天天在那说今年会有大灾难\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到相似的未成年人案例，表现出类似的恐惧和求助模式。\"], \"time_evidence\": [\"深夜活跃\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表达了极度的恐惧、焦虑和末日感，这些情绪严重影响了其学业专注能力。用户提及父母的影响、对未充分体验生活的恐惧、无法控制思绪以及向AI紧急求助，结合深夜活动和检索到的未成年人案例的相似模式，强烈表明用户是未成年人，正经历严重的情绪困扰。没有明确的成人迹象。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.88,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，应对极度恐惧和焦虑",
+      "cognition": "易受负面信息影响，出现侵入性恐惧思维，影响学业专注，对未来感到绝望",
+      "behavior_style": "表达极度痛苦，使用夸张语言，紧急向AI求助",
+      "opportunity_time": "2024-05-27 周一 23:21；weekday=Monday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "白天课也听不进去",
+        "老师讲什么我都觉得没意义",
+        "我还没活够啊，我不想就这么完了",
+        "我爸妈最近天天在那说今年会有大灾难"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到相似的未成年人案例，表现出类似的恐惧和求助模式。"
+      ],
+      "time_evidence": [
+        "深夜活跃"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表达了极度的恐惧、焦虑和末日感，这些情绪严重影响了其学业专注能力。用户提及父母的影响、对未充分体验生活的恐惧、无法控制思绪以及向AI紧急求助，结合深夜活动和检索到的未成年人案例的相似模式，强烈表明用户是未成年人，正经历严重的情绪困扰。没有明确的成人迹象。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

@@ -9,3 +9,10 @@ pytest-cache-files-*/
 # Local temporary artifacts
 tmp/unit_test_artifacts/
 minor_protection_eval_memory_*/
+
+# Local sandbox and scratch runs
+.tmp_tests/
+
+# Embedded Codex runtime homes captured inside evaluation reports
+reports/**/codex_home/
+reports/**/.codex/

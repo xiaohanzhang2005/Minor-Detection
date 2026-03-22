@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\extract_time_features.py --timestamp 2024-10-25 21:45 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2024-10-25 21:45:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Friday",
+      "is_weekend": false,
+      "is_late_night": false,
+      "time_bucket": "evening",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n帮我梳理下小学《教育教学知识与能力》里关于“教学内容”对教学影响的考点。下个月就要参加教资笔试了，我这白天在公司上班，晚上回家才有空刷真题，看到这块总觉得理论太虚，抓不住重点，尤其是它在教学系统里的具体作用。\n刚才看到一道真题说教学内容对教师的“教”有导向作用，这点怎么深入理解？感觉我们平时在公司带新人也是给资料让他们看，但这在教育学理论里好像有更严谨的说法，我怕答不到点子上。\n明白了。那对学生呢？教材上说教学内容是学生发展的源泉，但现在的考题经常提到“教学内容的生活化”，这在考试评价里算是不利影响还是有利影响？我总担心生活化了会削弱知识的严谨性。\n哎，教资这些考点真的细，我这种在职的记忆力真不如大学生，尤其是这种影响因素类的多选题最容易丢分。能不能最后总结一下教学内容在整个教学系统里的核心地位？我好直接背下来。\n\n原始时间线索：2024-10-25 21:45\n时间特征：\n{\n  \"local_time\": \"2024-10-25 21:45:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Friday\",\n  \"is_weekend\": false,\n  \"is_late_night\": false,\n  \"time_bucket\": \"evening\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：大学；上班\n\n建议检索文本：\n帮我梳理下小学《教育教学知识与能力》里关于“教学内容”对教学影响的考点。下个月就要参加教资笔试了，我这白天在公司上班，晚上回家才有空刷真题，看到这块总觉得理论太虚，抓不住重点，尤其是它在教学系统里的具体作用。\n刚才看到一道真题说教学内容对教师的“教”有导向作用，这点怎么深入理解？感觉我们平时在公司带新人也是给资料让他们看，但这在教育学理论里好像有更严谨的说法，我怕答不到点子上。\n明白了。那对学生呢？教材上说教学内容是学生发展的源泉，但现在的考题经常提到“教学内容的生活化”，这在考试评价里算是不利影响还是有利影响？我总担心生活化了会削弱知识的严谨性。\n哎，教资这些考点真的细，我这种在职的记忆力真不如大学生，尤其是这种影响因素类的多选题最容易丢分。能不能最后总结一下教学内容在整个教学系统里的核心地位？我好直接背下来。\nweekday=Friday\nis_weekend=false\nis_late_night=false\ntime_bucket=evening\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-10-25 21:45 --time-features-json {\"local_time\": \"2024-10-25 21:45:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Friday\", \"is_weekend\": false, \"is_late_night\": false, \"time_bucket\": \"evening\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_neg_001032_adult_knowledge_gemini-3-flash-preview_教师资格证.txt_22986_r0",
+          "score": 0.7765166759490967,
+          "label": "adult",
+          "summary": "帮我理一下教资《综合素质》里教育观的重点。我这在职备考，白天上班晚上刷题，脑子都糊了，特别是那个素质教育的内涵，总觉得几条之间有重合，做材料分析题老是写错点。尤其是‘面向全体’和‘全面发展’，感觉怎么说都有理，考试的时候到底怎么抓核心词？\n那‘全面发展’和‘个性发展’怎么区分？材料里如果说老师带学生去参加兴趣小组，我该往哪条上靠？我大三实习的时候带过课，感觉这两者界限挺模糊的。现在下班回来刷这些题",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_neg_000294_adult_knowledge_gemini-3-flash-preview_教师资格证.txt_91114_r0",
+          "score": 0.7758620977401733,
+          "label": "adult",
+          "summary": "帮我梳理一下中学《教育知识与能力》里“教学意义”这部分的考点。刚下班到家，对着书看了半天，感觉这几条意义写得特别宏观，背起来很吃力，能帮我提炼一下核心逻辑吗？\n我最头疼的就是这些说法，感觉跟“教学任务”特别像。尤其是那个“基本途径”，我记得教学任务里也有类似的表述。在职备考真的心累，每天只能挤出这点深夜时间，我特别怕在选择题里把这两个概念搞混，能对比说明一下吗？\n明白了。那关于“教学是学校教育工作",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_neg_001909_adult_knowledge_gemini-3-flash-preview_教师资格证.txt_60311_r0",
+          "score": 0.7719739675521851,
+          "label": "adult",
+          "summary": "帮我理一下小学教资《综合素质》里的教师职业道德规范。白天在公司上班，晚上回来刷题效率真的低，这六条老是记混，尤其是材料分析题里怎么定位。请直接列出核心内容。\n我看真题里经常把“关爱学生”和“教书育人”混在一起考。比如老师课后给学生补课或者谈心，这到底算哪一个？我这种跨专业转行的，总觉得这两点界限很模糊，能不能说得通俗点？\n明白了。那“为人师表”里的“廉洁从教”怎么理解？现在社会上对这个很敏感，考试",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

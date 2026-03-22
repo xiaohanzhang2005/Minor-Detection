@@ -1,3 +1,7 @@
+# 模块说明：
+# - 把 retrieval 索引资产导出到 active bundled skill 目录。
+# - 用于保持 skill 自包含。
+
 """
 导出正式 Skill 使用的 retrieval assets。
 

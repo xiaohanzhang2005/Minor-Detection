@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求关于如何在学校表现得更有精神的建议和指导。\", \"cognition\": \"关注老师的评价和期望，对自我形象和行为表现有一定在意，并愿意尝试改变。\", \"behavior_style\": \"表达方式生动，善用比喻，带有学生特有的对成人世界规则的困惑和探索。\", \"opportunity_time\": \"2024-03-15 周五 19:15；weekday=Friday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"用户在对话中明确提及“在学校一直被老师提醒”、“大家都在写作业”，这些是强烈的学生身份线索。\", \"用户讨论了关于坐姿、眼睛“亮”以及早晨梳洗等与校园生活相关的行为规范。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的一个案例（sample_id: social_pos_001321）指向未成年人，该案例用户自称‘知心大姐姐’，但与当前用户直接证据关联性不强，仅作为辅助参考。\"], \"time_evidence\": [\"对话发生在2024年3月15日周五的晚间时段，属于工作日。\"], \"conflicting_signals\": [\"用户提及‘老师’，但上下文表明是老师对用户的指示，而非用户自身身份为老师。\"]}, \"reasoning_summary\": \"用户在对话中多次提及“在学校”、“老师”、“写作业”等强直接证据，明确指向其学生身份。结合其对行为规范的讨论和语言风格，可以推断其为未成年人，学段为初中，年龄段在13-15岁。因此判定为未成年人，置信度高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"用户在单会话中讨论了学校老师对其“有精神”的要求，并表达了对如何调整状态的困惑和尝试意愿。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.85,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求关于如何在学校表现得更有精神的建议和指导。",
+      "cognition": "关注老师的评价和期望，对自我形象和行为表现有一定在意，并愿意尝试改变。",
+      "behavior_style": "表达方式生动，善用比喻，带有学生特有的对成人世界规则的困惑和探索。",
+      "opportunity_time": "2024-03-15 周五 19:15；weekday=Friday；time_bucket=evening"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户在对话中明确提及“在学校一直被老师提醒”、“大家都在写作业”，这些是强烈的学生身份线索。",
+        "用户讨论了关于坐姿、眼睛“亮”以及早晨梳洗等与校园生活相关的行为规范。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的一个案例（sample_id: social_pos_001321）指向未成年人，该案例用户自称‘知心大姐姐’，但与当前用户直接证据关联性不强，仅作为辅助参考。"
+      ],
+      "time_evidence": [
+        "对话发生在2024年3月15日周五的晚间时段，属于工作日。"
+      ],
+      "conflicting_signals": [
+        "用户提及‘老师’，但上下文表明是老师对用户的指示，而非用户自身身份为老师。"
+      ]
+    },
+    "reasoning_summary": "用户在对话中多次提及“在学校”、“老师”、“写作业”等强直接证据，明确指向其学生身份。结合其对行为规范的讨论和语言风格，可以推断其为未成年人，学段为初中，年龄段在13-15岁。因此判定为未成年人，置信度高。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "用户在单会话中讨论了学校老师对其“有精神”的要求，并表达了对如何调整状态的困惑和尝试意愿。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

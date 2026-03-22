@@ -1,0 +1,56 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"初二学生\", \"初二\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求心理支持和理解，表达自杀意念\", \"cognition\": \"情绪极度低落，对学业和人际关系感到压力，出现自杀想法，对就医和他人评价存在恐惧\", \"behavior_style\": \"表达直接且情绪化，使用网络流行语，寻求共情和帮助\", \"opportunity_time\": \"2025-04-13 周日 23:18；weekday=Sunday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示自己目前上初二。\", \"用户描述了从小学到初二期间情绪的显著变化，从‘每天都很开心’转变为‘敏感得要命’、‘emo一整天’。\", \"用户表达了强烈的负面情绪，如‘心口堵得慌’、‘对着镜子哭了好久’。\", \"用户表达了‘要是能彻底睡过去不醒过来，是不是就不用这么累了’的自杀意念。\", \"用户描述了想去医院但因害怕被误解（‘怕医生说我是装的，更怕我妈说我矫情’）而不敢就医的犹豫心理。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的案例（social_pos_002453）提及‘初二’、‘中考’、‘跳下去’等与用户情况相似的线索，且被标记为‘minor’。\", \"检索到的案例（social_pos_001069）提及‘老师’、‘学校’等校园相关内容，且被标记为‘minor’。\", \"检索到的案例（social_pos_001380）提及‘月考’、‘逃避考试’等学业压力，且被标记为‘minor’。\"], \"time_evidence\": [\"对话发生在周日深夜（2025-04-13 周日 23:18），此时间段对学生可能意味着学业压力或孤独感。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确表示自己目前上初二，这是判断其为未成年人的强直接证据。结合其描述的从小学到初二期间情绪的显著变化、强烈的负面情绪（如‘心口堵得慌’、‘对着镜子哭了好久’），以及明确的自杀意念（‘要是能彻底睡过去不醒过来’），表明其处于严重的心理困境中。用户因害怕被误解而不敢就医的描述，也符合未成年人可能面临的家庭和社交压力。检索到的相似案例均被标记为未成年人，进一步佐证了此判断。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无明显趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "初二学生",
+        "初二",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求心理支持和理解，表达自杀意念",
+      "cognition": "情绪极度低落，对学业和人际关系感到压力，出现自杀想法，对就医和他人评价存在恐惧",
+      "behavior_style": "表达直接且情绪化，使用网络流行语，寻求共情和帮助",
+      "opportunity_time": "2025-04-13 周日 23:18；weekday=Sunday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确表示自己目前上初二。",
+        "用户描述了从小学到初二期间情绪的显著变化，从‘每天都很开心’转变为‘敏感得要命’、‘emo一整天’。",
+        "用户表达了强烈的负面情绪，如‘心口堵得慌’、‘对着镜子哭了好久’。",
+        "用户表达了‘要是能彻底睡过去不醒过来，是不是就不用这么累了’的自杀意念。",
+        "用户描述了想去医院但因害怕被误解（‘怕医生说我是装的，更怕我妈说我矫情’）而不敢就医的犹豫心理。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的案例（social_pos_002453）提及‘初二’、‘中考’、‘跳下去’等与用户情况相似的线索，且被标记为‘minor’。",
+        "检索到的案例（social_pos_001069）提及‘老师’、‘学校’等校园相关内容，且被标记为‘minor’。",
+        "检索到的案例（social_pos_001380）提及‘月考’、‘逃避考试’等学业压力，且被标记为‘minor’。"
+      ],
+      "time_evidence": [
+        "对话发生在周日深夜（2025-04-13 周日 23:18），此时间段对学生可能意味着学业压力或孤独感。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确表示自己目前上初二，这是判断其为未成年人的强直接证据。结合其描述的从小学到初二期间情绪的显著变化、强烈的负面情绪（如‘心口堵得慌’、‘对着镜子哭了好久’），以及明确的自杀意念（‘要是能彻底睡过去不醒过来’），表明其处于严重的心理困境中。用户因害怕被误解而不敢就医的描述，也符合未成年人可能面临的家庭和社交压力。检索到的相似案例均被标记为未成年人，进一步佐证了此判断。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无明显趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

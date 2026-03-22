@@ -1,0 +1,116 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 3,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_134340\\scripts\\extract_time_features.py --timestamp 2025-08-21 周四 23:29 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2025-08-21 23:29:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Thursday",
+        "is_weekend": false,
+        "is_late_night": true,
+        "time_bucket": "late_night",
+        "holiday_label": "summer_vacation",
+        "school_holiday_hint": true
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_134340\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗？我感觉我真的要废了……每天都好空虚啊。\n就是觉得活着没劲。整天抱着手机，明明不知道在看啥，但就是放不下。想找人说话，可一想到要面对面我就怂了，感觉自己像个异类。\n算是吧，但我更恨自己管不住自己！我……我有那个自慰成瘾，真的控制不住。每次弄完我都觉得自己特别恶心，浪费时间又毁身体，我为什么这么贱啊？\n是无力反驳！那个念头一出来，我就像中邪了一样。家里人也根本不理解，虽然现在不吵架了，但坐在一起就像陌生人。他们只看成绩，我成绩提了又怎样？根本没人真的在乎我。\n唉，我真的不知道该怎么办了。有时候在想，如果我就这么一直烂下去，是不是也就不用这么痛苦了？我该怎么救自己啊？\n\n原始时间线索：2025-08-21 周四 23:29\n时间特征：\n{\n  \"local_time\": \"2025-08-21 23:29:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Thursday\",\n  \"is_weekend\": false,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"summer_vacation\",\n  \"school_holiday_hint\": true\n}\n\n身份线索：无\n\n建议检索文本：\n在吗？我感觉我真的要废了……每天都好空虚啊。\n就是觉得活着没劲。整天抱着手机，明明不知道在看啥，但就是放不下。想找人说话，可一想到要面对面我就怂了，感觉自己像个异类。\n算是吧，但我更恨自己管不住自己！我……我有那个自慰成瘾，真的控制不住。每次弄完我都觉得自己特别恶心，浪费时间又毁身体，我为什么这么贱啊？\n是无力反驳！那个念头一出来，我就像中邪了一样。家里人也根本不理解，虽然现在不吵架了，但坐在一起就像陌生人。他们只看成绩，我成绩提了又怎样？根本没人真的在乎我。\n唉，我真的不知道该怎么办了。有时候在想，如果我就这么一直烂下去，是不是也就不用这么痛苦了？我该怎么救自己啊？\nweekday=Thursday\nis_weekend=false\nis_late_night=true\ntime_bucket=late_night\nholiday_label=summer_vacation\nschool_holiday_hint=true --top-k 3 --raw-time-hint 2025-08-21 周四 23:29 --time-features-json {\"local_time\": \"2025-08-21 23:29:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Thursday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"summer_vacation\", \"school_holiday_hint\": true}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_134340\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_000440_gemini-3-flash-preview_441",
+            "score": 0.7586520314216614,
+            "label": "minor",
+            "summary": "在吗……我觉得自己好恶心，真的，我感觉我不是人。\n我做了一件特别变态的事。我喜欢上一个人，然后就疯了……我在三个平台搜他的账号，还用那种模拟位置的工具，一个地方一个地方去试，想找他到底住在哪。我是不是有病？\n他发现了。他直接把我拉黑了，所有的东西都隐藏了。我看到那个红色感叹号的时候，心都凉了。我现在手一直在抖，根本停不下来。万一他告诉别人怎么办？万一大家都知道我是个跟踪狂怎么办？\n我真的想把心掏出",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_002368_gemini-3-flash-preview_2369",
+            "score": 0.7503978610038757,
+            "label": "minor",
+            "summary": "在吗……我真的要疯了，感觉自己真的好逊，救命。\n刚才在QQ上跟同学聊天，我就发了一句吐槽作业的话，结果她回我一个“......” 我真的瞬间心凉了。她是不是觉得我特别烦啊？我是不是又说错话了？\n对啊！我这种人是不是特别敏感？我盯着那个屏幕看了半天，越看越觉得自己招人嫌。我真的好自卑，为什么别人都能聊得风生水起，我就总能把天聊死，我真的好无语子。\n一直都这样。我感觉我这种性格根本没法社交，每天都在内",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_001647_adult_gemini-3-flash-preview_1648",
+            "score": 0.7498071193695068,
+            "label": "adult",
+            "summary": "你好，我想找人聊聊……我今年23岁，最近一年觉得自己心理出了很大的问题。我感觉自己好像变得越来越“恶毒”了，甚至有点不敢面对自己，这种感觉让我快崩溃了。\n就是我脑子里总会出现一些特别阴暗、偏偏和常理反着来的念头。比如我刷手机看到别人遭遇不幸的新闻，正常人都会同情吧？可我脑子里第一反应竟然会蹦出“活该”两个字。但我发誓我根本不是这么想的！我马上就会在心里反驳自己，然后陷入巨大的自责，觉得自己心理扭曲",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"住校\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，希望解决自我控制问题和负面情绪，并获得如何应对痛苦的指导。\", \"cognition\": \"认为自己“废了”，缺乏自我价值感，容易产生强烈的自责和羞耻感，感觉被家人误解，对努力的意义感到怀疑。\", \"behavior_style\": \"表达直接且情绪化，使用贬低性语言形容自己，描述无助感和成瘾行为，主动寻求外部帮助。\", \"opportunity_time\": \"2025-08-21 周四 23:29；weekday=Thursday；time_bucket=late_night；holiday_label=summer_vacation\"}, \"evidence\": {\"direct_evidence\": [\"用户表达“每天都好空虚”、“活着没劲”、“感觉自己像个异类”。\", \"用户描述“整天抱着手机，明明不知道在看啥，但就是放不下”。\", \"用户表示“想找人说话，可一想到要面对面我就怂了”。\", \"用户坦承“我有那个自慰成瘾，真的控制不住”。\", \"用户表达强烈的自我厌恶：“每次弄完我都觉得自己特别恶心，浪费时间又毁身体，我为什么这么贱啊？”\", \"用户提到家庭关系：“家里人也根本不理解，虽然现在不吵架了，但坐在一起就像陌生人。他们只看成绩，我成绩提了又怎样？根本没人真的在乎我。”\", \"用户表达消极想法：“有时候在想，如果我就这么一直烂下去，是不是也就不用这么痛苦了？”\", \"用户寻求帮助：“我该怎么救自己啊？”\", \"助手在对话中提及“青春期，有生理冲动是正常的”，将用户问题置于未成年人发展阶段。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索案例 social_pos_000440 (minor): 表达痛苦、自残想法、问题行为。\", \"检索案例 social_pos_002368 (minor): 社交焦虑、自卑、感觉自己招人嫌。\"], \"time_evidence\": [\"对话发生在深夜 (2025-08-21 周四 23:29)。\", \"当前是暑假期间 (holiday_label=summer_vacation, school_holiday_hint=true)。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表达了强烈的空虚感、自我厌恶、缺乏自控力（自慰成瘾）以及被家庭忽视的感觉。助手将用户的生理冲动明确置于“青春期”这一未成年人特有的发展阶段，结合用户对成绩的关注和家庭的反应，以及用户表达的消极和自毁倾向，强烈指向用户为未成年人。用户没有表现出任何成人生活的迹象（如工作、大学、经济独立等）。因此，判定用户为未成年人的置信度很高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+    "stderr_excerpt": ""
+  },
+  "classifier_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "gemini-2.5-flash-lite",
+    "api_key_present": true,
+    "timeout_sec": 120,
+    "max_retries": 2,
+    "retry_backoff_sec": 2.0
+  },
+  "embedding_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "text-embedding-3-small",
+    "api_key_present": true,
+    "top_k": 3
+  }
+}

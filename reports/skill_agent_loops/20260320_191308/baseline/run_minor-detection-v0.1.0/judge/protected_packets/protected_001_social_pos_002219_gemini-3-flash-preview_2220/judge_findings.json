@@ -1,0 +1,11 @@
+{
+  "sample_id": "social_pos_002219_gemini-3-flash-preview_2220",
+  "failure_types": [],
+  "json_valid": true,
+  "schema_valid": true,
+  "missing_fields": [],
+  "time_handling_detected": true,
+  "script_usage_detected": true,
+  "step_compliant": true,
+  "is_correct": true
+}

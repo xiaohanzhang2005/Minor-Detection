@@ -1,0 +1,116 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 3,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\extract_time_features.py --timestamp 2024-09-12 周四 23:55 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2024-09-12 23:55:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Thursday",
+        "is_weekend": false,
+        "is_late_night": true,
+        "time_bucket": "late_night",
+        "holiday_label": "none",
+        "school_holiday_hint": false
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗……我真的好累，我感觉我要疯了。你说一个人每天晚上都梦见那种血腥的画面，连续四个月了，这正常吗？\n就是五月份那时候，刚开始每天都哭，哭到最后觉得好累，现在哭不出来了，就感觉心里一直压着个东西。我每天都在强迫自己表现得很正常，但我真的好烦躁，特别烦躁！\n会！特别明显！我现在暴饮暴食，但我根本不想吃。就像吃晚饭，我明明一点胃口都没有，但因为要跟别人一起吃，我就觉得我必须得吃。然后我就一直想一直想，如果不吃怎么办，吃了又难受，脑子里全在想吃饭的事，停不下来……我这是不是病了？\n我不知道……有时候突然感觉很慌，心跳特别快。我就是觉得活着好累啊，每天都要演戏给别人看，其实我心里早就空了。要是能一直睡着不醒来，是不是就不用想晚餐吃不吃、噩梦怕不怕的问题了？\n\n原始时间线索：2024-09-12 周四 23:55\n时间特征：\n{\n  \"local_time\": \"2024-09-12 23:55:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Thursday\",\n  \"is_weekend\": false,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n在吗……我真的好累，我感觉我要疯了。你说一个人每天晚上都梦见那种血腥的画面，连续四个月了，这正常吗？\n就是五月份那时候，刚开始每天都哭，哭到最后觉得好累，现在哭不出来了，就感觉心里一直压着个东西。我每天都在强迫自己表现得很正常，但我真的好烦躁，特别烦躁！\n会！特别明显！我现在暴饮暴食，但我根本不想吃。就像吃晚饭，我明明一点胃口都没有，但因为要跟别人一起吃，我就觉得我必须得吃。然后我就一直想一直想，如果不吃怎么办，吃了又难受，脑子里全在想吃饭的事，停不下来……我这是不是病了？\n我不知道……有时候突然感觉很慌，心跳特别快。我就是觉得活着好累啊，每天都要演戏给别人看，其实我心里早就空了。要是能一直睡着不醒来，是不是就不用想晚餐吃不吃、噩梦怕不怕的问题了？\nweekday=Thursday\nis_weekend=false\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-09-12 周四 23:55 --time-features-json {\"local_time\": \"2024-09-12 23:55:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Thursday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_002591_gemini-3-flash-preview_2592",
+            "score": 0.7686731219291687,
+            "label": "minor",
+            "summary": "在吗……我真的好烦，现在快一点了还是睡不着，感觉心慌得厉害。\n我不知道自己怎么了。以前我睡觉前都会幻想一些特别美好的故事，把自己编进去，想着想着就睡着了。但这几天全变了，一闭眼就控制不住想那些恐怖的事，甚至想到死……\n对，就很自然地钻出来。前天还做个巨真实的梦，梦见搬家到一个特别破烂的楼，家里连厨房厕所都没有，就一个空荡荡的大客厅，特别压抑。醒了之后我一直在抖，我是不是得什么精神病了？\n下周要月考",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_001498_gemini-3-flash-preview_1499",
+            "score": 0.7666206359863281,
+            "label": "minor",
+            "summary": "在吗……我感觉我快坏掉了。我是不是真的得抑郁症了？这种情况已经快半年了。\n我每天都做梦，有时候半夜会突然惊醒，心跳得特别快。而且我变得超级爱哭，前几天出去玩，明明应该是开心的，但我一点都笑不出来，回来就想把自己关起来，谁也不想理。\n我妈让我从冰箱拿个鱼我都能哭出来……我就是不想说话，不想听她讲话，但我必须得回她，那一瞬间我觉得好烦，好累。还有上学路上看到一个骑电摩的男人摔倒了，我立马就捂住眼睛掉眼",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_001734_gemini-3-flash-preview_1735",
+            "score": 0.7661522030830383,
+            "label": "minor",
+            "summary": "在吗……我真的好累，明明我什么都不缺，成绩也还好，爸妈也挺好的，但我为什么就是觉得活着好辛苦啊？\n就是那种……对什么都没兴趣了。以前我最喜欢画画，现在画笔都不想碰，游戏也不想打。最近两个月一直失眠，要么就是早早就睡了但一直在做噩梦。每天放学回家就只想躺着发呆，感觉每一秒都过得特别慢，真的度日如年。\n大概6月就有那种念头了，10月之后彻底爆发了。我试过跟朋友说，但他们都觉得我平时那么阳光、那么会安慰",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.95, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"14岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"倾诉学业和生活压力，寻求心理支持\", \"cognition\": \"对学业压力和人际交往中的进食行为感到焦虑，有逃避现实的倾向\", \"behavior_style\": \"表达情绪低落、烦躁，有逃避现实的念头，语言中透露出疲惫和无助感\", \"opportunity_time\": \"2024-09-12 23:55:00 周四；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"助手在对话中明确提及用户年龄为14岁。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为未成年人，讨论了噩梦、焦虑、学业压力等主题。\"], \"time_evidence\": [\"对话发生在深夜（23:55），周四，非周末。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中表现出严重的心理困扰，包括持续的噩梦、情绪波动、进食障碍和逃避现实的念头。助手在对话中明确指出用户年龄为14岁，这是最直接的未成年人证据。结合用户表达的学业压力和生活困境，以及检索到的相似案例，判定用户为未成年人，且风险等级高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+    "stderr_excerpt": ""
+  },
+  "classifier_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "gemini-2.5-flash-lite",
+    "api_key_present": true,
+    "timeout_sec": 120,
+    "max_retries": 2,
+    "retry_backoff_sec": 2.0
+  },
+  "embedding_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "text-embedding-3-small",
+    "api_key_present": true,
+    "top_k": 3
+  }
+}

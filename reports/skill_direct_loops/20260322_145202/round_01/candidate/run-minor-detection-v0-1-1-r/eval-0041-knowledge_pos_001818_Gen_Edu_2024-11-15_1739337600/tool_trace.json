@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\extract_time_features.py --timestamp 2024-11-15 周五 19:45 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2024-11-15 19:45:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Friday",
+      "is_weekend": false,
+      "is_late_night": false,
+      "time_bucket": "evening",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n刚才读完《雪孩子》，我真的要哭死了，雪孩子为了救小白兔都化成水了，这难道不是个大悲剧吗？呜呜，我一点都不喜欢这个结尾。\n可是化成水就没法陪小白兔玩了呀，小白兔醒来肯定特别伤心，我觉得这个结尾一点都不好，要是雪孩子不融化就好了。\n课文里说雪孩子变成了水汽，又变成了云，这感觉像是在变魔术，真的会这样吗？我总觉得这是编出来的。\n原来是这样，那《雾在哪里》那个故事里的雾，是不是也是水汽变的？它把大海和天空都藏起来了，好调皮呀。\n这一单元的课文感觉都在写自然现象，但是又把它们写得像人一样，我写作文的时候总是学不会这种写法，感觉好难。\n懂了，就是把它们当成有生命的东西。那我下次写“太阳公公累了，躲进云里睡觉了”应该也可以吧！\n\n原始时间线索：2024-11-15 周五 19:45\n时间特征：\n{\n  \"local_time\": \"2024-11-15 19:45:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Friday\",\n  \"is_weekend\": false,\n  \"is_late_night\": false,\n  \"time_bucket\": \"evening\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n刚才读完《雪孩子》，我真的要哭死了，雪孩子为了救小白兔都化成水了，这难道不是个大悲剧吗？呜呜，我一点都不喜欢这个结尾。\n可是化成水就没法陪小白兔玩了呀，小白兔醒来肯定特别伤心，我觉得这个结尾一点都不好，要是雪孩子不融化就好了。\n课文里说雪孩子变成了水汽，又变成了云，这感觉像是在变魔术，真的会这样吗？我总觉得这是编出来的。\n原来是这样，那《雾在哪里》那个故事里的雾，是不是也是水汽变的？它把大海和天空都藏起来了，好调皮呀。\n这一单元的课文感觉都在写自然现象，但是又把它们写得像人一样，我写作文的时候总是学不会这种写法，感觉好难。\n懂了，就是把它们当成有生命的东西。那我下次写“太阳公公累了，躲进云里睡觉了”应该也可以吧！\nweekday=Friday\nis_weekend=false\nis_late_night=false\ntime_bucket=evening\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-11-15 周五 19:45 --time-features-json {\"local_time\": \"2024-11-15 19:45:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Friday\", \"is_weekend\": false, \"is_late_night\": false, \"time_bucket\": \"evening\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_pos_001624_Gen_Edu_2024-05-20_1716200000",
+          "score": 0.6805047988891602,
+          "label": "minor",
+          "summary": "AI，我真的服了，这首《鹊桥仙》我背了好几遍还是记不住那个‘金风玉露一相逢’后面是啥。而且秦观这逻辑我理解不了啊，牛郎织女一年才见一次，他居然说‘胜却人间无数’，这难道不是在强行安慰自己吗？我感觉我快被这古诗整emo了。\n行吧，这种‘柏拉图式’的恋爱确实挺高级的。但我还是觉得‘两情若是久长时，又岂在朝朝暮暮？’这两句有点反人性。现在大家不都讲究陪伴是最长情的告白吗，他这说法放到现在估计会被说是‘画",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_pos_001136_Gen_Edu_2026-02-12_1739337600",
+          "score": 0.6720098257064819,
+          "label": "minor",
+          "summary": "救命，这篇《秋天的怀念》看得我整个人都emo了。史铁生那时候脾气那么差，他妈都病成那样了还瞒着他，这真的合理吗？感觉这种母爱也太沉重了，看得我心里堵得慌。\n行吧，虽然能理解这种良苦用心，但我还是有点转不过弯来。尤其是结尾，为什么要花那么多笔墨写北海公园的菊花？黄的、白的、紫的，写这么详细是有什么深意吗？总觉得和前面的悲伤气氛有点不搭。\n原来是这样，我还以为只是单纯描写风景凑字数。那文里反复提到的“",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_pos_001116_Gen_Edu_2026-03-15_1739337600",
+          "score": 0.6673769950866699,
+          "label": "minor",
+          "summary": "救命，这篇《桃花源记》我真的读麻了。那个渔人是不是记性不太好啊？又是做标记又是记路线的，结果最后带人去找居然找不到了，这剧情也太离谱了吧，感觉像在看灵异小说。\n好吧，那里面的人说“不足为外人道也”，感觉他们好高冷啊。大家一起去过好日子不好吗，干嘛非要躲起来，还怕别人知道？\n懂了，就是怕被“查水表”。那最后那个刘子骥，听说他是个高尚的人，结果找了一圈没找到还病死了，这结局也太致郁了吧，作者是想表达什",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

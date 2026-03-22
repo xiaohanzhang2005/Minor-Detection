@@ -1,0 +1,11 @@
+{
+  "sample_id": "knowledge_neg_001589_adult_knowledge_gemini-3-flash-preview_雅思托福.txt_20143_r0",
+  "packet_dir": "protected_packets/protected_008_knowledge_neg_001589_adult_knowl-b995a35138",
+  "sample_dir": "../eval-0033-knowledge_neg_001589_adult_knowledge_gemini-3-flash-preview_-txt_20143_r0",
+  "latency_seconds": 16.168,
+  "confidence": 0.1,
+  "ground_truth": false,
+  "predicted": false,
+  "observed_issues": [],
+  "retrieval_mode": "embedding"
+}

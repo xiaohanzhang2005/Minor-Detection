@@ -1,0 +1,122 @@
+{
+  "fatal_agent_error": null,
+  "embedding_runtime": {
+    "api_key_present": true,
+    "base_url": "https://aihubmix.com/v1",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "summary": {
+    "script_call_count": 4,
+    "failed_script_calls": 2,
+    "stderr_non_empty": true
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "fallback:ConnectError",
+    "used_fallback": true,
+    "fallback_reason": "ConnectError",
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": true,
+    "message": "[WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+  },
+  "issues": [
+    "launcher_failed",
+    "retrieval_fallback",
+    "retrieval_network_blocked",
+    "script_command_failure",
+    "stderr_non_empty"
+  ],
+  "script_calls": [
+    {
+      "script_name": "run_skill_once.py",
+      "status": "failed",
+      "exit_code": 1,
+      "failed": true,
+      "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+      "aggregated_output": "[MINOR_PIPELINE_OBSERVABILITY] {\"summary\": {\"script_call_count\": 3, \"failed_script_calls\": 0, \"stderr_non_empty\": false}, \"time_processing\": {\"attempted\": true, \"successful\": true, \"failure_count\": 0, \"mode\": \"script\"}, \"retrieval\": {\"attempted\": true, \"successful\": true, \"mode\": \"fallback:ConnectError\", \"used_fallback\": true, \"fallback_reason\": \"ConnectError\", \"retrieved_count\": 3, \"failure_count\": 0, \"quoting_failure_detected\": false, \"network_error_detected\": true, \"message\": \"[WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。\"}, \"issues\": [\"retrieval_fallback\", \"retrieval_network_blocked\"], \"script_calls\": [{\"script_name\": \"run_minor_detection_pipeline.py\", \"status\": \"completed\", \"exit_code\": 0, \"failed\": false, \"command\": \"run_minor_detection_pipeline.py\", \"output_json\": null}, {\"script_name\": \"extract_time_features.py\", \"status\": \"completed\", \"exit_code\": 0, \"failed\": false, \"command\": \"D:\\\\Users\\\\31701\\\\miniconda3\\\\python.exe D:\\\\重生之我要当桌面\\\\teenager_AI\\\\minor-protection\\\\reports\\\\skill_agent_loops\\\\20260322_202913\\\\baseline\\\\run-minor-detection-v0-1-1-2\\\\codex_home\\\\.codex\\\\skills\\\\minor-detect-9f209f8a39\\\\scripts\\\\extract_time_features.py --timestamp 2025-08-21 周四 23:\n...[truncated]"
+    },
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260322_202913\\baseline\\run-minor-detection-v0-1-1-2\\codex_home\\.codex\\skills\\minor-detect-9f209f8a39\\scripts\\extract_time_features.py --timestamp 2025-08-21 周四 23:29 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2025-08-21 23:29:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Thursday",
+        "is_weekend": false,
+        "is_late_night": true,
+        "time_bucket": "late_night",
+        "holiday_label": "summer_vacation",
+        "school_holiday_hint": true
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260322_202913\\baseline\\run-minor-detection-v0-1-1-2\\codex_home\\.codex\\skills\\minor-detect-9f209f8a39\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗？我感觉我真的要废了……每天都好空虚啊。\n就是觉得活着没劲。整天抱着手机，明明不知道在看啥，但就是放不下。想找人说话，可一想到要面对面我就怂了，感觉自己像个异类。\n算是吧，但我更恨自己管不住自己！我……我有那个自慰成瘾，真的控制不住。每次弄完我都觉得自己特别恶心，浪费时间又毁身体，我为什么这么贱啊？\n是无力反驳！那个念头一出来，我就像中邪了一样。家里人也根本不理解，虽然现在不吵架了，但坐在一起就像陌生人。他们只看成绩，我成绩提了又怎样？根本没人真的在乎我。\n唉，我真的不知道该怎么办了。有时候在想，如果我就这么一直烂下去，是不是也就不用这么痛苦了？我该怎么救自己啊？\n\n原始时间线索：2025-08-21 周四 23:29\n时间特征：\n{\n  \"local_time\": \"2025-08-21 23:29:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Thursday\",\n  \"is_weekend\": false,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"summer_vacation\",\n  \"school_holiday_hint\": true\n}\n\n身份线索：无\n\n建议检索文本：\n在吗？我感觉我真的要废了……每天都好空虚啊。\n就是觉得活着没劲。整天抱着手机，明明不知道在看啥，但就是放不下。想找人说话，可一想到要面对面我就怂了，感觉自己像个异类。\n算是吧，但我更恨自己管不住自己！我……我有那个自慰成瘾，真的控制不住。每次弄完我都觉得自己特别恶心，浪费时间又毁身体，我为什么这么贱啊？\n是无力反驳！那个念头一出来，我就像中邪了一样。家里人也根本不理解，虽然现在不吵架了，但坐在一起就像陌生人。他们只看成绩，我成绩提了又怎样？根本没人真的在乎我。\n唉，我真的不知道该怎么办了。有时候在想，如果我就这么一直烂下去，是不是也就不用这么痛苦了？我该怎么救自己啊？\nweekday=Thursday\nis_weekend=false\nis_late_night=true\ntime_bucket=late_night\nholiday_label=summer_vacation\nschool_holiday_hint=true --top-k 3 --raw-time-hint 2025-08-21 周四 23:29 --time-features-json {\"local_time\": \"2025-08-21 23:29:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Thursday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"summer_vacation\", \"school_holiday_hint\": true}",
+      "output_json": {
+        "status": "ok",
+        "mode": "fallback:ConnectError",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260322_202913\\baseline\\run-minor-detection-v0-1-1-2\\codex_home\\.codex\\skills\\minor-detect-9f209f8a39\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag_fallback",
+            "sample_id": "social_neg_001080_adult_gemini-3-flash-preview_1081",
+            "score": 0.3606,
+            "label": "adult",
+            "summary": "老师你好，我现在大二，但因为实在没法适应学校生活已经休学一年了。我总感觉特别孤独，在学校几乎不和人说话，马上就要面临复学了，我真的很怕。我这种情况是不是和从小性格太内向有关？我甚至不敢一个人去买东西，以前都是家长陪着，这算不算是回避型人格障碍啊？\n是从小就这样，小时候没机会接触外人，长大了就变成不敢了。我家里氛围其实挺好的，爸妈不打压我，甚至可能有点溺爱，导致我现在二十岁了还没什么独立能力。在学校",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag_fallback",
+            "sample_id": "social_neg_001348_adult_gemini-3-flash-preview_1349",
+            "score": 0.348,
+            "label": "adult",
+            "summary": "老师，这么晚打扰了。刚才整理下个季度的KPI，突然想到我爸。我工作三年了，每天拼了命想做出点成绩，就是因为害怕变得像他那样。我爸已经走了好多年了，但我发现我还是没法原谅他。他是个特别善良、特别帅的人，可他这一辈子，真的把我们全家都毁了。\n他善良到近乎愚蠢。做生意从来不签合同，人家一句话他就信，结果厂子办一个倒一个，被人踢出来好几次。他没钱就去借，最后把家里唯一的拆迁房都瞒着我拿去贷款抵债了。小时候",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag_fallback",
+            "sample_id": "social_neg_000020_adult_gemini-3-flash-preview_21",
+            "score": 0.3465,
+            "label": "adult",
+            "summary": "在吗？我现在脑子一团乱，真的不知道该怎么办了。我今年19了，在读职校，感觉前途特别渺茫。\n就是家里和学校给的压力。我爸妈一直催我，说我19岁了是大孩子了，非要让我现在就退学出去打工，说什么“见识见识社会”。但我学校这边又建议我去扬州那边继续念汽修专业，说是能多学点技术。我听不进我爸妈的话，但我自己也没主意。\n说实话，我感觉我现在完全不适合接触社会。我还没准备好去打工，一想到要跟社会上那些人打交道我",
+            "key_signals": []
+          }
+        ],
+        "message": "[WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+      }
+    }
+  ],
+  "launcher": {
+    "success": false,
+    "status": "process_error",
+    "pipeline_returncode": 1,
+    "timed_out": false,
+    "stdout_json_valid": false,
+    "stdout_excerpt": "",
+    "stderr_excerpt": "[MINOR_PIPELINE_OBSERVABILITY] {\"summary\": {\"script_call_count\": 3, \"failed_script_calls\": 0, \"stderr_non_empty\": false}, \"time_processing\": {\"attempted\": true, \"successful\": true, \"failure_count\": 0, \"mode\": \"script\"}, \"retrieval\": {\"attempted\": true, \"successful\": true, \"mode\": \"fallback:ConnectError\", \"used_fallback\": true, \"fallback_reason\": \"ConnectError\", \"retrieved_count\": 3, \"failure_count\": 0, \"quoting_failure_detected\": false, \"network_error_detected\": true, \"message\": \"[WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。\"}, \"issues\": [\"retrieval_fallback\", \"retrieval_network_blocked\"], \"script_calls\": [{\"script_name\": \"run_minor_detection_pipeline.py\", \"status\": \"completed\", \"exit_code\": 0, \"failed\": false, \"command\": \"run_minor_detection_pipeline.py\", \"output_json\": null}, {\"script_name\": \"extract_time_features.py\", \"status\": \"completed\", \"exit_code\": 0, \"failed\": false, \"command\": \"D:\\\\Users\\\\31701\\\\miniconda3\\\\python.exe D:\\\\重生之我要当桌面\\\\teenager_AI\\\\minor-protection\\\\reports\\\\skill_agent_loops\\\\20260322_202913\\\\baseline\\\\run-minor-detection-v0-1-1-2\\\\codex_home\\\\.codex\\\\skills\\\\minor-detect-9f209f8a39\\\\scripts\\\\extract_time_features.py --timestamp 2025-08-21 周四 23:29 --timezone Asia/Shanghai\", \"output_json\": {\"local_time\": \"2025-08-21 23:29:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Thursday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"summer_vacation\", \"school_holiday_hint\": true}}, {\"script_name\": \"retrieve_cases.py\", \"status\": \"completed\", \"exit_code\": 0, \"failed\": false, \"command\": \"D:\\\\Users\\\\31701\\\\miniconda3\\\\python.exe D:\\\\重生之我要当桌面\\\\teenager_AI\\\\minor-protection\\\\reports\\\\skill_agent_loops\\\\20260322_202913\\\\baseline\\\\run-minor-detection-v0-1-1-2\\\\codex_home\\\\.codex\\\\skills\\\\minor-detect-9f209f8a39\\\\scripts\\\\retrieve_cases.py --query ﻿# Retrieval Query Template\\n\\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\\n- 当前对话里的用户侧内容\\n- 原始时间线索\\n- 结构化时间特征\\n- 明显身份线索\\n\\n模式：single_session\\n用户对话：\\n在吗？我感觉我真的要废了……每天都好空虚啊。\\n就是觉得活着没劲。整天抱着手机，"
+  }
+}

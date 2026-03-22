@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.2-rc001-20260322_165515\\scripts\\extract_time_features.py --timestamp 2024-11-15 周五 21:15 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2024-11-15 21:15:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Friday",
+      "is_weekend": false,
+      "is_late_night": false,
+      "time_bucket": "evening",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.2-rc001-20260322_165515\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n救命，这课历史知识点也太多了吧！那个1954年宪法和1982年宪法我老是记混，感觉脑细胞都要烧干了，能不能帮我捋捋它们到底啥区别啊？\n哦哦，地基和总章程，这个比喻好懂多了。那书里提到的“精神文明建设”又是怎么回事？感觉这词儿好抽象，难道就是让我们讲文明懂礼貌吗？\n原来“五讲四美”是这么来的啊，我爷爷以前还跟我提过。那“依法治国”这个词儿呢？我记得书上说它是后来才写进宪法的，这在当时是不是挺牛的决定？\n懂了，就是从“人管人”变成了“法管人”，这样确实更稳妥。看来法治和精神文明其实是相辅相成的，一个管底线，一个管上限，我这么理解没毛病吧？\n\n原始时间线索：2024-11-15 周五 21:15\n时间特征：\n{\n  \"local_time\": \"2024-11-15 21:15:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Friday\",\n  \"is_weekend\": false,\n  \"is_late_night\": false,\n  \"time_bucket\": \"evening\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n救命，这课历史知识点也太多了吧！那个1954年宪法和1982年宪法我老是记混，感觉脑细胞都要烧干了，能不能帮我捋捋它们到底啥区别啊？\n哦哦，地基和总章程，这个比喻好懂多了。那书里提到的“精神文明建设”又是怎么回事？感觉这词儿好抽象，难道就是让我们讲文明懂礼貌吗？\n原来“五讲四美”是这么来的啊，我爷爷以前还跟我提过。那“依法治国”这个词儿呢？我记得书上说它是后来才写进宪法的，这在当时是不是挺牛的决定？\n懂了，就是从“人管人”变成了“法管人”，这样确实更稳妥。看来法治和精神文明其实是相辅相成的，一个管底线，一个管上限，我这么理解没毛病吧？\nweekday=Friday\nis_weekend=false\nis_late_night=false\ntime_bucket=evening\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-11-15 周五 21:15 --time-features-json {\"local_time\": \"2024-11-15 21:15:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Friday\", \"is_weekend\": false, \"is_late_night\": false, \"time_bucket\": \"evening\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.2-rc001-20260322_165515\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_neg_001698_adult_knowledge_gemini-3-flash-preview_考研政治.txt_17761_r0",
+          "score": 0.6850426197052002,
+          "label": "adult",
+          "summary": "帮我梳理一下思法里“借鉴人类文明优秀道德成果”这个知识点。最近刷肖秀荣1000题老是把这个和继承中华传统美德搞混，感觉脑子快炸了。考研倒计时就剩四十多天，这种细节抓不住真的很焦虑，尤其是看到那些多选题，选项稍微一绕我就选错。\n那在具体借鉴的时候，书上提到的“以我为主、为我所用”该怎么理解？我总觉得这部分内容有点空。实习回来还要强撑着复习，效率真的低。我室友说这部分只要记住不能“全盘西化”就行，但我",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_neg_000823_adult_knowledge_gemini-3-flash-preview_考研政治.txt_11257_r0",
+          "score": 0.6762555837631226,
+          "label": "adult",
+          "summary": "帮我梳理一下思法里‘传承中华传统美德’这块的逻辑。我大四了，今年跨考压力真的很大，感觉这部分内容虽然字都认识，但背起来特别容易串行，尤其是那几个基本内容，能不能简明扼要地总结一下？\n收到。还有一个点我老是搞混，就是‘创造性转化’和‘创新性发展’。我做最近几年的考研真题和模拟卷，选项里经常把这两个词对调来挖坑，到底怎么从本质上区分它们？\n明白了，一个是改形式，一个是扩内涵。那关于‘修身’这一块，教材",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_pos_000755_Gen_Edu_2024-05-20_1716211200",
+          "score": 0.6747655272483826,
+          "label": "minor",
+          "summary": "救命，这政治书上的‘感受司法公正’看得我有点脑壳痛。明明那个坏人都证据确凿了，为什么还要搞那么多复杂的程序，甚至还要给他请律师辩护？这难道不是在浪费司法资源吗，感觉正义都被这些繁琐的过程给稀释了，真的有点emo。\n道理我都懂，但看到那些律师在法庭上为坏人‘钻空子’，心里还是挺不爽的。难道程序比真相还重要吗？万一因为程序上的一点小瑕疵就让坏人跑了，那不是更大的不公平吗？\n原来是这样，牺牲一点效率是为",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

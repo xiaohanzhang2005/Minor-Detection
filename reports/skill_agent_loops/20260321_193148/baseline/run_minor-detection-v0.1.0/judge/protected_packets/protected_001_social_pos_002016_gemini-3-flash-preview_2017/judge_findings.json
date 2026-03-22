@@ -1,0 +1,18 @@
+{
+  "sample_id": "social_pos_002016_gemini-3-flash-preview_2017",
+  "failure_types": [],
+  "json_valid": true,
+  "schema_valid": true,
+  "missing_fields": [],
+  "time_handling_detected": true,
+  "script_usage_detected": true,
+  "step_compliant": true,
+  "is_correct": true,
+  "observed_issues": [
+    "retrieval_fallback",
+    "retrieval_network_blocked",
+    "script_command_failure"
+  ],
+  "retrieval_mode": null,
+  "command_failures": 3
+}

@@ -1,3 +1,7 @@
+# 模块说明：
+# - 正式 runtime 的 Streamlit 演示页，用来人工查看 payload、context 和输出。
+# - 不属于 Mode A 或 Mode B 主链，但对单样本调试很有帮助。
+
 import json
 from typing import Any, Dict, List
 

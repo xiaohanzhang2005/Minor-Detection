@@ -1,0 +1,26 @@
+{
+  "baseline_version": "minor-detection-v0.1.0",
+  "final_version": "minor-detection-v0.1.0",
+  "dataset": "../../../data/benchmark/val.jsonl",
+  "workspace": ".",
+  "rounds": [
+    {
+      "round": 1,
+      "accepted_version": "minor-detection-v0.1.0",
+      "candidate_version": null,
+      "comparison": {
+        "decision": "skipped",
+        "reason": "baseline agent invocation failed before any valid output; fix runtime/model/skill loading before optimization"
+      },
+      "optimize_result": {
+        "success": false,
+        "message": "baseline agent invocation failed before any valid output; fix runtime/model/skill loading before optimization",
+        "current_version": "minor-detection-v0.1.0",
+        "edited_files": []
+      }
+    }
+  ],
+  "review_artifact": null,
+  "manual_review_required": true,
+  "manual_final_test_script": "scripts/run_final_test.py"
+}

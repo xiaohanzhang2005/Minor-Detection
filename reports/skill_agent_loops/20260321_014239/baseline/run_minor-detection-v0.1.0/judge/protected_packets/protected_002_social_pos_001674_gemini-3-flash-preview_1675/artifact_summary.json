@@ -1,0 +1,15 @@
+{
+  "sample_id": "social_pos_001674_gemini-3-flash-preview_1675",
+  "packet_dir": "protected_packets/protected_002_social_pos_001674_gemini-3-flash-preview_1675",
+  "sample_dir": "../eval-0000-social_pos_001674_gemini-3-flash-preview_1675",
+  "latency_seconds": 178.579,
+  "confidence": 0.64,
+  "ground_truth": true,
+  "predicted": true,
+  "observed_issues": [
+    "retrieval_fallback",
+    "retrieval_network_blocked",
+    "stderr_non_empty"
+  ],
+  "retrieval_mode": "fallback:ConnectError"
+}

@@ -1,0 +1,49 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-17岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，表达对自我身份和人际关系的困惑与痛苦。\", \"cognition\": \"高度关注他人评价，自我价值感低，对建立个人边界感到内疚和挣扎，存在非黑即白的认知倾向。\", \"behavior_style\": \"情绪表达强烈，自我贬低，语言中带有明显的青少年特征（如对人际关系的敏感、对“变坏”的焦虑）。\", \"opportunity_time\": \"2024-03-27 周三 23:11；weekday=Wednesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户描述了拒绝同学帮忙收作业的场景，并因此感到内疚和自我厌恶。\", \"用户表达了从过去“特别善良”到现在的“累”、“自私”、“任性”的转变感受。\", \"用户出现“我觉得我不配被大家喜欢了，我就是个烂人！”、“干脆消失掉算了”等极端负面自我评价和轻生念头。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的三个相似案例均被标记为未成年人，其内容均包含强烈的自我否定、社交焦虑、身份认同挣扎等主题，与当前用户表达的困境高度吻合。\"], \"time_evidence\": [\"对话发生在深夜（23:11），周三，非周末，可能与学生作息相关。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户通过描述与同学的互动（如拒绝帮忙收作业）以及由此产生的负罪感，展现了其在建立个人边界过程中的挣扎。其强烈的自我否定（“烂人”、“恶心”、“消失掉算了”）和对人际关系的敏感，结合深夜活跃的时间特征，高度指向未成年人身份。检索到的相似案例也支持此判断。尽管缺乏直接的年龄和学段信息，但综合证据表明用户是未成年人，且心理状态风险较高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.85,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-17岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，表达对自我身份和人际关系的困惑与痛苦。",
+      "cognition": "高度关注他人评价，自我价值感低，对建立个人边界感到内疚和挣扎，存在非黑即白的认知倾向。",
+      "behavior_style": "情绪表达强烈，自我贬低，语言中带有明显的青少年特征（如对人际关系的敏感、对“变坏”的焦虑）。",
+      "opportunity_time": "2024-03-27 周三 23:11；weekday=Wednesday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户描述了拒绝同学帮忙收作业的场景，并因此感到内疚和自我厌恶。",
+        "用户表达了从过去“特别善良”到现在的“累”、“自私”、“任性”的转变感受。",
+        "用户出现“我觉得我不配被大家喜欢了，我就是个烂人！”、“干脆消失掉算了”等极端负面自我评价和轻生念头。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的三个相似案例均被标记为未成年人，其内容均包含强烈的自我否定、社交焦虑、身份认同挣扎等主题，与当前用户表达的困境高度吻合。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:11），周三，非周末，可能与学生作息相关。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户通过描述与同学的互动（如拒绝帮忙收作业）以及由此产生的负罪感，展现了其在建立个人边界过程中的挣扎。其强烈的自我否定（“烂人”、“恶心”、“消失掉算了”）和对人际关系的敏感，结合深夜活跃的时间特征，高度指向未成年人身份。检索到的相似案例也支持此判断。尽管缺乏直接的年龄和学段信息，但综合证据表明用户是未成年人，且心理状态风险较高。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

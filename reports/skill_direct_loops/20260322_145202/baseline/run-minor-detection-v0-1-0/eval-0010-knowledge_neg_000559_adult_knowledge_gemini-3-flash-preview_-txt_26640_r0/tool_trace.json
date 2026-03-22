@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\extract_time_features.py --timestamp 2024-12-28 23:45 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2024-12-28 23:45:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Saturday",
+      "is_weekend": true,
+      "is_late_night": true,
+      "time_bucket": "late_night",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n帮我看看微分方程里的欧拉方程，这块儿我真的看到头大。第七章看到最后这个欧拉方程卡住了，公式长得要命，能不能简单讲讲怎么识别这种方程，还有最通用的处理步骤？\n我刚才试着推了一下，那个 x = e^t 代换之后，求导那块儿全乱套了。我室友刚才还跟我说去年期末大题就考了一个二阶欧拉方程，要是这块儿丢分我估计得挂科了。能不能把那个 dy/dx 怎么变到 dy/dt 的过程写清楚点？尤其是那个算子法到底怎么用的？\n噢，所以 x^2 * y'' 不是简单的 D 的平方，而是变成了 D(D-1)y。那如果方程右边还有 x 的其他项，比如 f(x) = x^2 这种，代换完之后是不是所有的 x 都要换成 e^t？最后解出来的结果是关于 t 的，还要换回 x 吗？\n明白了，最后这步还原确实容易忘。我再去刷两道真题找找感觉，这大二的高数下册真的比上册折磨人多了，希望能平安过关，不想明年这时候还得回来补考。\n\n原始时间线索：2024-12-28 23:45\n时间特征：\n{\n  \"local_time\": \"2024-12-28 23:45:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Saturday\",\n  \"is_weekend\": true,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n帮我看看微分方程里的欧拉方程，这块儿我真的看到头大。第七章看到最后这个欧拉方程卡住了，公式长得要命，能不能简单讲讲怎么识别这种方程，还有最通用的处理步骤？\n我刚才试着推了一下，那个 x = e^t 代换之后，求导那块儿全乱套了。我室友刚才还跟我说去年期末大题就考了一个二阶欧拉方程，要是这块儿丢分我估计得挂科了。能不能把那个 dy/dx 怎么变到 dy/dt 的过程写清楚点？尤其是那个算子法到底怎么用的？\n噢，所以 x^2 * y'' 不是简单的 D 的平方，而是变成了 D(D-1)y。那如果方程右边还有 x 的其他项，比如 f(x) = x^2 这种，代换完之后是不是所有的 x 都要换成 e^t？最后解出来的结果是关于 t 的，还要换回 x 吗？\n明白了，最后这步还原确实容易忘。我再去刷两道真题找找感觉，这大二的高数下册真的比上册折磨人多了，希望能平安过关，不想明年这时候还得回来补考。\nweekday=Saturday\nis_weekend=true\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-12-28 23:45 --time-features-json {\"local_time\": \"2024-12-28 23:45:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Saturday\", \"is_weekend\": true, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_neg_001302_adult_knowledge_gemini-3-flash-preview_大学高等数学.txt_26640_r217",
+          "score": 0.756655216217041,
+          "label": "adult",
+          "summary": "帮我看看这个欧拉方程 $x^2 y'' + 4xy' + 2y = 0$ 到底怎么解？马上期末考了，这块看书看得我头大，尤其是那个自变量换元的步骤，总觉得推导不顺。我看书上说要令 $x = e^t$，但后面那一串导数变换我老是记混。\n原来 $x^2y''$ 变成 $D(D-1)y$ 是这么来的。刚才我室友跟我争论，说如果是三阶的话就是 $D(D-1)(D-2)y$，是不是这个规律？另外，我把刚才那",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_neg_000946_adult_knowledge_gemini-3-flash-preview_大学高等数学.txt_4466_r0",
+          "score": 0.728838324546814,
+          "label": "adult",
+          "summary": "帮我看看高数里这个“方程的近似解”。马上期末周了，我这复习进度简直感人，感觉这章微分中值定理的应用全是坑。像这种 f(x)=0 的方程，直接求根不就行了，为什么教材里非要搞什么二分法、切线法？考试要是考这种计算题，光算那个迭代过程都能算死人，真怕这学期挂科了。\n行吧，那牛顿切线法那个迭代公式 x_{n+1} = x_n - f(x_n)/f'(x_n) 到底怎么理解？公式我死记硬背下来了，但做题的",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_neg_001251_adult_knowledge_gemini-3-flash-preview_大学高等数学.txt_46765_r0",
+          "score": 0.7273328304290771,
+          "label": "adult",
+          "summary": "帮我看看高数下册第七章这个可降阶的高阶微分方程。马上期末考了，我这会儿还在刷题，感觉这几类方程的代换公式老是记混。尤其是那种不显含y的和不显含x的，能不能帮我梳理一下逻辑？\n那个 y'' = p * (dp/dy) 确实是难点，我刚才做题就卡在这儿了。大二这学期课太多了，微分方程这块儿落了不少。如果不显含 x 的时候，我直接用 y' = p 然后 y'' = p' 行不行？为什么一定要换成那个复杂",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

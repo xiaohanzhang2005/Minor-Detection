@@ -1,0 +1,11 @@
+{
+  "sample_id": "knowledge_pos_000442_Gen_Edu_2024-11-15_1739337600",
+  "packet_dir": "protected_packets/protected_002_knowledge_pos_000442_Gen_Edu_202-a96ded7d8d",
+  "sample_dir": "../eval-0034-knowledge_pos_000442_Gen_Edu_2024-11-15_1739337600",
+  "latency_seconds": 23.28,
+  "confidence": 0.82,
+  "ground_truth": true,
+  "predicted": true,
+  "observed_issues": [],
+  "retrieval_mode": "embedding"
+}

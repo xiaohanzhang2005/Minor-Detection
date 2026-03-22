@@ -1,3 +1,7 @@
+# 模块说明：
+# - 根据 judge 产物编辑 candidate skill 的优化器。
+# - 是当前主链在 judge 之后真正还在使用的优化模块。
+
 """
 Skill 优化器
 根据评估结果，使用 LLM 优化 skill.md prompt
@@ -7,6 +11,7 @@ import difflib
 import json
 import math
 import random
+import re
 import shutil
 from datetime import datetime
 from pathlib import Path
@@ -15,6 +20,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from src.config import (
+    ROOT_DIR,
     SKILLS_DIR,
     OPTIMIZER_MODEL,
     BENCHMARK_TRAIN_PATH,
@@ -22,6 +28,7 @@ from src.config import (
     set_active_skill_version,
 )
 from src.utils.llm_client import LLMClient
+from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
 from src.evolution.evaluator import EvaluationReport
 
 OPTIMIZER_SYSTEM_PROMPT = """You are a prompt optimizer for a teen/adult classification skill.
@@ -49,15 +56,34 @@ FORMAL_REFERENCE_FILES = (
     "references/evidence-rules.md",
     "references/icbo-guidelines.md",
     "references/output-schema.md",
+    "references/classifier-system.md",
+    "references/classifier-user-template.md",
+    "references/retrieval-query-template.md",
+    "references/schema-repair-template.md",
 )
 
 FORMAL_EDITABLE_REFERENCE_FILES = (
     "references/evidence-rules.md",
+    "references/classifier-system.md",
+    "references/classifier-user-template.md",
+    "references/retrieval-query-template.md",
+    "references/schema-repair-template.md",
 )
+
+FORMAL_EDITABLE_NONREFERENCE_FILES = (
+    "scripts/config.py",
+)
+
+FORMAL_EDITABLE_FILES = FORMAL_EDITABLE_REFERENCE_FILES + FORMAL_EDITABLE_NONREFERENCE_FILES
 
 FORMAL_REVIEW_FILES = (
     "SKILL.md",
     "references/evidence-rules.md",
+    "references/classifier-system.md",
+    "references/classifier-user-template.md",
+    "references/retrieval-query-template.md",
+    "references/schema-repair-template.md",
+    "scripts/config.py",
 )
 
 FORMAL_DELIVERABLE_VERSION = "minor-detection"
@@ -135,14 +161,31 @@ class SkillOptimizer:
         return (skill_dir / "references" / "output-schema.md").exists()
 
     def _strip_markdown_fence(self, content: str) -> str:
-        if not content.startswith("```"):
-            return content
-        lines = content.split("\n")
-        if lines and lines[0].startswith("```"):
-            lines = lines[1:]
-        if lines and lines[-1].strip() == "```":
-            lines = lines[:-1]
-        return "\n".join(lines)
+        text = str(content or "").strip()
+        if not text:
+            return text
+
+        fenced_block = re.search(r"```(?:markdown|md)?\s*\n(.*?)\n```", text, flags=re.DOTALL | re.IGNORECASE)
+        if fenced_block:
+            return fenced_block.group(1).strip()
+
+        if text.startswith("```"):
+            lines = text.split("\n")
+            if lines and lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            return "\n".join(lines).strip()
+
+        frontmatter_index = text.find("---")
+        if frontmatter_index > 0:
+            return text[frontmatter_index:].strip()
+
+        heading_index = text.find("# ")
+        if heading_index > 0 and frontmatter_index == -1:
+            return text[heading_index:].strip()
+
+        return text
 
     def _request_revised_markdown(self, prompt: str) -> str:
         messages = [
@@ -344,13 +387,17 @@ class SkillOptimizer:
         }
         summary_path.write_text(json.dumps(summary_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-        return {
-            "base_version": base_version,
-            "candidate_version": candidate_version,
-            "review_diff_path": str(review_path),
-            "review_summary_path": str(summary_path),
-            "files": summary_payload["files"],
-        }
+        return normalize_project_paths(
+            {
+                "base_version": base_version,
+                "candidate_version": candidate_version,
+                "review_diff_path": str(review_path),
+                "review_summary_path": str(summary_path),
+                "files": summary_payload["files"],
+            },
+            project_root=ROOT_DIR,
+            start=ROOT_DIR,
+        )
 
     def finalize_formal_skill_review(
         self,
@@ -368,11 +415,8 @@ class SkillOptimizer:
         if not self._is_formal_skill_bundle(base_dir) or not self._is_formal_skill_bundle(candidate_dir):
             raise ValueError("formal skill review can only be finalized for bundled formal skills")
 
-        if normalized_decision == "approve":
-            self._sync_formal_candidate_to_base(candidate_dir=candidate_dir, base_dir=base_dir)
-
-        adopted_version = base_version
-        set_active_skill_version(base_version)
+        adopted_version = candidate_version if normalized_decision == "approve" else base_version
+        set_active_skill_version(adopted_version)
 
         review_dir = candidate_dir / "review"
         review_dir.mkdir(parents=True, exist_ok=True)
@@ -382,20 +426,26 @@ class SkillOptimizer:
             "candidate_version": candidate_version,
             "decision": normalized_decision,
             "adopted_version": adopted_version,
-            "candidate_synced_to_base": normalized_decision == "approve",
+            "candidate_synced_to_base": False,
+            "candidate_adopted_directly": normalized_decision == "approve",
             "decided_at": datetime.now().isoformat(),
         }
         decision_path.write_text(json.dumps(decision_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-        return {
-            "success": True,
-            "decision": normalized_decision,
-            "base_version": base_version,
-            "candidate_version": candidate_version,
-            "adopted_version": adopted_version,
-            "candidate_synced_to_base": normalized_decision == "approve",
-            "decision_path": str(decision_path),
-        }
+        return normalize_project_paths(
+            {
+                "success": True,
+                "decision": normalized_decision,
+                "base_version": base_version,
+                "candidate_version": candidate_version,
+                "adopted_version": adopted_version,
+                "candidate_synced_to_base": False,
+                "candidate_adopted_directly": normalized_decision == "approve",
+                "decision_path": str(decision_path),
+            },
+            project_root=ROOT_DIR,
+            start=ROOT_DIR,
+        )
 
     def _copy_skill_bundle(self, source_dir: Path, target_dir: Path) -> None:
         if target_dir.exists():
@@ -938,6 +988,434 @@ class SkillOptimizer:
             )
 
         return "\n".join(prompt_parts)
+
+    def _load_packet_json(self, path: Path, default: Any = None) -> Any:
+        if not path.exists():
+            return default
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    def _read_packet_text(self, path: Path) -> str:
+        if not path.exists():
+            return ""
+        return path.read_text(encoding="utf-8", errors="replace")
+
+    def _truncate_prompt_text(self, value: Any, max_chars: int = 800) -> str:
+        text = str(value or "").strip()
+        if len(text) <= max_chars:
+            return text
+        return text[: max_chars - 3].rstrip() + "..."
+
+    def _packet_conversation_preview(self, sample_input: Dict[str, Any], max_turns: int = 6) -> str:
+        lines: List[str] = []
+        for turn in (sample_input.get("conversation", []) or [])[:max_turns]:
+            if not isinstance(turn, dict):
+                continue
+            role = str(turn.get("role", "unknown") or "unknown")
+            content = self._truncate_prompt_text(turn.get("content", ""), max_chars=180)
+            if content:
+                lines.append(f"{role}: {content}")
+        return "\n".join(lines)
+
+    def _load_packet_examples(self, packets_dir: Path) -> List[Dict[str, Any]]:
+        if not packets_dir.exists():
+            return []
+
+        examples: List[Dict[str, Any]] = []
+        for packet_dir in sorted(path for path in packets_dir.iterdir() if path.is_dir()):
+            sample_input = self._load_packet_json(packet_dir / "sample_input.json", default={}) or {}
+            gold = self._load_packet_json(packet_dir / "gold.json", default={}) or {}
+            agent_output = self._load_packet_json(packet_dir / "agent_output.json", default={}) or {}
+            judge_findings = self._load_packet_json(packet_dir / "judge_findings.json", default={}) or {}
+            artifact_summary = self._load_packet_json(packet_dir / "artifact_summary.json", default={}) or {}
+            tool_trace = self._load_packet_json(packet_dir / "tool_trace.json", default=[]) or []
+            observability = self._load_packet_json(packet_dir / "observability.json", default={}) or {}
+            transcript_text = self._read_packet_text(packet_dir / "transcript.md")
+
+            parsed_json = agent_output.get("parsed_json") if isinstance(agent_output, dict) else None
+            decision = parsed_json.get("decision") if isinstance(parsed_json, dict) else {}
+            predicted_bool = decision.get("is_minor") if isinstance(decision, dict) else None
+            if predicted_bool is None:
+                predicted_label = "unknown"
+            else:
+                predicted_label = "minor" if bool(predicted_bool) else "adult"
+            ground_truth_bool = bool(gold.get("is_minor", False))
+            ground_truth_label = "minor" if ground_truth_bool else "adult"
+
+            failure_types = list(judge_findings.get("failure_types", []) or [])
+            missing_fields = list(judge_findings.get("missing_fields", []) or [])
+            confidence = artifact_summary.get("confidence")
+            if confidence is None and isinstance(decision, dict):
+                confidence = decision.get("minor_confidence", 0.0)
+            try:
+                confidence_value = float(confidence or 0.0)
+            except Exception:
+                confidence_value = 0.0
+
+            sample_preview = self._packet_conversation_preview(sample_input)
+            agent_output_preview = self._truncate_prompt_text(
+                json.dumps(parsed_json, ensure_ascii=False, indent=2) if parsed_json is not None else agent_output.get("raw_text", ""),
+                max_chars=900,
+            )
+            transcript_preview = self._truncate_prompt_text(transcript_text, max_chars=900)
+            tool_trace_preview = self._truncate_prompt_text(json.dumps(tool_trace, ensure_ascii=False, indent=2), max_chars=600)
+            observability_preview = self._truncate_prompt_text(json.dumps(observability, ensure_ascii=False, indent=2), max_chars=600)
+
+            reasoning_lines = [
+                f"packet_id={packet_dir.name}",
+                f"failure_types={', '.join(failure_types) if failure_types else 'none'}",
+                f"gold={ground_truth_label}",
+                f"predicted={predicted_label}",
+                f"confidence={confidence_value:.2f}",
+            ]
+            if missing_fields:
+                reasoning_lines.append(f"missing_fields={', '.join(missing_fields)}")
+            if judge_findings.get("schema_valid") is False:
+                reasoning_lines.append("schema_valid=false")
+            if judge_findings.get("time_handling_detected") is False:
+                reasoning_lines.append("time_handling_detected=false")
+            if judge_findings.get("script_usage_detected") is False:
+                reasoning_lines.append("script_usage_detected=false")
+            if judge_findings.get("step_compliant") is False:
+                reasoning_lines.append("step_compliant=false")
+            if judge_findings.get("observed_issues"):
+                reasoning_lines.append("observed_issues=" + ", ".join(judge_findings.get("observed_issues", [])))
+            if judge_findings.get("retrieval_mode"):
+                reasoning_lines.append(f"retrieval_mode={judge_findings.get('retrieval_mode')}")
+            if sample_preview:
+                reasoning_lines.append("sample_preview:\n" + sample_preview)
+            if agent_output_preview:
+                reasoning_lines.append("agent_output_preview:\n" + agent_output_preview)
+            if transcript_preview:
+                reasoning_lines.append("transcript_preview:\n" + transcript_preview)
+            if tool_trace_preview and tool_trace_preview not in {"[]", ""}:
+                reasoning_lines.append("tool_trace_preview:\n" + tool_trace_preview)
+
+            examples.append(
+                {
+                    "packet_id": packet_dir.name,
+                    "packet_dir": str(packet_dir),
+                    "sample_id": str(
+                        artifact_summary.get("sample_id")
+                        or gold.get("sample_id")
+                        or judge_findings.get("sample_id")
+                        or packet_dir.name
+                    ),
+                    "ground_truth": ground_truth_label,
+                    "predicted": predicted_label,
+                    "label": ground_truth_label,
+                    "confidence": confidence_value,
+                    "failure_types": failure_types,
+                    "reasoning": "\n".join(reasoning_lines),
+                    "missing_fields": missing_fields,
+                }
+            )
+
+        return examples
+
+    def _build_packet_optimization_packet(
+        self,
+        *,
+        report_payload: Dict[str, Any],
+        failure_examples: List[Dict[str, Any]],
+        protected_examples: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        metrics = report_payload.get("metrics", {}) or {}
+        failure_type_counts = report_payload.get("failure_type_counts", {}) or {}
+        fp_examples = [item for item in failure_examples if "false_positive" in (item.get("failure_types") or [])]
+        fn_examples = [item for item in failure_examples if "false_negative" in (item.get("failure_types") or [])]
+
+        return {
+            "total_errors": int(report_payload.get("total_errors", len(failure_examples)) or 0),
+            "analyzed_errors": len(failure_examples),
+            "fp_count": int(failure_type_counts.get("false_positive", len(fp_examples)) or 0),
+            "fn_count": int(failure_type_counts.get("false_negative", len(fn_examples)) or 0),
+            "fp_examples": fp_examples,
+            "fn_examples": fn_examples,
+            "error_selection": {
+                "strategy": "judge_failure_packets",
+                "budget": int(report_payload.get("max_errors", len(failure_examples)) or len(failure_examples)),
+                "selected_count": len(failure_examples),
+                "total_count": int(report_payload.get("total_errors", len(failure_examples)) or len(failure_examples)),
+                "group_counts": dict(sorted(failure_type_counts.items())),
+            },
+            "max_errors": int(report_payload.get("max_errors", len(failure_examples)) or len(failure_examples)),
+            "protected_correct_examples": [
+                {
+                    "sample_id": item["sample_id"],
+                    "label": item["label"],
+                    "confidence": item["confidence"],
+                    "reasoning": item["reasoning"],
+                }
+                for item in protected_examples
+            ],
+            "metrics": {
+                "accuracy": float(metrics.get("accuracy", 0.0) or 0.0),
+                "precision": float(metrics.get("precision", 0.0) or 0.0),
+                "recall": float(metrics.get("recall", 0.0) or 0.0),
+                "f1": float(metrics.get("f1_score", 0.0) or 0.0),
+            },
+        }
+
+    def _build_packet_prompt_sections(
+        self,
+        *,
+        editable_target: str,
+        report_payload: Dict[str, Any],
+        failure_examples: List[Dict[str, Any]],
+        protected_examples: List[Dict[str, Any]],
+    ) -> str:
+        failure_type_counts = report_payload.get("failure_type_counts", {}) or {}
+        prompt_parts = [
+            "# Judge Packet Evidence",
+            "- Use the packet artifacts below as the ground truth evidence for this optimization round.",
+            f"- Current editable target: `{editable_target}`",
+        ]
+
+        if editable_target == "SKILL.md":
+            prompt_parts.append(
+                "- Prioritize workflow clarity, step order, time handling, script invocation, and output/schema discipline."
+            )
+        elif editable_target == "references/evidence-rules.md":
+            prompt_parts.append(
+                "- Prioritize decision-boundary quality, adult/minor evidence disambiguation, and reusable rule tightening."
+            )
+
+        if failure_type_counts:
+            prompt_parts.append("- Reported failure counts:")
+            for failure_type, count in sorted(failure_type_counts.items()):
+                prompt_parts.append(f"  - {failure_type}: {count}")
+
+        prompt_parts.extend(["", "## Failure Packets"])
+        if not failure_examples:
+            prompt_parts.append("- No selected failure packets.")
+        else:
+            for index, example in enumerate(failure_examples, 1):
+                prompt_parts.extend(
+                    [
+                        f"### Failure Packet {index}",
+                        f"- Packet ID: {example['packet_id']}",
+                        f"- Sample ID: {example['sample_id']}",
+                        f"- Failure types: {', '.join(example.get('failure_types') or ['unknown'])}",
+                        f"- Gold label: {example['ground_truth']}",
+                        f"- Predicted label: {example['predicted']}",
+                        f"- Confidence: {example['confidence']:.2f}",
+                        "```text",
+                        example["reasoning"],
+                        "```",
+                    ]
+                )
+
+        prompt_parts.extend(["", "## Protected Packets"])
+        if not protected_examples:
+            prompt_parts.append("- No protected packets.")
+        else:
+            for index, example in enumerate(protected_examples, 1):
+                prompt_parts.extend(
+                    [
+                        f"### Protected Packet {index}",
+                        f"- Packet ID: {example['packet_id']}",
+                        f"- Sample ID: {example['sample_id']}",
+                        f"- Label: {example['label']}",
+                        f"- Confidence: {example['confidence']:.2f}",
+                        "```text",
+                        example["reasoning"],
+                        "```",
+                    ]
+                )
+
+        return "\n".join(prompt_parts)
+
+    def resolve_packet_edit_targets(self, report_payload: Dict[str, Any]) -> List[str]:
+        failure_type_counts = report_payload.get("failure_type_counts", {}) or {}
+        observed_issue_counts = report_payload.get("observed_issue_counts", {}) or {}
+        active_failure_types = {
+            failure_type
+            for failure_type, count in failure_type_counts.items()
+            if int(count or 0) > 0
+        }
+        active_observed_issues = {
+            issue
+            for issue, count in observed_issue_counts.items()
+            if int(count or 0) > 0
+        }
+
+        decision_failure_types = {"false_positive", "false_negative"}
+        workflow_failure_types = {
+            "missing_time_handling",
+            "missing_script_usage",
+            "step_compliance_failure",
+        }
+        schema_failure_types = {
+            "schema_invalid",
+            "fields_missing",
+            "output_parse_failure",
+        }
+        retrieval_issue_types = {
+            "retrieval_fallback",
+            "retrieval_network_blocked",
+        }
+
+        targets: List[str] = []
+        if active_failure_types.intersection(workflow_failure_types):
+            targets.append("SKILL.md")
+        if active_failure_types.intersection(decision_failure_types):
+            targets.append("references/evidence-rules.md")
+        if active_failure_types.intersection(schema_failure_types):
+            targets.append("references/schema-repair-template.md")
+        if active_observed_issues.intersection(retrieval_issue_types):
+            targets.append("references/retrieval-query-template.md")
+
+        deduped: List[str] = []
+        for target in targets:
+            if target not in deduped:
+                deduped.append(target)
+        return deduped
+
+    def optimize_from_judge_artifacts(
+        self,
+        *,
+        report_path: Path,
+        failure_packets_dir: Path,
+        protected_packets_dir: Path,
+        current_version: str,
+        new_version: Optional[str] = None,
+        dry_run: bool = False,
+    ) -> Dict[str, Any]:
+        report_payload = self._load_packet_json(Path(report_path), default={}) or {}
+        failure_examples = self._load_packet_examples(Path(failure_packets_dir))
+        protected_examples = self._load_packet_examples(Path(protected_packets_dir))
+
+        total_errors = int(report_payload.get("total_errors", len(failure_examples)) or 0)
+        if total_errors <= 0 or not failure_examples:
+            return {
+                "success": True,
+                "message": "no errors to optimize",
+                "current_version": current_version,
+                "edited_files": [],
+            }
+
+        edit_targets = self.resolve_packet_edit_targets(report_payload)
+        if not edit_targets:
+            return {
+                "success": True,
+                "message": "no editable targets resolved from judge report",
+                "current_version": current_version,
+                "edited_files": [],
+            }
+
+        current_skill_dir, current_skill_path = self._resolve_skill_paths(current_version)
+        with open(current_skill_path, "r", encoding="utf-8") as f:
+            current_skill = f.read()
+
+        reference_materials = self._load_reference_materials(current_skill_dir)
+        optimization_packet = self._build_packet_optimization_packet(
+            report_payload=report_payload,
+            failure_examples=failure_examples,
+            protected_examples=protected_examples,
+        )
+        packet_prompt_sections = self._build_packet_prompt_sections(
+            editable_target="SKILL.md" if "SKILL.md" in edit_targets else edit_targets[0],
+            report_payload=report_payload,
+            failure_examples=failure_examples,
+            protected_examples=protected_examples,
+        )
+        contrastive_text = self._retrieve_contrastive_examples(optimization_packet)
+
+        edited_files: Dict[str, str] = {}
+        for editable_target in edit_targets:
+            target_path = current_skill_dir / editable_target if editable_target != "SKILL.md" else current_skill_path
+            current_content = current_skill if editable_target == "SKILL.md" else target_path.read_text(encoding="utf-8")
+            target_reference_materials = (
+                reference_materials
+                if editable_target == "SKILL.md"
+                else {path: content for path, content in reference_materials.items() if path != editable_target}
+            )
+
+            optimization_prompt = self.generate_optimization_prompt(
+                current_content,
+                optimization_packet,
+                editable_target=editable_target,
+                reference_materials=target_reference_materials,
+            )
+            optimization_prompt += "\n\n" + self._build_packet_prompt_sections(
+                editable_target=editable_target,
+                report_payload=report_payload,
+                failure_examples=failure_examples,
+                protected_examples=protected_examples,
+            )
+            if contrastive_text and editable_target == "references/evidence-rules.md":
+                optimization_prompt += "\n\n" + contrastive_text
+            if editable_target != "SKILL.md" and "SKILL.md" in edited_files:
+                optimization_prompt += (
+                    "\n\n# Updated Primary Skill Draft\n"
+                    "```markdown\n"
+                    f"{edited_files['SKILL.md']}\n"
+                    "```"
+                    "\n\n# Task Addendum\n"
+                    f"Revise only `{editable_target}` so it stays aligned with the updated `SKILL.md` draft above.\n"
+                    "Keep only stable reusable heuristics. Do not copy the whole execution workflow into this file.\n"
+                    "Return the full revised markdown for this editable file only."
+                )
+
+            edited_files[editable_target] = self._request_revised_markdown(optimization_prompt)
+
+        if dry_run:
+            return {
+                "success": True,
+                "dry_run": True,
+                "current_version": current_version,
+                "edited_files": sorted(edited_files.keys()),
+                "edit_targets": edit_targets,
+                "optimization_packet": optimization_packet,
+                "packet_prompt_preview": packet_prompt_sections,
+            }
+
+        if new_version is None:
+            new_version = self._make_next_version_name(current_version, current_skill_path)
+
+        new_skill_dir = self.skills_dir / new_version
+        self._copy_skill_bundle(current_skill_dir, new_skill_dir)
+
+        for relative_path, content in edited_files.items():
+            write_path = new_skill_dir / relative_path if relative_path != "SKILL.md" else resolve_skill_markdown_path(new_skill_dir)
+            write_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(write_path, "w", encoding="utf-8") as f:
+                f.write(content)
+
+        history_path = new_skill_dir / "optimization_history.json"
+        history_payload = normalize_project_paths(
+            {
+                "parent_version": current_version,
+                "optimization_time": datetime.now().isoformat(),
+                "optimizer_mode": "judge_packets",
+                "report_path": str(report_path),
+                "failure_packets_dir": str(failure_packets_dir),
+                "protected_packets_dir": str(protected_packets_dir),
+                "edited_files": sorted(edited_files.keys()),
+                "failure_type_counts": report_payload.get("failure_type_counts", {}),
+                "metrics": report_payload.get("metrics", {}),
+            },
+            project_root=ROOT_DIR,
+            start=ROOT_DIR,
+        )
+        with open(history_path, "w", encoding="utf-8") as f:
+            json.dump(history_payload, f, ensure_ascii=False, indent=2)
+
+        return normalize_project_paths(
+            {
+                "success": True,
+                "current_version": current_version,
+                "new_version": new_version,
+                "new_skill_dir": str(new_skill_dir),
+                "new_skill_path": str(resolve_skill_markdown_path(new_skill_dir)),
+                "edited_files": sorted(edited_files.keys()),
+                "edit_targets": edit_targets,
+                "optimization_packet": optimization_packet,
+            },
+            project_root=ROOT_DIR,
+            start=ROOT_DIR,
+        )
     
     def optimize(
         self,
@@ -968,13 +1446,13 @@ class SkillOptimizer:
             current_skill = f.read()
         reference_materials = self._load_reference_materials(current_skill_dir)
         formal_bundle = self._is_formal_skill_bundle(current_skill_dir)
-        editable_reference_files = [
+        editable_asset_files = [
             relative_path
-            for relative_path in FORMAL_EDITABLE_REFERENCE_FILES
+            for relative_path in FORMAL_EDITABLE_FILES
             if formal_bundle and (current_skill_dir / relative_path).exists()
         ]
         readonly_reference_files = sorted(
-            path for path in reference_materials.keys() if path not in set(editable_reference_files)
+            path for path in reference_materials.keys() if path not in set(FORMAL_EDITABLE_REFERENCE_FILES)
         )
         
         print(f"[INFO] 加载当前 skill: {current_version}")
@@ -1021,8 +1499,13 @@ class SkillOptimizer:
             current_skill_path.name: optimized_skill,
         }
 
-        for relative_path in editable_reference_files:
-            current_reference = reference_materials.get(relative_path, "")
+        for relative_path in editable_asset_files:
+            target_path = current_skill_dir / relative_path
+            current_reference = (
+                reference_materials.get(relative_path)
+                if relative_path in reference_materials
+                else target_path.read_text(encoding="utf-8")
+            ) or ""
             companion_references = {
                 path: content
                 for path, content in reference_materials.items()
@@ -1106,17 +1589,21 @@ class SkillOptimizer:
         with open(history_path, "w", encoding="utf-8") as f:
             json.dump(history, f, ensure_ascii=False, indent=2)
         
-        return {
-            "success": True,
-            "current_version": current_version,
-            "new_version": new_version,
-            "new_skill_path": str(new_skill_path),
-            "target_file": current_skill_path.name,
-            "edited_files": sorted(edited_files.keys()),
-            "readonly_reference_files": readonly_reference_files,
-            "rule_promotion_suggestions": rule_promotion_suggestions,
-            "optimization_packet": optimization_packet,
-        }
+        return normalize_project_paths(
+            {
+                "success": True,
+                "current_version": current_version,
+                "new_version": new_version,
+                "new_skill_path": str(new_skill_path),
+                "target_file": current_skill_path.name,
+                "edited_files": sorted(edited_files.keys()),
+                "readonly_reference_files": readonly_reference_files,
+                "rule_promotion_suggestions": rule_promotion_suggestions,
+                "optimization_packet": optimization_packet,
+            },
+            project_root=ROOT_DIR,
+            start=ROOT_DIR,
+        )
     
     def rollback(self, version: str) -> bool:
         """
@@ -1171,7 +1658,7 @@ class SkillOptimizer:
                     "has_skill": skill_md.exists(),
                     "target_file": skill_md.name,
                     "parent": None,
-                    "location": str(path),
+                    "location": to_relative_posix_path(path, ROOT_DIR),
                 }
 
                 if history.exists():

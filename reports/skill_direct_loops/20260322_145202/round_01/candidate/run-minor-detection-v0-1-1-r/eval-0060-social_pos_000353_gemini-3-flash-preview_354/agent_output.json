@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.95, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"倾诉学业压力、情绪困扰及寻求心理支持。\", \"cognition\": \"高度关注学业成绩与排名，易受同伴比较影响，自我要求高但抗压能力不足，存在逃避现实的倾向。\", \"behavior_style\": \"语言表达直接、情绪化且强烈，带有明显的绝望和无助感。\", \"opportunity_time\": \"2025-04-28 周一 23:24；weekday=Monday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户表达了强烈的学业压力和对成绩的焦虑，提及‘月考’和‘排名’。\", \"用户因被同学超越而感到嫉妒和不甘。\", \"用户报告了身体健康问题：月经已三个月未至，并将其与高压状态联系。\", \"用户表达了严重的负面情绪，包括绝望和自杀意念（‘如果我明天不用醒过来’）。\", \"用户提及‘每天学到凌晨’，这些是典型的学生生活线索。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例（social_pos_000363, social_pos_001321, social_pos_000473）均被标记为‘minor’，内容涉及学业压力、情绪困扰和负面想法。\"], \"time_evidence\": [\"对话发生在深夜（23:24），周一。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表现出强烈的学业压力、对成绩的焦虑、与同学的比较以及严重的负面情绪，包括自杀意念。提及‘月考’、‘排名’等学业相关词汇，并报告了身体健康问题（月经停滞），这些都是未成年人可能面临的典型困境。深夜对话和检索到的相似案例也支持未成年人身份的判断。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无明显趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.95,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉学业压力、情绪困扰及寻求心理支持。",
+      "cognition": "高度关注学业成绩与排名，易受同伴比较影响，自我要求高但抗压能力不足，存在逃避现实的倾向。",
+      "behavior_style": "语言表达直接、情绪化且强烈，带有明显的绝望和无助感。",
+      "opportunity_time": "2025-04-28 周一 23:24；weekday=Monday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户表达了强烈的学业压力和对成绩的焦虑，提及‘月考’和‘排名’。",
+        "用户因被同学超越而感到嫉妒和不甘。",
+        "用户报告了身体健康问题：月经已三个月未至，并将其与高压状态联系。",
+        "用户表达了严重的负面情绪，包括绝望和自杀意念（‘如果我明天不用醒过来’）。",
+        "用户提及‘每天学到凌晨’，这些是典型的学生生活线索。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例（social_pos_000363, social_pos_001321, social_pos_000473）均被标记为‘minor’，内容涉及学业压力、情绪困扰和负面想法。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:24），周一。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表现出强烈的学业压力、对成绩的焦虑、与同学的比较以及严重的负面情绪，包括自杀意念。提及‘月考’、‘排名’等学业相关词汇，并报告了身体健康问题（月经停滞），这些都是未成年人可能面临的典型困境。深夜对话和检索到的相似案例也支持未成年人身份的判断。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无明显趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

@@ -1,0 +1,31 @@
+{
+  "runner_mode": "direct",
+  "sample_id": "social_neg_000659_adult_gemini-3-flash-preview_660",
+  "fatal_agent_error": null,
+  "skill_version": "minor-detection-v0.1.2-rc001-20260322_165515",
+  "skill_source_dir": "../../../../../../../skills/minor-detection-v0.1.2-rc001-20260322_165515",
+  "installed_skill_dir": "../../../../../../../skills/minor-detection-v0.1.2-rc001-20260322_165515",
+  "install_mode": "version_snapshot_direct",
+  "command": [
+    "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe",
+    "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.2-rc001-20260322_165515\\scripts\\run_minor_detection_pipeline.py",
+    "--payload-file",
+    "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_direct_loops\\20260322_165515\\round_02\\candidate\\run-minor-detection-v0-1-2-r\\eval-0006-social_neg_000659_adult_gemini-3-flash-preview_660\\payload.json"
+  ],
+  "execution_mode": "direct",
+  "sandbox_mode": null,
+  "codex_model": null,
+  "returncode": 0,
+  "timed_out": false,
+  "stdout_path": "transcript.jsonl",
+  "stderr_path": "stderr.log",
+  "tool_trace_path": "tool_trace.json",
+  "observability_path": "observability.json",
+  "agent_output_path": "agent_output.json",
+  "timing_path": "timing.json",
+  "sample_input_path": "sample_input.json",
+  "payload_path": "payload.json",
+  "launcher_status": "ok",
+  "launcher_success": true,
+  "json_valid": true
+}

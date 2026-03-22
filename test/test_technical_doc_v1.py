@@ -1,3 +1,7 @@
+# 模块说明：
+# - 面向旧技术文档路线的大型历史集成测试。
+# - 更像旧链路遗留，不是当前主链核心测试。
+
 import json
 import shutil
 import unittest

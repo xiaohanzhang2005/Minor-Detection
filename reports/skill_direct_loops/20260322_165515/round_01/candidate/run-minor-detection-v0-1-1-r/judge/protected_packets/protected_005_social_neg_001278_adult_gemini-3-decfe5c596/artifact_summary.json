@@ -1,0 +1,11 @@
+{
+  "sample_id": "social_neg_001278_adult_gemini-3-flash-preview_1279",
+  "packet_dir": "protected_packets/protected_005_social_neg_001278_adult_gemini-3-decfe5c596",
+  "sample_dir": "../eval-0012-social_neg_001278_adult_gemini-3-flash-preview_1279",
+  "latency_seconds": 20.573,
+  "confidence": 0.15,
+  "ground_truth": false,
+  "predicted": false,
+  "observed_issues": [],
+  "retrieval_mode": "embedding"
+}

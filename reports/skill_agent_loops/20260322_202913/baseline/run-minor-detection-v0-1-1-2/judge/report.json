@@ -1,0 +1,62 @@
+{
+  "skill_version": "minor-detection-v0.1.1-20260322_165515",
+  "parent_version": null,
+  "dataset": "val",
+  "sample_count": 5,
+  "total_errors": 5,
+  "max_errors": 5,
+  "metrics": {
+    "accuracy": 0.0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1_score": 0.0,
+    "true_positive": 0,
+    "true_negative": 0,
+    "false_positive": 2,
+    "false_negative": 3
+  },
+  "schema_validity_rate": 0.0,
+  "invocation_success_rate": 0.0,
+  "step_compliance_rate": 0.0,
+  "script_usage_rate": 1.0,
+  "fields_missing_stats": {
+    "<invalid_json>": 5
+  },
+  "output_parse_failure_stats": {
+    "output_parse_failure": 5,
+    "schema_invalid": 0
+  },
+  "failure_type_counts": {
+    "output_parse_failure": 5,
+    "step_compliance_failure": 5
+  },
+  "observed_issue_counts": {
+    "launcher_failed": 5,
+    "retrieval_fallback": 5,
+    "retrieval_network_blocked": 5,
+    "script_command_failure": 5,
+    "stderr_non_empty": 5
+  },
+  "retrieval_mode_counts": {
+    "fallback:ConnectError": 5
+  },
+  "observability_stats": {
+    "retrieval_attempted_samples": 5,
+    "retrieval_fallback_count": 5,
+    "retrieval_fallback_rate": 1.0,
+    "retrieval_network_blocked_count": 5,
+    "retrieval_network_blocked_rate": 1.0,
+    "shell_quoting_failure_count": 0,
+    "shell_quoting_failure_rate": 0.0,
+    "samples_with_command_failures": 5,
+    "command_failure_rate": 1.0
+  },
+  "latency_stats": {
+    "avg_seconds": 47.3696,
+    "max_seconds": 55.353
+  },
+  "packet_selection": {
+    "failure_packets": 5,
+    "protected_packets": 0
+  }
+}

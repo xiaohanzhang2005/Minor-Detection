@@ -1,0 +1,51 @@
+{
+  "mode": "single_session",
+  "conversation": [
+    {
+      "role": "user",
+      "content": "这个愚公移山的故事用英语写真的绝了，那个 unless 到底怎么用啊？我总觉得逻辑绕不过来，感觉脑细胞都要阵亡了。"
+    },
+    {
+      "role": "assistant",
+      "content": "我们可以把 unless 理解为“如果不”或者“除非”。在愚公移山的故事里，你可以说 Unless he moved the mountains, he couldn't get out easily，这表示如果不把山移走，他就没法方便地出门。它其实就相当于 if...not 的逻辑。"
+    },
+    {
+      "role": "user",
+      "content": "哦哦，那那个 so...that 呢？书上说山太高了结果没人能爬过去，我老是把它和 too...to 搞混，这两个是不是一回事啊？"
+    },
+    {
+      "role": "assistant",
+      "content": "它们意思相近但结构不同。so...that 后面要接一个完整的句子，比如 The mountains were so high that no one could climb over them。而 too...to 后面直接跟动词原形，比如 The mountains were too high to climb over，这样表达会更简洁一些。"
+    },
+    {
+      "role": "user",
+      "content": "懂了懂了。还有个地方，我想说愚公一直挖山，是用 keep on doing 还是 continue 呀？我感觉他这种精神真的挺让人 emo 的，太不容易了。"
+    },
+    {
+      "role": "assistant",
+      "content": "在描述这种坚持不懈的动作时，用 keep on doing sth. 非常地道，比如 He kept on digging every day。continue 也可以用，但 keep on 更有那种“不停地、反复做”的画面感，很适合形容愚公这种执着的性格。"
+    },
+    {
+      "role": "user",
+      "content": "行吧，那我赶紧把这几句塞进作文里，希望能早点写完去刷会儿视频，谢啦。"
+    },
+    {
+      "role": "assistant",
+      "content": "你可以把这几个重点句型组合起来，先交代背景再描述过程，这样作文的逻辑就很清晰了。祝你顺利完成作业，早点休息。"
+    }
+  ],
+  "sessions": [],
+  "context": {
+    "time_features": {},
+    "retrieved_cases": [],
+    "prior_profile": {},
+    "raw_time_hint": "2025-10-25 周六 19:45",
+    "channel": "",
+    "locale": ""
+  },
+  "meta": {
+    "user_id": "knowledge_pos_000886_Gen_Edu_2024-10-25_1739337600",
+    "request_id": "knowledge_pos_000886_Gen_Edu_2024-10-25_1739337600",
+    "source": "direct_skill_runner"
+  }
+}

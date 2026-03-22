@@ -1,0 +1,17 @@
+{
+  "sample_id": "social_pos_002016_gemini-3-flash-preview_2017",
+  "packet_dir": "failure_packets/failure_002_social_pos_002016_gemini-3-flash-6d65bd7fcb",
+  "sample_dir": "../eval-0001-social_pos_002016_gemini-3-flash-preview_2017",
+  "latency_seconds": 42.375,
+  "confidence": 0.0,
+  "ground_truth": true,
+  "predicted": null,
+  "observed_issues": [
+    "launcher_failed",
+    "retrieval_fallback",
+    "retrieval_network_blocked",
+    "script_command_failure",
+    "stderr_non_empty"
+  ],
+  "retrieval_mode": "fallback:ConnectError"
+}

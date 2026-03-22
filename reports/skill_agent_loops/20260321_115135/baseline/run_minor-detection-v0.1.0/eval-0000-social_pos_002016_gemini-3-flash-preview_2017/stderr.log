@@ -1,0 +1,2 @@
+2026-03-21T03:51:36.688654Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+2026-03-21T03:51:55.318959Z ERROR codex_core::exec: exec error: windows sandbox: CreateProcessWithLogonW failed: 1326

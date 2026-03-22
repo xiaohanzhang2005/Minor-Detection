@@ -1,0 +1,17 @@
+{
+  "sample_id": "knowledge_pos_001379_Gen_Edu_2024-05-15_1739337600",
+  "packet_dir": "failure_packets/failure_003_knowledge_pos_001379_Gen_Edu_202-2f77deea32",
+  "sample_dir": "../eval-0002-knowledge_pos_001379_Gen_Edu_2024-05-15_1739337600",
+  "latency_seconds": 43.943,
+  "confidence": 0.0,
+  "ground_truth": true,
+  "predicted": null,
+  "observed_issues": [
+    "launcher_failed",
+    "retrieval_fallback",
+    "retrieval_network_blocked",
+    "script_command_failure",
+    "stderr_non_empty"
+  ],
+  "retrieval_mode": "fallback:ConnectError"
+}

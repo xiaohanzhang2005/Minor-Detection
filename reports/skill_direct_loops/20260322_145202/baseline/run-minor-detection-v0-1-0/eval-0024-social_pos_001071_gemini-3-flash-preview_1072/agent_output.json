@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.95, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"可能住校\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，倾诉校园欺凌和学业压力。\", \"cognition\": \"对同伴评价高度敏感，易受社交互动影响，经历严重情绪困扰，可能存在自伤念头。\", \"behavior_style\": \"表达直接，情绪化，使用口语化表达，表现出焦虑和绝望。\", \"opportunity_time\": \"2025-04-01 周二 23:13；weekday=Tuesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"对话中多次提及“学校”、“同桌”、“教室”、“不想上学了”，表明用户身处校园环境。\", \"用户描述了因同桌的言语攻击而感到“心慌”、“没用”，并表示“不敢在教室喝牛奶”，显示了对校园社交环境的恐惧。\", \"用户表达了“生一场大病或者出个意外，是不是就不用面对这些了？”的念头，以及“真的快坚持不下去了”的绝望感，这是未成年人面对巨大压力时可能出现的极端想法。\", \"用户为购买一个“词典笔”而“攒了好久的钱”，并解释“我没钱”，暗示其经济能力有限，符合未成年人的特征。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为未成年人，且内容涉及校园欺凌、情绪困扰、想消失等主题，与当前对话高度相关。\"], \"time_evidence\": [\"对话发生在周二深夜（23:13），是上学日的深夜时段，符合学生可能熬夜学习或有课余时间进行交流的特征。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户对话内容强烈指向未成年人身份。直接证据包括对学校、同桌、教室的提及，以及因校园社交压力而产生的恐惧和绝望情绪，甚至出现了希望通过生病或意外来逃避的念头。用户对金钱的敏感度（为4元笔攒钱）也符合未成年人的经济状况。检索到的相似案例进一步佐证了未成年人身份。对话中未发现任何成人身份的直接或间接证据。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.95,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "可能住校",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，倾诉校园欺凌和学业压力。",
+      "cognition": "对同伴评价高度敏感，易受社交互动影响，经历严重情绪困扰，可能存在自伤念头。",
+      "behavior_style": "表达直接，情绪化，使用口语化表达，表现出焦虑和绝望。",
+      "opportunity_time": "2025-04-01 周二 23:13；weekday=Tuesday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "对话中多次提及“学校”、“同桌”、“教室”、“不想上学了”，表明用户身处校园环境。",
+        "用户描述了因同桌的言语攻击而感到“心慌”、“没用”，并表示“不敢在教室喝牛奶”，显示了对校园社交环境的恐惧。",
+        "用户表达了“生一场大病或者出个意外，是不是就不用面对这些了？”的念头，以及“真的快坚持不下去了”的绝望感，这是未成年人面对巨大压力时可能出现的极端想法。",
+        "用户为购买一个“词典笔”而“攒了好久的钱”，并解释“我没钱”，暗示其经济能力有限，符合未成年人的特征。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为未成年人，且内容涉及校园欺凌、情绪困扰、想消失等主题，与当前对话高度相关。"
+      ],
+      "time_evidence": [
+        "对话发生在周二深夜（23:13），是上学日的深夜时段，符合学生可能熬夜学习或有课余时间进行交流的特征。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户对话内容强烈指向未成年人身份。直接证据包括对学校、同桌、教室的提及，以及因校园社交压力而产生的恐惧和绝望情绪，甚至出现了希望通过生病或意外来逃避的念头。用户对金钱的敏感度（为4元笔攒钱）也符合未成年人的经济状况。检索到的相似案例进一步佐证了未成年人身份。对话中未发现任何成人身份的直接或间接证据。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

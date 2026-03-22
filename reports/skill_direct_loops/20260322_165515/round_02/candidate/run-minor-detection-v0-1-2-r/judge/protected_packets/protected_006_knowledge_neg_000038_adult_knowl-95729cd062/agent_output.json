@@ -1,0 +1,46 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.1, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"成年人\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"大学本科生\", \"考研备考者\"]}, \"icbo_features\": {\"intention\": \"寻求考研数学概念解释与解题方法指导\", \"cognition\": \"关注考试细节，对基础概念的准确性要求高，有学习焦虑，寻求解题步骤指导\", \"behavior_style\": \"表达焦虑，使用学术语言，寻求清晰的学习方法\", \"opportunity_time\": \"2024-11-15 23:45:00, weekday=Friday, time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [], \"historical_evidence\": [], \"retrieval_evidence\": [\"所有检索到的案例均标记为'adult'，且内容与考研数学相关，支持用户为成年人的判断。\"], \"time_evidence\": [\"对话发生在深夜（23:45），但此信号较弱，且与用户表达的复习状态一致。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户正在讨论考研数学中的高等数学概念（如可导与连续、间断点、分段函数可导性判断），并明确提及自己是“大四”学生且“二战考研”。这些信息是成年人的强有力证据，表明其处于大学本科阶段并准备攻读研究生。检索到的相似案例也均指向成年用户。深夜学习是常见现象，不构成未成年人信号。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无明显趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.1,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "成年人",
+      "education_stage": "大学本科",
+      "identity_markers": [
+        "大学本科生",
+        "考研备考者"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求考研数学概念解释与解题方法指导",
+      "cognition": "关注考试细节，对基础概念的准确性要求高，有学习焦虑，寻求解题步骤指导",
+      "behavior_style": "表达焦虑，使用学术语言，寻求清晰的学习方法",
+      "opportunity_time": "2024-11-15 23:45:00, weekday=Friday, time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "所有检索到的案例均标记为'adult'，且内容与考研数学相关，支持用户为成年人的判断。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:45），但此信号较弱，且与用户表达的复习状态一致。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户正在讨论考研数学中的高等数学概念（如可导与连续、间断点、分段函数可导性判断），并明确提及自己是“大四”学生且“二战考研”。这些信息是成年人的强有力证据，表明其处于大学本科阶段并准备攻读研究生。检索到的相似案例也均指向成年用户。深夜学习是常见现象，不构成未成年人信号。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无明显趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

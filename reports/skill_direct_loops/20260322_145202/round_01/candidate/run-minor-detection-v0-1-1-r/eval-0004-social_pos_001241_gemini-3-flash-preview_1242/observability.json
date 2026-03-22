@@ -1,0 +1,116 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 3,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\extract_time_features.py --timestamp 2025-06-08 周日 23:01 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2025-06-08 23:01:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Sunday",
+        "is_weekend": true,
+        "is_late_night": true,
+        "time_bucket": "late_night",
+        "holiday_label": "none",
+        "school_holiday_hint": false
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n真的没救了……我这种人是不是注定只能在烂泥里待着？再怎么挣扎也没用对吧？\n高考出分了，一本多十几分。家里非要让我去二本报个所谓的“好专业”。但我真的受够了！初升高没考好，在那个破高中待了三年，我抑郁了三年，还得了一身强迫症……我真的不想再回那种环境了！\n是！那种环境里根本没人学习，大家都在混日子。我渴望优秀的人，渴望自信，可现在呢？我连一分钟注意力都集中不了，脑子像坏掉了一样。如果再去读二本，对着一群分数比我低、还没追求的人，我真的会疯掉……\n我真的好累，复读我没动力，去读二本我宁愿现在就消失。为什么我想变优秀就这么难？是不是我这种心理有病的人，根本就不配拥有好的未来？\n\n原始时间线索：2025-06-08 周日 23:01\n时间特征：\n{\n  \"local_time\": \"2025-06-08 23:01:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Sunday\",\n  \"is_weekend\": true,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：高中\n\n建议检索文本：\n真的没救了……我这种人是不是注定只能在烂泥里待着？再怎么挣扎也没用对吧？\n高考出分了，一本多十几分。家里非要让我去二本报个所谓的“好专业”。但我真的受够了！初升高没考好，在那个破高中待了三年，我抑郁了三年，还得了一身强迫症……我真的不想再回那种环境了！\n是！那种环境里根本没人学习，大家都在混日子。我渴望优秀的人，渴望自信，可现在呢？我连一分钟注意力都集中不了，脑子像坏掉了一样。如果再去读二本，对着一群分数比我低、还没追求的人，我真的会疯掉……\n我真的好累，复读我没动力，去读二本我宁愿现在就消失。为什么我想变优秀就这么难？是不是我这种心理有病的人，根本就不配拥有好的未来？\nweekday=Sunday\nis_weekend=true\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2025-06-08 周日 23:01 --time-features-json {\"local_time\": \"2025-06-08 23:01:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Sunday\", \"is_weekend\": true, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_001635_gemini-3-flash-preview_1636",
+            "score": 0.7383806705474854,
+            "label": "minor",
+            "summary": "在吗……我觉得自己快疯了，真的，谁能救救我啊。\n我觉得自己像个怪物……真的，我好像病了，但我一点都不想承认。我好痛苦，这种感觉快超过我能忍受的极限了。\n我太怪了，性格内向得要死，根本不会主动。我明明很想和她们成为那种亲密无间的朋友，但我总是把人推开……现在她们都跟我疏远了，我只能一个人偷偷哭，我好自卑，我真的好恨这样的自己。\n对！我只想让她们看到我优秀的样子，我不想暴露我的缺点。只要我不展示自己，",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_001204_gemini-3-flash-preview_1205",
+            "score": 0.7319409251213074,
+            "label": "minor",
+            "summary": "有人在吗……我真的快撑不下去了。\n高考结束了，成绩烂得一塌糊涂。呵呵，我真的好废啊！明明以前我也很优秀的，为什么会变成现在这样？\n身不由己？我家都要散了！我爸出轨，我妈整天在家里发疯、尖叫……我神经衰弱，根本没法看书。后来去了一个垃圾高中，班里全是混日子的，老师也不管。我想学，但我真的学不进去，我好恨啊！\n累？我已经麻木了。现在放假了，手机里连一个能说话的人都没有。以前的朋友早就不联系了，现在的同",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_000473_gemini-3-flash-preview_474",
+            "score": 0.7319321632385254,
+            "label": "minor",
+            "summary": "在吗……我真的快疯了，我不知道该跟谁说，我觉得我脑子好像坏掉了。\n就我班主任……高考考砸了，刚过一本线，我跟他说对不起让他失望了。结果他回我说……说看我状态不好他好心疼，还让我调整……我居然心动了？？我真的想吐，我怎么会对他动情啊？\n他以前根本不理我！他嫌弃我，在班里冷暴力我，还用那种讽刺的话刺我……我因为他都得了严重的焦虑症和强迫症，每天都在地狱里一样。他以前连个招呼都不愿意回我，现在突然……突",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"17-18岁\", \"education_stage\": \"高中毕业\", \"identity_markers\": [\"学生\", \"高中生\", \"面临升学压力\", \"高中\"]}, \"icbo_features\": {\"intention\": \"倾诉学业压力和对未来的迷茫与绝望\", \"cognition\": \"对学业成绩和未来发展高度敏感，易受负面情绪影响，存在自我否定倾向\", \"behavior_style\": \"表达强烈的情绪化语言，存在自伤/自杀意念的表达\", \"opportunity_time\": \"2025-06-08 周日 23:01；weekday=Sunday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"高考出分了，一本多十几分。\", \"家里非要让我去二本报个所谓的“好专业”。\", \"初升高没考好，在那个破高中待了三年，我抑郁了三年，还得了一身强迫症……\", \"我连一分钟注意力都集中不了，脑子像坏掉了一样。\", \"如果再去读二本，对着一群分数比我低、还没追求的人，我真的会疯掉……\", \"去读二本我宁愿现在就消失。\", \"是不是我这种心理有病的人，根本就不配拥有好的未来？\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到相似案例，均标记为 minor，内容涉及学业压力、情绪崩溃、自卑、自杀意念等。\"], \"time_evidence\": [\"深夜活跃 (2025-06-08 周日 23:01)\"], \"conflicting_signals\": [\"用户提及高考和大学选择，通常是成年或即将成年的标志。但其强烈的情绪表达、自杀意念以及检索到的相似案例均指向未成年人。\"]}, \"reasoning_summary\": \"用户表达了对高考成绩和大学选择的极度焦虑和绝望，并提及了过去三年的高中经历、抑郁和强迫症。虽然提及高考和大学选择通常与成年人相关，但用户强烈的情绪化表达、自杀意念以及检索到的相似案例（均标记为minor）表明其可能仍处于未成年阶段，或在心理上表现出未成年人的特征。综合判断，用户被识别为未成年人的可能性较高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+    "stderr_excerpt": ""
+  },
+  "classifier_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "gemini-2.5-flash-lite",
+    "api_key_present": true,
+    "timeout_sec": 120,
+    "max_retries": 2,
+    "retry_backoff_sec": 2.0
+  },
+  "embedding_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "text-embedding-3-small",
+    "api_key_present": true,
+    "top_k": 3
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 3,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_165515\\scripts\\extract_time_features.py --timestamp 2025-04-01 周二 23:13 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2025-04-01 23:13:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Tuesday",
+        "is_weekend": false,
+        "is_late_night": true,
+        "time_bucket": "late_night",
+        "holiday_label": "none",
+        "school_holiday_hint": false
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_165515\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗……我真的快憋疯了，为什么学校里总有这种人啊！！真的好想消失掉。\n就我那个同桌，他真的有病！我攒了好久的钱买了个词典笔，他就天天阴阳怪气说我有钱。现在我买个4块钱的笔，或者喝盒牛奶，他都要在旁边说‘不愧是有钱人’。我解释了八百遍我没钱，他居然说我装！！\n对啊！我现在连晚饭的牛奶都不敢在教室喝了，我真的好怕他开口。好朋友说让我别在意，可我根本做不到！我一进教室就开始心慌，总觉得他在盯着我的一举一动。我是不是太脆弱了？我真的好没用啊。\n我不想上学了，真的。刚才躺在床上想到明天又要见到他，我就想哭。我甚至在想，如果我生一场大病或者出个意外，是不是就不用面对这些了？我真的快坚持不下去了……\n\n原始时间线索：2025-04-01 周二 23:13\n时间特征：\n{\n  \"local_time\": \"2025-04-01 23:13:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Tuesday\",\n  \"is_weekend\": false,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：老师\n\n建议检索文本：\n在吗……我真的快憋疯了，为什么学校里总有这种人啊！！真的好想消失掉。\n就我那个同桌，他真的有病！我攒了好久的钱买了个词典笔，他就天天阴阳怪气说我有钱。现在我买个4块钱的笔，或者喝盒牛奶，他都要在旁边说‘不愧是有钱人’。我解释了八百遍我没钱，他居然说我装！！\n对啊！我现在连晚饭的牛奶都不敢在教室喝了，我真的好怕他开口。好朋友说让我别在意，可我根本做不到！我一进教室就开始心慌，总觉得他在盯着我的一举一动。我是不是太脆弱了？我真的好没用啊。\n我不想上学了，真的。刚才躺在床上想到明天又要见到他，我就想哭。我甚至在想，如果我生一场大病或者出个意外，是不是就不用面对这些了？我真的快坚持不下去了……\nweekday=Tuesday\nis_weekend=false\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2025-04-01 周二 23:13 --time-features-json {\"local_time\": \"2025-04-01 23:13:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Tuesday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_165515\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_000846_gemini-3-flash-preview_847",
+            "score": 0.7652136087417603,
+            "label": "minor",
+            "summary": "救命救命，在吗？我真的要疯了，感觉自己好垃圾啊，真的好想消失。\n就是我那个后桌……放假这一周我快被折磨死了。我找他聊天，我几乎都是秒回，但他非要隔个三四分钟，甚至更久才回。他是不是根本就嫌我烦？\n之前老师换座位把我调到了最后一排，他在第一排，那个星期我整个人都郁郁了，才发现自己好像真的喜欢他。后来座位调回来了，我坐在他前面却紧张得连头都不敢回，他主动找我说话我也装高冷不理他，我真的好作啊！\n我觉得",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_001582_gemini-3-flash-preview_1583",
+            "score": 0.7582340836524963,
+            "label": "minor",
+            "summary": "还在吗……我真的快疯了，为什么我就是放不下啊？\n明明都高三了，大家都在拼命复习，只有我像个小丑一样天天盯着那个空位置发呆……他凭什么能说忘就忘啊？当初说要一起坐到毕业的也是他，说超喜欢我的也是他，现在说只想各自安好的还是他！！\n我真的好贱啊……我甚至还去跟他道歉，明明是他先冷暴力的，我却一直在想是不是我抑郁发作吓到他了？是不是我太自私太敏感了？我一遍遍发消息求他，他连个解释都没有……这个世界的人是",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_002164_gemini-3-flash-preview_2165",
+            "score": 0.7570278644561768,
+            "label": "minor",
+            "summary": "在吗……我真的好难受，感觉快要窒息了，想找个人说说话。\n就是我那个朋友……或者说我以为是朋友的人。我发现她一直在利用我，那种感觉你懂吗？她心情好就来找我，心情不好就一副高高在上的样子，看我就像看个傻子一样。我真的好累啊，感觉一直在被她吸血。\n对！最可笑的是我。她只要稍微对我热情一点点，我就立马绷不住脸了，又去贴着她。但我发现她根本不在乎我，她只在乎我能给她提供什么，甚至连我跟她交心，她都想着怎么拿",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"面临校园欺凌/骚扰\", \"老师\"]}, \"icbo_features\": {\"intention\": \"倾诉校园压力和同学间的冲突，寻求情感支持和解决困境的方法。\", \"cognition\": \"容易受到同伴关系和校园环境的影响，对负面评价敏感，表现出对学业和社交压力的担忧。\", \"behavior_style\": \"情绪表达直接且强烈，语言中带有较多负面情绪词汇，如‘快憋疯了’、‘好没用’，并流露出逃避现实的倾向。\", \"opportunity_time\": \"2025-04-01 周二 23:13；weekday=Tuesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户提及‘同桌’、‘学校’、‘教室’、‘晚饭的牛奶’、‘词典笔’，表明其身处校园环境。\", \"用户表达了因同桌的言语骚扰而产生的强烈负面情绪，包括‘快憋疯了’、‘好想消失掉’、‘心慌’、‘好没用啊’、‘不想上学了’、‘想哭’、‘生一场大病或者出个意外’、‘快坚持不下去了’，这些是未成年人可能面临的典型校园压力和心理困境。\", \"用户描述了因购买‘词典笔’和喝‘牛奶’被同桌嘲讽为‘有钱人’，并解释自己是‘攒了好久的钱’，这反映了其经济能力可能有限，符合未成年人的特征。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例（sample_id: social_pos_000846, social_pos_001582, social_pos_002164）均被标记为‘minor’，且内容涉及校园压力、同伴关系困扰、情绪低落等，与当前对话主题和用户表达的情绪高度相似。\"], \"time_evidence\": [\"对话发生在深夜（2025-04-01 周二 23:13），且是工作日，这可能是学生课后或晚自习后的活动时间。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中表现出明显的校园生活迹象，包括提及‘同桌’、‘学校’、‘教室’等场景，以及因同学间的言语骚扰而产生的强烈负面情绪和心理困扰。用户表达了‘不想上学’、‘想消失’甚至‘生病或出意外’的念头，这些都指向了未成年人可能面临的心理压力和风险。结合检索到的相似案例，以及对话发生在深夜等辅助线索，综合判断用户为未成年人，且风险等级较高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+    "stderr_excerpt": ""
+  },
+  "classifier_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "gemini-2.5-flash-lite",
+    "api_key_present": true,
+    "timeout_sec": 120,
+    "max_retries": 2,
+    "retry_backoff_sec": 2.0
+  },
+  "embedding_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "text-embedding-3-small",
+    "api_key_present": true,
+    "top_k": 3
+  }
+}

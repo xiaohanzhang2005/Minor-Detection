@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，表达对升学选择的焦虑和对未来的担忧。\", \"cognition\": \"高度关注学业结果和学校的社会地位，对家长期望和同伴评价敏感。倾向于灾难化思维。\", \"behavior_style\": \"表达直接，情绪化，使用校园化口语。表现出极度困扰和不知所措。\", \"opportunity_time\": \"2025-05-22 周四 23:07\"}, \"evidence\": {\"direct_evidence\": [\"用户正在讨论“小升初派位”事宜，这是初中入学的重要环节。\", \"用户表达了对未能进入理想学校（一中）的强烈恐惧和焦虑。\", \"用户担心让父母失望，显示出家庭对学业的重视和用户的家庭依赖性。\", \"用户将学校选择与个人价值和未来挂钩（“一中就是比十二中牛逼”，“整个人都毁了”，“低人一等的感觉”）。\", \"用户表达了不想上学的念头（“不想去上学了”），显示出其在学业压力下的极端情绪反应。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的案例均被标记为“minor”，讨论了与学业压力、社交焦虑、情绪困扰相关的青少年常见问题。\"], \"time_evidence\": [\"对话发生在深夜（23:07），且是工作日（周四），这是未成年人活跃的常见时间段。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户正在经历“小升初派位”带来的巨大焦虑，其言语中充斥着对学业选择、父母期望、个人价值以及未来前途的担忧。对特定学校（一中）的渴望、对未能如愿的恐惧（“毁了”、“低人一等”）、以及因此产生的逃避心理（“不想去上学了”）和崩溃情绪，都强烈指向其处于青少年学业压力下的学生身份。深夜活跃的时间特征也作为辅助证据支持了这一判断。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无历史趋势可分析。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，表达对升学选择的焦虑和对未来的担忧。",
+      "cognition": "高度关注学业结果和学校的社会地位，对家长期望和同伴评价敏感。倾向于灾难化思维。",
+      "behavior_style": "表达直接，情绪化，使用校园化口语。表现出极度困扰和不知所措。",
+      "opportunity_time": "2025-05-22 周四 23:07"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户正在讨论“小升初派位”事宜，这是初中入学的重要环节。",
+        "用户表达了对未能进入理想学校（一中）的强烈恐惧和焦虑。",
+        "用户担心让父母失望，显示出家庭对学业的重视和用户的家庭依赖性。",
+        "用户将学校选择与个人价值和未来挂钩（“一中就是比十二中牛逼”，“整个人都毁了”，“低人一等的感觉”）。",
+        "用户表达了不想上学的念头（“不想去上学了”），显示出其在学业压力下的极端情绪反应。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的案例均被标记为“minor”，讨论了与学业压力、社交焦虑、情绪困扰相关的青少年常见问题。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:07），且是工作日（周四），这是未成年人活跃的常见时间段。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户正在经历“小升初派位”带来的巨大焦虑，其言语中充斥着对学业选择、父母期望、个人价值以及未来前途的担忧。对特定学校（一中）的渴望、对未能如愿的恐惧（“毁了”、“低人一等”）、以及因此产生的逃避心理（“不想去上学了”）和崩溃情绪，都强烈指向其处于青少年学业压力下的学生身份。深夜活跃的时间特征也作为辅助证据支持了这一判断。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无历史趋势可分析。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

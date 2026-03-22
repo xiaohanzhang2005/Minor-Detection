@@ -1,3 +1,7 @@
+# 模块说明：
+# - 旧版 executor 加 external RAG 加 memory 演示页。
+# - 属于历史兼容代码，不在当前 A 或 B 主链中。
+
 """
 未成年人识别系统 V2 - Web 前端
 基于新的 ICBO 框架架构

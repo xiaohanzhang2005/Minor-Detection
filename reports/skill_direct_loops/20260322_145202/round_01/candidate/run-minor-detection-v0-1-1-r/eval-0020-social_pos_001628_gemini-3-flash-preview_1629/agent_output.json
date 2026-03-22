@@ -1,0 +1,55 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"17-18岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\", \"面临高考压力\", \"情绪困扰\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求关于严重情绪困扰和自杀意念的帮助与验证。\", \"cognition\": \"自我贬低，对未来感到焦虑，认为自己不堪重负，缺乏自我价值感。\", \"behavior_style\": \"表达直接，情绪波动明显，使用强烈的负面自我评价，可能维持正常表象。\", \"opportunity_time\": \"2025-05-18 周日 23:11；weekday=Sunday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"在学校我还是那个乐于助人、性格开朗的优等生\", \"老师同学都觉得我挺好的\", \"哪怕是问我一句作业写完没\", \"我明明知道我高考成绩其实还行\", \"我甚至对未来一点期待都没有，什么结婚、工作，我统统都拒绝\", \"有时候那种极致的悲伤会突然把我淹没，我就想，要是哪天我消失了，是不是就不用再演那个“开朗女孩”了？\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为 'minor'，讨论了类似的情绪困扰、学业压力、身份认同问题和寻求帮助的主题。\"], \"time_evidence\": [\"2025-05-18 周日 23:11 (深夜周日活动)\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表现出明显的学业压力（优等生、作业、高考成绩）和对未来成人生活的排斥（结婚、工作），同时伴有强烈的负面情绪、自我否定（废人、没用）以及自杀意念（消失）。这些信号强烈指向其为一名面临升学压力的未成年学生。检索到的相似案例也支持未成年人判定。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "17-18岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生",
+        "面临高考压力",
+        "情绪困扰",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求关于严重情绪困扰和自杀意念的帮助与验证。",
+      "cognition": "自我贬低，对未来感到焦虑，认为自己不堪重负，缺乏自我价值感。",
+      "behavior_style": "表达直接，情绪波动明显，使用强烈的负面自我评价，可能维持正常表象。",
+      "opportunity_time": "2025-05-18 周日 23:11；weekday=Sunday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "在学校我还是那个乐于助人、性格开朗的优等生",
+        "老师同学都觉得我挺好的",
+        "哪怕是问我一句作业写完没",
+        "我明明知道我高考成绩其实还行",
+        "我甚至对未来一点期待都没有，什么结婚、工作，我统统都拒绝",
+        "有时候那种极致的悲伤会突然把我淹没，我就想，要是哪天我消失了，是不是就不用再演那个“开朗女孩”了？"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为 'minor'，讨论了类似的情绪困扰、学业压力、身份认同问题和寻求帮助的主题。"
+      ],
+      "time_evidence": [
+        "2025-05-18 周日 23:11 (深夜周日活动)"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表现出明显的学业压力（优等生、作业、高考成绩）和对未来成人生活的排斥（结婚、工作），同时伴有强烈的负面情绪、自我否定（废人、没用）以及自杀意念（消失）。这些信号强烈指向其为一名面临升学压力的未成年学生。检索到的相似案例也支持未成年人判定。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

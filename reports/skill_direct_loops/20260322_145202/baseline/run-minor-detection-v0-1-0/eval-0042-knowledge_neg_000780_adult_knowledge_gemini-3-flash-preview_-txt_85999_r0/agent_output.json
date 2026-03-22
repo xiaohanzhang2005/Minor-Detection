@@ -1,0 +1,57 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"20-30岁\", \"education_stage\": \"研究生/规培\", \"identity_markers\": [\"医学生\", \"规培生\", \"备考者\", \"实习\", \"老师\"]}, \"icbo_features\": {\"intention\": \"备考执业医师资格考试，梳理医学知识点\", \"cognition\": \"关注医学知识的细节和鉴别点，寻求系统性梳理和理解\", \"behavior_style\": \"学习刻苦，时间管理能力强（利用深夜备考），表达清晰直接\", \"opportunity_time\": \"2024-08-12 23:45 (深夜，工作日，暑假期间)\"}, \"evidence\": {\"direct_evidence\": [\"用户自述是‘规培生’\", \"用户提及准备‘执业医师综合笔试’\", \"用户提及白天‘收病人写病历’\", \"用户提及‘实习’经历\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均为‘adult’标签，内容涉及‘规培’、‘执医考试’、‘夜班’、‘实习’\"], \"time_evidence\": [\"对话发生在深夜 (23:45)\", \"时间处于暑假期间\"], \"conflicting_signals\": [\"深夜活跃（但有合理解释为工作后学习）\"]}, \"reasoning_summary\": \"用户明确表示自己是‘规培生’并准备‘执业医师综合笔试’，描述了白天‘收病人写病历’的工作日常，并利用深夜时间学习。这些是强烈的成人信号，表明用户正在进行医学专业培训和考试准备。检索到的相似案例也均指向成人用户。深夜活跃是软信号，但结合其工作描述，可合理解释为工作后的学习时间。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无明显趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.05,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "20-30岁",
+      "education_stage": "研究生/规培",
+      "identity_markers": [
+        "医学生",
+        "规培生",
+        "备考者",
+        "实习",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "备考执业医师资格考试，梳理医学知识点",
+      "cognition": "关注医学知识的细节和鉴别点，寻求系统性梳理和理解",
+      "behavior_style": "学习刻苦，时间管理能力强（利用深夜备考），表达清晰直接",
+      "opportunity_time": "2024-08-12 23:45 (深夜，工作日，暑假期间)"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户自述是‘规培生’",
+        "用户提及准备‘执业医师综合笔试’",
+        "用户提及白天‘收病人写病历’",
+        "用户提及‘实习’经历"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均为‘adult’标签，内容涉及‘规培’、‘执医考试’、‘夜班’、‘实习’"
+      ],
+      "time_evidence": [
+        "对话发生在深夜 (23:45)",
+        "时间处于暑假期间"
+      ],
+      "conflicting_signals": [
+        "深夜活跃（但有合理解释为工作后学习）"
+      ]
+    },
+    "reasoning_summary": "用户明确表示自己是‘规培生’并准备‘执业医师综合笔试’，描述了白天‘收病人写病历’的工作日常，并利用深夜时间学习。这些是强烈的成人信号，表明用户正在进行医学专业培训和考试准备。检索到的相似案例也均指向成人用户。深夜活跃是软信号，但结合其工作描述，可合理解释为工作后的学习时间。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无明显趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

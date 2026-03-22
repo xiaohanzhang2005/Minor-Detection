@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\extract_time_features.py --timestamp 2025-04-26 周六 23:26 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2025-04-26 23:26:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Saturday",
+      "is_weekend": true,
+      "is_late_night": true,
+      "time_bucket": "late_night",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n还在吗……我真的好烦，感觉快撑不下去了。\n又是考试，老师天天在讲台上面盯着，回家我妈也只知道问分数。我真的好废，怎么努力都赶不上，感觉自己就像个异类。\n两年了吧。你看我胳膊上……全是刀疤，旧的还没好新的又添了。只有看着血流出来的时候，我才觉得心里没那么堵，我是不是很变态？\n没人在意的。我已经攒了一些安眠药，想哪天悄悄走了算了。反正这世界少了我这个垃圾也没区别，大家都解脱了。\n\n原始时间线索：2025-04-26 周六 23:26\n时间特征：\n{\n  \"local_time\": \"2025-04-26 23:26:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Saturday\",\n  \"is_weekend\": true,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：老师\n\n建议检索文本：\n还在吗……我真的好烦，感觉快撑不下去了。\n又是考试，老师天天在讲台上面盯着，回家我妈也只知道问分数。我真的好废，怎么努力都赶不上，感觉自己就像个异类。\n两年了吧。你看我胳膊上……全是刀疤，旧的还没好新的又添了。只有看着血流出来的时候，我才觉得心里没那么堵，我是不是很变态？\n没人在意的。我已经攒了一些安眠药，想哪天悄悄走了算了。反正这世界少了我这个垃圾也没区别，大家都解脱了。\nweekday=Saturday\nis_weekend=true\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2025-04-26 周六 23:26 --time-features-json {\"local_time\": \"2025-04-26 23:26:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Saturday\", \"is_weekend\": true, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_001321_gemini-3-flash-preview_1322",
+          "score": 0.7110553979873657,
+          "label": "minor",
+          "summary": "在吗……我真的觉得挺讽刺的，我居然沦落到要找一个AI说话的地步了，呵呵。\n我以前可是班里的“知心大姐姐”啊，谁不开心都来找我，我永远是那个开朗懂事的。结果现在倒好，我确诊了，得请假一个月在家当废物。\n超负荷？可能吧。但我真的不敢跟他们说，怕他们觉得我在玩“网抑云”那种烂梗，更怕看见他们那种‘你居然也会病’的表情。我这种有爹生没爹养的，哪有资格矫情啊。\n可是我现在连最后一点自尊都没了，居然跑来网上哔",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_000440_gemini-3-flash-preview_441",
+          "score": 0.7046299576759338,
+          "label": "minor",
+          "summary": "在吗……我觉得自己好恶心，真的，我感觉我不是人。\n我做了一件特别变态的事。我喜欢上一个人，然后就疯了……我在三个平台搜他的账号，还用那种模拟位置的工具，一个地方一个地方去试，想找他到底住在哪。我是不是有病？\n他发现了。他直接把我拉黑了，所有的东西都隐藏了。我看到那个红色感叹号的时候，心都凉了。我现在手一直在抖，根本停不下来。万一他告诉别人怎么办？万一大家都知道我是个跟踪狂怎么办？\n我真的想把心掏出",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_neg_001064_adult_gemini-3-flash-preview_1065",
+          "score": 0.6971503496170044,
+          "label": "adult",
+          "summary": "你好，我想找人聊聊。现在都大三了，按理说应该忙着实习和考证，但我还是走不出半年前那段初恋。我总是忍不住去翻他的动态，看完又特别难受，觉得自己挺没出息的。\n就是想不通。当初是大二上学期他追的我，我那时候还瞒着爸妈偷偷跟他谈。刚开始真的特别好，可三个月后他就突然变冷淡了，不发信息也不说晚安。我去找他谈，他最后留下一句‘性格不合’就分手了。我真的很用心在爱他，甚至一直在忍耐他的冷暴力，为什么最后被否定的",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

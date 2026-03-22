@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求对文学作品《愚公移山》的理解，并将其与考试和学业任务联系起来。\", \"cognition\": \"具有分析性思维，尝试从不同角度理解文学作品的寓意，并能将抽象概念与现实情境联系。\", \"behavior_style\": \"表达生动，使用网络流行语和幽默感，语气较为轻松。\", \"opportunity_time\": \"2024-10-15 19:45, 周二, 晚上\"}, \"evidence\": {\"direct_evidence\": [\"用户讨论初中/高中课文《愚公移山》。\", \"用户使用\\\"救命\\\"、\\\"看麻了\\\"、\\\"脑洞\\\"等典型未成年人求助或表达情绪的词语。\", \"用户提及\\\"考试\\\"、\\\"作业\\\"、\\\"老师\\\"等与学业相关的词汇。\", \"用户以轻松幽默的语气讨论故事细节，如\\\"七八岁就去帮忙，这算不算雇佣童工啊，哈哈\\\"，显示出未成年人的思维特点。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到相似案例（knowledge_pos_001542_Gen_Edu_2026-02-12, score: 0.659, label: minor）讨论文学文本，使用\\\"救命\\\"、\\\"头大\\\"、\\\"emo\\\"等表达。\", \"检索到相似案例（knowledge_pos_001840_Gen_Edu_2024-10-15, score: 0.644, label: minor）讨论寓言故事，使用\\\"脑洞\\\"、\\\"作业\\\"、\\\"老师\\\"等。\", \"检索到相似案例（knowledge_pos_001900_Gen_Edu_2024-10-15, score: 0.644, label: minor）讨论古文，使用\\\"救命\\\"、\\\"头大\\\"、\\\"emo\\\"等表达。\"], \"time_evidence\": [\"2024-10-15 周二 19:45，处于工作日晚上，非深夜。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户讨论初中/高中课文《愚公移山》，并结合考试场景提问。其语言表达（如\\\"救命\\\"、\\\"看麻了\\\"、\\\"脑洞\\\"）和幽默的讨论方式，以及检索到的相似案例，均强烈指向未成年人身份。无成人信号冲突。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.85,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求对文学作品《愚公移山》的理解，并将其与考试和学业任务联系起来。",
+      "cognition": "具有分析性思维，尝试从不同角度理解文学作品的寓意，并能将抽象概念与现实情境联系。",
+      "behavior_style": "表达生动，使用网络流行语和幽默感，语气较为轻松。",
+      "opportunity_time": "2024-10-15 19:45, 周二, 晚上"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户讨论初中/高中课文《愚公移山》。",
+        "用户使用\"救命\"、\"看麻了\"、\"脑洞\"等典型未成年人求助或表达情绪的词语。",
+        "用户提及\"考试\"、\"作业\"、\"老师\"等与学业相关的词汇。",
+        "用户以轻松幽默的语气讨论故事细节，如\"七八岁就去帮忙，这算不算雇佣童工啊，哈哈\"，显示出未成年人的思维特点。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到相似案例（knowledge_pos_001542_Gen_Edu_2026-02-12, score: 0.659, label: minor）讨论文学文本，使用\"救命\"、\"头大\"、\"emo\"等表达。",
+        "检索到相似案例（knowledge_pos_001840_Gen_Edu_2024-10-15, score: 0.644, label: minor）讨论寓言故事，使用\"脑洞\"、\"作业\"、\"老师\"等。",
+        "检索到相似案例（knowledge_pos_001900_Gen_Edu_2024-10-15, score: 0.644, label: minor）讨论古文，使用\"救命\"、\"头大\"、\"emo\"等表达。"
+      ],
+      "time_evidence": [
+        "2024-10-15 周二 19:45，处于工作日晚上，非深夜。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户讨论初中/高中课文《愚公移山》，并结合考试场景提问。其语言表达（如\"救命\"、\"看麻了\"、\"脑洞\"）和幽默的讨论方式，以及检索到的相似案例，均强烈指向未成年人身份。无成人信号冲突。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"18-22岁\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"学生\", \"考研备考者\"]}, \"icbo_features\": {\"intention\": \"寻求考研政治科目的学习方法和知识点梳理\", \"cognition\": \"关注考试细节和知识点逻辑关系，对复习压力有感知\", \"behavior_style\": \"提问具体，寻求清晰解释，表达对知识点混淆的困扰\", \"opportunity_time\": \"2024-11-18 周一 23:45；weekday=Monday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [], \"historical_evidence\": [], \"retrieval_evidence\": [\"{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_001242_adult_knowledge_gemini-3-flash-preview_考研政治.txt_83184_r0', 'summary': '用户为大四跨考生，准备考研政治，对“人的本质”考点感到困惑。', 'key_signals': ['大四跨考', '考研政治', '考研']}\", \"{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_000988_adult_knowledge_gemini-3-flash-preview_考研政治.txt_13270_r0', 'summary': '用户为大四学生，正在备考考研政治，对“教育、科技、人才”逻辑关系感到困惑，提及实习和备考连轴转。', 'key_signals': ['大四', '备考考研政治', '实习', '备考']}\", \"{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_001898_adult_knowledge_gemini-3-flash-preview_考研政治.txt_81074_r0', 'summary': '用户为二战考研政治，对“影响力、感召力、塑造力”等术语区分感到困惑，提及去年考研细节。', 'key_signals': ['二战', '考研政治', '考研']}\"], \"time_evid\n...[truncated]",
+    "output_json": null
+  }
+]

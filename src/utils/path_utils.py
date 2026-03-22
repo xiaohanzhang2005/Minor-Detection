@@ -1,3 +1,7 @@
+# 模块说明：
+# - 把绝对路径归一化成项目内稳定相对路径。
+# - 主要服务 loop 报告和 CLI JSON 输出。
+
 from __future__ import annotations
 
 import os

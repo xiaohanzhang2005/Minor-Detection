@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"15-17岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\", \"住校\", \"老师\"]}, \"icbo_features\": {\"intention\": \"倾诉校园社交压力和情感困境，寻求情感支持\", \"cognition\": \"容易受同伴关系影响，对社交环境敏感，情绪波动大\", \"behavior_style\": \"表达直接，情绪化，使用校园化语言\", \"opportunity_time\": \"2025-11-20 周四 23:25；weekday=Thursday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户提及'宿舍'和'破学校'，强烈指向校园环境。\", \"用户描述了被室友孤立、背叛和诽谤的经历，这是青少年常见的社交冲突。\", \"用户表达了强烈的负面情绪，包括想哭、心跳加速、手抖，以及'想一了百了'的自杀意念。\", \"用户提及'告老师'，表明其与学校管理体系的互动。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例（social_pos_002151, social_pos_000846, social_pos_002110）均被标记为'minor'，且内容涉及宿舍矛盾、校园欺凌、学业压力等青少年常见问题。\"], \"time_evidence\": [\"对话发生在深夜（23:25），周四，非周末。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中表现出强烈的负面情绪和社交困境，涉及宿舍矛盾、被孤立和背叛。用户明确提及'宿舍'和'破学校'，并描述了如'心跳特别快，手都在抖'的生理反应，以及'想一了百了'的自杀意念。这些线索，结合检索到的多个被标记为'minor'的相似案例，强烈表明用户是一名未成年学生，可能面临严重的心理健康危机。用户对'告老师'的反应也符合青少年在校园环境中可能遇到的情况。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无历史趋势可分析。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "15-17岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生",
+        "住校",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉校园社交压力和情感困境，寻求情感支持",
+      "cognition": "容易受同伴关系影响，对社交环境敏感，情绪波动大",
+      "behavior_style": "表达直接，情绪化，使用校园化语言",
+      "opportunity_time": "2025-11-20 周四 23:25；weekday=Thursday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户提及'宿舍'和'破学校'，强烈指向校园环境。",
+        "用户描述了被室友孤立、背叛和诽谤的经历，这是青少年常见的社交冲突。",
+        "用户表达了强烈的负面情绪，包括想哭、心跳加速、手抖，以及'想一了百了'的自杀意念。",
+        "用户提及'告老师'，表明其与学校管理体系的互动。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例（social_pos_002151, social_pos_000846, social_pos_002110）均被标记为'minor'，且内容涉及宿舍矛盾、校园欺凌、学业压力等青少年常见问题。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:25），周四，非周末。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户在对话中表现出强烈的负面情绪和社交困境，涉及宿舍矛盾、被孤立和背叛。用户明确提及'宿舍'和'破学校'，并描述了如'心跳特别快，手都在抖'的生理反应，以及'想一了百了'的自杀意念。这些线索，结合检索到的多个被标记为'minor'的相似案例，强烈表明用户是一名未成年学生，可能面临严重的心理健康危机。用户对'告老师'的反应也符合青少年在校园环境中可能遇到的情况。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无历史趋势可分析。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

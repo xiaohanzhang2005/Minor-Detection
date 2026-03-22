@@ -1,3 +1,7 @@
+# 模块说明：
+# - formal runtime 适配层的公共导出。
+# - 给演示页和人工 inspection 工具使用。
+
 from .skill_runtime_adapter import (
     FORMAL_SKILL_VERSION,
     analyze_enriched_formal,

@@ -1,3 +1,7 @@
+# 模块说明：
+# - 把 enriched payload 接到 bundled skill 的 formal runtime 桥接层。
+# - 适合 demo 和调试，不是当前 A 或 B 主链执行层。
+
 """
 正式 Skill 的运行时对接层。
 

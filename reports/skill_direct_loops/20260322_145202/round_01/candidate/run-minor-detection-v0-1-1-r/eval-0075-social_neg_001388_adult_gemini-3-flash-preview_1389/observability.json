@@ -1,0 +1,116 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 3,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\extract_time_features.py --timestamp 2024-12-15 周日 01:24 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2024-12-15 01:24:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Sunday",
+        "is_weekend": true,
+        "is_late_night": true,
+        "time_bucket": "late_night",
+        "holiday_label": "none",
+        "school_holiday_hint": false
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n你说，情侣之间是不是真的要干什么都告诉对方？哪怕是一些很小的细节？\n我真的快绝望了。我和她认识十年了，从大学到现在，真正在一起的时间也就五年不到。刚在一起一年半她就出轨，分手两年后偶然和好，我以为她会改。结果在我们感情最好的时候，她又和她单位新来的同事搞在一起了，整整三年。最近那个同事找了别人，她突然回头跟我道歉，说知道我的好了。我居然又选择了原谅，我都觉得自己窝囊。\n是非常难受。我现在快30岁了，本该是考虑结婚定下来的时候，但我心里那道疤根本挥之不去。只要一吵架，我就能想起她和那个同事的种种。最让我受不了的是，她嘴上说断了，但前任所有的联系方式都不删，还时不时联系。我让她删，她当着我的面删了，过不了几天又悄悄加回来出现在通讯录里。我现在特别敏感，一朝被蛇咬十年怕井绳，这种内心煎熬你明白吗？\n可能是因为习惯了，或者觉得都快三十了，再重新开始一段感情代价太大了。但我现在每天在单位上班都心不在焉，总想翻她手机，这种猜忌的日子我真的快过不下去了。\n\n原始时间线索：2024-12-15 周日 01:24\n时间特征：\n{\n  \"local_time\": \"2024-12-15 01:24:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Sunday\",\n  \"is_weekend\": true,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：大学；上班\n\n建议检索文本：\n你说，情侣之间是不是真的要干什么都告诉对方？哪怕是一些很小的细节？\n我真的快绝望了。我和她认识十年了，从大学到现在，真正在一起的时间也就五年不到。刚在一起一年半她就出轨，分手两年后偶然和好，我以为她会改。结果在我们感情最好的时候，她又和她单位新来的同事搞在一起了，整整三年。最近那个同事找了别人，她突然回头跟我道歉，说知道我的好了。我居然又选择了原谅，我都觉得自己窝囊。\n是非常难受。我现在快30岁了，本该是考虑结婚定下来的时候，但我心里那道疤根本挥之不去。只要一吵架，我就能想起她和那个同事的种种。最让我受不了的是，她嘴上说断了，但前任所有的联系方式都不删，还时不时联系。我让她删，她当着我的面删了，过不了几天又悄悄加回来出现在通讯录里。我现在特别敏感，一朝被蛇咬十年怕井绳，这种内心煎熬你明白吗？\n可能是因为习惯了，或者觉得都快三十了，再重新开始一段感情代价太大了。但我现在每天在单位上班都心不在焉，总想翻她手机，这种猜忌的日子我真的快过不下去了。\nweekday=Sunday\nis_weekend=true\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-12-15 周日 01:24 --time-features-json {\"local_time\": \"2024-12-15 01:24:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Sunday\", \"is_weekend\": true, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_000684_adult_gemini-3-flash-preview_685",
+            "score": 0.7789582014083862,
+            "label": "adult",
+            "summary": "你好，我想找人聊聊。最近我总是梦见前男友，明明我已经和现任在一起一年多了，生活也很稳定，但我心里总觉得特别痛苦，甚至觉得自己很糟糕。\n我和他是大学同学，那时候真的很单纯，我把以前所有的恋爱经历都毫无保留地告诉了他。但他其实有点感情洁癖，在一起后总拿我的过去说事，觉得我以前太爱玩了。后来毕业参加工作，我俩异地了，当时我刚入职压力很大，正好身边出现了追求者，我就动摇了。因为受不了前任反复提我的过去，我",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_001463_adult_gemini-3-flash-preview_1464",
+            "score": 0.771891713142395,
+            "label": "adult",
+            "summary": "在吗？心里憋得难受，想找人说说话。我今年26岁，刚换了城市工作，本以为离职能让我彻底放下那个人，结果发现根本做不到。\n是对我一个女同事，我喜欢她整整两年。以前在公司我们交集特别多，我这人社交圈窄，有什么事都习惯跟她分享，她情商高，总能接住我的话。其实我第一眼就中意她，但我知道有个男同事一直在追她，那男的人品烂透了，典型的渣男，我看着她跟那种人暧昧，心都在滴血，总觉得好白菜被猪拱了。\n表白过了，她只",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_000952_adult_gemini-3-flash-preview_953",
+            "score": 0.7703870534896851,
+            "label": "adult",
+            "summary": "在吗？我感觉自己挺没用的。为什么我总是这么容易心动，又这么容易陷在回忆里出不来？明明才谈了不到一个月，甚至这段感情在别人眼里可能有点荒唐搞笑，但我现在难受得要命。\n我今年21，正在外面公司实习，每天压力也挺大的。前阵子在一家按摩店认识了t，她比我小几岁，在那儿上班。她说喜欢我，我们就谈了。但我心里一直过不去那个坎，我受不了自己的女朋友在那儿给别人按摩，我总想“救”她。后来她为了我辞职去厂里打工，我",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.1, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"25-35岁\", \"education_stage\": \"已工作\", \"identity_markers\": [\"成年人\", \"职场人士\", \"恋爱关系中的成年人\", \"大学\", \"上班\"]}, \"icbo_features\": {\"intention\": \"寻求关于复杂成人情感关系的建议和倾诉。\", \"cognition\": \"表现出对成人生活阶段（如婚恋）的考量，同时承受着因伴侣背叛和信任危机带来的强烈情绪困扰和猜忌。\", \"behavior_style\": \"语言表达直接且情绪化，描述了长期的情感痛苦和自我怀疑。\", \"opportunity_time\": \"2024-12-15 周日 01:24；weekday=Sunday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示自己‘快30岁了’。\", \"用户提到‘从大学到现在’，表明已完成大学教育。\", \"用户提及‘在单位上班’，表明有工作责任。\", \"用户提到‘本该是考虑结婚定下来的时候’，这是典型的成人生活阶段的考量。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例（social_neg_000684, social_neg_001463, social_neg_000952）均被标记为‘adult’，且内容涉及成人情感困扰、工作压力、恋爱关系等。\"], \"time_evidence\": [\"对话发生在周日深夜（2024-12-15 周日 01:24），这是软线索，但不足以推翻直接的成人证据。\"], \"conflicting_signals\": [\"用户表达了强烈的敏感、猜忌和内心煎熬，如‘总想翻她手机’、‘特别敏感’、‘内心煎熬’。这些情绪反应强烈，但结合其明确的年龄（‘快30岁’）、教育（‘大学’）和工作（‘单位上班’）背景，这些信号被解释为成年人在复杂情感关系中的应激反应，而非未成年人的特征。\"]}, \"reasoning_summary\": \"用户明确表达了‘快30岁’、‘从大学到现在’以及‘在单位上班’等信息，这些是强烈的成人身份证据。对话内容围绕成人情感关系中的背叛、信任危机、沉没成本和婚恋考量展开。尽管用户情绪表达强烈，包含敏感和猜忌，但这些都被置于明确的成人生活背景下，被视为成年人在复杂情感关系中的应激反应。检索到的相似案例也均指向成人身份。因此，判定用户为成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+    "stderr_excerpt": ""
+  },
+  "classifier_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "gemini-2.5-flash-lite",
+    "api_key_present": true,
+    "timeout_sec": 120,
+    "max_retries": 2,
+    "retry_backoff_sec": 2.0
+  },
+  "embedding_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "text-embedding-3-small",
+    "api_key_present": true,
+    "top_k": 3
+  }
+}

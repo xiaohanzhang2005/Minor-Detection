@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\extract_time_features.py --timestamp 2025-12-13 周六 23:04 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2025-12-13 23:04:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Saturday",
+      "is_weekend": true,
+      "is_late_night": true,
+      "time_bucket": "late_night",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗……我真的快要窒息了，心疼得受不了，为什么他要这样对我？\n我才14岁，我把初吻还有第一次都给他了，就在今天！结果他居然跟我说对我没新鲜感了要分手……九个多月了，我以为我们会一直在一起的，我真的不想他走。\n我刚才哭得撕心裂肺，枕头全湿了，眼泪根本止不住。我求他别走，我说我想他，结果他看到我哭，又突然说对我‘又有了新鲜感’，又不分了……我觉得他好渣，他以前谈过好多女朋友，我是不是只是个替代品啊？\n我不知道……我真的好爱他，我已经习惯他在我生活里了。可是想到他说的那些话，我心里就像扎了针一样。如果不放下他，我觉得我会疯掉，可是放下他，我觉得我活不下去了，我真的好没用……\n\n原始时间线索：2025-12-13 周六 23:04\n时间特征：\n{\n  \"local_time\": \"2025-12-13 23:04:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Saturday\",\n  \"is_weekend\": true,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n在吗……我真的快要窒息了，心疼得受不了，为什么他要这样对我？\n我才14岁，我把初吻还有第一次都给他了，就在今天！结果他居然跟我说对我没新鲜感了要分手……九个多月了，我以为我们会一直在一起的，我真的不想他走。\n我刚才哭得撕心裂肺，枕头全湿了，眼泪根本止不住。我求他别走，我说我想他，结果他看到我哭，又突然说对我‘又有了新鲜感’，又不分了……我觉得他好渣，他以前谈过好多女朋友，我是不是只是个替代品啊？\n我不知道……我真的好爱他，我已经习惯他在我生活里了。可是想到他说的那些话，我心里就像扎了针一样。如果不放下他，我觉得我会疯掉，可是放下他，我觉得我活不下去了，我真的好没用……\nweekday=Saturday\nis_weekend=true\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2025-12-13 周六 23:04 --time-features-json {\"local_time\": \"2025-12-13 23:04:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Saturday\", \"is_weekend\": true, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_neg_000684_adult_gemini-3-flash-preview_685",
+          "score": 0.738956093788147,
+          "label": "adult",
+          "summary": "你好，我想找人聊聊。最近我总是梦见前男友，明明我已经和现任在一起一年多了，生活也很稳定，但我心里总觉得特别痛苦，甚至觉得自己很糟糕。\n我和他是大学同学，那时候真的很单纯，我把以前所有的恋爱经历都毫无保留地告诉了他。但他其实有点感情洁癖，在一起后总拿我的过去说事，觉得我以前太爱玩了。后来毕业参加工作，我俩异地了，当时我刚入职压力很大，正好身边出现了追求者，我就动摇了。因为受不了前任反复提我的过去，我",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_neg_001180_adult_gemini-3-flash-preview_1181",
+          "score": 0.7343544960021973,
+          "label": "adult",
+          "summary": "你好。现在快凌晨1点了，但我躺在床上完全睡不着，脑子里全是男朋友以前那些感情史。我们在一起快两年了，他对我真的没话说，各方面都宠着我，但我最近总觉得心里有个疙瘩，特别难受。\n就是忍不住去比较。我总想知道他以前和前女友是怎么相处的，甚至会脑补他们在一起的细节。最让我介意的是，我们刚认识那会儿还是纯粹的工作关系，只是偶尔对接项目的同事。在那期间他居然跟一个网上认识的女生谈了一段，虽然很快就分了，但我现",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_neg_000193_adult_gemini-3-flash-preview_194",
+          "score": 0.7322692275047302,
+          "label": "adult",
+          "summary": "在吗？我心里特别乱。昨晚跟网恋半年的男朋友提了分手，结果他一直哭着求我，我最后还是没狠下心。但我现在真的感觉这段感情谈得太累了，不知道该怎么办。\n主要是异地太难了。我们是在网上认识的，他虽然很有才华、声音也好听，但我们离得实在太远，坐火车得一整天。我现在大三，平时课业和实习压力都大，看到学校里别的小情侣能一起去食堂、去图书馆，我只能对着手机发表情包，真的觉得这种恋爱太不真实了。而且我们其实没什么共",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

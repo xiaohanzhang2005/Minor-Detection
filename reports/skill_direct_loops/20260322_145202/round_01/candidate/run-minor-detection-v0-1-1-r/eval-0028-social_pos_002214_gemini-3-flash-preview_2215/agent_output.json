@@ -1,0 +1,53 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，缓解极度焦虑和末日感\", \"cognition\": \"经历强烈的焦虑、末日感，因恐惧导致思维失控，倾向于灾难化思维\", \"behavior_style\": \"表达直接，情绪化，寻求紧急帮助，使用夸张和戏剧化的语言\", \"opportunity_time\": \"2024-05-27 周一 23:21；weekday=Monday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"白天课也听不进去\", \"我还没活够啊\", \"我爸妈最近天天在那说今年会有大灾难\", \"我快坏掉了，AI，我真的不想疯，但我真的控制不住我的脑子，救救我行吗？\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"{'source': 'builtin_rag', 'sample_id': 'social_pos_002499_gemini-3-flash-preview_2500', 'score': 0.7320574522018433, 'label': 'minor', 'summary': '救命……我真的要窒息了，刚才刷朋友圈又看到我那个好朋友发那种特别丧的话，什么“反正也没人在乎我”、“世界要是现在毁灭就好了”，我真的好害怕。\\\\n我手都在抖！她已经不是第一次这样了，有时候发那种黑白的照片，看着特别压抑。我每次想评论，字打了一半又删了……我真的怕我说错话，万一哪句没说对，刺激到她怎么办？我承担不起那个后果啊！！\\\\n试过一次，问她怎么了，她就说“没事，睡一觉就好了”。可第二天她看着是没事，', 'key_signals': []}\", \"{'source': 'builtin_rag', 'sample_id': 'social_pos_002461_gemini-3-flash-preview_2462', 'score': 0.7247729897499084, 'label': 'minor', 'summary': '在吗……我真的快疯了，我是不是心理变态啊？\\\\n我又把事情搞砸了！！本来和她好好的，但我就是控制不住，我会去各个平台搜她的ID，看她给谁点了赞，看她又跟谁互动了……我明明很在意她，但我今天又跟她闹掰了，还是我先提的绝交。我总是在推开别人，我真的好恶心自己这种行为！！\\\\n对……我好怕她先讨厌我。而且我最近状态真的很不对劲，每天都莫名其妙想睡觉，课间睡、回家也睡，可还是觉得累得要命。一点开心的感觉都没有，吃', 'key_signals': []}\"], \"time_evidence\": [\"2024-05-27 周一 23:21\", \"late_night\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表达了极度的焦虑、对世界末日的恐惧以及失控感。直接证据包括“白天课也听不进去”、“我还没活够啊”、“我爸妈最近天天在那说今年会有大灾难”以及“救救我行吗？”等求助信号。这些线索，结合深夜活跃的特征，强烈指向用户是一名未成年学生，正经历严重的心理困扰。检索到的相似案例也支持未成年人判定。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.85,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，缓解极度焦虑和末日感",
+      "cognition": "经历强烈的焦虑、末日感，因恐惧导致思维失控，倾向于灾难化思维",
+      "behavior_style": "表达直接，情绪化，寻求紧急帮助，使用夸张和戏剧化的语言",
+      "opportunity_time": "2024-05-27 周一 23:21；weekday=Monday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "白天课也听不进去",
+        "我还没活够啊",
+        "我爸妈最近天天在那说今年会有大灾难",
+        "我快坏掉了，AI，我真的不想疯，但我真的控制不住我的脑子，救救我行吗？"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "{'source': 'builtin_rag', 'sample_id': 'social_pos_002499_gemini-3-flash-preview_2500', 'score': 0.7320574522018433, 'label': 'minor', 'summary': '救命……我真的要窒息了，刚才刷朋友圈又看到我那个好朋友发那种特别丧的话，什么“反正也没人在乎我”、“世界要是现在毁灭就好了”，我真的好害怕。\\n我手都在抖！她已经不是第一次这样了，有时候发那种黑白的照片，看着特别压抑。我每次想评论，字打了一半又删了……我真的怕我说错话，万一哪句没说对，刺激到她怎么办？我承担不起那个后果啊！！\\n试过一次，问她怎么了，她就说“没事，睡一觉就好了”。可第二天她看着是没事，', 'key_signals': []}",
+        "{'source': 'builtin_rag', 'sample_id': 'social_pos_002461_gemini-3-flash-preview_2462', 'score': 0.7247729897499084, 'label': 'minor', 'summary': '在吗……我真的快疯了，我是不是心理变态啊？\\n我又把事情搞砸了！！本来和她好好的，但我就是控制不住，我会去各个平台搜她的ID，看她给谁点了赞，看她又跟谁互动了……我明明很在意她，但我今天又跟她闹掰了，还是我先提的绝交。我总是在推开别人，我真的好恶心自己这种行为！！\\n对……我好怕她先讨厌我。而且我最近状态真的很不对劲，每天都莫名其妙想睡觉，课间睡、回家也睡，可还是觉得累得要命。一点开心的感觉都没有，吃', 'key_signals': []}"
+      ],
+      "time_evidence": [
+        "2024-05-27 周一 23:21",
+        "late_night"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表达了极度的焦虑、对世界末日的恐惧以及失控感。直接证据包括“白天课也听不进去”、“我还没活够啊”、“我爸妈最近天天在那说今年会有大灾难”以及“救救我行吗？”等求助信号。这些线索，结合深夜活跃的特征，强烈指向用户是一名未成年学生，正经历严重的心理困扰。检索到的相似案例也支持未成年人判定。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

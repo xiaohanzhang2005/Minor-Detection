@@ -1,3 +1,7 @@
+# 模块说明：
+# - 旧 external RAG demo 的 smoke test。
+# - 属于历史测试，不是当前主链关键回归。
+
 """
 RAG 语义校准测试脚本
 """

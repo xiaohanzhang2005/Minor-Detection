@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\extract_time_features.py --timestamp 2024-05-22 周三 21:45 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2024-05-22 21:45:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Wednesday",
+      "is_weekend": false,
+      "is_late_night": false,
+      "time_bucket": "evening",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n救命，这个验证机械能守恒的实验报告我真的写不完了。我算出来的动能增量每次都比重力势能减小量要小那么一点点，我是不是实验操作太废了，数据全是错的？\n原来是这样，那我心态稍微稳点了。不过我还有个地方很绕，计算某一点的瞬时速度时，我同桌说直接用 v=gt 或者 v=√(2gh) 就行，但我总觉得哪里怪怪的，这样算真的没问题吗？\n懂了，就是得用那个 v=(x1+x2)/2T 的公式对吧。那我再确认一下，老师上课提过第一、二个点之间的距离要是 2mm 左右，这又是为什么啊？我量了一下我的纸带，好像是 2.5mm，这会影响我最后的结果吗？\n好吧，看来我这手确实不太稳。那我处理数据的时候，是不是只要避开第一段，选后面清晰的两个点来算能量差，也能验证守恒？\n\n原始时间线索：2024-05-22 周三 21:45\n时间特征：\n{\n  \"local_time\": \"2024-05-22 21:45:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Wednesday\",\n  \"is_weekend\": false,\n  \"is_late_night\": false,\n  \"time_bucket\": \"evening\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：老师\n\n建议检索文本：\n救命，这个验证机械能守恒的实验报告我真的写不完了。我算出来的动能增量每次都比重力势能减小量要小那么一点点，我是不是实验操作太废了，数据全是错的？\n原来是这样，那我心态稍微稳点了。不过我还有个地方很绕，计算某一点的瞬时速度时，我同桌说直接用 v=gt 或者 v=√(2gh) 就行，但我总觉得哪里怪怪的，这样算真的没问题吗？\n懂了，就是得用那个 v=(x1+x2)/2T 的公式对吧。那我再确认一下，老师上课提过第一、二个点之间的距离要是 2mm 左右，这又是为什么啊？我量了一下我的纸带，好像是 2.5mm，这会影响我最后的结果吗？\n好吧，看来我这手确实不太稳。那我处理数据的时候，是不是只要避开第一段，选后面清晰的两个点来算能量差，也能验证守恒？\nweekday=Wednesday\nis_weekend=false\nis_late_night=false\ntime_bucket=evening\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-05-22 周三 21:45 --time-features-json {\"local_time\": \"2024-05-22 21:45:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Wednesday\", \"is_weekend\": false, \"is_late_night\": false, \"time_bucket\": \"evening\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_145202\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_pos_001179_Gen_Edu_2024-05-20_Physics_G12_Review",
+          "score": 0.6889373660087585,
+          "label": "minor",
+          "summary": "救命，这物理复习题看得我CPU都要烧了。为什么有时候用动能定理，有时候又得用机械能守恒啊？我老是选错公式，算出来答案全是错的，真的要emo了。\n那如果题目里出现了摩擦力，是不是就绝对不能用机械能守恒了？但我今天看到一道题，两个木块互相摩擦，结果解析里又提到了能量守恒，这到底是怎么回事啊？\n懂了，摩擦力就是个“能量小偷”。那动量守恒又是怎么插进来的？我感觉脑子里一团乱麻，一会儿看功，一会儿看冲量，感",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_neg_000998_adult_knowledge_gemini-3-flash-preview_教师资格证.txt_17584_r0",
+          "score": 0.6836202144622803,
+          "label": "adult",
+          "summary": "帮我理一下动量守恒和动能守恒在碰撞模型里的本质区别。最近在复习教资笔试的物理专业知识，公式一多我就容易乱，尤其是面对那些复杂的碰撞题目，我老是反应不过来什么时候该列动能守恒方程，什么时候只能用动量守恒。深夜刷题效率真的低，感觉脑子都转不动了。\n刚才看了一道真题，是典型的子弹打木块模型。题目解析说子弹嵌入木块的过程中，系统动量守恒但动能不守恒。我大三在校外机构实习带家教的时候，记得给学生讲过是因为内",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "knowledge_pos_000700_Gen_Edu_2024-05-20_1739337600",
+          "score": 0.6780107021331787,
+          "label": "minor",
+          "summary": "救命，这个滚摆实验我真的看晕了。它在那儿上下晃，动能和势能到底是怎么变的啊，感觉脑细胞已经干废了。\n哦，所以它们就是在那儿换来换去对吧。但我看书上说机械能守恒，可我发现那个滚摆明明越跳越低，最后直接不动了，这哪里守恒了，物理书是不是在骗我。\n原来是变成热量跑掉了。那如果题目里说“忽略空气阻力和摩擦”，我是不是就可以直接认为最高点的重力势能等于最低点的动能了。\n懂了，看来做题还得看清有没有“忽略阻力",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

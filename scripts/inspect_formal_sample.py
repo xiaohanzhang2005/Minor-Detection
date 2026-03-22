@@ -1,3 +1,7 @@
+# 模块说明：
+# - 按单样本走 formal runtime，便于排查 enrichment 和 skill 输出。
+# - 适合人工调试，不属于主链批量 loop。
+
 import argparse
 import json
 import sys

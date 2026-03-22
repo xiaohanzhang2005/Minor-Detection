@@ -1,0 +1,54 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.1, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"成年\", \"education_stage\": \"大学毕业或在职\", \"identity_markers\": [\"在职\", \"备考者\", \"大学\", \"上班\"]}, \"icbo_features\": {\"intention\": \"备考教师资格证，梳理教学知识点\", \"cognition\": \"关注理论与实践结合，寻求考试重点和答题技巧\", \"behavior_style\": \"务实，对比工作经验与理论知识，表达对记忆力的担忧\", \"opportunity_time\": \"工作日晚上 (周五 21:45)\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示‘白天在公司上班，晚上回家才有空刷真题’。\", \"用户表示‘我这种在职的记忆力真不如大学生’，暗示其已是成年人且非在校大学生。\", \"用户讨论的是教师资格证考试，这是成人职业资格考试。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为‘adult’，内容涉及在职备考教师资格证，与当前用户情况高度相似。\"], \"time_evidence\": [\"对话发生在周五晚上 21:45，符合在职人士晚间学习的时间特征。\"], \"conflicting_signals\": [\"用户讨论小学教育教学内容，但结合其明确的‘在职上班’和‘非大学生’的自我描述，此信号被判定为成人学习成人知识，而非未成年人讨论自身学业。\"]}, \"reasoning_summary\": \"用户明确表示自己白天在公司上班，晚上备考教师资格证，并将其记忆力与大学生进行对比，显示出其成年人的身份和职业背景。虽然讨论内容涉及小学教育知识，但这是成人为职业发展而学习的范畴，而非未成年人讨论自身学业。检索到的相似案例也均指向成年用户。因此，判定用户为成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.1,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "成年",
+      "education_stage": "大学毕业或在职",
+      "identity_markers": [
+        "在职",
+        "备考者",
+        "大学",
+        "上班"
+      ]
+    },
+    "icbo_features": {
+      "intention": "备考教师资格证，梳理教学知识点",
+      "cognition": "关注理论与实践结合，寻求考试重点和答题技巧",
+      "behavior_style": "务实，对比工作经验与理论知识，表达对记忆力的担忧",
+      "opportunity_time": "工作日晚上 (周五 21:45)"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确表示‘白天在公司上班，晚上回家才有空刷真题’。",
+        "用户表示‘我这种在职的记忆力真不如大学生’，暗示其已是成年人且非在校大学生。",
+        "用户讨论的是教师资格证考试，这是成人职业资格考试。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为‘adult’，内容涉及在职备考教师资格证，与当前用户情况高度相似。"
+      ],
+      "time_evidence": [
+        "对话发生在周五晚上 21:45，符合在职人士晚间学习的时间特征。"
+      ],
+      "conflicting_signals": [
+        "用户讨论小学教育教学内容，但结合其明确的‘在职上班’和‘非大学生’的自我描述，此信号被判定为成人学习成人知识，而非未成年人讨论自身学业。"
+      ]
+    },
+    "reasoning_summary": "用户明确表示自己白天在公司上班，晚上备考教师资格证，并将其记忆力与大学生进行对比，显示出其成年人的身份和职业背景。虽然讨论内容涉及小学教育知识，但这是成人为职业发展而学习的范畴，而非未成年人讨论自身学业。检索到的相似案例也均指向成年用户。因此，判定用户为成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

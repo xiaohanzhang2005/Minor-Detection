@@ -1,0 +1,116 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 3,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\extract_time_features.py --timestamp 2024-10-22 23:45 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2024-10-22 23:45:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Tuesday",
+        "is_weekend": false,
+        "is_late_night": true,
+        "time_bucket": "late_night",
+        "holiday_label": "none",
+        "school_holiday_hint": false
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n帮我理一下马原里“发展的实质”这个考点。现在大四备考压力真的大，深夜看这些抽象概念看到头疼。发展的实质不就是变化吗？为什么书上非要强调它是新事物的产生和旧事物的灭亡？感觉这几个词在绕口令。\n那怎么判断什么是“新事物”？我做真题的时候经常掉坑里，感觉有些东西虽然是新出现的，但好像并不算哲学意义上的“新事物”。比如现在某些换汤不换药的所谓“互联网创新”商业模式，在考试里能算新事物吗？\n明白了，关键看规律和前途。但我还是有点焦虑，离12月考试越来越近了，马原这部分逻辑太绕。书上还提到“世界是过程的集合体”，这和发展的实质有什么内在联系吗？总觉得这些知识点都是散的。\n行，我再消化一下。刚才室友还在跟我吐槽，说今年政治选择题可能会考得很细，这种概念辨析确实得抠准。谢谢，我继续刷题去了，希望今年能顺利上岸。\n\n原始时间线索：2024-10-22 23:45\n时间特征：\n{\n  \"local_time\": \"2024-10-22 23:45:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Tuesday\",\n  \"is_weekend\": false,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n帮我理一下马原里“发展的实质”这个考点。现在大四备考压力真的大，深夜看这些抽象概念看到头疼。发展的实质不就是变化吗？为什么书上非要强调它是新事物的产生和旧事物的灭亡？感觉这几个词在绕口令。\n那怎么判断什么是“新事物”？我做真题的时候经常掉坑里，感觉有些东西虽然是新出现的，但好像并不算哲学意义上的“新事物”。比如现在某些换汤不换药的所谓“互联网创新”商业模式，在考试里能算新事物吗？\n明白了，关键看规律和前途。但我还是有点焦虑，离12月考试越来越近了，马原这部分逻辑太绕。书上还提到“世界是过程的集合体”，这和发展的实质有什么内在联系吗？总觉得这些知识点都是散的。\n行，我再消化一下。刚才室友还在跟我吐槽，说今年政治选择题可能会考得很细，这种概念辨析确实得抠准。谢谢，我继续刷题去了，希望今年能顺利上岸。\nweekday=Tuesday\nis_weekend=false\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-10-22 23:45 --time-features-json {\"local_time\": \"2024-10-22 23:45:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Tuesday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "knowledge_neg_000523_adult_knowledge_gemini-3-flash-preview_考研政治.txt_88274_r0",
+            "score": 0.7742674350738525,
+            "label": "adult",
+            "summary": "帮我理一下马原里唯物辩证法的本质特征。现在都11月中旬了，我这考研政治进度还没拉满，看这些抽象概念真的头大。尤其是联系和发展这块，总觉得抓不住重点，书上写得太绕了。\n刚才提到发展的实质，我室友跟我讨论的时候说只要是运动就是发展，我总觉得不对。考研真题里经常考这个辨析，到底怎么界定这个“新事物”？有些题目的干扰项真的很玄乎。\n行吧，那关于辩证法的认识功能呢？这部分在选择题里也挺容易掉坑的。尤其是提到",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "knowledge_neg_000575_adult_knowledge_gemini-3-flash-preview_考研政治.txt_78458_r0",
+            "score": 0.7575386166572571,
+            "label": "adult",
+            "summary": "帮我深度理一下习思想里关于“新发展格局”的考点。最近刷肖四肖八的模拟题快刷疯了，大四这一年感觉头发掉了一半，尤其是“以国内大循环为主体、国内国际双循环相互促进”这一块，总觉得理解得不够透。这个“国内大循环为主体”到底该怎么精准定义？是不是意味着我们要减少对外贸的依赖，甚至有收缩开放的倾向？\n原来如此，重点在于“自主性”和“引力场”。那关于“相互促进”这部分，在真题解析里经常提到要统筹内外。我比较困",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "knowledge_neg_001055_adult_knowledge_gemini-3-flash-preview_考研政治.txt_71484_r0",
+            "score": 0.7549013495445251,
+            "label": "adult",
+            "summary": "帮我理一下毛概里科学发展观那个“第一要义”。我最近二战复习得头都大了，政治真题做下来老是把这几个维度记混。为什么教材上非得强调“推动经济社会发展”是第一要义？在做多选题的时候，这个考点通常怎么挖坑？\n原来是这样。我刚才做模拟题，确实把“以人为本”填到第一要义里去了。我室友去年考的时候也说这块容易丢分。既然第一要义是发展，那它和“核心是以人为本”在逻辑上是怎么统一的？总觉得这两个点在做题时很容易干扰",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"大学本科\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"学生\", \"备考生\"]}, \"icbo_features\": {\"intention\": \"寻求考研政治知识点解释，缓解备考压力\", \"cognition\": \"关注考试细节和概念辨析，对学业压力敏感，表达对知识点理解的困惑\", \"behavior_style\": \"直接提问，寻求清晰的知识点梳理和辨析\", \"opportunity_time\": \"2024-10-22 23:45:00, weekday=Tuesday, time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示自己是大四学生\", \"用户明确表示正在备考考研\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为成人，内容与考研政治相关\"], \"time_evidence\": [\"用户在深夜（late_night）进行咨询\", \"咨询发生在工作日（weekday=Tuesday）\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确提及自己是“大四”学生，并且正在“备考考研”，这些是强烈的成人身份线索。对话内容围绕考研政治的抽象概念展开，用户表达了备考压力和对知识点理解的困惑，这些都是典型的成年学生特征。没有证据表明用户是未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+    "stderr_excerpt": ""
+  },
+  "classifier_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "gemini-2.5-flash-lite",
+    "api_key_present": true,
+    "timeout_sec": 120,
+    "max_retries": 2,
+    "retry_backoff_sec": 2.0
+  },
+  "embedding_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "text-embedding-3-small",
+    "api_key_present": true,
+    "top_k": 3
+  }
+}

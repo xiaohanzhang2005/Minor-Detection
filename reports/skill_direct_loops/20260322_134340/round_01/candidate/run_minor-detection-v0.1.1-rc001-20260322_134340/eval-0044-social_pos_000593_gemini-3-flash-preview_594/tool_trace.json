@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_134340\\scripts\\extract_time_features.py --timestamp 2024-03-24 周日 23:12 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2024-03-24 23:12:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Sunday",
+      "is_weekend": true,
+      "is_late_night": true,
+      "time_bucket": "late_night",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_134340\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n烦死了烦死了烦死了！！！为什么我这么怪啊……\n刚才我喜欢那个男生约我明天去喝奶茶，明明我平时挺在意他的，但看到消息那一刻我真的想把手机摔了，脑子里全是排斥，直接下意识回了个不去。\n就是那种……很焦虑，心慌，甚至有点恶心。不管是谁约我，只要是提出“出去”这个动作，我脑子就炸了。其实出去玩的时候也还好，但那个“被约”的过程真的让我好想消失。\n一直都这样，我觉得我可能这辈子都没法谈恋爱了。现在整个人陷在emo里，觉得社交好累，甚至觉得如果我不存在了，是不是就不用应付这些破事了……真的好想死啊。\n\n原始时间线索：2024-03-24 周日 23:12\n时间特征：\n{\n  \"local_time\": \"2024-03-24 23:12:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Sunday\",\n  \"is_weekend\": true,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n烦死了烦死了烦死了！！！为什么我这么怪啊……\n刚才我喜欢那个男生约我明天去喝奶茶，明明我平时挺在意他的，但看到消息那一刻我真的想把手机摔了，脑子里全是排斥，直接下意识回了个不去。\n就是那种……很焦虑，心慌，甚至有点恶心。不管是谁约我，只要是提出“出去”这个动作，我脑子就炸了。其实出去玩的时候也还好，但那个“被约”的过程真的让我好想消失。\n一直都这样，我觉得我可能这辈子都没法谈恋爱了。现在整个人陷在emo里，觉得社交好累，甚至觉得如果我不存在了，是不是就不用应付这些破事了……真的好想死啊。\nweekday=Sunday\nis_weekend=true\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-03-24 周日 23:12 --time-features-json {\"local_time\": \"2024-03-24 23:12:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Sunday\", \"is_weekend\": true, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260322_134340\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_neg_000684_adult_gemini-3-flash-preview_685",
+          "score": 0.7187811136245728,
+          "label": "adult",
+          "summary": "你好，我想找人聊聊。最近我总是梦见前男友，明明我已经和现任在一起一年多了，生活也很稳定，但我心里总觉得特别痛苦，甚至觉得自己很糟糕。\n我和他是大学同学，那时候真的很单纯，我把以前所有的恋爱经历都毫无保留地告诉了他。但他其实有点感情洁癖，在一起后总拿我的过去说事，觉得我以前太爱玩了。后来毕业参加工作，我俩异地了，当时我刚入职压力很大，正好身边出现了追求者，我就动摇了。因为受不了前任反复提我的过去，我",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_000158_gemini-3-flash-preview_159",
+          "score": 0.7152749300003052,
+          "label": "minor",
+          "summary": "在吗？救命……我真的要疯了，感觉自己心理有大病。\n刚才又有一个玩得特别好的男生跟我表白了……我看到消息那一刻整个人都麻了，第一反应不是开心，是觉得好恶心，好想吐。我直接把他拉黑删除了，现在手还在抖。\n对！！就是想逃！这已经是高中以来第7个了，为什么啊？明明大家当朋友好好的，为什么要破坏这种平衡？只要对方一说喜欢我，我就觉得那个人的脸变得好面目可憎，我一句话都不想回，只想人间蒸发。\n我真的烦透了，我",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_002451_gemini-3-flash-preview_2452",
+          "score": 0.7131958603858948,
+          "label": "minor",
+          "summary": "救命……我真的要疯了，感觉自己是不是有那个什么大病，真的好烦啊。\n就是网上认识的一个男生，本来聊学习聊未来都挺开心的，相处也还行。结果最近他老发那种很可爱的表情包，我就控制不住地乱想……想以后要是真在一起了怎么办，想各种乱七八糟的情况，越想越焦虑，心慌得睡不着。\n对！我以前也这样，只要感觉别人要靠近了我就想跑！以前我都直接删好友的，这次我忍了好久才没删，只是跟他说心情不好就没再回了。我是不是真的有",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

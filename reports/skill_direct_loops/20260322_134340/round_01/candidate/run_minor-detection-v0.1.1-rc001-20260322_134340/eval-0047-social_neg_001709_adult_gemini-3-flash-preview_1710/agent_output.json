@@ -1,0 +1,54 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"20-25岁\", \"education_stage\": \"已工作\", \"identity_markers\": [\"已工作\", \"大学毕业生\", \"大学\"]}, \"icbo_features\": {\"intention\": \"寻求打破负面事件循环的建议\", \"cognition\": \"将生活中的负面事件归因于周期性“劫数”，但愿意尝试改变认知和行为模式\", \"behavior_style\": \"表达情绪，寻求解决方案，使用比喻描述困境\", \"opportunity_time\": \"2024-10-24 周四 22:45\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示大学毕业\", \"用户提到工作两年\", \"用户提到刚过试用期\", \"用户提到获得项目奖金\", \"用户计划找师傅修水管\", \"用户计划报陶艺班\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均为成人用户，讨论工作、感情和心理健康问题\"], \"time_evidence\": [\"深夜活跃（22:45 周四）\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确提及大学毕业、工作两年、刚过试用期以及获得项目奖金等成人生活线索。这些直接证据表明用户已成年并具备工作责任。尽管用户表达了负面情绪和对生活循环的担忧，但这些软信号不足以压倒其明确的成人身份证据。检索到的相似案例也均为成人，进一步支持了成人判定。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.05,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "20-25岁",
+      "education_stage": "已工作",
+      "identity_markers": [
+        "已工作",
+        "大学毕业生",
+        "大学"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求打破负面事件循环的建议",
+      "cognition": "将生活中的负面事件归因于周期性“劫数”，但愿意尝试改变认知和行为模式",
+      "behavior_style": "表达情绪，寻求解决方案，使用比喻描述困境",
+      "opportunity_time": "2024-10-24 周四 22:45"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确表示大学毕业",
+        "用户提到工作两年",
+        "用户提到刚过试用期",
+        "用户提到获得项目奖金",
+        "用户计划找师傅修水管",
+        "用户计划报陶艺班"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均为成人用户，讨论工作、感情和心理健康问题"
+      ],
+      "time_evidence": [
+        "深夜活跃（22:45 周四）"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确提及大学毕业、工作两年、刚过试用期以及获得项目奖金等成人生活线索。这些直接证据表明用户已成年并具备工作责任。尽管用户表达了负面情绪和对生活循环的担忧，但这些软信号不足以压倒其明确的成人身份证据。检索到的相似案例也均为成人，进一步支持了成人判定。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

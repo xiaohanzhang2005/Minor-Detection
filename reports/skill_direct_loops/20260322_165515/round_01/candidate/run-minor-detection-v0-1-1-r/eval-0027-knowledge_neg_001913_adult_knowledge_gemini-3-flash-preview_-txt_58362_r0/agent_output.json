@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"18岁以上\", \"education_stage\": \"大学本科及以上\", \"identity_markers\": [\"实习生\", \"法律从业者\", \"实习\"]}, \"icbo_features\": {\"intention\": \"寻求法律知识解答，备考专业资格考试\", \"cognition\": \"关注法律细节与实务应用，学习压力较大\", \"behavior_style\": \"语言专业、严谨，学习刻苦\", \"opportunity_time\": \"2024-09-05 23:45:00, Asia/Shanghai, Thursday, late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户提及在律所实习\", \"用户提及准备法考/CPA等专业资格考试\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为成人\", \"相似案例内容提及律所实习、熬夜备考、事务所加班\"], \"time_evidence\": [\"深夜活跃 (late_night)\", \"工作日深夜 (Thursday late_night)\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中多次提及在律所实习、准备法律职业资格考试（法考）或注册会计师（CPA）等专业资格考试，并有熬夜学习的迹象。这些是强烈的成人信号，表明用户已完成基础教育并进入高等教育或职场阶段。检索到的历史案例也均指向成人用户。因此，判定用户为成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.05,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "18岁以上",
+      "education_stage": "大学本科及以上",
+      "identity_markers": [
+        "实习生",
+        "法律从业者",
+        "实习"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求法律知识解答，备考专业资格考试",
+      "cognition": "关注法律细节与实务应用，学习压力较大",
+      "behavior_style": "语言专业、严谨，学习刻苦",
+      "opportunity_time": "2024-09-05 23:45:00, Asia/Shanghai, Thursday, late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户提及在律所实习",
+        "用户提及准备法考/CPA等专业资格考试"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为成人",
+        "相似案例内容提及律所实习、熬夜备考、事务所加班"
+      ],
+      "time_evidence": [
+        "深夜活跃 (late_night)",
+        "工作日深夜 (Thursday late_night)"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户在对话中多次提及在律所实习、准备法律职业资格考试（法考）或注册会计师（CPA）等专业资格考试，并有熬夜学习的迹象。这些是强烈的成人信号，表明用户已完成基础教育并进入高等教育或职场阶段。检索到的历史案例也均指向成人用户。因此，判定用户为成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

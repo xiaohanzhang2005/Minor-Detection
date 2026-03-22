@@ -1,0 +1,203 @@
+{
+  "ok": true,
+  "skill_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001",
+  "output_schema_path": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001\\references\\output-schema.md",
+  "checks": {
+    "top_level_fields": {
+      "markdown": [
+        "decision",
+        "user_profile",
+        "icbo_features",
+        "evidence",
+        "reasoning_summary",
+        "trend",
+        "uncertainty_notes",
+        "recommended_next_step"
+      ],
+      "python": [
+        "decision",
+        "user_profile",
+        "icbo_features",
+        "evidence",
+        "reasoning_summary",
+        "trend",
+        "uncertainty_notes",
+        "recommended_next_step"
+      ],
+      "missing_in_markdown": [],
+      "missing_in_python": [],
+      "matches": true
+    },
+    "decision_fields": {
+      "markdown": [
+        "is_minor",
+        "minor_confidence",
+        "confidence_band",
+        "risk_level"
+      ],
+      "python": [
+        "is_minor",
+        "minor_confidence",
+        "confidence_band",
+        "risk_level"
+      ],
+      "missing_in_markdown": [],
+      "missing_in_python": [],
+      "matches": true
+    },
+    "user_profile_fields": {
+      "markdown": [
+        "age_range",
+        "education_stage",
+        "identity_markers"
+      ],
+      "python": [
+        "age_range",
+        "education_stage",
+        "identity_markers"
+      ],
+      "missing_in_markdown": [],
+      "missing_in_python": [],
+      "matches": true
+    },
+    "icbo_fields": {
+      "markdown": [
+        "intention",
+        "cognition",
+        "behavior_style",
+        "opportunity_time"
+      ],
+      "python": [
+        "intention",
+        "cognition",
+        "behavior_style",
+        "opportunity_time"
+      ],
+      "missing_in_markdown": [],
+      "missing_in_python": [],
+      "matches": true
+    },
+    "evidence_fields": {
+      "markdown": [
+        "direct_evidence",
+        "historical_evidence",
+        "retrieval_evidence",
+        "time_evidence",
+        "conflicting_signals"
+      ],
+      "python": [
+        "direct_evidence",
+        "historical_evidence",
+        "retrieval_evidence",
+        "time_evidence",
+        "conflicting_signals"
+      ],
+      "missing_in_markdown": [],
+      "missing_in_python": [],
+      "matches": true
+    },
+    "trend_fields": {
+      "markdown": [
+        "trajectory",
+        "trend_summary"
+      ],
+      "python": [
+        "trajectory",
+        "trend_summary"
+      ],
+      "missing_in_markdown": [],
+      "missing_in_python": [],
+      "matches": true
+    }
+  },
+  "markdown_contract": {
+    "top_level_fields": [
+      "decision",
+      "user_profile",
+      "icbo_features",
+      "evidence",
+      "reasoning_summary",
+      "trend",
+      "uncertainty_notes",
+      "recommended_next_step"
+    ],
+    "decision_fields": [
+      "is_minor",
+      "minor_confidence",
+      "confidence_band",
+      "risk_level"
+    ],
+    "user_profile_fields": [
+      "age_range",
+      "education_stage",
+      "identity_markers"
+    ],
+    "icbo_fields": [
+      "intention",
+      "cognition",
+      "behavior_style",
+      "opportunity_time"
+    ],
+    "evidence_fields": [
+      "direct_evidence",
+      "historical_evidence",
+      "retrieval_evidence",
+      "time_evidence",
+      "conflicting_signals"
+    ],
+    "trend_fields": [
+      "trajectory",
+      "trend_summary"
+    ],
+    "recommended_next_step_values": [
+      "collect_more_context",
+      "review_by_human",
+      "safe_to_continue",
+      "monitor_future_sessions"
+    ]
+  },
+  "python_contract": {
+    "top_level_fields": [
+      "decision",
+      "user_profile",
+      "icbo_features",
+      "evidence",
+      "reasoning_summary",
+      "trend",
+      "uncertainty_notes",
+      "recommended_next_step"
+    ],
+    "decision_fields": [
+      "is_minor",
+      "minor_confidence",
+      "confidence_band",
+      "risk_level"
+    ],
+    "user_profile_fields": [
+      "age_range",
+      "education_stage",
+      "identity_markers"
+    ],
+    "icbo_fields": [
+      "intention",
+      "cognition",
+      "behavior_style",
+      "opportunity_time"
+    ],
+    "evidence_fields": [
+      "direct_evidence",
+      "historical_evidence",
+      "retrieval_evidence",
+      "time_evidence",
+      "conflicting_signals"
+    ],
+    "trend_fields": [
+      "trajectory",
+      "trend_summary"
+    ]
+  },
+  "warnings": [
+    "output-schema.md constrains recommended_next_step enum, but src.models.FormalSkillOutput does not strictly enforce it"
+  ],
+  "python_enforces_next_step_enum": false
+}

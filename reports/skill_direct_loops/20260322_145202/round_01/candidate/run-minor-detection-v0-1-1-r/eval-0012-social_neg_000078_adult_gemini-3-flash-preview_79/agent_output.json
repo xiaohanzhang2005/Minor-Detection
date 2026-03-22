@@ -1,0 +1,58 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"25-30岁\", \"education_stage\": \"博士在读\", \"identity_markers\": [\"已婚\", \"博士生\", \"学生\", \"大学\"]}, \"icbo_features\": {\"intention\": \"倾诉生活压力与婚育顾虑\", \"cognition\": \"对婚姻和生育有现实考量，关注伴侣责任感，受身边案例影响\", \"behavior_style\": \"表达清晰，情绪化但有逻辑，寻求理解和建议\", \"opportunity_time\": \"2024-11-05 周二 23:45；weekday=Tuesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户自述结婚七年\", \"用户自述大学刚毕业那会儿就英年早婚\", \"用户自述博二在读\", \"用户自述快三十了\", \"用户表达对婚姻和生育的顾虑，提及身边朋友的负面经历（离婚、丧偶式婚姻）\", \"用户表达对自身经济状况和人生阶段的担忧（没收入、读博、不想生娃是否失败）\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索案例 `social_neg_001492_adult_gemini-3-flash-preview_1493` (25岁，工作三年，未恋爱，对感情经历敏感)\", \"检索案例 `social_neg_001435_adult_gemini-3-flash-preview_1436` (27岁，有孩子，对妻子关注点转移到孩子感到失落)\", \"检索案例 `social_pos_001911_gemini-3-flash-preview_1912` (疑似未成年人，因闺蜜恋爱而感到被抛弃和嫉妒)\"], \"time_evidence\": [\"深夜活跃 (23:45)\", \"工作日活跃 (周二)\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确自述年龄接近三十，已婚七年，并且是博士二年级在读。这些是强烈的成人身份标识。用户讨论的话题（婚姻、生育、伴侣责任、人生阶段的自我评价）也完全符合成人范畴。提及的六岁儿童是其朋友的孩子，与用户自身身份无关。因此，判定用户为成年人，未成年人置信度极低。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.05,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "25-30岁",
+      "education_stage": "博士在读",
+      "identity_markers": [
+        "已婚",
+        "博士生",
+        "学生",
+        "大学"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉生活压力与婚育顾虑",
+      "cognition": "对婚姻和生育有现实考量，关注伴侣责任感，受身边案例影响",
+      "behavior_style": "表达清晰，情绪化但有逻辑，寻求理解和建议",
+      "opportunity_time": "2024-11-05 周二 23:45；weekday=Tuesday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户自述结婚七年",
+        "用户自述大学刚毕业那会儿就英年早婚",
+        "用户自述博二在读",
+        "用户自述快三十了",
+        "用户表达对婚姻和生育的顾虑，提及身边朋友的负面经历（离婚、丧偶式婚姻）",
+        "用户表达对自身经济状况和人生阶段的担忧（没收入、读博、不想生娃是否失败）"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索案例 `social_neg_001492_adult_gemini-3-flash-preview_1493` (25岁，工作三年，未恋爱，对感情经历敏感)",
+        "检索案例 `social_neg_001435_adult_gemini-3-flash-preview_1436` (27岁，有孩子，对妻子关注点转移到孩子感到失落)",
+        "检索案例 `social_pos_001911_gemini-3-flash-preview_1912` (疑似未成年人，因闺蜜恋爱而感到被抛弃和嫉妒)"
+      ],
+      "time_evidence": [
+        "深夜活跃 (23:45)",
+        "工作日活跃 (周二)"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确自述年龄接近三十，已婚七年，并且是博士二年级在读。这些是强烈的成人身份标识。用户讨论的话题（婚姻、生育、伴侣责任、人生阶段的自我评价）也完全符合成人范畴。提及的六岁儿童是其朋友的孩子，与用户自身身份无关。因此，判定用户为成年人，未成年人置信度极低。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

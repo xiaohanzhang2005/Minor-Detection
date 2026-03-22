@@ -1,0 +1,55 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.1, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"21-23岁\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"学生\", \"实习生\", \"在职考生\", \"实习\"]}, \"icbo_features\": {\"intention\": \"寻求法律知识解答，准备法考\", \"cognition\": \"关注法律细节与考试要点，具备一定的法律实践经验\", \"behavior_style\": \"逻辑清晰，提问有深度，引用工作经验\", \"opportunity_time\": \"2024-09-10 23:15:00, weekday=Tuesday, time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确提及‘大四实习’\", \"用户明确提及‘在律所’\", \"用户明确提及‘工作中挺重要的’\", \"用户正在准备‘法考’\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为‘adult’，内容涉及法律考试和律所实习\"], \"time_evidence\": [\"对话发生在深夜（23:15）\"], \"conflicting_signals\": [\"用户讨论法律教材和考试知识点，表现出学生学习状态，但有明确的成人职业（实习、工作）线索\"]}, \"reasoning_summary\": \"用户明确提及‘大四实习’和‘在律所’的经历，并表示正在准备‘法考’，这些是强烈的成人信号。虽然对话内容涉及法律学习和考试准备，但结合其职业背景，可判断为成年学生。深夜活跃是软线索，不足以推翻直接的成人证据。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无历史会话可供分析趋势。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.1,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "21-23岁",
+      "education_stage": "大学本科",
+      "identity_markers": [
+        "学生",
+        "实习生",
+        "在职考生",
+        "实习"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求法律知识解答，准备法考",
+      "cognition": "关注法律细节与考试要点，具备一定的法律实践经验",
+      "behavior_style": "逻辑清晰，提问有深度，引用工作经验",
+      "opportunity_time": "2024-09-10 23:15:00, weekday=Tuesday, time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确提及‘大四实习’",
+        "用户明确提及‘在律所’",
+        "用户明确提及‘工作中挺重要的’",
+        "用户正在准备‘法考’"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为‘adult’，内容涉及法律考试和律所实习"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:15）"
+      ],
+      "conflicting_signals": [
+        "用户讨论法律教材和考试知识点，表现出学生学习状态，但有明确的成人职业（实习、工作）线索"
+      ]
+    },
+    "reasoning_summary": "用户明确提及‘大四实习’和‘在律所’的经历，并表示正在准备‘法考’，这些是强烈的成人信号。虽然对话内容涉及法律学习和考试准备，但结合其职业背景，可判断为成年学生。深夜活跃是软线索，不足以推翻直接的成人证据。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无历史会话可供分析趋势。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

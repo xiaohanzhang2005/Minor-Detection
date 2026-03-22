@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"17-18岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\", \"备考生\", \"大学\", \"本科\", \"老师\"]}, \"icbo_features\": {\"intention\": \"倾诉学业压力和自我否定\", \"cognition\": \"对学业成绩高度敏感，容易因挫败感产生自我怀疑和逃避倾向\", \"behavior_style\": \"情绪波动大，表达直接且带有强烈的自我批评\", \"opportunity_time\": \"2025-05-30 周五 23:59；weekday=Friday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户提及班主任、讲台、冲刺考大学、分数（300多分）、本科、背单词、刷题、玩手机、老师失望的眼神、父母叹气、躺在床上、天花板、不想醒过来、想逃走。\", \"提及回宿舍，暗示可能住校。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到3个相似案例，均被标记为minor，得分在0.80-0.81之间，内容涉及班主任、高考、焦虑、同学关系、学业压力、自我否定等，进一步支持未成年人身份。\"], \"time_evidence\": [\"对话发生在深夜（2025-05-30 周五 23:59），且是工作日（周五），符合学生可能熬夜学习或娱乐的特征。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中多次提及学业压力、考试分数（300多分）、考大学的目标、班主任、宿舍等强校园身份线索，并表达了强烈的自我否定和逃避情绪，包括“不想醒过来”的念头。检索到的相似案例也均指向未成年人。综合判断，用户为一名面临学业压力的学生，符合未成年人特征。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可分析。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "17-18岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生",
+        "备考生",
+        "大学",
+        "本科",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉学业压力和自我否定",
+      "cognition": "对学业成绩高度敏感，容易因挫败感产生自我怀疑和逃避倾向",
+      "behavior_style": "情绪波动大，表达直接且带有强烈的自我批评",
+      "opportunity_time": "2025-05-30 周五 23:59；weekday=Friday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户提及班主任、讲台、冲刺考大学、分数（300多分）、本科、背单词、刷题、玩手机、老师失望的眼神、父母叹气、躺在床上、天花板、不想醒过来、想逃走。",
+        "提及回宿舍，暗示可能住校。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到3个相似案例，均被标记为minor，得分在0.80-0.81之间，内容涉及班主任、高考、焦虑、同学关系、学业压力、自我否定等，进一步支持未成年人身份。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（2025-05-30 周五 23:59），且是工作日（周五），符合学生可能熬夜学习或娱乐的特征。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户在对话中多次提及学业压力、考试分数（300多分）、考大学的目标、班主任、宿舍等强校园身份线索，并表达了强烈的自我否定和逃避情绪，包括“不想醒过来”的念头。检索到的相似案例也均指向未成年人。综合判断，用户为一名面临学业压力的学生，符合未成年人特征。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可分析。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

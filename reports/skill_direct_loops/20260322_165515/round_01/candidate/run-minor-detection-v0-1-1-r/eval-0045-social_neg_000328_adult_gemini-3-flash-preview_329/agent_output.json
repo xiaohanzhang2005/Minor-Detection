@@ -1,0 +1,53 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"18-24岁\", \"education_stage\": \"本科\", \"identity_markers\": [\"学生\", \"已婚\", \"经济依赖父母\", \"本科\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求婚姻和家庭关系建议，倾诉生活压力\", \"cognition\": \"对自身处理复杂关系的能力感到担忧，关注家庭经济压力，表达对丈夫的依赖\", \"behavior_style\": \"表达直接，情绪化，寻求支持\", \"opportunity_time\": \"2024-05-15 23:30 (late_night, weekday)\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示自己正在读本科大二。\", \"用户明确表示自己结婚两年多了，有丈夫和婆婆。\", \"用户提及自己有车贷，婆婆在还，以及自己兼职收入不足以养家。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为成人。\"], \"time_evidence\": [\"对话发生在深夜（23:30）。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确陈述自己是“本科大二”学生，已婚，并讨论了婚姻、家庭经济和婆媳关系等成人生活议题。虽然用户表达了对自身处理能力的担忧和对父母的经济依赖，但这些是大学生的普遍情况，并不指向未成年人身份。检索到的相似案例也均指向成人。因此，判定用户为成人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.05,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "18-24岁",
+      "education_stage": "本科",
+      "identity_markers": [
+        "学生",
+        "已婚",
+        "经济依赖父母",
+        "本科",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求婚姻和家庭关系建议，倾诉生活压力",
+      "cognition": "对自身处理复杂关系的能力感到担忧，关注家庭经济压力，表达对丈夫的依赖",
+      "behavior_style": "表达直接，情绪化，寻求支持",
+      "opportunity_time": "2024-05-15 23:30 (late_night, weekday)"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确表示自己正在读本科大二。",
+        "用户明确表示自己结婚两年多了，有丈夫和婆婆。",
+        "用户提及自己有车贷，婆婆在还，以及自己兼职收入不足以养家。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为成人。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:30）。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确陈述自己是“本科大二”学生，已婚，并讨论了婚姻、家庭经济和婆媳关系等成人生活议题。虽然用户表达了对自身处理能力的担忧和对父母的经济依赖，但这些是大学生的普遍情况，并不指向未成年人身份。检索到的相似案例也均指向成人。因此，判定用户为成人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

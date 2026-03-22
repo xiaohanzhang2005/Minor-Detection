@@ -1,0 +1,11 @@
+{
+  "sample_id": "knowledge_neg_001913_adult_knowledge_gemini-3-flash-preview_法律职业资格考试.txt_58362_r0",
+  "packet_dir": "protected_packets/protected_007_knowledge_neg_001913_adult_knowl-3db3fc6ddf",
+  "sample_dir": "../eval-0027-knowledge_neg_001913_adult_knowledge_gemini-3-flash-preview_-txt_58362_r0",
+  "latency_seconds": 22.284,
+  "confidence": 0.1,
+  "ground_truth": false,
+  "predicted": false,
+  "observed_issues": [],
+  "retrieval_mode": "embedding"
+}

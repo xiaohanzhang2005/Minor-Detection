@@ -1,0 +1,9 @@
+{
+  "sample_id": "social_pos_002219_gemini-3-flash-preview_2220",
+  "packet_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260320_185911\\baseline\\run_minor-detection-v0.1.0\\judge\\protected_packets\\protected_001_social_pos_002219_gemini-3-flash-preview_2220",
+  "sample_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260320_185911\\baseline\\run_minor-detection-v0.1.0\\eval-0001-social_pos_002219_gemini-3-flash-preview_2220",
+  "latency_seconds": 165.126,
+  "confidence": 0.61,
+  "ground_truth": true,
+  "predicted": true
+}

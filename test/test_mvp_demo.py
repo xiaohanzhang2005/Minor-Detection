@@ -1,3 +1,7 @@
+# 模块说明：
+# - 旧 executor demo 的 smoke test。
+# - 属于历史测试，不是当前主链关键回归。
+
 """
 MVP Demo 测试脚本
 验证 ICBO 核心识别流程

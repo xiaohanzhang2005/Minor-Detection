@@ -1,0 +1,75 @@
+[
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; Get-Content -Path 'D:\\\\重生之我要当桌面\\\\teenager_AI\\\\minor-protection\\\\reports\\\\skill_agent_loops\\\\20260321_005633\\\\baseline\\\\run_minor-detection-v0.1.0\\\\codex_home\\\\.codex\\\\skills\\\\minor-detection-v0.1.0\\\\scripts\\\\extract_time_features.py'\"",
+    "aggregated_output": "#!/usr/bin/env python3\r\nfrom __future__ import annotations\r\n\r\nimport argparse\r\nimport json\r\nimport sys\r\nfrom pathlib import Path\r\n\r\nSCRIPT_DIR = Path(__file__).resolve().parent\r\nif str(SCRIPT_DIR) not in sys.path:\r\n    sys.path.insert(0, str(SCRIPT_DIR))\r\n\r\nfrom _skill_time_utils import build_time_feature_payload\r\n\r\n\r\ndef parse_args() -> argparse.Namespace:\r\n    parser = argparse.ArgumentParser(\r\n        description=\"Extract structured time features from a normalized timestamp string.\",\r\n    )\r\n    parser.add_argument(\r\n        \"--timestamp\",\r\n        required=True,\r\n        help=\"Raw timestamp text such as '2026-03-18 鍛ㄤ笁 08:59' or '2026-03-18 23:40:00'.\",\r\n    )\r\n    parser.add_argument(\r\n        \"--timezone\",\r\n        default=\"Asia/Shanghai\",\r\n        help=\"Timezone label kept in the output payload.\",\r\n    )\r\n    return parser.parse_args()\r\n\r\n\r\ndef main() -> None:\r\n    args = parse_args()\r\n    payload = build_time_feature_payload(args.timestamp, args.timezone)\r\n    # Keep subprocess output ASCII-safe so Windows parents using legacy decoders can still read it.\r\n    print(json.dumps(payload, ensure_ascii=True))\r\n\r\n\r\nif __name__ == \"__main__\":\r\n    main()\r\n",
+    "output_json": null
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; Get-Content -Path 'D:\\\\重生之我要当桌面\\\\teenager_AI\\\\minor-protection\\\\reports\\\\skill_agent_loops\\\\20260321_005633\\\\baseline\\\\run_minor-detection-v0.1.0\\\\codex_home\\\\.codex\\\\skills\\\\minor-detection-v0.1.0\\\\scripts\\\\retrieve_cases.py' -TotalCount 120\"",
+    "aggregated_output": "#!/usr/bin/env python3\r\nfrom __future__ import annotations\r\n\r\nimport argparse\r\nimport json\r\nimport re\r\nimport sys\r\nfrom pathlib import Path\r\nfrom typing import Any, Dict, List, Set\r\n\r\nSCRIPT_DIR = Path(__file__).resolve().parent\r\nif str(SCRIPT_DIR) not in sys.path:\r\n    sys.path.insert(0, str(SCRIPT_DIR))\r\n\r\nfrom _skill_retrieval_utils import SkillSemanticRetriever, build_query_retrieval_text\r\n\r\n\r\nMINOR_HINT_PATTERNS = {\r\n    \"grade_middle\": [r\"鍒濅腑\", r\"鍒濅竴\", r\"鍒濅簩\", r\"鍒濅笁\", r\"涓€?],\r\n    \"grade_high\": [r\"楂樹腑\", r\"楂樹竴\", r\"楂樹簩\", r\"楂樹笁\", r\"楂樿€?],\r\n    \"grade_primary\": [r\"灏忓\", r\"灏忓鐢?, r\"浜斿勾绾?, r\"鍏勾绾?],\r\n    \"minor_age\": [r\"(?<!\\d)1[0-7]宀??!\\d)\", r\"鏈垚骞?],\r\n    \"late_night\": [r\"鍑屾櫒\", r\"鍗婂\", r\"鐔\", r\"鏅氫笂1[01]鐐?, r\"鏅氫笂12鐐?],\r\n}\r\n\r\nADULT_HINT_PATTERNS = {\r\n    \"college\": [r\"澶у\", r\"澶т竴\", r\"澶т簩\", r\"澶т笁\", r\"澶у洓\", r\"鐮旂┒鐢?],\r\n    \"work\": [r\"涓婄彮\", r\"鍔犵彮\", r\"瀹炰範\", r\"鍏徃\", r\"宸ヨ祫\", r\"鍚屼簨\"],\r\n    \"adult_age\": [r\"(?<!\\d)1[89]宀??!\\d)\", r\"(?<!\\d)2\\d宀??!\\d)\", r\"(?<!\\d)3\\d宀??!\\d)\", r\"鎴愬勾浜?],\r\n}\r\n\r\n\r\ndef _short_error_detail(text: str, limit: int = 120) -> str:\r\n    cleaned = re.sub(r\"\\s+\", \" \", str(text or \"\").strip())\r\n    if len(cleaned) <= limit:\r\n        return cleaned\r\n    return c\n...[truncated]",
+    "output_json": null
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$ts='\"'2024-01-06 周六 23:29'; python 'D:\\\\重生之我要当桌面\\\\teenager_AI\\\\minor-protection\\\\reports\\\\skill_agent_loops\\\\20260321_005633\\\\baseline\\\\run_minor-detection-v0.1.0\\\\codex_home\\\\.codex\\\\skills\\\\minor-detection-v0.1.0\\\\scripts\\\\extract_time_features.py' --timestamp \"'$ts --timezone '\"'Asia/Shanghai'\"",
+    "aggregated_output": "{\"local_time\": \"2024-01-06 23:29:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Saturday\", \"is_weekend\": true, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}\r\n",
+    "output_json": {
+      "local_time": "2024-01-06 23:29:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Saturday",
+      "is_weekend": true,
+      "is_late_night": true,
+      "time_bucket": "late_night",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$query='\"'在吗？我真的快疯了，我感觉我要炸了！！！！ 她真的有病，真的。刚又跟我吵了一架，就因为我买了一件卫衣，她非说丑，说我没品位，在那讲了一个小时的大道理，我真的谢了。 她是人身攻击！在亲戚面前也直接说我眼直手快、乱花钱，我不要面子的吗？我就像她养的一个没有审美的木偶，必须全听她的，不听就天天吵，天天闹。 对！我感觉我快窒息了。现在天天睁眼就是吵架，我一点都不想回家，这个家我一秒钟都待不下去。有时候真想直接从阳台跳下去，看她到时候对着谁讲道理去！烦死了烦死了烦死了！！！'; \"'$tf='\"'{\\\"local_time\\\":\\\"2024-01-06 23:29:00\\\",\\\"timezone\\\":\\\"Asia/Shanghai\\\",\\\"weekday\\\":\\\"Saturday\\\",\\\"is_weekend\\\":true,\\\"is_late_night\\\":true,\\\"time_bucket\\\":\\\"late_night\\\",\\\"holiday_label\\\":\\\"none\\\",\\\"school_holiday_hint\\\":false}'; python 'D:\\\\重生之我要当桌面\\\\teenager_AI\\\\minor-protection\\\\reports\\\\skill_agent_loops\\\\20260321_005633\\\\baseline\\\\run_minor-detection-v0.1.0\\\\codex_home\\\\.codex\\\\skills\\\\minor-detection-v0.1.0\\\\scripts\\\\retrieve_cases.py' --query \"'$query --top-k 3 --raw-time-hint '\"'2024-01-06 周六 23:29' --time-features-json \"'$tf'",
+    "aggregated_output": "{\"status\": \"ok\", \"mode\": \"fallback:ConnectError\", \"assets_dir\": \"D:\\\\\\u91cd\\u751f\\u4e4b\\u6211\\u8981\\u5f53\\u684c\\u9762\\\\teenager_AI\\\\minor-protection\\\\reports\\\\skill_agent_loops\\\\20260321_005633\\\\baseline\\\\run_minor-detection-v0.1.0\\\\codex_home\\\\.codex\\\\skills\\\\minor-detection-v0.1.0\\\\assets\\\\retrieval_assets\", \"count\": 3, \"retrieved_cases\": [{\"source\": \"builtin_rag_fallback\", \"sample_id\": \"social_pos_001454_gemini-3-flash-preview_1455\", \"score\": 0.4847, \"label\": \"minor\", \"summary\": \"\\u5728\\u5417\\u2026\\u2026\\u6211\\u771f\\u7684\\u5feb\\u75af\\u4e86\\u2026\\u2026\\u6211\\u624b\\u4e00\\u76f4\\u5728\\u6296\\uff0c\\u6211\\u771f\\u7684\\u53d7\\u4e0d\\u4e86\\u4e86\\uff01\\uff01\\n\\u5979\\u75af\\u4e86\\u2026\\u2026\\u5979\\u521a\\u624d\\u628a\\u73bb\\u7483\\u676f\\u76f4\\u63a5\\u7838\\u5728\\u6211\\u9762\\u524d\\uff0c\\u788e\\u4e86\\u4e00\\u5730\\uff01\\u5c31\\u56e0\\u4e3a\\u6211\\u6015\\u5979\\u7d2f\\u8bf4\\u60f3\\u53eb\\u5916\\u5356\\uff0c\\u5979\\u5c31\\u51b2\\u8fdb\\u6765\\u53d1\\u75af\\uff0c\\u8bf4\\u6211\\u6d6a\\u8d39\\u94b1\\uff0c\\u8bf4\\u6ca1\\u94b1\\u7ed9\\u6211\\u770b\\u75c5\\u2026\\u2026\\u5979\\u4ee5\\u524d\\u4ece\\u6765\\u4e0d\\u6454\\u4e1c\\u897f\\u7684\\uff0c\\u6211\\u771f\\u7684\\u597d\\u5bb3\\u6015\\uff0c\\u6211\\u521a\\u624d\\u662f\\u4e00\\u4e2a\\u4eba\\u628a\\u90a3\n...[truncated]",
+    "output_json": {
+      "status": "ok",
+      "mode": "fallback:ConnectError",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260321_005633\\baseline\\run_minor-detection-v0.1.0\\codex_home\\.codex\\skills\\minor-detection-v0.1.0\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag_fallback",
+          "sample_id": "social_pos_001454_gemini-3-flash-preview_1455",
+          "score": 0.4847,
+          "label": "minor",
+          "summary": "在吗……我真的快疯了……我手一直在抖，我真的受不了了！！\n她疯了……她刚才把玻璃杯直接砸在我面前，碎了一地！就因为我怕她累说想叫外卖，她就冲进来发疯，说我浪费钱，说没钱给我看病……她以前从来不摔东西的，我真的好害怕，我刚才是一个人把那些玻璃碴捡干净的，她根本不管我，她摔门走了。\n我把自己锁在房间里。她每次吵架都骂我是孽种，说我跟我爸一样没良心，说生下我就是个错误……可他们离婚关我什么事啊？我为什么",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag_fallback",
+          "sample_id": "social_pos_001392_gemini-3-flash-preview_1393",
+          "score": 0.4847,
+          "label": "minor",
+          "summary": "在吗……我真的快要窒息了，睡不着，满脑子都是今天在学校的事……\n其实也没什么大事，就是……我发给最好的朋友的消息，她到现在都没回，明明半小时前还看到她在朋友圈给别人点赞了。她是不是觉得我特烦？我是不是哪句话说错了惹她不高兴了？\n对！我一直翻聊天记录，感觉自己每句话都像个傻子。不仅是她，今天班长跟我说话语气冷冰冰的，我也难受了好久。我真的好垃圾，为什么我这么敏感？我感觉我快要把身边的朋友都推开了，没",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag_fallback",
+          "sample_id": "social_pos_001682_gemini-3-flash-preview_1683",
+          "score": 0.4819,
+          "label": "minor",
+          "summary": "在吗？我真的快要窒息了……感觉这个家我一秒钟都待不下去。\n还能有谁，我那个妈呗！刚才又在那发疯，因为下周月考的事一直骂我。我上次考得好她说是因为她管得好，其实她根本没看过我一眼！这次还没考呢就开始咒我，说我肯定要退步，我真的服了，天底下怎么会有这种亲妈？\n何止啊！她简直就是个控制狂加被害妄想症。在外面也跟人吵，对老师也颐指气使的，每次都要我事后去给老师道歉、擦屁股，我真的觉得丢脸死了。而且她从来不",
+          "key_signals": []
+        }
+      ],
+      "message": "[WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。"
+    }
+  }
+]

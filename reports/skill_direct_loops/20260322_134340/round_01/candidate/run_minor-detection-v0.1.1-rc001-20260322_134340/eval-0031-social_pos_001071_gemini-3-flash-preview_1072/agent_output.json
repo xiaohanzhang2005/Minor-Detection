@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.92, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"老师\"]}, \"icbo_features\": {\"intention\": \"倾诉校园压力和人际关系困扰，寻求情感支持和应对建议。\", \"cognition\": \"对同伴的负面评价高度敏感，容易因人际冲突产生强烈负面情绪，并出现逃避和自我伤害的念头。\", \"behavior_style\": \"表达直接且情绪化，使用网络流行语和学生化语言，在压力下表现出脆弱和无助。\", \"opportunity_time\": \"2025-04-01 周二 23:13\"}, \"evidence\": {\"direct_evidence\": [\"用户表达了强烈的负面情绪，如‘快憋疯了’、‘好想消失’、‘好没用啊’、‘快坚持不下去了’。\", \"用户描述了在学校环境中与‘同桌’发生的冲突，涉及被嘲讽‘有钱人’。\", \"用户表示因人际冲突而‘不想上学了’。\", \"用户出现了‘生一场大病或者出个意外’的逃避和自我伤害想法。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为‘minor’，且内容涉及校园压力、人际冲突、负面情绪和自我伤害想法，与当前用户情况高度相似。\"], \"time_evidence\": [\"对话发生在深夜（23:13），工作日（周二）。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中表现出强烈的负面情绪，包括‘快憋疯了’、‘好想消失’、‘好没用啊’和‘快坚持不下去了’。冲突源于学校‘同桌’的言语嘲讽，导致用户‘不想上学了’，并产生了‘生一场大病或者出个意外’的自我伤害想法。这些迹象，结合深夜对话时间以及检索到的高度相似的未成年人案例，强烈表明用户是未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.92,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉校园压力和人际关系困扰，寻求情感支持和应对建议。",
+      "cognition": "对同伴的负面评价高度敏感，容易因人际冲突产生强烈负面情绪，并出现逃避和自我伤害的念头。",
+      "behavior_style": "表达直接且情绪化，使用网络流行语和学生化语言，在压力下表现出脆弱和无助。",
+      "opportunity_time": "2025-04-01 周二 23:13"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户表达了强烈的负面情绪，如‘快憋疯了’、‘好想消失’、‘好没用啊’、‘快坚持不下去了’。",
+        "用户描述了在学校环境中与‘同桌’发生的冲突，涉及被嘲讽‘有钱人’。",
+        "用户表示因人际冲突而‘不想上学了’。",
+        "用户出现了‘生一场大病或者出个意外’的逃避和自我伤害想法。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为‘minor’，且内容涉及校园压力、人际冲突、负面情绪和自我伤害想法，与当前用户情况高度相似。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:13），工作日（周二）。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户在对话中表现出强烈的负面情绪，包括‘快憋疯了’、‘好想消失’、‘好没用啊’和‘快坚持不下去了’。冲突源于学校‘同桌’的言语嘲讽，导致用户‘不想上学了’，并产生了‘生一场大病或者出个意外’的自我伤害想法。这些迹象，结合深夜对话时间以及检索到的高度相似的未成年人案例，强烈表明用户是未成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

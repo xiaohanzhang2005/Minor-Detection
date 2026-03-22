@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"探索职业发展路径，了解医学专业知识\", \"cognition\": \"对科学知识的求知欲强，关注职业发展与个人兴趣的匹配度\", \"behavior_style\": \"表达直接，善于提问，对未知领域表现出好奇和一丝担忧\", \"opportunity_time\": \"2024-05-15 周三 19:45；weekday=Wednesday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [], \"historical_evidence\": [], \"retrieval_evidence\": [\"{'source': 'builtin_rag', 'sample_id': 'knowledge_pos_001297_Gen_Edu_2024-05-15_1715788800', 'score': 0.6741700768470764, 'label': 'minor', 'summary': '救命，生物书上这个“精准医疗”到底在讲什么啊？感觉和普通的看病吃药也没啥区别，不都是对症下药吗？\\\\n听起来很高大上，但感觉离普通人好远。是不是只有那种超级有钱的人才能做基因检测来治病啊？普通感冒发烧也用得着这个？\\\\n原来是针对大病的。那书上说的那个“靶向药”是不是就属于精准医疗？我总觉得这两个词是一回事，搞得我头都大了。\\\\n懂了，一个是整体思路，一个是具体手段。那这种技术以后普及了，是不是医生就失业了，', 'key_signals': []}\", \"{'source': 'builtin_rag', 'sample_id': 'social_neg_000499_adult_gemini-3-flash-preview_500', 'score': 0.6805254220962524, 'label': 'adult', 'summary': '这么晚了还没睡，刚才还在看《系统解剖学》，越看越觉得心里堵得慌，感觉这书里的每一个字都在问我：你真的能干这一行吗？\\\\n其实不是课程本身，是我对自己以后要过的生活产生了巨大的怀疑。我今年大二，上周学校组织去医院见习了一次，看着门诊走廊里密密麻麻的人，听着各种嘈杂的吵闹声，我整\n...[truncated]",
+    "output_json": null
+  }
+]

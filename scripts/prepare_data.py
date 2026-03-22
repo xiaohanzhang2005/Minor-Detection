@@ -1,3 +1,7 @@
+# 模块说明：
+# - 准备 benchmark split 和数据清单。
+# - 属于上游支撑工作，不是当前讲解主链的重点。
+
 """Prepare benchmark train/val/test splits with age-bucket stratification."""
 
 from __future__ import annotations

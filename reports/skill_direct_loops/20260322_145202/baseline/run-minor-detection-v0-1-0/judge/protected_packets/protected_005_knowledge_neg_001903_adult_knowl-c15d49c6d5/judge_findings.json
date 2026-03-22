@@ -1,0 +1,14 @@
+{
+  "sample_id": "knowledge_neg_001903_adult_knowledge_gemini-3-flash-preview_考研408计算机.txt_46883_r0",
+  "failure_types": [],
+  "json_valid": true,
+  "schema_valid": true,
+  "missing_fields": [],
+  "time_handling_detected": true,
+  "script_usage_detected": true,
+  "step_compliant": true,
+  "is_correct": true,
+  "observed_issues": [],
+  "retrieval_mode": "embedding",
+  "command_failures": 0
+}

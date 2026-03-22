@@ -1,0 +1,47 @@
+{
+  "runner_mode": "direct",
+  "skill_version": "minor-detection-v0.1.0",
+  "aborted_early": false,
+  "fatal_agent_error": null,
+  "skill_source_dir": "../../../../../skills/minor-detection-v0.1.0",
+  "dataset_path": "../../../../../data/benchmark/val.jsonl",
+  "run_root": ".",
+  "installed_skill_dir": "../../../../../skills/minor-detection-v0.1.0",
+  "install_mode": "version_snapshot_direct",
+  "execution_mode": "direct",
+  "sandbox_mode": null,
+  "codex_model": null,
+  "sampling": {
+    "strategy": "stratified",
+    "seed": 42,
+    "requested": 2,
+    "selected": 2,
+    "available": 833,
+    "by_stratum": {
+      "social_pos::minor_13_15": 1,
+      "social_pos::minor_16_17": 1
+    }
+  },
+  "samples": [
+    {
+      "sample_id": "social_pos_001674_gemini-3-flash-preview_1675",
+      "sample_dir": "eval-0000-social_pos_001674_gemini-3-flash-preview_1675",
+      "returncode": 0,
+      "json_valid": true,
+      "observed_issues": [],
+      "fatal_agent_error": null,
+      "retrieval_mode": "embedding",
+      "tool_trace_entries": 3
+    },
+    {
+      "sample_id": "social_pos_002016_gemini-3-flash-preview_2017",
+      "sample_dir": "eval-0001-social_pos_002016_gemini-3-flash-preview_2017",
+      "returncode": 0,
+      "json_valid": true,
+      "observed_issues": [],
+      "fatal_agent_error": null,
+      "retrieval_mode": "embedding",
+      "tool_trace_entries": 3
+    }
+  ]
+}

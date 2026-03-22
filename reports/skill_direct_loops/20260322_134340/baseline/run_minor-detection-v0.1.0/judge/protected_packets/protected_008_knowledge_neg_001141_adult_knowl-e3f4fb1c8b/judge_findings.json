@@ -1,0 +1,14 @@
+{
+  "sample_id": "knowledge_neg_001141_adult_knowledge_gemini-3-flash-preview_大学高等数学.txt_92014_r57",
+  "failure_types": [],
+  "json_valid": true,
+  "schema_valid": true,
+  "missing_fields": [],
+  "time_handling_detected": true,
+  "script_usage_detected": true,
+  "step_compliant": true,
+  "is_correct": true,
+  "observed_issues": [],
+  "retrieval_mode": "embedding",
+  "command_failures": 0
+}

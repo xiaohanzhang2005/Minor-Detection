@@ -1,0 +1,7 @@
+{
+  "raw_text": "File \"D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260321_205706\\baseline\\run_minor-detection-v0.1.0\\eval-0000-social_pos_002016_gemini-3-flash-preview_2017\\run_skill_once.py\", line 31\n    json_text = \"\n                ^\nSyntaxError: unterminated string literal (detected at line 31)",
+  "parsed_json": null,
+  "json_valid": false,
+  "launcher_success": true,
+  "launcher_status": null
+}

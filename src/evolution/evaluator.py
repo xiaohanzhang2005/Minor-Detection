@@ -1,3 +1,7 @@
+# 模块说明：
+# - 旧 executor 路线下的 benchmark evaluator。
+# - 可做历史验收，但不是当前 A 或 B 主链执行器。
+
 """
 Skill evaluator for validation and test benchmarks.
 """

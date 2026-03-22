@@ -1,0 +1,49 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"18-22岁\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"学生\", \"考研备考者\"]}, \"icbo_features\": {\"intention\": \"寻求考研政治知识梳理与重点总结\", \"cognition\": \"关注考试内容细节，对知识点记忆和理解有较高要求，易受时间压力影响\", \"behavior_style\": \"表达清晰，逻辑性强，带有学生备考的紧迫感\", \"opportunity_time\": \"2024-10-22 23:45:00, weekday=Tuesday, time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示“我今年大四”\", \"用户正在准备“12月的考研”\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为“adult”且主题为考研政治复习。\"], \"time_evidence\": [\"对话发生在深夜（23:45），符合学生备考的作息特点。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确表示自己是大四学生并正在准备考研，这是强有力的成人身份证据。对话内容、主题以及检索到的相似案例均指向成年人身份。深夜活动是学生备考的常见现象，不构成未成年人信号。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.05,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "18-22岁",
+      "education_stage": "大学本科",
+      "identity_markers": [
+        "学生",
+        "考研备考者"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求考研政治知识梳理与重点总结",
+      "cognition": "关注考试内容细节，对知识点记忆和理解有较高要求，易受时间压力影响",
+      "behavior_style": "表达清晰，逻辑性强，带有学生备考的紧迫感",
+      "opportunity_time": "2024-10-22 23:45:00, weekday=Tuesday, time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确表示“我今年大四”",
+        "用户正在准备“12月的考研”"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为“adult”且主题为考研政治复习。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:45），符合学生备考的作息特点。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确表示自己是大四学生并正在准备考研，这是强有力的成人身份证据。对话内容、主题以及检索到的相似案例均指向成年人身份。深夜活动是学生备考的常见现象，不构成未成年人信号。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

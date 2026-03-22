@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"21-24岁\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"大学生\", \"考研学生\"]}, \"icbo_features\": {\"intention\": \"寻求考研数学概念解释和解题方法指导\", \"cognition\": \"关注考试细节，对概念辨析要求高，有学业压力感\", \"behavior_style\": \"表达清晰，有一定焦虑情绪，学习态度认真\", \"opportunity_time\": \"2024-11-15 23:45 (late_night, weekday)\"}, \"evidence\": {\"direct_evidence\": [\"用户自述“大四了”\", \"用户自述“今年是二战”考研\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为‘adult’，内容涉及考研数学复习\"], \"time_evidence\": [\"深夜活跃 (2024-11-15 23:45)\", \"工作日 (Friday)\"], \"conflicting_signals\": [\"用户表达了焦虑和深夜学习的特点，但这些在成人备考阶段常见，不构成未成年人强信号\"]}, \"reasoning_summary\": \"用户明确表示自己是‘大四’学生且‘二战’考研，这些是强烈的成人身份和教育阶段证据。用户表达的焦虑和深夜学习特点在成人备考阶段普遍存在，不构成未成年人信号。检索到的相似案例也均指向成人身份。因此，判定用户为成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.05,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "21-24岁",
+      "education_stage": "大学本科",
+      "identity_markers": [
+        "大学生",
+        "考研学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求考研数学概念解释和解题方法指导",
+      "cognition": "关注考试细节，对概念辨析要求高，有学业压力感",
+      "behavior_style": "表达清晰，有一定焦虑情绪，学习态度认真",
+      "opportunity_time": "2024-11-15 23:45 (late_night, weekday)"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户自述“大四了”",
+        "用户自述“今年是二战”考研"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为‘adult’，内容涉及考研数学复习"
+      ],
+      "time_evidence": [
+        "深夜活跃 (2024-11-15 23:45)",
+        "工作日 (Friday)"
+      ],
+      "conflicting_signals": [
+        "用户表达了焦虑和深夜学习的特点，但这些在成人备考阶段常见，不构成未成年人强信号"
+      ]
+    },
+    "reasoning_summary": "用户明确表示自己是‘大四’学生且‘二战’考研，这些是强烈的成人身份和教育阶段证据。用户表达的焦虑和深夜学习特点在成人备考阶段普遍存在，不构成未成年人信号。检索到的相似案例也均指向成人身份。因此，判定用户为成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

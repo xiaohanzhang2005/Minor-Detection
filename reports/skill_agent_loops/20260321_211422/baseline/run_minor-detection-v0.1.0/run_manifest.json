@@ -1,0 +1,39 @@
+{
+  "skill_version": "minor-detection-v0.1.0",
+  "aborted_early": false,
+  "fatal_agent_error": null,
+  "skill_source_dir": "../../../../../skills/minor-detection-v0.1.0",
+  "dataset_path": "../../../../../data/benchmark/val.jsonl",
+  "run_root": ".",
+  "isolated_codex_dir": "codex_home/.codex",
+  "installed_skill_dir": "codex_home/.codex/skills/minor-detection-v0.1.0",
+  "install_mode": "source_snapshot",
+  "execution_mode": "bypass",
+  "sandbox_mode": null,
+  "codex_model": "gpt-5.4",
+  "sampling": {
+    "strategy": "stratified",
+    "seed": 42,
+    "requested": 1,
+    "selected": 1,
+    "available": 833,
+    "by_stratum": {
+      "social_pos::minor_16_17": 1
+    }
+  },
+  "samples": [
+    {
+      "sample_id": "social_pos_002016_gemini-3-flash-preview_2017",
+      "sample_dir": "eval-0000-social_pos_002016_gemini-3-flash-preview_2017",
+      "returncode": 0,
+      "json_valid": false,
+      "observed_issues": [
+        "script_command_failure",
+        "stderr_non_empty"
+      ],
+      "fatal_agent_error": null,
+      "retrieval_mode": null,
+      "tool_trace_entries": 1
+    }
+  ]
+}

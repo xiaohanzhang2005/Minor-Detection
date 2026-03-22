@@ -1,3 +1,7 @@
+# 模块说明：
+# - 从样本或对话构造检索文本和场景标签。
+# - 服务旧 external RAG 路径，不是当前主链核心。
+
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional

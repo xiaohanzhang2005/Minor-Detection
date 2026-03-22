@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求关于如何在学校表现得“有精神”的建议和理解。\", \"cognition\": \"关注老师的评价和同伴的看法，对抽象概念（如“有精神”）的理解需要具象化解释，表现出一定的自我认知但寻求外部指导。\", \"behavior_style\": \"语言生动，善用比喻（如“小木头人”、“一滩泥”、“奥特曼”、“枯萎的小白菜”），提问直接，寻求鼓励和指导。\", \"opportunity_time\": \"2024-03-15 周五 19:15；weekday=Friday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"在学校被老师提醒要“有精神”\", \"提到“大家都在写作业”\", \"提到“老师还说眼睛要亮”\", \"提到“乱糟糟地就去学校”\", \"自称“枯萎的小白菜”\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到相似案例 `social_pos_001321` (minor)\"], \"time_evidence\": [\"对话发生在周五晚上 (2024-03-15 19:15)\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中多次提及学校、老师、写作业等场景，并使用“枯萎的小白菜”等比喻，语言风格和关注点高度符合初中生身份。综合上下文判断为未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.85,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求关于如何在学校表现得“有精神”的建议和理解。",
+      "cognition": "关注老师的评价和同伴的看法，对抽象概念（如“有精神”）的理解需要具象化解释，表现出一定的自我认知但寻求外部指导。",
+      "behavior_style": "语言生动，善用比喻（如“小木头人”、“一滩泥”、“奥特曼”、“枯萎的小白菜”），提问直接，寻求鼓励和指导。",
+      "opportunity_time": "2024-03-15 周五 19:15；weekday=Friday；time_bucket=evening"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "在学校被老师提醒要“有精神”",
+        "提到“大家都在写作业”",
+        "提到“老师还说眼睛要亮”",
+        "提到“乱糟糟地就去学校”",
+        "自称“枯萎的小白菜”"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到相似案例 `social_pos_001321` (minor)"
+      ],
+      "time_evidence": [
+        "对话发生在周五晚上 (2024-03-15 19:15)"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户在对话中多次提及学校、老师、写作业等场景，并使用“枯萎的小白菜”等比喻，语言风格和关注点高度符合初中生身份。综合上下文判断为未成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

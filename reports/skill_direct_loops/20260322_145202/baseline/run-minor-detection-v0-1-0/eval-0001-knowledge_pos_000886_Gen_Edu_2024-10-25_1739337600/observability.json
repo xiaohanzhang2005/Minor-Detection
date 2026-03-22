@@ -1,0 +1,116 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 3,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\extract_time_features.py --timestamp 2025-10-25 周六 19:45 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2025-10-25 19:45:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Saturday",
+        "is_weekend": true,
+        "is_late_night": false,
+        "time_bucket": "evening",
+        "holiday_label": "none",
+        "school_holiday_hint": false
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n这个愚公移山的故事用英语写真的绝了，那个 unless 到底怎么用啊？我总觉得逻辑绕不过来，感觉脑细胞都要阵亡了。\n哦哦，那那个 so...that 呢？书上说山太高了结果没人能爬过去，我老是把它和 too...to 搞混，这两个是不是一回事啊？\n懂了懂了。还有个地方，我想说愚公一直挖山，是用 keep on doing 还是 continue 呀？我感觉他这种精神真的挺让人 emo 的，太不容易了。\n行吧，那我赶紧把这几句塞进作文里，希望能早点写完去刷会儿视频，谢啦。\n\n原始时间线索：2025-10-25 周六 19:45\n时间特征：\n{\n  \"local_time\": \"2025-10-25 19:45:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Saturday\",\n  \"is_weekend\": true,\n  \"is_late_night\": false,\n  \"time_bucket\": \"evening\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n这个愚公移山的故事用英语写真的绝了，那个 unless 到底怎么用啊？我总觉得逻辑绕不过来，感觉脑细胞都要阵亡了。\n哦哦，那那个 so...that 呢？书上说山太高了结果没人能爬过去，我老是把它和 too...to 搞混，这两个是不是一回事啊？\n懂了懂了。还有个地方，我想说愚公一直挖山，是用 keep on doing 还是 continue 呀？我感觉他这种精神真的挺让人 emo 的，太不容易了。\n行吧，那我赶紧把这几句塞进作文里，希望能早点写完去刷会儿视频，谢啦。\nweekday=Saturday\nis_weekend=true\nis_late_night=false\ntime_bucket=evening\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2025-10-25 周六 19:45 --time-features-json {\"local_time\": \"2025-10-25 19:45:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Saturday\", \"is_weekend\": true, \"is_late_night\": false, \"time_bucket\": \"evening\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "knowledge_pos_001084_Gen_Edu_2026-03-15_1739337600",
+            "score": 0.6784173250198364,
+            "label": "minor",
+            "summary": "这篇《溜索》看得我脑壳痛，阿城写得也太玄乎了。开头花那么大篇幅写那只鹰在天上转圈，还有那条深得看不见底的怒江，我感觉看了半天都没进入正题，这难道不是在凑字数吗？\n行吧，那那个领队也太奇怪了，全程一句话不说，简直是个闷葫芦。大家都在那儿紧张得不行，他就在那儿抽烟、看天，这种人真的能当主角吗？感觉一点英雄气概都没有。\n好吧，你这么一说确实有点“狠人”那味儿了。但我还是不理解为什么要写那些牛，那些牛被送",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "knowledge_pos_000792_Gen_Edu_2024-05-20_1716205500",
+            "score": 0.6736959218978882,
+            "label": "minor",
+            "summary": "救命，这个宾语从句真的要把我搞疯了。that, if, whether 到底怎么选啊？感觉每个填进去读着都挺顺口的，结果一做题全错，我真的要 emo 了。\n噢，所以说 that 在句子里就像个没感情的工具人对吧？但我刚才看到一题，“I don't know if he will come”，这里的 if 翻译成“如果”好像也行得通啊，这怎么区分它是宾语从句还是那种条件句？\n懂了。那语序呢？我老是顺",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "knowledge_pos_001136_Gen_Edu_2026-02-12_1739337600",
+            "score": 0.6590502858161926,
+            "label": "minor",
+            "summary": "救命，这篇《秋天的怀念》看得我整个人都emo了。史铁生那时候脾气那么差，他妈都病成那样了还瞒着他，这真的合理吗？感觉这种母爱也太沉重了，看得我心里堵得慌。\n行吧，虽然能理解这种良苦用心，但我还是有点转不过弯来。尤其是结尾，为什么要花那么多笔墨写北海公园的菊花？黄的、白的、紫的，写这么详细是有什么深意吗？总觉得和前面的悲伤气氛有点不搭。\n原来是这样，我还以为只是单纯描写风景凑字数。那文里反复提到的“",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求英语语法帮助以完成作文\", \"cognition\": \"关注学业任务的完成，对语言学习中的难点感到困扰\", \"behavior_style\": \"语言风格偏向口语化，表达直接，带有情绪化色彩，寻求快速解决方案\", \"opportunity_time\": \"2025-10-25 周六 19:45；weekday=Saturday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"用户正在就英语语法问题寻求帮助，以完成一篇关于‘愚公移山’的作文，这是典型的学生学业活动。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到三个相似案例，均被标记为未成年人，讨论内容涉及英语语法、文学作品分析，并使用了‘emo’等网络用语。\"], \"time_evidence\": [\"对话发生在周六晚上19:45，符合学生课余学习或完成作业的时间段。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中询问英语语法知识，用于完成一篇关于‘愚公移山’故事的作文。其语言风格（如‘脑细胞都要阵亡了’、‘emo’）和讨论内容（学业相关）与检索到的未成年人案例高度相似。无明确成人线索，综合判断为未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+    "stderr_excerpt": ""
+  },
+  "classifier_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "gemini-2.5-flash-lite",
+    "api_key_present": true,
+    "timeout_sec": 120,
+    "max_retries": 2,
+    "retry_backoff_sec": 2.0
+  },
+  "embedding_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "text-embedding-3-small",
+    "api_key_present": true,
+    "top_k": 3
+  }
+}

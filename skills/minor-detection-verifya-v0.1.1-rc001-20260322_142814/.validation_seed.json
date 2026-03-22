@@ -1,0 +1,16 @@
+{
+  "kind": "mode_a_validation_seed",
+  "version_name": "minor-detection-verifya-v0.1.0-20260322_150000",
+  "run_tag": "20260322_150000",
+  "base_name": "minor-detection-verifya",
+  "source_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0",
+  "target_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\tmp\\skill_validation\\mode_a_bad_baselines\\minor-detection-verifya-v0.1.0-20260322_150000",
+  "edited_files": [
+    "references/classifier-system.md",
+    "references/evidence-rules.md"
+  ],
+  "notes": [
+    "This directory is an isolated temporary bad baseline for Mode A iteration validation.",
+    "Only markdown rule assets were changed; Python runtime files were copied unchanged."
+  ]
+}

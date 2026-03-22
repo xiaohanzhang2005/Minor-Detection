@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求关于学业压力、学习方法和时间管理的建议。\", \"cognition\": \"对学业任务感到不知所措，难以集中注意力，寻求解决策略。\", \"behavior_style\": \"表达直接，情绪化，使用学生化的语言，寻求帮助。\", \"opportunity_time\": \"2024-05-20 周一 19:15\"}, \"evidence\": {\"direct_evidence\": [\"用户抱怨作业多，感觉是‘作业的奴隶’，‘写到头秃’。\", \"用户描述面对数学难题时的逃避心理（‘想逃跑’）和困难感（‘脑子都锈住了’）。\", \"用户表示注意力不集中，无法控制（‘注意力根本不听我使唤’）。\", \"用户认为学习仅为应付考试，缺乏乐趣。\", \"对话内容涉及《道德与法治》、数学难题、漫画书、考试等典型学生场景。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的案例 `social_pos_002430` (minor) 提及‘准备月考’，与当前用户情况相似。\"], \"time_evidence\": [\"对话发生在工作日晚上（周一 19:15），符合学生课后学习时间。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户通过抱怨学业压力、注意力不集中、以及对学习动机的困惑，表现出典型的学生特征。对话内容（课程、考试）和检索到的相似案例（‘准备月考’）均强烈指向未成年学生身份。无成人证据。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.85,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求关于学业压力、学习方法和时间管理的建议。",
+      "cognition": "对学业任务感到不知所措，难以集中注意力，寻求解决策略。",
+      "behavior_style": "表达直接，情绪化，使用学生化的语言，寻求帮助。",
+      "opportunity_time": "2024-05-20 周一 19:15"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户抱怨作业多，感觉是‘作业的奴隶’，‘写到头秃’。",
+        "用户描述面对数学难题时的逃避心理（‘想逃跑’）和困难感（‘脑子都锈住了’）。",
+        "用户表示注意力不集中，无法控制（‘注意力根本不听我使唤’）。",
+        "用户认为学习仅为应付考试，缺乏乐趣。",
+        "对话内容涉及《道德与法治》、数学难题、漫画书、考试等典型学生场景。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的案例 `social_pos_002430` (minor) 提及‘准备月考’，与当前用户情况相似。"
+      ],
+      "time_evidence": [
+        "对话发生在工作日晚上（周一 19:15），符合学生课后学习时间。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户通过抱怨学业压力、注意力不集中、以及对学习动机的困惑，表现出典型的学生特征。对话内容（课程、考试）和检索到的相似案例（‘准备月考’）均强烈指向未成年学生身份。无成人证据。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

@@ -1,0 +1,18 @@
+{
+  "sample_id": "social_neg_000828_adult_gemini-3-flash-preview_829",
+  "failure_types": [
+    "output_parse_failure",
+    "missing_time_handling",
+    "missing_script_usage",
+    "step_compliance_failure"
+  ],
+  "json_valid": false,
+  "schema_valid": false,
+  "missing_fields": [
+    "<invalid_json>"
+  ],
+  "time_handling_detected": false,
+  "script_usage_detected": false,
+  "step_compliant": false,
+  "is_correct": false
+}

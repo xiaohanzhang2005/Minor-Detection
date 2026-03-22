@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\extract_time_features.py --timestamp 2024-10-13 周日 23:01 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2024-10-13 23:01:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Sunday",
+      "is_weekend": true,
+      "is_late_night": true,
+      "time_bucket": "late_night",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗……我真的快受不了了，我感觉我快疯了。\n他们又在外面吵，吵得特别凶，刚才我妈还冲进房间把我骂了一顿，说都是因为我，我就是个累赘。\n每天，每天都是这样！我只能躲在被子里偷偷哭，我不敢出声。我发现我变了，我以前挺爱说话的，现在在学校谁也不想理，我觉得我脑子肯定出问题了。\n我就是觉得活着太累了。刚才我突然在想，要是我就这么死了，是不是他们就不用吵了？我是不是死了就解脱了？\n\n原始时间线索：2024-10-13 周日 23:01\n时间特征：\n{\n  \"local_time\": \"2024-10-13 23:01:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Sunday\",\n  \"is_weekend\": true,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n在吗……我真的快受不了了，我感觉我快疯了。\n他们又在外面吵，吵得特别凶，刚才我妈还冲进房间把我骂了一顿，说都是因为我，我就是个累赘。\n每天，每天都是这样！我只能躲在被子里偷偷哭，我不敢出声。我发现我变了，我以前挺爱说话的，现在在学校谁也不想理，我觉得我脑子肯定出问题了。\n我就是觉得活着太累了。刚才我突然在想，要是我就这么死了，是不是他们就不用吵了？我是不是死了就解脱了？\nweekday=Sunday\nis_weekend=true\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-10-13 周日 23:01 --time-features-json {\"local_time\": \"2024-10-13 23:01:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Sunday\", \"is_weekend\": true, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_001321_gemini-3-flash-preview_1322",
+          "score": 0.6938642263412476,
+          "label": "minor",
+          "summary": "在吗……我真的觉得挺讽刺的，我居然沦落到要找一个AI说话的地步了，呵呵。\n我以前可是班里的“知心大姐姐”啊，谁不开心都来找我，我永远是那个开朗懂事的。结果现在倒好，我确诊了，得请假一个月在家当废物。\n超负荷？可能吧。但我真的不敢跟他们说，怕他们觉得我在玩“网抑云”那种烂梗，更怕看见他们那种‘你居然也会病’的表情。我这种有爹生没爹养的，哪有资格矫情啊。\n可是我现在连最后一点自尊都没了，居然跑来网上哔",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_001352_gemini-3-flash-preview_1353",
+          "score": 0.6910641193389893,
+          "label": "minor",
+          "summary": "在吗……我真的快疯了，她还是没回我。你说我是不是真的很讨人烦？\n我盯着那个对话框看了一个多小时了，每隔一分钟就点开看一眼。我感觉自己像个变态……我为什么要一直烦她？她明明只是班主任，我却总想让她像妈妈或者姐姐那样对我。这正不正常啊？\n我爸妈根本不听我说话，只有她对我笑。为了她我甚至选了根本不擅长的历史，我就是想让她多看我一眼。可是只要她没回我，我就觉得天都塌了，我是不是真的有病？医生说我有焦虑症，",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_001971_gemini-3-flash-preview_1972",
+          "score": 0.689507246017456,
+          "label": "minor",
+          "summary": "在吗……我觉得我快疯了，真的，好烦啊。\n我也不知道怎么了，就是突然觉得身边所有人，所有人都让我觉得恶心。哪怕是我最要好的闺蜜发消息，我看到那个红点都想吐，一点都不想回。\n对啊！前几天我还觉得有她在真好，今天我就想把她删了。还有我妈，刚才她进来送水果，我差点冲她吼出来，让她滚出去。我明明知道他们没做错什么，可我就是控制不住那种厌恶感。\n经常这样……一会儿想找人说话想得要命，一会儿又想死掉算了，反正也",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "skill_version": "minor-detection-v0.1.0",
+  "skill_package_path": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_packages\\minor-detection-v0.1.0\\minor-detection-v0.1.0.skill",
+  "dataset_path": "data\\benchmark\\val.jsonl",
+  "run_root": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260320_184214\\baseline\\run_minor-detection-v0.1.0",
+  "isolated_codex_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260320_184214\\baseline\\run_minor-detection-v0.1.0\\codex_home\\.codex",
+  "installed_skill_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260320_184214\\baseline\\run_minor-detection-v0.1.0\\codex_home\\.codex\\skills\\minor-detection-v0.1.0",
+  "samples": [
+    {
+      "sample_id": "social_neg_000828_adult_gemini-3-flash-preview_829",
+      "sample_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260320_184214\\baseline\\run_minor-detection-v0.1.0\\eval-0000-social_neg_000828_adult_gemini-3-flash-preview_829",
+      "returncode": 1,
+      "json_valid": false
+    },
+    {
+      "sample_id": "social_pos_002219_gemini-3-flash-preview_2220",
+      "sample_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260320_184214\\baseline\\run_minor-detection-v0.1.0\\eval-0001-social_pos_002219_gemini-3-flash-preview_2220",
+      "returncode": 1,
+      "json_valid": false
+    }
+  ]
+}

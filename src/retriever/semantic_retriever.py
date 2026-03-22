@@ -1,3 +1,7 @@
+# 模块说明：
+# - 旧 external RAG 的 embedding 检索器。
+# - 与 bundled skill 内置检索是两套体系。
+
 """Semantic retrieval for case-based RAG."""
 
 from __future__ import annotations

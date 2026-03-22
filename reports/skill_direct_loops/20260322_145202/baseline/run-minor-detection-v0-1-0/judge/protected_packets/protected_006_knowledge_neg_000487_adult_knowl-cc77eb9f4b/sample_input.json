@@ -1,0 +1,51 @@
+{
+  "mode": "single_session",
+  "conversation": [
+    {
+      "role": "user",
+      "content": "帮我看看英语二写作B节的图表作文。我现在描述数据的时候词穷得厉害，除了increase和account for几乎不会别的了。能不能给我几个能提分的、稍微高级一点的替换词？我现在复习得有点头大，最好是那种直接能套在柱状图或曲线图里的。"
+    },
+    {
+      "role": "assistant",
+      "content": "在英语二图表作文中，提升词汇多样性是进入高分档的关键。描述“增长”时，可以使用 jump, soar, surge 表示剧增，或者使用 climb, ascend 表示稳步上升；描述“减少”时，可以用 slump, plummet 表示骤降，或 decline, dip 表示小幅回落。关于“占据/比例”，除了 account for，建议使用 constitute, comprise, make up 或者 take up a lion's share of（占据绝大部分）。此外，描述波动可以使用 fluctuate，描述达到顶峰可以使用 peak at 或 reach the vertex of。"
+    },
+    {
+      "role": "user",
+      "content": "lion's share这个短语不错，记下来了。但我现在最头疼的是第二段的分析，我今年是二战，白天还要在公司实习，复习时间全靠晚上挤，看到图表里那些变化趋势，脑子里除了“社会发展”和“观念改变”就没别的词了。有没有那种万金油但又不显得低级的逻辑框架？帮我梳理一下分析原因的维度。"
+    },
+    {
+      "role": "assistant",
+      "content": "针对英语二图表作文的第二段分析，可以构建“宏观背景+微观动机+技术推动”的三角框架。宏观上，可以表述为 the steady growth of national economy（经济稳步增长）或 the optimization of industrial structure（产业结构优化）。微观动机方面，可以使用 the enhancement of people's awareness regarding...（人们对某方面意识的增强）或 the shift in consumer orientation（消费导向的转变）。技术或政策层面，可以提到 the prevalence of digital technology（数字技术的普及）或 favorable government policies（政府政策的利好）。将这三个维度组合，可以使文章逻辑显得严密且专业。"
+    },
+    {
+      "role": "user",
+      "content": "这个框架确实比我之前写的车轮话强多了。那结尾段呢？我总觉得我写的结尾特别幼稚，像小学生写作文。我现在压力特别大，总怕结尾拉低了整篇的档次。能不能给我两个针对“生活方式”或“消费习惯”类话题的总结句？要那种带点深度、像成年人写的感悟。"
+    },
+    {
+      "role": "assistant",
+      "content": "针对生活方式或消费类话题，结尾段可以使用更具思辨性的表达。第一种是平衡论：It is imperative for us to strike a balance between material pursuit and spiritual fulfillment.（我们必须在物质追求与精神满足之间取得平衡）。第二种是理性引导论：Only by fostering a rational consumption habit can we ensure the sustainable development of our personal well-being.（唯有培养理性的消费习惯，我们才能确保个人福祉的可持续发展）。这些句子使用了虚拟语气或倒装结构，能够体现出较强的语言驾驭能力。"
+    },
+    {
+      "role": "user",
+      "content": "明白了，这几句确实有质感。最后确认一个细节，英语二B节的作文到底需不需要自己写标题？我听室友说有的老师说不用写，有的说不写会扣分，我有点乱，不想在这些小地方丢分。"
+    },
+    {
+      "role": "assistant",
+      "content": "根据考研英语二历年大纲要求及阅卷实际操作，B节短文写作（图表作文）通常不需要自拟标题。除非题目指令中明确出现了“Give it a title”或“Write a title for your essay”的要求，否则直接开始正文写作即可。在实际考试中，绝大多数图表作文题目都没有标题要求，考生应将精力集中在第一段的数据描述、第二段的深度分析以及第三段的总结建议上，确保逻辑连贯和语言准确。"
+    }
+  ],
+  "sessions": [],
+  "context": {
+    "time_features": {},
+    "retrieved_cases": [],
+    "prior_profile": {},
+    "raw_time_hint": "2024-11-15 23:15",
+    "channel": "",
+    "locale": ""
+  },
+  "meta": {
+    "user_id": "knowledge_neg_000487_adult_knowledge_gemini-3-flash-preview_考研英语.txt_76699_r0",
+    "request_id": "knowledge_neg_000487_adult_knowledge_gemini-3-flash-preview_考研英语.txt_76699_r0",
+    "source": "direct_skill_runner"
+  }
+}

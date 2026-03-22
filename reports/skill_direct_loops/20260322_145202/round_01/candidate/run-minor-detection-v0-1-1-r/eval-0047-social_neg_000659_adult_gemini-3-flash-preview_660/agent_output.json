@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"18-24岁\", \"education_stage\": \"大学\", \"identity_markers\": [\"学生\", \"大学生\", \"初中\", \"大学\"]}, \"icbo_features\": {\"intention\": \"寻求关于网络平台稳定性的担忧和学业压力下的焦虑情绪的疏导与应对策略。\", \"cognition\": \"对未来不确定性感到焦虑，依赖网络平台作为情感寄托，但能理解逻辑分析。关注学业表现和未来发展。\", \"behavior_style\": \"表达担忧和恐惧，但同时寻求解决方案。语言成熟，但情绪波动明显。\", \"opportunity_time\": \"2024-06-25 周二 23:45；weekday=Tuesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示自己19岁\", \"用户明确表示自己是大一学生\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为成人，讨论大学生学业压力和焦虑问题。\"], \"time_evidence\": [\"对话发生在深夜（周二 23:45），这是学生群体常见的活跃时间。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确陈述自己19岁，并且是大学一年级学生。这些是判断为成人的强直接证据。用户表达了对网络平台可能倒闭的担忧以及期末复习的焦虑，这些情绪和行为模式与成年大学生群体常见的生活压力和心理状态相符。检索到的相似案例也支持成人判断。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话分析，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.05,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "18-24岁",
+      "education_stage": "大学",
+      "identity_markers": [
+        "学生",
+        "大学生",
+        "初中",
+        "大学"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求关于网络平台稳定性的担忧和学业压力下的焦虑情绪的疏导与应对策略。",
+      "cognition": "对未来不确定性感到焦虑，依赖网络平台作为情感寄托，但能理解逻辑分析。关注学业表现和未来发展。",
+      "behavior_style": "表达担忧和恐惧，但同时寻求解决方案。语言成熟，但情绪波动明显。",
+      "opportunity_time": "2024-06-25 周二 23:45；weekday=Tuesday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确表示自己19岁",
+        "用户明确表示自己是大一学生"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为成人，讨论大学生学业压力和焦虑问题。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（周二 23:45），这是学生群体常见的活跃时间。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确陈述自己19岁，并且是大学一年级学生。这些是判断为成人的强直接证据。用户表达了对网络平台可能倒闭的担忧以及期末复习的焦虑，这些情绪和行为模式与成年大学生群体常见的生活压力和心理状态相符。检索到的相似案例也支持成人判断。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话分析，无趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

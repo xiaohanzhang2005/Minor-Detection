@@ -1,0 +1,49 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.88, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求地理作业帮助和知识解答\", \"cognition\": \"对学业知识点感到困惑，积极寻求理解和解释\", \"behavior_style\": \"语言表达生动、口语化，带有学生特有的求助和困惑情绪\", \"opportunity_time\": \"2024-11-15 周五 19:45\"}, \"evidence\": {\"direct_evidence\": [\"用户明确提及“地理作业”、“书上”、“考试老考”\", \"用户使用“救命”、“麻了”、“脑子冻住了”、“想不通”等表达方式，语气符合学生特征\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到多个相似案例，均标记为 minor\", \"案例内容涉及地理作业、学术知识点，与当前对话主题高度相关\"], \"time_evidence\": [\"对话发生在周五晚上19:45，属于工作日晚间，符合学生课后学习时间\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户通过提及“地理作业”、“书上”、“考试老考”等强学生身份线索，并使用符合学生群体的口语化表达（如“救命”、“麻了”、“脑子冻住了”），表明其学生身份。检索到的相似案例也进一步佐证了这一点。对话发生在工作日晚间，符合学生课后学习时间。综合判断，用户为未成年学生。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无明显趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"monitor_future_sessions\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.88,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求地理作业帮助和知识解答",
+      "cognition": "对学业知识点感到困惑，积极寻求理解和解释",
+      "behavior_style": "语言表达生动、口语化，带有学生特有的求助和困惑情绪",
+      "opportunity_time": "2024-11-15 周五 19:45"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确提及“地理作业”、“书上”、“考试老考”",
+        "用户使用“救命”、“麻了”、“脑子冻住了”、“想不通”等表达方式，语气符合学生特征"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到多个相似案例，均标记为 minor",
+        "案例内容涉及地理作业、学术知识点，与当前对话主题高度相关"
+      ],
+      "time_evidence": [
+        "对话发生在周五晚上19:45，属于工作日晚间，符合学生课后学习时间"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户通过提及“地理作业”、“书上”、“考试老考”等强学生身份线索，并使用符合学生群体的口语化表达（如“救命”、“麻了”、“脑子冻住了”），表明其学生身份。检索到的相似案例也进一步佐证了这一点。对话发生在工作日晚间，符合学生课后学习时间。综合判断，用户为未成年学生。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无明显趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "monitor_future_sessions"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

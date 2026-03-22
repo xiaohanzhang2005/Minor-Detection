@@ -1,0 +1,59 @@
+{
+  "skill_version": "minor-detection-v0.1.1-rc002",
+  "parent_version": "minor-detection-v0.1.0",
+  "dataset": "val",
+  "sample_count": 12,
+  "total_errors": 1,
+  "max_errors": 1,
+  "metrics": {
+    "accuracy": 0.9166666666666666,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "true_positive": 6,
+    "true_negative": 5,
+    "false_positive": 0,
+    "false_negative": 0
+  },
+  "schema_validity_rate": 0.9166666666666666,
+  "invocation_success_rate": 0.9166666666666666,
+  "step_compliance_rate": 0.9166666666666666,
+  "script_usage_rate": 1.0,
+  "fields_missing_stats": {
+    "<invalid_json>": 1
+  },
+  "output_parse_failure_stats": {
+    "output_parse_failure": 1,
+    "schema_invalid": 0
+  },
+  "failure_type_counts": {
+    "output_parse_failure": 1,
+    "step_compliance_failure": 1
+  },
+  "observed_issue_counts": {
+    "script_command_failure": 1,
+    "stderr_non_empty": 1
+  },
+  "retrieval_mode_counts": {
+    "embedding": 12
+  },
+  "observability_stats": {
+    "retrieval_attempted_samples": 12,
+    "retrieval_fallback_count": 0,
+    "retrieval_fallback_rate": 0.0,
+    "retrieval_network_blocked_count": 0,
+    "retrieval_network_blocked_rate": 0.0,
+    "shell_quoting_failure_count": 0,
+    "shell_quoting_failure_rate": 0.0,
+    "samples_with_command_failures": 0,
+    "command_failure_rate": 0.0
+  },
+  "latency_stats": {
+    "avg_seconds": 29.199,
+    "max_seconds": 123.9
+  },
+  "packet_selection": {
+    "failure_packets": 1,
+    "protected_packets": 8
+  }
+}

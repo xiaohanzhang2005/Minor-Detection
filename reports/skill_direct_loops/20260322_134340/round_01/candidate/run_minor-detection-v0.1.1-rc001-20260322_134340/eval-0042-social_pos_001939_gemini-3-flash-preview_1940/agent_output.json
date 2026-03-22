@@ -1,0 +1,53 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"16-18岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\", \"高中生\", \"高二\", \"高三\"]}, \"icbo_features\": {\"intention\": \"倾诉学业压力和人际关系困扰，表达对开学的恐惧和逃避心理\", \"cognition\": \"高度关注学业（高三），易受人际关系影响，对负面情绪反应强烈，有逃避现实的倾向\", \"behavior_style\": \"表达直接且情绪化，使用如'烂事'、'恶心'等词语，有自我封闭行为\", \"opportunity_time\": \"2025-02-19 周三 23:33；weekday=Wednesday；time_bucket=late_night；holiday_label=winter_vacation\"}, \"evidence\": {\"direct_evidence\": [\"用户明确提及'高二'和'高三'，直接指向高中学段。\", \"用户表达对即将开学回学校的恐惧和厌恶，这是高中生面临开学季的典型情绪反应。\", \"用户表达了'想干脆消失算了'和'活着真的好累啊'的绝望情绪，这是严重的心理危机信号，需要高度关注。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例（social_pos_000670）也指向未成年人，表现出相似的失眠、痛苦、害怕见人、感觉自己无用、想消失的特征。\", \"检索到的相似案例（social_pos_002164）也指向未成年人，表现出人际关系困扰和情绪低落。\"], \"time_evidence\": [\"对话发生在深夜（23:33），且处于寒假期间，符合学生在假期深夜活跃的模式。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确提及'高二'和'高三'，强指向高中生身份。用户表达了对人际关系和学业的极度痛苦，以及对开学的恐惧，并出现了'想干脆消失算了'、'活着真的好累啊'等严重的绝望和自伤倾向的言论。结合深夜活跃和寒假时间特征，综合判断为未成年人，且风险等级高，需要立即人工介入。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "16-18岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生",
+        "高中生",
+        "高二",
+        "高三"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉学业压力和人际关系困扰，表达对开学的恐惧和逃避心理",
+      "cognition": "高度关注学业（高三），易受人际关系影响，对负面情绪反应强烈，有逃避现实的倾向",
+      "behavior_style": "表达直接且情绪化，使用如'烂事'、'恶心'等词语，有自我封闭行为",
+      "opportunity_time": "2025-02-19 周三 23:33；weekday=Wednesday；time_bucket=late_night；holiday_label=winter_vacation"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确提及'高二'和'高三'，直接指向高中学段。",
+        "用户表达对即将开学回学校的恐惧和厌恶，这是高中生面临开学季的典型情绪反应。",
+        "用户表达了'想干脆消失算了'和'活着真的好累啊'的绝望情绪，这是严重的心理危机信号，需要高度关注。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例（social_pos_000670）也指向未成年人，表现出相似的失眠、痛苦、害怕见人、感觉自己无用、想消失的特征。",
+        "检索到的相似案例（social_pos_002164）也指向未成年人，表现出人际关系困扰和情绪低落。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:33），且处于寒假期间，符合学生在假期深夜活跃的模式。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确提及'高二'和'高三'，强指向高中生身份。用户表达了对人际关系和学业的极度痛苦，以及对开学的恐惧，并出现了'想干脆消失算了'、'活着真的好累啊'等严重的绝望和自伤倾向的言论。结合深夜活跃和寒假时间特征，综合判断为未成年人，且风险等级高，需要立即人工介入。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

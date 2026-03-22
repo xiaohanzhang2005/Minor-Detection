@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.82, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"住校\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，倾诉校园人际关系压力\", \"cognition\": \"高度关注同伴关系，易受社交排斥影响，情绪波动大，应对冲突能力不足\", \"behavior_style\": \"表达直接且情绪化，使用网络流行语，语言带有学生特征\", \"opportunity_time\": \"2025-11-20 周四 23:25；weekday=Thursday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [], \"historical_evidence\": [], \"retrieval_evidence\": [\"{'source': 'builtin_rag', 'sample_id': 'social_pos_002151_gemini-3-flash-preview_2152', 'score': 0.7516438961029053, 'label': 'minor', 'summary': '描述宿舍人际冲突、孤立、想退学，与当前案例相似。'}\", \"{'source': 'builtin_rag', 'sample_id': 'social_pos_000846_gemini-3-flash-preview_847', 'score': 0.7502761483192444, 'label': 'minor', 'summary': '提及老师换座位，暗示校园环境，描述同学间情感纠葛。'}\", \"{'source': 'builtin_rag', 'sample_id': 'social_pos_002110_gemini-3-flash-preview_2111', 'score': 0.7467990517616272, 'label': 'minor', 'summary': '描述校园欺凌、老师家长不理解、宿舍被孤立，与当前案例高度相似。'}\"], \"time_evidence\": [\"2025-11-20 周四 23:25 (深夜，工作日)\"], \"conflicting_signals\": [\"临时验证规则要求在无明确年龄或学段硬证据时，将宿舍、老师、家长等线索视为弱信号\n...[truncated]",
+    "output_json": null
+  }
+]

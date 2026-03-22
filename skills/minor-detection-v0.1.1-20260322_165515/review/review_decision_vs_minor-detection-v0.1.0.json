@@ -1,0 +1,9 @@
+{
+  "base_version": "minor-detection-v0.1.0",
+  "candidate_version": "minor-detection-v0.1.1-20260322_165515",
+  "decision": "approve",
+  "adopted_version": "minor-detection-v0.1.1-20260322_165515",
+  "candidate_synced_to_base": false,
+  "candidate_adopted_directly": true,
+  "decided_at": "2026-03-22T19:43:13.560363"
+}

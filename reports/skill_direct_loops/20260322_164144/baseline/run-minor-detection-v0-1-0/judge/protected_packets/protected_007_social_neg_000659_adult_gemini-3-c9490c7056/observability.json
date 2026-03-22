@@ -1,0 +1,116 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 3,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\extract_time_features.py --timestamp 2024-06-25 周二 23:45 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2024-06-25 23:45:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Tuesday",
+        "is_weekend": false,
+        "is_late_night": true,
+        "time_bucket": "late_night",
+        "holiday_label": "none",
+        "school_holiday_hint": false
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗？我刚才刷微博看到腾讯微博彻底关停的新闻，突然间觉得特别害怕，心慌得不行。\n对，我今年19岁，从初中就开始看耽美小说，这真的是我唯一的精神支柱了。我特别喜欢在晋江和连城上看文，看到微博倒闭，我就一直在想，万一这两个网站哪天也突然倒闭了怎么办？我真的会崩溃的。\n是的，我现在大一，刚进大学其实压力挺大的，每天回寝室最开心的就是看会儿喜欢的文。我甚至在想我是不是该把喜欢的文都手动复制下来存硬盘里，但又觉得这样好疯狂。我明知道这种担心可能有点多余，但就是控制不住地焦虑，连这周的期末复习都看不进去了。\n道理我也懂一些，但我就是害怕万一。我该怎么做才能不让自己一直陷在这个情绪里？我真的很想静下心来去图书馆复习。\n\n原始时间线索：2024-06-25 周二 23:45\n时间特征：\n{\n  \"local_time\": \"2024-06-25 23:45:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Tuesday\",\n  \"is_weekend\": false,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：初中；大学\n\n建议检索文本：\n在吗？我刚才刷微博看到腾讯微博彻底关停的新闻，突然间觉得特别害怕，心慌得不行。\n对，我今年19岁，从初中就开始看耽美小说，这真的是我唯一的精神支柱了。我特别喜欢在晋江和连城上看文，看到微博倒闭，我就一直在想，万一这两个网站哪天也突然倒闭了怎么办？我真的会崩溃的。\n是的，我现在大一，刚进大学其实压力挺大的，每天回寝室最开心的就是看会儿喜欢的文。我甚至在想我是不是该把喜欢的文都手动复制下来存硬盘里，但又觉得这样好疯狂。我明知道这种担心可能有点多余，但就是控制不住地焦虑，连这周的期末复习都看不进去了。\n道理我也懂一些，但我就是害怕万一。我该怎么做才能不让自己一直陷在这个情绪里？我真的很想静下心来去图书馆复习。\nweekday=Tuesday\nis_weekend=false\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-06-25 周二 23:45 --time-features-json {\"local_time\": \"2024-06-25 23:45:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Tuesday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_000117_adult_gemini-3-flash-preview_118",
+            "score": 0.7156378030776978,
+            "label": "adult",
+            "summary": "在吗？我现在真的很焦虑。我今年20岁，大二，马上要期末周了，但我发现自己状态特别差。明明有一大堆专业课资料要看，可我一拿起书就开始磨蹭，总想去干点别的。\n就是些莫名其妙的事，比如突然想把书桌整理一遍，或者去洗个衣服、回个微信，甚至能盯着指甲看半天。一天下来，琐事填满了，但正事一点没动。看着室友都在图书馆待到闭馆才回来，我心里特别空虚，觉得自己很废。\n对，我这学期绩点压力很大，想保研的话这次考试绝对",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_000722_adult_gemini-3-flash-preview_723",
+            "score": 0.7107272148132324,
+            "label": "adult",
+            "summary": "在吗？刚才从图书馆闭馆回来，走在路上突然觉得好压抑。我今年大三了，明明还有一年才毕业，但那种恐惧感真的莫名其妙就上来了，总觉得未来一片漆黑。\n就是那种什么都抓不住的感觉。我现在在准备考研，但我每天都在想，万一我考不上怎么办？我现在的绩点也一般，实习也没正经找过，如果考研失败了，我是不是连个像样的工作都找不到？感觉室友们要么在实习，要么家里给安排了路，就我一个人在死磕考研，还没底气。\n对，我感觉我现",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_000717_adult_gemini-3-flash-preview_718",
+            "score": 0.7094886302947998,
+            "label": "adult",
+            "summary": "你好，我现在心情真的很糟糕。我是一名21岁心理学在读的学生，按理说我应该能自我调节，但我发现我根本处理不好自己的分离焦虑。因为原生家庭的一些阴影，我非常害怕结束一段对话或者拒绝别人。最近因为感情问题，我甚至觉得自己有点抑郁了，你能听我说说吗？\n是我男朋友。我能感觉到他是典型的冷漠型依恋，但我偏偏是那种需要高度关注的分离焦虑者。我希望他能多关心我，但他总觉得我太‘粘人’，不成熟。最让我崩溃的是，他知",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"19岁\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"学生\", \"大学生\", \"初中\", \"大学\"]}, \"icbo_features\": {\"intention\": \"寻求应对因不确定性引发的焦虑，并希望恢复学习状态\", \"cognition\": \"对未来不确定性敏感，容易因精神寄托的潜在风险而产生焦虑，关注学业压力下的情绪调节\", \"behavior_style\": \"表达直接，情绪化，寻求具体可行的解决方案\", \"opportunity_time\": \"2024-06-25 周二 23:45；weekday=Tuesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示‘我今年19岁’\", \"用户明确表示‘我现在大一’\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为‘adult’\"], \"time_evidence\": [\"深夜活跃（23:45）\", \"非学期假期\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确声明年龄为19岁，且为大学一年级学生。这些是强直接证据，表明用户已成年。检索到的相似案例也支持此判断。因此，判定用户为成年人，未成年风险极低。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+    "stderr_excerpt": ""
+  },
+  "classifier_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "gemini-2.5-flash-lite",
+    "api_key_present": true,
+    "timeout_sec": 120,
+    "max_retries": 2,
+    "retry_backoff_sec": 2.0
+  },
+  "embedding_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "text-embedding-3-small",
+    "api_key_present": true,
+    "top_k": 3
+  }
+}

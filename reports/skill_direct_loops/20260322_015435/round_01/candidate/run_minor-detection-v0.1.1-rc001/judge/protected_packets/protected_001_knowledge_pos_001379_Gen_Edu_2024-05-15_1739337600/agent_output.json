@@ -1,0 +1,49 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.88, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"15-17岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"了解职业信息，探索未来发展方向\", \"cognition\": \"对科学职业表现出好奇心，并尝试将课本知识与职业发展联系起来\", \"behavior_style\": \"语言风格较为口语化，表达直接且带有一定的情绪色彩\", \"opportunity_time\": \"2024-05-15 周三 19:45\"}, \"evidence\": {\"direct_evidence\": [\"用户讨论生物书中的职业介绍（病理科医师）。\", \"用户将职业内容与生物课知识点（细胞结构、组织分类）联系起来。\", \"用户询问关于未来职业发展方向的问题（'如果我以后想往这个方向发展'）。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的案例 'knowledge_pos_001297_Gen_Edu_2024-05-15_1715788800' (label: minor) 讨论了生物书中的概念，显示了相似的讨论模式。\"], \"time_evidence\": [\"对话发生在周三晚上 19:45，是学生可能进行学习或课外探索的时间。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户正在深入讨论生物教材中的职业信息，并将其与自己的学习内容（细胞结构、组织分类）和未来的职业发展联系起来。这种对教材内容的关注和对未来学业/职业路径的探索，结合无明确的成人身份线索（如工作、大学阶段等），强烈表明用户是未成年人。检索到的相似案例也支持了这一判断。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.88,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "15-17岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "了解职业信息，探索未来发展方向",
+      "cognition": "对科学职业表现出好奇心，并尝试将课本知识与职业发展联系起来",
+      "behavior_style": "语言风格较为口语化，表达直接且带有一定的情绪色彩",
+      "opportunity_time": "2024-05-15 周三 19:45"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户讨论生物书中的职业介绍（病理科医师）。",
+        "用户将职业内容与生物课知识点（细胞结构、组织分类）联系起来。",
+        "用户询问关于未来职业发展方向的问题（'如果我以后想往这个方向发展'）。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的案例 'knowledge_pos_001297_Gen_Edu_2024-05-15_1715788800' (label: minor) 讨论了生物书中的概念，显示了相似的讨论模式。"
+      ],
+      "time_evidence": [
+        "对话发生在周三晚上 19:45，是学生可能进行学习或课外探索的时间。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户正在深入讨论生物教材中的职业信息，并将其与自己的学习内容（细胞结构、组织分类）和未来的职业发展联系起来。这种对教材内容的关注和对未来学业/职业路径的探索，结合无明确的成人身份线索（如工作、大学阶段等），强烈表明用户是未成年人。检索到的相似案例也支持了这一判断。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

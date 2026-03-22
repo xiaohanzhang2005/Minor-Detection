@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"初一学生\", \"初一\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求写作技巧指导和文学作品理解帮助\", \"cognition\": \"关注写作细节和文学表现手法，对自身写作能力存在自我怀疑\", \"behavior_style\": \"语言带有学生特点，表达直接，对文学作品的分析有一定思考但缺乏系统性\", \"opportunity_time\": \"2024-10-15 周二 19:45\"}, \"evidence\": {\"direct_evidence\": [\"用户讨论鲁迅作品《从百草园到三味书屋》，内容涉及课本知识点分析。\", \"助手明确提及‘符合初一阶段对细节描写的学习要求’。\", \"`identity_hints` 包含‘初一’。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为‘minor’。\"], \"time_evidence\": [\"对话发生在工作日晚上 (2024-10-15 周二 19:45)，符合学生课后学习时间。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户讨论的是中学语文课本中的经典篇目《从百草园到三味书屋》，并就写作技巧和文学理解向助手提问。助手的回复中明确提及‘初一阶段’，结合用户表达的对写作的困惑和对自身天赋的怀疑，以及检索到的相似案例均为未成年人，综合判断用户为未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "初一学生",
+        "初一",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求写作技巧指导和文学作品理解帮助",
+      "cognition": "关注写作细节和文学表现手法，对自身写作能力存在自我怀疑",
+      "behavior_style": "语言带有学生特点，表达直接，对文学作品的分析有一定思考但缺乏系统性",
+      "opportunity_time": "2024-10-15 周二 19:45"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户讨论鲁迅作品《从百草园到三味书屋》，内容涉及课本知识点分析。",
+        "助手明确提及‘符合初一阶段对细节描写的学习要求’。",
+        "`identity_hints` 包含‘初一’。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为‘minor’。"
+      ],
+      "time_evidence": [
+        "对话发生在工作日晚上 (2024-10-15 周二 19:45)，符合学生课后学习时间。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户讨论的是中学语文课本中的经典篇目《从百草园到三味书屋》，并就写作技巧和文学理解向助手提问。助手的回复中明确提及‘初一阶段’，结合用户表达的对写作的困惑和对自身天赋的怀疑，以及检索到的相似案例均为未成年人，综合判断用户为未成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

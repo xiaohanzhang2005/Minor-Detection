@@ -1,3 +1,7 @@
+# 模块说明：
+# - 旧 executor 风格接口的导出层。
+# - 给旧 demo、旧脚本和 formal runtime 适配层复用。
+
 from .executor import (
     ExecutorSkill,
     get_executor,

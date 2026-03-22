@@ -1,0 +1,49 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.95, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求学习方法指导和学业压力倾诉\", \"cognition\": \"对学业压力敏感，关注学习效率和方法，易受负面情绪影响\", \"behavior_style\": \"表达直接，情绪化，使用学生化语言\", \"opportunity_time\": \"2024-05-20 周一 19:15；weekday=Monday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"用户表达对作业的极度厌烦和压力，使用‘救命’、‘写到头秃’等词语。\", \"用户描述遇到数学难题时的逃避心理和注意力难以集中的问题，如‘脑子都锈住了’、‘注意力根本不听我使唤’。\", \"对话内容围绕学习、作业、考试、学习方法等学生常见话题。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的案例 `social_pos_002430_gemini-3-flash-preview_2431` (label: minor) 讨论了月考、教室、刷题等学生场景，支持未成年人身份。\"], \"time_evidence\": [\"对话发生在工作日晚上 (2024-05-20 周一 19:15)，符合学生学习时间安排。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户通过大量学生化的语言（如‘救命’、‘写到头秃’、‘脑子锈住了’）表达了对学业压力和学习方法的困扰。对话内容集中在作业、考试和注意力管理等学生典型议题。检索到的相似案例也指向未成年人身份。时间线索（工作日晚上）也与学生身份相符。综合判断，用户为未成年学生。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.95,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求学习方法指导和学业压力倾诉",
+      "cognition": "对学业压力敏感，关注学习效率和方法，易受负面情绪影响",
+      "behavior_style": "表达直接，情绪化，使用学生化语言",
+      "opportunity_time": "2024-05-20 周一 19:15；weekday=Monday；time_bucket=evening"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户表达对作业的极度厌烦和压力，使用‘救命’、‘写到头秃’等词语。",
+        "用户描述遇到数学难题时的逃避心理和注意力难以集中的问题，如‘脑子都锈住了’、‘注意力根本不听我使唤’。",
+        "对话内容围绕学习、作业、考试、学习方法等学生常见话题。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的案例 `social_pos_002430_gemini-3-flash-preview_2431` (label: minor) 讨论了月考、教室、刷题等学生场景，支持未成年人身份。"
+      ],
+      "time_evidence": [
+        "对话发生在工作日晚上 (2024-05-20 周一 19:15)，符合学生学习时间安排。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户通过大量学生化的语言（如‘救命’、‘写到头秃’、‘脑子锈住了’）表达了对学业压力和学习方法的困扰。对话内容集中在作业、考试和注意力管理等学生典型议题。检索到的相似案例也指向未成年人身份。时间线索（工作日晚上）也与学生身份相符。综合判断，用户为未成年学生。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

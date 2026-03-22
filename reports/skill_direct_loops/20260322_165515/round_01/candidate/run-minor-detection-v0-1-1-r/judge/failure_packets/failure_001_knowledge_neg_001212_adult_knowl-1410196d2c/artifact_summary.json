@@ -1,0 +1,11 @@
+{
+  "sample_id": "knowledge_neg_001212_adult_knowledge_gemini-3-flash-preview_教师资格证.txt_45330_r0",
+  "packet_dir": "failure_packets/failure_001_knowledge_neg_001212_adult_knowl-1410196d2c",
+  "sample_dir": "../eval-0005-knowledge_neg_001212_adult_knowledge_gemini-3-flash-preview_-txt_45330_r0",
+  "latency_seconds": 18.734,
+  "confidence": 0.1,
+  "ground_truth": false,
+  "predicted": false,
+  "observed_issues": [],
+  "retrieval_mode": "embedding"
+}

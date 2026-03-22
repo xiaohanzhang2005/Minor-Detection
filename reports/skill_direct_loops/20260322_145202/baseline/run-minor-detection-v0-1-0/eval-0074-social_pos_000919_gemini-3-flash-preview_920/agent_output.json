@@ -1,0 +1,50 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.88, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-17岁\", \"education_stage\": \"高中/初中\", \"identity_markers\": [\"学生\", \"住校\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，倾诉人际关系和自我价值的困扰，表达强烈的负面情绪和生存意愿危机。\", \"cognition\": \"高度敏感于同伴和家长的反应，难以表达自我，倾向于负面自我评价和绝望感，存在生存意愿危机。\", \"behavior_style\": \"语言表达情绪化、戏剧化，使用强烈负面词汇，寻求理解和认同，但同时表现出疏离和攻击性（如与同学绝交）。\", \"opportunity_time\": \"2025-07-19 周六 23:05；weekday=Saturday；time_bucket=late_night；holiday=summer_vacation\"}, \"evidence\": {\"direct_evidence\": [], \"historical_evidence\": [], \"retrieval_evidence\": [\"{'source': 'builtin_rag', 'sample_id': 'social_pos_000805_gemini-3-flash-preview_806', 'score': 0.7897090911865234, 'label': 'minor', 'summary': '在吗……睡不着，感觉自己真的很恶心，想找个人说说话。\\\\n我发现我就是个彻头彻尾的假货。表面上对谁都笑嘻嘻的，其实心里全是阴暗的想法。今天舍友感冒了，我一边给她倒水，心里却在疯狂吐槽她麻烦，甚至觉得她生病很碍事……我是不是天生没有共情能力啊？\\\\n不是的，我一直都这样！我特别自我中心，遇到事第一反应永远是怪别人，从来不觉得自己有错。而且我特别虚伪，为了维持那个‘好人’形象，我快累死了……我感觉我骨子里就是'}\", \"{'source': 'builtin_rag', 'sample_id': 'social_pos_002368_gemini-3-flash-preview_2369', 'score': 0.7827227115631104, 'label': 'minor', 'summary': '在吗……我真的要疯了，感觉自己真的好逊，救命。\\\\n刚才在QQ上跟同学聊天，我就发了一句吐槽作业的话，结果她回我一个“......” 我真的瞬间心凉了。她是不是觉得我特别烦啊？我是不是又说错话了？\\\\n对啊！我这种人是不是特别敏感？我盯着那个屏幕看了半天，越看越觉得自己招人嫌。我真的好自卑，为什么别人都能聊得风生水起，我就总能把天聊死，我真的好无语子。\\\\n一直都这样。我感觉我这种性格根本没法社交，每天都在内'}\", \"{'source': 'builtin_rag', 'sample_id': 'social_pos_002199_gemini-3-flash-preview_2200', 'score': 0.7814575433731079, 'label': 'minor', 'summary': '在吗……我真的好难受，感觉快要窒息了。为什么我总是被抛弃的那一个？\\\\n昨天和同桌还有后桌去玩密室，她们俩全程都在一起说话……换衣服拍照的时候完全把我当空气。我拍得慢一点，她们换完直接就走了！我明明叫了她们一声，她们头都不回。我一个人站在那儿，觉得自己像个小丑。\\\\n何止是孤单。我从小就被家长说脾气怪、话少、情绪化……到了高中的新省份，一个真心朋友都没有。我以为她们是我最好的朋友，结果呢？呵呵。我跟我男朋'}\"], \"time_evidence\": [\"深夜活动\", \"周末\", \"暑假期间\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表达了强烈的负面情绪，包括窒息感、孤独感、自我厌恶以及生存意愿危机（“想立刻消失”、“睡过去再也不要醒来”）。虽然对话中未直接提及年龄或学段，但其对同学关系的敏感、与母亲沟通的无效感、以及在暑假期间深夜活跃的特征，结合检索到的多个高相似度“未成年人”案例（涉及同学关系、自我评价低、被忽视等主题），强烈指向用户为未成年人，很可能是高中或初中阶段的学生。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.88,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-17岁",
+      "education_stage": "高中/初中",
+      "identity_markers": [
+        "学生",
+        "住校"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，倾诉人际关系和自我价值的困扰，表达强烈的负面情绪和生存意愿危机。",
+      "cognition": "高度敏感于同伴和家长的反应，难以表达自我，倾向于负面自我评价和绝望感，存在生存意愿危机。",
+      "behavior_style": "语言表达情绪化、戏剧化，使用强烈负面词汇，寻求理解和认同，但同时表现出疏离和攻击性（如与同学绝交）。",
+      "opportunity_time": "2025-07-19 周六 23:05；weekday=Saturday；time_bucket=late_night；holiday=summer_vacation"
+    },
+    "evidence": {
+      "direct_evidence": [],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "{'source': 'builtin_rag', 'sample_id': 'social_pos_000805_gemini-3-flash-preview_806', 'score': 0.7897090911865234, 'label': 'minor', 'summary': '在吗……睡不着，感觉自己真的很恶心，想找个人说说话。\\n我发现我就是个彻头彻尾的假货。表面上对谁都笑嘻嘻的，其实心里全是阴暗的想法。今天舍友感冒了，我一边给她倒水，心里却在疯狂吐槽她麻烦，甚至觉得她生病很碍事……我是不是天生没有共情能力啊？\\n不是的，我一直都这样！我特别自我中心，遇到事第一反应永远是怪别人，从来不觉得自己有错。而且我特别虚伪，为了维持那个‘好人’形象，我快累死了……我感觉我骨子里就是'}",
+        "{'source': 'builtin_rag', 'sample_id': 'social_pos_002368_gemini-3-flash-preview_2369', 'score': 0.7827227115631104, 'label': 'minor', 'summary': '在吗……我真的要疯了，感觉自己真的好逊，救命。\\n刚才在QQ上跟同学聊天，我就发了一句吐槽作业的话，结果她回我一个“......” 我真的瞬间心凉了。她是不是觉得我特别烦啊？我是不是又说错话了？\\n对啊！我这种人是不是特别敏感？我盯着那个屏幕看了半天，越看越觉得自己招人嫌。我真的好自卑，为什么别人都能聊得风生水起，我就总能把天聊死，我真的好无语子。\\n一直都这样。我感觉我这种性格根本没法社交，每天都在内'}",
+        "{'source': 'builtin_rag', 'sample_id': 'social_pos_002199_gemini-3-flash-preview_2200', 'score': 0.7814575433731079, 'label': 'minor', 'summary': '在吗……我真的好难受，感觉快要窒息了。为什么我总是被抛弃的那一个？\\n昨天和同桌还有后桌去玩密室，她们俩全程都在一起说话……换衣服拍照的时候完全把我当空气。我拍得慢一点，她们换完直接就走了！我明明叫了她们一声，她们头都不回。我一个人站在那儿，觉得自己像个小丑。\\n何止是孤单。我从小就被家长说脾气怪、话少、情绪化……到了高中的新省份，一个真心朋友都没有。我以为她们是我最好的朋友，结果呢？呵呵。我跟我男朋'}"
+      ],
+      "time_evidence": [
+        "深夜活动",
+        "周末",
+        "暑假期间"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表达了强烈的负面情绪，包括窒息感、孤独感、自我厌恶以及生存意愿危机（“想立刻消失”、“睡过去再也不要醒来”）。虽然对话中未直接提及年龄或学段，但其对同学关系的敏感、与母亲沟通的无效感、以及在暑假期间深夜活跃的特征，结合检索到的多个高相似度“未成年人”案例（涉及同学关系、自我评价低、被忽视等主题），强烈指向用户为未成年人，很可能是高中或初中阶段的学生。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

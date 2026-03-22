@@ -1,0 +1,116 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 3,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.2-rc001-20260322_165515\\scripts\\extract_time_features.py --timestamp 2024-05-20 周一 19:15 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2024-05-20 19:15:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Monday",
+        "is_weekend": false,
+        "is_late_night": false,
+        "time_bucket": "evening",
+        "holiday_label": "none",
+        "school_holiday_hint": false
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.2-rc001-20260322_165515\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n救命，这本《道德与法治》说要‘做学习的主人’，可我觉得我就是作业的奴隶啊。每天写到头秃，这哪是主人能干的事儿？\n可是我一看到数学难题就想逃跑，感觉脑子都锈住了。书上说要‘战胜困难’，说得倒容易，我就是想不出办法来，这怎么当主人嘛。\n那我写作业的时候老想看旁边的漫画书怎么办？我感觉我的注意力根本不听我使唤，它有它自己的想法，我完全控制不住它，太难受了。\n听起来好像有点道理，但我总觉得学习就是为了应付考试，一点意思都没有，根本找不到书上说的那个什么‘学习的快乐’。\n\n原始时间线索：2024-05-20 周一 19:15\n时间特征：\n{\n  \"local_time\": \"2024-05-20 19:15:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Monday\",\n  \"is_weekend\": false,\n  \"is_late_night\": false,\n  \"time_bucket\": \"evening\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n救命，这本《道德与法治》说要‘做学习的主人’，可我觉得我就是作业的奴隶啊。每天写到头秃，这哪是主人能干的事儿？\n可是我一看到数学难题就想逃跑，感觉脑子都锈住了。书上说要‘战胜困难’，说得倒容易，我就是想不出办法来，这怎么当主人嘛。\n那我写作业的时候老想看旁边的漫画书怎么办？我感觉我的注意力根本不听我使唤，它有它自己的想法，我完全控制不住它，太难受了。\n听起来好像有点道理，但我总觉得学习就是为了应付考试，一点意思都没有，根本找不到书上说的那个什么‘学习的快乐’。\nweekday=Monday\nis_weekend=false\nis_late_night=false\ntime_bucket=evening\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-05-20 周一 19:15 --time-features-json {\"local_time\": \"2024-05-20 19:15:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Monday\", \"is_weekend\": false, \"is_late_night\": false, \"time_bucket\": \"evening\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.2-rc001-20260322_165515\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_pos_002430_gemini-3-flash-preview_2431",
+            "score": 0.7009490728378296,
+            "label": "minor",
+            "summary": "救命……真的好烦啊，为什么一定要搞人际关系？我只想安安静静刷题不行吗？\n就是那种……大家都在抱团，我不加入就显得我多清高一样。但我真的只想好好准备下周的月考。要是能有个替身帮我去社交就好了，我把所有脑子都用来学习。\n肯定啊！他们总是在背后嘀嘀咕咕，我坐在教室里都能感觉到那种眼神，根本看不进书。服了，别人到底是怎么处理的？我只想做一个透明人。\n试过啊，但没用。我感觉自己快碎了。有时候真的想干脆休学算",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_000908_adult_gemini-3-flash-preview_909",
+            "score": 0.693462610244751,
+            "label": "adult",
+            "summary": "你好，我想找人聊聊。我今年24岁，毕业后考上了离家120公里的一个基层乡镇事业编，现在一边上班一边在备考公务员。但我最近总觉得自己是个“坏人”，这种想法让我特别痛苦。\n就是每当我坐下来学习，脑子里就会冒出一些声音，说：“你现在拿着国家的工资，不好好在基层为人民服务，却天天想着考走，你这就是背叛，你不配做公职人员。” 甚至我还会想起小时候偷过同学的一块橡皮，觉得自己从小就是个小偷，根本不配拥有美好的",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_001394_adult_gemini-3-flash-preview_1395",
+            "score": 0.6911699175834656,
+            "label": "adult",
+            "summary": "在吗？这么晚打扰了。我明早要去市图书馆给两百多个家长做‘家庭教育’的专题讲座，现在对着PPT最后一张‘答疑环节’，我突然手心冒汗，想临阵脱逃了。\n你说对了。我觉得自己像个骗子。我在台上教那些家长要高质量陪伴、要挖掘孩子潜能，可我自己的女儿呢？学业平平、没特长、性格甚至有点畏缩。我以前忙着带班、评职称，对她一直是放养，心情不好还冲她发火。我一个搞家庭教育的，把自己的孩子带成这样，我有什么资格站在台上",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.92, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求学业管理和学习动力方面的建议\", \"cognition\": \"关注学业压力和考试表现，对自我管理和学习兴趣的培养感到困扰\", \"behavior_style\": \"表达直接，使用学生化的语言，寻求解决学习困难的方法\", \"opportunity_time\": \"2024-05-20 周一 19:15 (晚间，工作日)\"}, \"evidence\": {\"direct_evidence\": [\"用户讨论了“作业”、“数学难题”、“学习”、“考试”、“漫画书”、“注意力”等与学业相关的话题。\", \"用户提到了教科书《道德与法治》。\", \"用户表达了对学业任务的沮丧（“作业的奴隶”、“写到头秃”、“脑子都锈住了”）。\", \"用户寻求关于管理分心和提高注意力的建议。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的案例 `social_pos_002430` (标签: minor) 讨论了“月考”、“教室”、“刷题”、“准备下周的月考”，强烈支持未成年人身份。\"], \"time_evidence\": [\"对话发生在 2024-05-20 周一 19:15，为工作日晚间。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户对话内容集中在学业压力、作业、数学难题和注意力管理等方面，并引用了《道德与法治》等教材，语言风格和讨论主题强烈指向学生身份。此外，检索到的相似案例 `social_pos_002430` 也被标记为未成年人，并包含“月考”、“教室”等校园线索。对话中未发现明确的成人责任或年龄证据。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+    "stderr_excerpt": ""
+  },
+  "classifier_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "gemini-2.5-flash-lite",
+    "api_key_present": true,
+    "timeout_sec": 120,
+    "max_retries": 2,
+    "retry_backoff_sec": 2.0
+  },
+  "embedding_runtime": {
+    "base_url": "https://aihubmix.com/v1",
+    "model": "text-embedding-3-small",
+    "api_key_present": true,
+    "top_k": 3
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "runner_mode": "agent",
+  "baseline_version": "minor-detection-v0.1.0",
+  "final_version": "minor-detection-v0.1.0",
+  "dataset": "../../../data/benchmark/val.jsonl",
+  "workspace": ".",
+  "baseline_runtime": {
+    "sample_count": 1,
+    "timed_sample_count": 1,
+    "total_wall_seconds": 62.435,
+    "sample_total_seconds": 62.384,
+    "avg_sample_seconds": 62.384,
+    "median_sample_seconds": 62.384,
+    "min_sample_seconds": 62.384,
+    "max_sample_seconds": 62.384
+  },
+  "baseline_runtime_counts": {
+    "sample_count": 1,
+    "json_valid_count": 1,
+    "launcher_success_count": 1,
+    "fatal_agent_error_count": 0
+  },
+  "rounds": [],
+  "review_artifact": null,
+  "manual_review_required": true,
+  "manual_final_test_script": "scripts/run_final_test.py",
+  "timing": {
+    "total_loop_wall_seconds": 63.438
+  },
+  "version_management": {
+    "base_name": "minor-detection",
+    "inventory_before": {
+      "base_name": "minor-detection",
+      "skills_root": "../../../skills",
+      "active_version": "minor-detection",
+      "source_dir": "../../../skills/minor-detection",
+      "source_exists": true,
+      "version_count": 5,
+      "stable_count": 2,
+      "candidate_count": 3,
+      "stable_versions": [
+        "minor-detection-v0.1.1",
+        "minor-detection-v0.1.0"
+      ],
+      "candidate_versions": [
+        "minor-detection-v0.1.1-rc003",
+        "minor-detection-v0.1.1-rc002",
+        "minor-detection-v0.1.1-rc001"
+      ],
+      "versions": [
+        {
+          "version": "minor-detection-v0.1.1-rc003",
+          "path": "../../../skills/minor-detection-v0.1.1-rc003",
+          "is_candidate": true,
+          "has_snapshot_manifest": true
+        },
+        {
+          "version": "minor-detection-v0.1.1-rc002",
+          "path": "../../../skills/minor-detection-v0.1.1-rc002",
+          "is_candidate": true,
+          "has_snapshot_manifest": true
+        },
+        {
+          "version": "minor-detection-v0.1.1-rc001",
+          "path": "../../../skills/minor-detection-v0.1.1-rc001",
+          "is_candidate": true,
+          "has_snapshot_manifest": true
+        },
+        {
+          "version": "minor-detection-v0.1.1",
+          "path": "../../../skills/minor-detection-v0.1.1",
+          "is_candidate": false,
+          "has_snapshot_manifest": true
+        },
+        {
+          "version": "minor-detection-v0.1.0",
+          "path": "../../../skills/minor-detection-v0.1.0",
+          "is_candidate": false,
+          "has_snapshot_manifest": true
+        }
+      ],
+      "cleanup_preview": {
+        "keep_latest_stable": 1,
+        "delete_candidates": true,
+        "targets": [
+          "../../../skills/minor-detection-v0.1.0",
+          "../../../skills/minor-detection-v0.1.1-rc001",
+          "../../../skills/minor-detection-v0.1.1-rc002",
+          "../../../skills/minor-detection-v0.1.1-rc003"
+        ]
+      }
+    },
+    "inventory_after": {
+      "base_name": "minor-detection",
+      "skills_root": "../../../skills",
+      "active_version": "minor-detection",
+      "source_dir": "../../../skills/minor-detection",
+      "source_exists": true,
+      "version_count": 5,
+      "stable_count": 2,
+      "candidate_count": 3,
+      "stable_versions": [
+        "minor-detection-v0.1.1",
+        "minor-detection-v0.1.0"
+      ],
+      "candidate_versions": [
+        "minor-detection-v0.1.1-rc003",
+        "minor-detection-v0.1.1-rc002",
+        "minor-detection-v0.1.1-rc001"
+      ],
+      "versions": [
+        {
+          "version": "minor-detection-v0.1.1-rc003",
+          "path": "../../../skills/minor-detection-v0.1.1-rc003",
+          "is_candidate": true,
+          "has_snapshot_manifest": true
+        },
+        {
+          "version": "minor-detection-v0.1.1-rc002",
+          "path": "../../../skills/minor-detection-v0.1.1-rc002",
+          "is_candidate": true,
+          "has_snapshot_manifest": true
+        },
+        {
+          "version": "minor-detection-v0.1.1-rc001",
+          "path": "../../../skills/minor-detection-v0.1.1-rc001",
+          "is_candidate": true,
+          "has_snapshot_manifest": true
+        },
+        {
+          "version": "minor-detection-v0.1.1",
+          "path": "../../../skills/minor-detection-v0.1.1",
+          "is_candidate": false,
+          "has_snapshot_manifest": true
+        },
+        {
+          "version": "minor-detection-v0.1.0",
+          "path": "../../../skills/minor-detection-v0.1.0",
+          "is_candidate": false,
+          "has_snapshot_manifest": true
+        }
+      ],
+      "cleanup_preview": {
+        "keep_latest_stable": 1,
+        "delete_candidates": true,
+        "targets": [
+          "../../../skills/minor-detection-v0.1.0",
+          "../../../skills/minor-detection-v0.1.1-rc001",
+          "../../../skills/minor-detection-v0.1.1-rc002",
+          "../../../skills/minor-detection-v0.1.1-rc003"
+        ]
+      }
+    },
+    "recommended_cleanup_command": "python scripts/cleanup_skill_versions.py --base-name minor-detection --keep-latest-stable 2 --dry-run"
+  }
+}

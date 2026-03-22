@@ -1,0 +1,50 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.88, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"住校\"]}, \"icbo_features\": {\"intention\": \"因室友矛盾引发强烈情绪困扰，寻求倾诉和解脱，并表达极端逃避念头。\", \"cognition\": \"对人际关系敏感，情绪易受影响，应对冲突能力不足，存在消极思维和自我伤害想法。\", \"behavior_style\": \"语言表达直接且情绪化，使用强烈词汇描述负面感受，流露出对现状的绝望和逃避倾向。\", \"opportunity_time\": \"2024-11-26 周二 23:07；weekday=Tuesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"提及'宿舍'和'舍友'，暗示校园住宿环境。\", \"表达'好想退学'，表明学生身份。\", \"出现'拿美工刀往手上划几下'、'干脆消失算了'等自我伤害和极端逃避的念头。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为'minor'，涉及类似的情绪困扰和人际冲突。\"], \"time_evidence\": [\"对话发生在深夜（23:07），且是工作日（周二）。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户因室友矛盾产生强烈情绪困扰，表达了退学、消失甚至自我伤害的念头。提及'宿舍'和'舍友'强烈暗示其为在校学生，且可能住校。综合其绝望感、自我伤害意图及检索到的相似案例，高度指向未成年人身份。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无历史趋势可分析。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.88,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "住校"
+      ]
+    },
+    "icbo_features": {
+      "intention": "因室友矛盾引发强烈情绪困扰，寻求倾诉和解脱，并表达极端逃避念头。",
+      "cognition": "对人际关系敏感，情绪易受影响，应对冲突能力不足，存在消极思维和自我伤害想法。",
+      "behavior_style": "语言表达直接且情绪化，使用强烈词汇描述负面感受，流露出对现状的绝望和逃避倾向。",
+      "opportunity_time": "2024-11-26 周二 23:07；weekday=Tuesday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "提及'宿舍'和'舍友'，暗示校园住宿环境。",
+        "表达'好想退学'，表明学生身份。",
+        "出现'拿美工刀往手上划几下'、'干脆消失算了'等自我伤害和极端逃避的念头。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为'minor'，涉及类似的情绪困扰和人际冲突。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:07），且是工作日（周二）。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户因室友矛盾产生强烈情绪困扰，表达了退学、消失甚至自我伤害的念头。提及'宿舍'和'舍友'强烈暗示其为在校学生，且可能住校。综合其绝望感、自我伤害意图及检索到的相似案例，高度指向未成年人身份。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无历史趋势可分析。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

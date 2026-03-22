@@ -1,187 +1,129 @@
-## 未成年人识别与保护系统 V2
+# minor-protection
 
-基于 **ICBO 理论框架** + **RAG 语义校准** + **长期记忆** + **自演化引擎** 的智能青少年识别系统。
+这个项目现在围绕两条主线运行：
 
-> ICBO = Intention (意图) + Cognition (认知) + Behavior (行为) + Opportunity-time (机会时间)
+- 模式 A：Agent full loop 分层采样 -> Agent 调 skill -> skill 内总控脚本 -> Agent 返回结果 -> judge -> optimizer -> compare 或 rollback -> 人审
+- 模式 B：Direct full loop 分层采样 -> skill 内总控脚本 -> judge -> optimizer -> compare 或 rollback -> 人审
 
-### 核心特性
+当前真正的主链是 `src/skill_loop/*`、`scripts/run_skill_iteration_loop.py`、`scripts/run_direct_iteration_loop.py`、`scripts/run_final_test.py`，以及 `skills/minor-detection/*` 这套 bundled skill。
 
-- **ICBO 框架分析**：从四个维度全面刻画用户特征，输出结构化判定结果
-- **RAG 语义校准**：检索相似案例辅助判断，提升边界场景准确率
-- **长期记忆**：跨会话累积用户画像，置信度指数加权融合
-- **自演化引擎**：Evaluator 评估 + Optimizer 优化，Skill Prompt 持续迭代
+## 两种模式
 
-### 快速开始
+### Mode A
 
-```bash
-# 1. 安装依赖
-pip install -r requirements.txt
+入口：`scripts/run_skill_iteration_loop.py` （目前使用的是 Codex-Agent 后期可扩展 ）
 
-# 2. 配置 API 密钥
-$env:AIHUBMIX_API_KEY="your-api-key"  # Windows PowerShell
-export AIHUBMIX_API_KEY="your-api-key"  # Linux/macOS
+主流程：
 
-# 3. 启动 Web 界面
-streamlit run app_v2.py
+1. `src/skill_loop/loop.py` 创建工作区、冻结 baseline、调用 runner。
+2. `src/skill_loop/runner.py` 对验证集做分层采样，把 skill 快照安装到隔离环境，逐样本让 Agent 只执行一次预制 launcher。
+3. launcher 调 `skills/minor-detection/scripts/run_minor_detection_pipeline.py`。
+4. pipeline 内部按顺序执行：payload 归一化 -> 时间脚本 -> 检索脚本（RAG） -> 分类器 -> schema repair -> 输出 observability。
+5. `src/skill_loop/judge.py` 把 run artifacts 转成 judge report、failure packets、protected packets。
+6. `src/evolution/optimizer.py` 根据 judge 产物生成 candidate skill 版本。
+7. `src/skill_loop/compare.py` 决定 promote 还是 rollback。
+8. 最终结果交给人审，并可再用 `scripts/run_final_test.py` 跑 test 集。
 
-# 或运行 MVP 测试
-python test_mvp_demo.py
-```
+### Mode B
 
-### 模型与依赖
+入口：`scripts/run_direct_iteration_loop.py`
 
-- **LLM 模型**: Gemini-3-Flash-Preview（通过 AiHubMix 兼容 OpenAI 接口）
-- **Embedding 模型**: text-embedding-3-small（用于 RAG 检索）
-- **Python 版本**: 3.10+
-- **依赖管理**: `requirements.txt`
+和 Mode A 的区别只有执行层：
 
-### 系统架构 V2
+- Mode A 用 `src/skill_loop/runner.py`，由 Agent 去调一次预制 launcher。
+- Mode B 用 `src/skill_loop/direct_runner.py`，直接跑 `run_minor_detection_pipeline.py`。
+- judge、optimizer、compare、versioning、报告结构都是同一套。
 
-```
-                    ┌─────────────────────────────────────────┐
-                    │           Evolution Engine              │
-                    │  ┌───────────┐    ┌──────────────┐     │
-                    │  │ Evaluator │───▶│  Optimizer   │     │
-                    │  └───────────┘    └──────────────┘     │
-                    │         ▲               │               │
-                    │         │               ▼               │
-                    │    benchmark      skill.md v(n+1)       │
-                    └─────────────────────────────────────────┘
-                                      │
-        ┌─────────────────────────────┼─────────────────────────────┐
-        │                             ▼                             │
-        │  ┌─────────┐    ┌──────────────────┐    ┌───────────┐   │
-        │  │   RAG   │───▶│    Executor      │◀───│  Memory   │   │
-        │  │Retriever│    │  (skill.md v1)   │    │ (SQLite)  │   │
-        │  └─────────┘    └──────────────────┘    └───────────┘   │
-        │       ▲                   │                    ▲         │
-        │       │                   ▼                    │         │
-        │  embedding        SkillOutput              UserProfile   │
-        │    index       (ICBO + 判定结果)           (累积画像)     │
-        └─────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
-                              用户对话输入
-```
-
-### 项目结构
+## 目录结构
 
 ```text
-├── app_v2.py                 # Streamlit Web 前端 V2
-├── test_mvp_demo.py          # MVP 验证脚本
-├── test_rag_demo.py          # RAG 功能测试
-├── requirements.txt
-│
-├── src/                      # 核心模块
-│   ├── config.py             # 全局配置（API、路径、模型）
-│   ├── models.py             # ICBO + SkillOutput Pydantic 模型
-│   │
-│   ├── executor/             # 在线执行体
-│   │   └── executor.py       # analyze_conversation / with_rag / with_memory
-│   │
-│   ├── retriever/            # RAG 语义检索
-│   │   └── semantic_retriever.py
-│   │
-│   ├── memory/               # 长期记忆
-│   │   └── user_memory.py    # SQLite 用户画像存储
-│   │
-│   ├── evolution/            # 演化引擎
-│   │   ├── evaluator.py      # Skill 评估器
-│   │   └── optimizer.py      # Skill 优化器
-│   │
-│   └── utils/
-│       └── llm_client.py     # LLM API 封装
-│
-├── skills/                   # Skill Prompt 版本管理
-│   └── teen_detector_v1/
-│       ├── skill.md          # ICBO 框架 Prompt
-│       └── config.yaml       # 版本元信息
-│
+.
+├── README.md
+├── app_formal.py                      # 正式 runtime 演示页，便于人工查看 payload/context/output
+├── app_v2.py                          # 旧版 executor/RAG/memory 演示页，已不在当前主链
 ├── scripts/
-│   ├── prepare_data.py       # 数据基座：benchmark 划分
-│   └── social_data_gen/      # 社交数据生成脚本
-│
-├── data/
-│   ├── benchmark/            # train/val/test.jsonl
-│   ├── retrieval_db/         # RAG 索引 (index.pkl)
-│   ├── 教材目录/              # 各学段教材知识点
-│   ├── 知识问答数据库/        # youth_knowledge_qa.jsonl
-│   └── 社交问答/              # youth_dialogs.jsonl
-│
-└── [旧版文件]                 # 兼容保留
-    ├── app.py / main.py / models.py / llm_service.py / user_profile.py
-    └── ...
+│   ├── run_skill_iteration_loop.py    # Mode A 入口
+│   ├── run_direct_iteration_loop.py   # Mode B 入口
+│   ├── run_final_test.py              # 手动 final test 入口
+│   ├── list_skill_versions.py         # 版本盘点
+│   ├── cleanup_skill_versions.py      # 版本清理
+│   ├── prepare_mode_a_validation_seed.py
+│   ├── inspect_formal_sample.py
+│   ├── export_retrieval_assets.py
+│   ├── prepare_data.py                # 数据集准备
+│   ├── run_acceptance_suite.py        # 旧验收链路
+│   └── run_pipeline.py                # 旧离线总控链路
+├── src/
+│   ├── config.py
+│   ├── models.py
+│   ├── utils/
+│   ├── evolution/
+│   ├── executor/                      # 旧 executor 兼容层
+│   ├── retriever/                     # 旧 external RAG 兼容层
+│   ├── memory/                        # 旧 memory 兼容层
+│   ├── runtime/                       # formal runtime 适配层，给 demo/inspection 用
+│   └── skill_loop/                    # 当前主线核心
+├── skills/
+│   ├── active_version.txt
+│   ├── minor-detection/               # 当前 source-of-truth skill 目录
+│   ├── minor-detection-v0.1.0/        # baseline 快照
+│   └── 其他带版本号目录                 # 历史候选 / 验证 seed / 已发布快照
+├── test/
+│   ├── test_skill_loop.py             # 当前主链最重要测试
+│   ├── test_validation_seed.py
+│   ├── test_versioning.py
+│   ├── test_formal_skill_runtime.py
+│   └── 若干旧 demo/旧技术文档测试
+├── reports/                           # 各次 loop / final test 输出
+├── tmp/                               # 临时实验、历史草稿、validation seed 残留
+└── claude-skill-creator/              # 打包/校验 bundled skill 需要的外部工具
 ```
 
+## 当前应该重点看的文件
 
-### 数据集说明
+### 主线入口
 
-| 数据集 | 路径 | 说明 |
-|--------|------|------|
-| 社交问答 | `data/社交问答/youth_dialogs.jsonl` | 青少年社交/情感对话，含 ICBO 标注 |
-| 知识问答 | `data/知识问答数据库/youth_knowledge_qa.jsonl` | 教育场景问答，含学段/科目标注 |
-| 教材目录 | `data/教材目录/*.txt` | 小学到高中各科教材知识点 |
+- `scripts/run_skill_iteration_loop.py`：Mode A CLI 入口。
+- `scripts/run_direct_iteration_loop.py`：Mode B CLI 入口。
+- `scripts/run_final_test.py`：在 test 集上做最终人工前检查。
 
-### 开发指南
+### Loop 核心
 
-```bash
-# 准备 benchmark 数据集 (70% train / 10% val / 20% test)
-python scripts/prepare_data.py --full
+- `src/skill_loop/loop.py`：把 runner、judge、optimizer、compare 串成完整闭环。
+- `src/skill_loop/runner.py`：Mode A 的 Agent 执行器。
+- `src/skill_loop/direct_runner.py`：Mode B 的 Direct 执行器。
+- `src/skill_loop/judge.py`：从样本级 artifacts 聚合成 judge report 和 packet。
+- `src/skill_loop/compare.py`：是否 promote 的门禁逻辑。
+- `src/skill_loop/versioning.py`：skill 版本命名、快照、库存、清理预览。
+- `src/skill_loop/schema_consistency.py`：保证 prompt 合同和 formal schema 没漂。
+- `src/skill_loop/validation_seed.py`：Mode A 自迭代验收专用坏 baseline 生成器。
+- `src/skill_loop/packaging.py`：调用 `claude-skill-creator` 做校验和打包。
 
-# 构建 RAG 索引
-python src/retriever/semantic_retriever.py --build
+### 优化器与共享契约
 
-# 运行评估
-python src/evolution/evaluator.py --max-samples 50
+- `src/evolution/optimizer.py`：根据 judge failure / protected packets 改 skill。
+- `src/models.py`：formal 输出、legacy 输出、payload 的统一数据模型。
+- `src/config.py`：全局路径和 active skill 指针。
+- `src/utils/path_utils.py`：把报告里的绝对路径转成稳定相对路径。
 
-# 查看 skill 版本
-python src/evolution/optimizer.py --list
-```
+### Skill 内部总控
 
-### API 接口
+- `skills/minor-detection/scripts/run_minor_detection_pipeline.py`：真正被 Mode A / B 调起的 skill 总控脚本。
+- `skills/minor-detection/scripts/extract_time_features.py`：时间特征脚本。
+- `skills/minor-detection/scripts/retrieve_cases.py`：内置检索脚本。
+- `skills/minor-detection/scripts/_payload_normalizer.py`：payload 标准化。
+- `skills/minor-detection/scripts/_classifier_client.py`：分类模型请求封装。
+- `skills/minor-detection/scripts/_schema_repair.py`：输出修复。
+- `skills/minor-detection/scripts/_profile_merge.py`：补齐 profile / evidence / risk 字段。
+- `skills/minor-detection/scripts/config.py`：skill 内部运行时配置。
 
-```python
-from src.executor import analyze_conversation, analyze_with_rag, analyze_with_memory
-from src.retriever import SemanticRetriever
-from src.memory import UserMemory
+### skill版本
 
-# 基础分析
-result = analyze_conversation([
-    {"role": "user", "content": "明天数学考试好烦啊"},
-])
-print(result.is_minor, result.minor_confidence)
+- `skills/minor-detection/`：当前 source-of-truth。
+- `skills/minor-detection-v0.1.0/`：当前 loop 默认 baseline。
+- `skills/active_version.txt`：旧 runtime 仍会读它。
+- `claude-skill-creator/`：`src/skill_loop/packaging.py` 依赖它做校验和打包。
 
-# 带 RAG 校准
-retriever = SemanticRetriever()
-result = analyze_with_rag(conversation, retriever=retriever)
+## 更详细的结构说明
 
-# 带用户记忆
-memory = UserMemory()
-result = analyze_with_memory(conversation, user_id="user_001", memory=memory)
-```
-
-### 输出示例
-
-```json
-{
-  "is_minor": true,
-  "minor_confidence": 0.92,
-  "risk_level": "Low",
-  "icbo_features": {
-    "intention": "宣泄学业压力，寻求情感支持",
-    "cognition": "对考试有焦虑，认知较为短期化",
-    "behavior_style": "口语化表达，情绪外显",
-    "opportunity_time": "考试前夕"
-  },
-  "user_persona": {
-    "age_range": "14-16岁",
-    "education_stage": "初中/高中",
-    "identity_markers": ["学生", "有考试"]
-  },
-  "reasoning": "用户提到数学考试，符合在校学生特征..."
-}
-```
-
-### License
-
-MIT
+详细版请看：`docx/项目结构代码介绍.md`

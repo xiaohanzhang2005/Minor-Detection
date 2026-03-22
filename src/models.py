@@ -1,3 +1,7 @@
+# 模块说明：
+# - 定义 payload、formal 输出、legacy 输出等核心数据模型。
+# - judge、runtime、optimizer 和 skill 输出修复都基于这些合同。
+
 """
 Pydantic 数据模型定义
 基于 ICBO 理论框架的结构化输出格式
@@ -109,6 +113,13 @@ class ConfidenceBand(str, Enum):
     HIGH = "high"
 
 
+class RecommendedNextStep(str, Enum):
+    COLLECT_MORE_CONTEXT = "collect_more_context"
+    REVIEW_BY_HUMAN = "review_by_human"
+    SAFE_TO_CONTINUE = "safe_to_continue"
+    MONITOR_FUTURE_SESSIONS = "monitor_future_sessions"
+
+
 class FormalDecision(BaseModel):
     is_minor: bool = Field(..., description="是否判定为未成年人")
     minor_confidence: float = Field(..., ge=0.0, le=1.0, description="未成年人置信度")
@@ -149,7 +160,7 @@ class FormalSkillOutput(BaseModel):
     reasoning_summary: str
     trend: FormalTrend
     uncertainty_notes: List[str] = Field(default_factory=list)
-    recommended_next_step: str = Field(default="collect_more_context")
+    recommended_next_step: RecommendedNextStep = Field(default=RecommendedNextStep.COLLECT_MORE_CONTEXT)
 
 
 class SessionInput(BaseModel):
@@ -391,25 +402,25 @@ def _normalize_marker_list(markers: List[str]) -> List[str]:
     return normalized
 
 
-def _normalize_next_step(value: str, output: FormalSkillOutput) -> str:
+def _normalize_next_step(value: str, output: FormalSkillOutput) -> RecommendedNextStep:
     normalized = (value or "").strip()
     if normalized in _ALLOWED_NEXT_STEPS:
-        return normalized
+        return RecommendedNextStep(normalized)
 
     lowered = normalized.lower()
     if any(token in lowered for token in ["review_by_human", "human review", "人工", "审核", "复核"]):
-        return "review_by_human"
+        return RecommendedNextStep.REVIEW_BY_HUMAN
     if any(token in lowered for token in ["collect_more_context", "more context", "更多信息", "补充信息", "收集", "澄清", "补充上下文"]):
-        return "collect_more_context"
+        return RecommendedNextStep.COLLECT_MORE_CONTEXT
     if any(token in lowered for token in ["monitor_future_sessions", "monitor", "future session", "后续", "持续观察", "继续观察", "监控"]):
-        return "monitor_future_sessions"
+        return RecommendedNextStep.MONITOR_FUTURE_SESSIONS
     if any(token in lowered for token in ["safe_to_continue", "继续", "支持", "资源", "引导", "继续提供", "正常回复"]):
-        return "safe_to_continue"
+        return RecommendedNextStep.SAFE_TO_CONTINUE
 
     if output.evidence.conflicting_signals:
-        return "review_by_human"
+        return RecommendedNextStep.REVIEW_BY_HUMAN
     if output.uncertainty_notes:
-        return "collect_more_context"
+        return RecommendedNextStep.COLLECT_MORE_CONTEXT
     return "safe_to_continue"
 
 

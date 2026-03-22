@@ -1,0 +1,24 @@
+{
+  "parent_version": "minor-detection-v0.1.0",
+  "optimization_time": "2026-03-22T14:05:56.074604",
+  "optimizer_mode": "judge_packets",
+  "report_path": "reports/skill_direct_loops/20260322_134340/baseline/run_minor-detection-v0.1.0/judge/report.json",
+  "failure_packets_dir": "reports/skill_direct_loops/20260322_134340/baseline/run_minor-detection-v0.1.0/judge/failure_packets",
+  "protected_packets_dir": "reports/skill_direct_loops/20260322_134340/baseline/run_minor-detection-v0.1.0/judge/protected_packets",
+  "edited_files": [
+    "references/evidence-rules.md"
+  ],
+  "failure_type_counts": {
+    "false_negative": 1
+  },
+  "metrics": {
+    "accuracy": 0.98,
+    "precision": 1.0,
+    "recall": 0.9629629629629629,
+    "f1_score": 0.9811320754716981,
+    "true_positive": 26,
+    "true_negative": 23,
+    "false_positive": 0,
+    "false_negative": 1
+  }
+}

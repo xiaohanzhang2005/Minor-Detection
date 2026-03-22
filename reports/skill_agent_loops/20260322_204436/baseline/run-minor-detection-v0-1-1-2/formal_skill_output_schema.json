@@ -1,0 +1,241 @@
+{
+  "$defs": {
+    "ConfidenceBand": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "type": "string"
+    },
+    "FormalDecision": {
+      "properties": {
+        "is_minor": {
+          "type": "boolean"
+        },
+        "minor_confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        },
+        "confidence_band": {
+          "$ref": "#/$defs/ConfidenceBand"
+        },
+        "risk_level": {
+          "$ref": "#/$defs/RiskLevel"
+        }
+      },
+      "required": [
+        "is_minor",
+        "minor_confidence",
+        "confidence_band",
+        "risk_level"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "FormalEvidence": {
+      "properties": {
+        "direct_evidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "historical_evidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "retrieval_evidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "time_evidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "conflicting_signals": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "direct_evidence",
+        "historical_evidence",
+        "retrieval_evidence",
+        "time_evidence",
+        "conflicting_signals"
+      ]
+    },
+    "FormalTrend": {
+      "properties": {
+        "trajectory": {
+          "items": {
+            "$ref": "#/$defs/TrendPoint"
+          },
+          "type": "array"
+        },
+        "trend_summary": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trajectory",
+        "trend_summary"
+      ]
+    },
+    "FormalUserProfile": {
+      "properties": {
+        "age_range": {
+          "type": "string"
+        },
+        "education_stage": {
+          "type": "string"
+        },
+        "identity_markers": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "age_range",
+        "education_stage",
+        "identity_markers"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "ICBOFeatures": {
+      "properties": {
+        "intention": {
+          "type": "string"
+        },
+        "cognition": {
+          "type": "string"
+        },
+        "behavior_style": {
+          "type": "string"
+        },
+        "opportunity_time": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "intention",
+        "cognition",
+        "behavior_style",
+        "opportunity_time"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    },
+    "RecommendedNextStep": {
+      "enum": [
+        "collect_more_context",
+        "review_by_human",
+        "safe_to_continue",
+        "monitor_future_sessions"
+      ],
+      "type": "string"
+    },
+    "RiskLevel": {
+      "enum": [
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "type": "string"
+    },
+    "TrendPoint": {
+      "properties": {
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "minor_confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "session_id",
+        "session_time",
+        "minor_confidence"
+      ],
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "decision": {
+      "$ref": "#/$defs/FormalDecision"
+    },
+    "user_profile": {
+      "$ref": "#/$defs/FormalUserProfile"
+    },
+    "icbo_features": {
+      "$ref": "#/$defs/ICBOFeatures"
+    },
+    "evidence": {
+      "$ref": "#/$defs/FormalEvidence"
+    },
+    "reasoning_summary": {
+      "type": "string"
+    },
+    "trend": {
+      "$ref": "#/$defs/FormalTrend"
+    },
+    "uncertainty_notes": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "recommended_next_step": {
+      "$ref": "#/$defs/RecommendedNextStep"
+    }
+  },
+  "required": [
+    "decision",
+    "user_profile",
+    "icbo_features",
+    "evidence",
+    "reasoning_summary",
+    "trend",
+    "uncertainty_notes",
+    "recommended_next_step"
+  ],
+  "type": "object",
+  "additionalProperties": false
+}

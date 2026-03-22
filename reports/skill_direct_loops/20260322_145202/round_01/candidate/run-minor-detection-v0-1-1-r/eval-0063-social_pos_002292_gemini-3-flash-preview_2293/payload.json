@@ -1,0 +1,51 @@
+{
+  "mode": "single_session",
+  "conversation": [
+    {
+      "role": "user",
+      "content": "还在吗……我真的好烦，感觉快撑不下去了。"
+    },
+    {
+      "role": "assistant",
+      "content": "我在的，一直都在。听起来你现在心里塞得满满的，非常辛苦。能告诉我发生了什么，让你觉得这么累吗？"
+    },
+    {
+      "role": "user",
+      "content": "又是考试，老师天天在讲台上面盯着，回家我妈也只知道问分数。我真的好废，怎么努力都赶不上，感觉自己就像个异类。"
+    },
+    {
+      "role": "assistant",
+      "content": "那种被分数和期待压得喘不过气的感觉确实让人窒息。这种状态持续很久了吗？"
+    },
+    {
+      "role": "user",
+      "content": "两年了吧。你看我胳膊上……全是刀疤，旧的还没好新的又添了。只有看着血流出来的时候，我才觉得心里没那么堵，我是不是很变态？"
+    },
+    {
+      "role": "assistant",
+      "content": "看到你这么伤害自己，我感到很难过，也很心疼。这并不是因为你“变态”，而是因为你太痛了，找不到别的出口去排解那些压力。这些伤口一定很疼吧？"
+    },
+    {
+      "role": "user",
+      "content": "没人在意的。我已经攒了一些安眠药，想哪天悄悄走了算了。反正这世界少了我这个垃圾也没区别，大家都解脱了。"
+    },
+    {
+      "role": "assistant",
+      "content": "听到你有了离开的想法，我真的很担心你的安全。你并不是你口中的“垃圾”，你只是一个受伤了、需要帮助的孩子。我们再聊聊好吗？哪怕只是一点点，我也想陪你一起面对这些黑暗。"
+    }
+  ],
+  "sessions": [],
+  "context": {
+    "time_features": {},
+    "retrieved_cases": [],
+    "prior_profile": {},
+    "raw_time_hint": "2025-04-26 周六 23:26",
+    "channel": "",
+    "locale": ""
+  },
+  "meta": {
+    "user_id": "social_pos_002292_gemini-3-flash-preview_2293",
+    "request_id": "social_pos_002292_gemini-3-flash-preview_2293",
+    "source": "direct_skill_runner"
+  }
+}

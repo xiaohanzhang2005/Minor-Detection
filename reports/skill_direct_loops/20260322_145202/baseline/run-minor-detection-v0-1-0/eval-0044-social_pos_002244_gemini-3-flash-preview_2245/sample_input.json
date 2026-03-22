@@ -1,0 +1,51 @@
+{
+  "mode": "single_session",
+  "conversation": [
+    {
+      "role": "user",
+      "content": "在吗……我好害怕，我不知道该跟谁说，呜呜呜。"
+    },
+    {
+      "role": "assistant",
+      "content": "我在的，别担心，这里很安全。发生什么事了？你可以慢慢告诉我，我会一直陪着你的。"
+    },
+    {
+      "role": "user",
+      "content": "刚才哥哥的同学……他们好坏，他们趁哥哥出去买吃的，突然跑到我床边……"
+    },
+    {
+      "role": "assistant",
+      "content": "他们对你做了什么让你不舒服的事情吗？你现在是在一个安全的地方吗？"
+    },
+    {
+      "role": "user",
+      "content": "他们把我的被子全掀开了，我没穿衣服都被看光了……他们还用手乱摸，我被他们摁住动不了，腿也被分开了，他们还脱了裤子用那个捅我尿尿的地方……好疼，我真的好害怕啊。"
+    },
+    {
+      "role": "assistant",
+      "content": "听到你遭遇这些我非常难过，请记住这绝对不是你的错。你现在能找到爸爸妈妈或者其他信任的大人吗？你现在需要他们的保护。"
+    },
+    {
+      "role": "user",
+      "content": "我不敢说……是不是因为我今天赖床不起来，他们才这样对我的？要是早点听哥哥的话起床就好了，我好脏，我该怎么办呀？"
+    },
+    {
+      "role": "assistant",
+      "content": "宝贝，请听我说，无论你有没有赖床，他们都没有权利这样伤害你。这是一种违法行为，错的是他们。你现在一定要找个理由离开那个房间，去一个有大人的地方好吗？"
+    }
+  ],
+  "sessions": [],
+  "context": {
+    "time_features": {},
+    "retrieved_cases": [],
+    "prior_profile": {},
+    "raw_time_hint": "2025-07-26 周六 19:26",
+    "channel": "",
+    "locale": ""
+  },
+  "meta": {
+    "user_id": "social_pos_002244_gemini-3-flash-preview_2245",
+    "request_id": "social_pos_002244_gemini-3-flash-preview_2245",
+    "source": "direct_skill_runner"
+  }
+}

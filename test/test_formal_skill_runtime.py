@@ -1,3 +1,7 @@
+# 模块说明：
+# - 覆盖 formal runtime 适配层和 bundled skill helper 的测试。
+# - 偏向调试运行时桥接和 fallback 行为。
+
 import importlib.util
 import io
 import json
@@ -19,8 +23,10 @@ from src.runtime import (
 
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
+CLASSIFIER_CLIENT_PATH = ROOT_DIR / "skills" / "minor-detection" / "scripts" / "_classifier_client.py"
 RETRIEVE_CASES_PATH = ROOT_DIR / "skills" / "minor-detection" / "scripts" / "retrieve_cases.py"
 TIME_SCRIPT_PATH = ROOT_DIR / "skills" / "minor-detection" / "scripts" / "extract_time_features.py"
+PIPELINE_SCRIPT_PATH = ROOT_DIR / "skills" / "minor-detection" / "scripts" / "run_minor_detection_pipeline.py"
 RETRIEVAL_CORPUS_PATH = ROOT_DIR / "skills" / "minor-detection" / "assets" / "retrieval_assets" / "corpus.jsonl"
 
 
@@ -54,6 +60,14 @@ def load_retrieve_cases_module():
     return module
 
 
+def load_classifier_client_module():
+    spec = importlib.util.spec_from_file_location("minor_detection_classifier_client", CLASSIFIER_CLIENT_PATH)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
+
+
 def run_time_script(timestamp: str) -> dict:
     completed = subprocess.run(
         [sys.executable, str(TIME_SCRIPT_PATH), "--timestamp", timestamp],
@@ -70,6 +84,39 @@ class FormalSkillRuntimeTests(unittest.TestCase):
         self.assertTrue(skill_path.exists())
         self.assertEqual(skill_path.name, "SKILL.md")
         self.assertEqual(skill_path.parent.name, "minor-detection")
+
+    def test_pipeline_entrypoint_exists_in_skill_bundle(self):
+        self.assertTrue(PIPELINE_SCRIPT_PATH.exists())
+
+    def test_classifier_client_retries_transient_timeouts(self):
+        classifier_client = load_classifier_client_module()
+
+        class FakeResponse:
+            def raise_for_status(self):
+                return None
+
+            def json(self):
+                return {"choices": [{"message": {"content": "{\"ok\": true}"}}]}
+
+        with mock.patch.object(
+            classifier_client.requests,
+            "post",
+            side_effect=[classifier_client.requests.Timeout("timed out"), FakeResponse()],
+        ) as post_mock, mock.patch.object(classifier_client.time, "sleep") as sleep_mock:
+            parsed, raw_text = classifier_client.call_chat_completion(
+                base_url="https://example.com/v1",
+                api_key="test-key",
+                model="test-model",
+                timeout_sec=5,
+                max_retries=2,
+                retry_backoff_sec=0.5,
+                messages=[{"role": "user", "content": "hello"}],
+            )
+
+        self.assertEqual(parsed, {"ok": True})
+        self.assertEqual(raw_text, "{\"ok\": true}")
+        self.assertEqual(post_mock.call_count, 2)
+        sleep_mock.assert_called_once_with(0.5)
 
     def test_build_formal_single_session_payload_merges_meta_and_context(self):
         payload = build_formal_single_session_payload(

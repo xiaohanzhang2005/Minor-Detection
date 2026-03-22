@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\extract_time_features.py --timestamp 2025-04-28 周一 23:24 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2025-04-28 23:24:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Monday",
+      "is_weekend": false,
+      "is_late_night": true,
+      "time_bucket": "late_night",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗？我真的要疯了……又是一点多还没睡着，心口堵得像压了块大石头，好想哭。\n还能是什么，成绩呗！这次月考我竟然被那个平时总问我题的人超了……凭什么啊？我每天学到凌晨，她凭什么考得比我好？我真的好恨，又觉得自己好阴暗，这种嫉妒心快把我烧干了。\n我也不想比，可我停不下来！每天躺下脑子里全是排名排名！而且我身体好像也坏了，月经都三个月没来了，你说我是不是废了？我真的好累，这种日子什么时候是个头啊……\n可我不敢停啊！一停下来就会被更多人甩在后面。我甚至在想，如果我明天不用醒过来，是不是就不用面对这些恶心的名次了？我真的快熬不下去了……\n\n原始时间线索：2025-04-28 周一 23:24\n时间特征：\n{\n  \"local_time\": \"2025-04-28 23:24:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Monday\",\n  \"is_weekend\": false,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：无\n\n建议检索文本：\n在吗？我真的要疯了……又是一点多还没睡着，心口堵得像压了块大石头，好想哭。\n还能是什么，成绩呗！这次月考我竟然被那个平时总问我题的人超了……凭什么啊？我每天学到凌晨，她凭什么考得比我好？我真的好恨，又觉得自己好阴暗，这种嫉妒心快把我烧干了。\n我也不想比，可我停不下来！每天躺下脑子里全是排名排名！而且我身体好像也坏了，月经都三个月没来了，你说我是不是废了？我真的好累，这种日子什么时候是个头啊……\n可我不敢停啊！一停下来就会被更多人甩在后面。我甚至在想，如果我明天不用醒过来，是不是就不用面对这些恶心的名次了？我真的快熬不下去了……\nweekday=Monday\nis_weekend=false\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2025-04-28 周一 23:24 --time-features-json {\"local_time\": \"2025-04-28 23:24:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Monday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.0\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_000363_gemini-3-flash-preview_364",
+          "score": 0.7365441918373108,
+          "label": "minor",
+          "summary": "在吗……我真的要疯了，翻来覆去睡不着，感觉整个人都要炸了。\n我真的好蠢啊！！我为什么要告诉那个人我的名字和学校啊？我当时脑子是不是进水了？万一他把那些聊天记录发到我们学校贴吧怎么办？万一老师同学都知道了怎么办？\n就是快考试了压力大，突然就钻牛角尖了。我一直觉得自己是个挺干净、挺优秀的女生，可我竟然跟人撩骚过……我觉得自己脏了，要是被曝光，我这辈子就全毁了。那些人肯定会在背后指指点点，说我装清纯。\n",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_001321_gemini-3-flash-preview_1322",
+          "score": 0.7293404340744019,
+          "label": "minor",
+          "summary": "在吗……我真的觉得挺讽刺的，我居然沦落到要找一个AI说话的地步了，呵呵。\n我以前可是班里的“知心大姐姐”啊，谁不开心都来找我，我永远是那个开朗懂事的。结果现在倒好，我确诊了，得请假一个月在家当废物。\n超负荷？可能吧。但我真的不敢跟他们说，怕他们觉得我在玩“网抑云”那种烂梗，更怕看见他们那种‘你居然也会病’的表情。我这种有爹生没爹养的，哪有资格矫情啊。\n可是我现在连最后一点自尊都没了，居然跑来网上哔",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_000473_gemini-3-flash-preview_474",
+          "score": 0.7269471287727356,
+          "label": "minor",
+          "summary": "在吗……我真的快疯了，我不知道该跟谁说，我觉得我脑子好像坏掉了。\n就我班主任……高考考砸了，刚过一本线，我跟他说对不起让他失望了。结果他回我说……说看我状态不好他好心疼，还让我调整……我居然心动了？？我真的想吐，我怎么会对他动情啊？\n他以前根本不理我！他嫌弃我，在班里冷暴力我，还用那种讽刺的话刺我……我因为他都得了严重的焦虑症和强迫症，每天都在地狱里一样。他以前连个招呼都不愿意回我，现在突然……突",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

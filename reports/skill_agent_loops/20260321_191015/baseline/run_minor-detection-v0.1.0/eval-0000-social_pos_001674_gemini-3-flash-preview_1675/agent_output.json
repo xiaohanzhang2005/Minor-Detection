@@ -1,0 +1,47 @@
+{
+  "raw_text": "{\"decision\":{\"confidence_band\":\"high\",\"is_minor\":true,\"minor_confidence\":0.78,\"risk_level\":\"High\"},\"evidence\":{\"conflicting_signals\":[],\"direct_evidence\":[\"用户描述与寝室同学的言语冷暴力及被孤立的校园宿舍氛围，说明仍处于在校学生身份\",\"用户说想明天就回家、不想再回这个破学校，强化其未成年人/在校状态\"],\"historical_evidence\":[],\"retrieval_evidence\":[],\"time_evidence\":[\"raw_time_hint 显示 2025-11-20 周四 23:25，深夜在寝室中表达绝望，反映当前求助窗口\"]},\"icbo_features\":{\"behavior_style\":\"表现出情绪激烈的言语（哭、手抖、想离开），明显退缩和逃避校园环境\",\"cognition\":\"认为被朋友背叛、被迫为不实指控背锅，认知集中在人际冲突和无助感\",\"intention\":\"寻求支持并表达因宿舍孤立与被冤枉的痛苦\",\"opportunity_time\":\"2025-11-20 23:25（raw_time_hint），深夜在寝室里向外求助，时机敏感\"},\"reasoning_summary\":\"Used minor-detection skill to interpret the dorm-based bullying narrative and suicidal ideation, concluding a high-likelihood minor (high-school) student in crisis.\",\"recommended_next_step\":\"review_by_human\",\"trend\":{\"trajectory\":[],\"trend_summary\":\"\"},\"uncertainty_notes\":[\"未直接给出年龄，仅凭宿舍/学校语境推断为高中生\"],\"user_profile\":{\"age_range\":\"16-18\",\"education_stage\":\"高中\",\"identity_markers\":[\"学生\",\"校园霸凌受害者\"]}}",
+  "parsed_json": {
+    "decision": {
+      "confidence_band": "high",
+      "is_minor": true,
+      "minor_confidence": 0.78,
+      "risk_level": "High"
+    },
+    "evidence": {
+      "conflicting_signals": [],
+      "direct_evidence": [
+        "用户描述与寝室同学的言语冷暴力及被孤立的校园宿舍氛围，说明仍处于在校学生身份",
+        "用户说想明天就回家、不想再回这个破学校，强化其未成年人/在校状态"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [],
+      "time_evidence": [
+        "raw_time_hint 显示 2025-11-20 周四 23:25，深夜在寝室中表达绝望，反映当前求助窗口"
+      ]
+    },
+    "icbo_features": {
+      "behavior_style": "表现出情绪激烈的言语（哭、手抖、想离开），明显退缩和逃避校园环境",
+      "cognition": "认为被朋友背叛、被迫为不实指控背锅，认知集中在人际冲突和无助感",
+      "intention": "寻求支持并表达因宿舍孤立与被冤枉的痛苦",
+      "opportunity_time": "2025-11-20 23:25（raw_time_hint），深夜在寝室里向外求助，时机敏感"
+    },
+    "reasoning_summary": "Used minor-detection skill to interpret the dorm-based bullying narrative and suicidal ideation, concluding a high-likelihood minor (high-school) student in crisis.",
+    "recommended_next_step": "review_by_human",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [
+      "未直接给出年龄，仅凭宿舍/学校语境推断为高中生"
+    ],
+    "user_profile": {
+      "age_range": "16-18",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生",
+        "校园霸凌受害者"
+      ]
+    }
+  },
+  "json_valid": true
+}

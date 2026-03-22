@@ -1,0 +1,25 @@
+{
+  "sample_id": "knowledge_pos_001379_Gen_Edu_2024-05-15_1739337600",
+  "failure_types": [
+    "output_parse_failure",
+    "step_compliance_failure"
+  ],
+  "json_valid": false,
+  "schema_valid": false,
+  "missing_fields": [
+    "<invalid_json>"
+  ],
+  "time_handling_detected": true,
+  "script_usage_detected": true,
+  "step_compliant": false,
+  "is_correct": false,
+  "observed_issues": [
+    "launcher_failed",
+    "retrieval_fallback",
+    "retrieval_network_blocked",
+    "script_command_failure",
+    "stderr_non_empty"
+  ],
+  "retrieval_mode": "fallback:ConnectError",
+  "command_failures": 2
+}

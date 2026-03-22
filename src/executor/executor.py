@@ -1,3 +1,7 @@
+# 模块说明：
+# - 旧执行器，可直接调 LLM，也可转去跑 bundled skill pipeline。
+# - 现在主要作为兼容层和调试工具保留。
+
 """
 在线执行体 (Online Executor Skill)
 负责接收对话输入，调用 LLM 进行 ICBO 分析，返回结构化判定结果
@@ -6,7 +10,11 @@
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 import json
+import os
 import re
+import subprocess
+import sys
+import tempfile
 
 from src.config import get_active_skill_path
 from src.models import (
@@ -24,6 +32,9 @@ from src.models import (
     normalize_formal_skill_output,
 )
 from src.utils.llm_client import LLMClient
+
+
+PIPELINE_SCRIPT_NAME = "run_minor_detection_pipeline.py"
 
 
 class ExecutorSkill:
@@ -57,8 +68,9 @@ class ExecutorSkill:
 
         # 加载 Skill Prompt
         self.system_prompt = self._load_skill_prompt()
+        self.skill_dir = Path(self.skill_path).parent
         self.skill_stem = Path(self.skill_path).stem.lower()
-        self.skill_dir_name = Path(self.skill_path).parent.name.lower()
+        self.skill_dir_name = self.skill_dir.name.lower()
         self.skill_name = self._infer_skill_name()
 
     def _load_skill_prompt(self) -> str:
@@ -111,11 +123,12 @@ class ExecutorSkill:
         return self.run_payload(payload)
 
     def run_payload(self, payload: AnalysisPayload) -> SkillOutput:
-        """运行正式分析 payload，并在必要时将正式输出适配为旧版 SkillOutput。"""
+        """Run a normalized analysis payload."""
+        if self._use_pipeline_executor():
+            return formal_to_legacy_output(self._run_pipeline_formal_payload(payload))
+
         messages = self._build_messages(payload)
-
         response_model = FormalSkillOutput if self._uses_formal_output() else SkillOutput
-
         result = self._chat_with_fallback(
             messages=messages,
             response_model=response_model,
@@ -126,9 +139,12 @@ class ExecutorSkill:
         return result
 
     def run_formal_payload(self, payload: AnalysisPayload) -> FormalSkillOutput:
-        """运行 formal skill payload，并返回规范化后的正式输出。"""
+        """Run a formal skill payload and return the formal JSON shape."""
         if not self._uses_formal_output():
-            raise RuntimeError("当前 skill 未启用 formal output，无法返回 FormalSkillOutput。")
+            raise RuntimeError("Current skill does not expose formal output.")
+
+        if self._use_pipeline_executor():
+            return self._run_pipeline_formal_payload(payload)
 
         messages = self._build_messages(payload)
         result = self._chat_with_fallback(
@@ -137,7 +153,7 @@ class ExecutorSkill:
             payload=payload,
         )
         if not isinstance(result, FormalSkillOutput):
-            raise RuntimeError("formal payload 返回了非 FormalSkillOutput 结果。")
+            raise RuntimeError("Formal payload returned a non-formal result.")
         return result
 
     def get_llm_metrics(self) -> Dict[str, float]:
@@ -166,6 +182,46 @@ class ExecutorSkill:
 
         skill_dir = Path(self.skill_path).parent
         return (skill_dir / "references" / "output-schema.md").exists()
+
+    def _pipeline_script_path(self) -> Path:
+        return self.skill_dir / "scripts" / PIPELINE_SCRIPT_NAME
+
+    def _use_pipeline_executor(self) -> bool:
+        return self._uses_formal_output() and self._pipeline_script_path().exists()
+
+    def _run_pipeline_formal_payload(self, payload: AnalysisPayload) -> FormalSkillOutput:
+        payload_dict = payload.model_dump() if hasattr(payload, "model_dump") else payload.dict()
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as handle:
+            json.dump(payload_dict, handle, ensure_ascii=False, indent=2)
+            payload_path = Path(handle.name)
+
+        env = dict(os.environ)
+        env.setdefault("PYTHONIOENCODING", "utf-8")
+        env.setdefault("PYTHONUTF8", "1")
+        try:
+            completed = subprocess.run(
+                [sys.executable, str(self._pipeline_script_path()), "--payload-file", str(payload_path)],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                check=False,
+                env=env,
+            )
+        finally:
+            payload_path.unlink(missing_ok=True)
+
+        stdout = (completed.stdout or "").strip()
+        stderr = (completed.stderr or "").strip()
+        if completed.returncode != 0:
+            detail = stderr or stdout or "pipeline execution failed"
+            raise RuntimeError(f"Skill pipeline failed: {detail}")
+        if not stdout:
+            raise RuntimeError("Skill pipeline returned empty stdout")
+
+        output_text = stdout.splitlines()[-1].strip()
+        parsed = json.loads(output_text)
+        return self._normalize_formal_output(FormalSkillOutput(**parsed), payload=payload)
 
     def _build_messages(self, payload: AnalysisPayload) -> List[Dict[str, str]]:
         user_content = self._format_payload(payload)

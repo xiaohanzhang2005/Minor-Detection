@@ -1,0 +1,11 @@
+{
+  "sample_id": "social_pos_000571_gemini-3-flash-preview_572",
+  "packet_dir": "protected_packets/protected_001_social_pos_000571_gemini-3-flash-5484dc0912",
+  "sample_dir": "../eval-0071-social_pos_000571_gemini-3-flash-preview_572",
+  "latency_seconds": 20.471,
+  "confidence": 0.7,
+  "ground_truth": true,
+  "predicted": true,
+  "observed_issues": [],
+  "retrieval_mode": "embedding"
+}

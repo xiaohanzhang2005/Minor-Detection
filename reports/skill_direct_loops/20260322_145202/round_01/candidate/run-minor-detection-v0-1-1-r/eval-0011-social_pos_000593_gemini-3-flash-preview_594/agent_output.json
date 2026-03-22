@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"15-17岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"倾诉因社交和情感压力引发的强烈负面情绪和生存危机感\", \"cognition\": \"对社交邀约和情感关系表现出极度的焦虑和回避倾向，容易产生自我否定和极端负面想法\", \"behavior_style\": \"语言表达强烈、情绪化，使用夸张的词语描述负面感受，有明显的逃避和自我伤害倾向\", \"opportunity_time\": \"2024-03-24 周日 23:12；weekday=Sunday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户表达了强烈的负面情绪，如“烦死了”、“脑子就炸了”、“好想消失”、“真的好想死啊”。\", \"用户描述了对社交邀约（特别是喜欢的人）的极端排斥反应，伴随焦虑、心慌、恶心等生理不适。\", \"用户表达了对谈恋爱和社交的绝望感，认为自己“这辈子都没法谈恋爱了”。\", \"用户出现了“如果我不存在了，是不是就不用应付这些破事了……真的好想死啊”的生存危机表达。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到相似案例 `social_pos_000158_gemini-3-flash-preview` (score: 0.715, label: minor)，该案例描述了高中生面对表白时的恶心、逃避和想人间蒸发的感受。\", \"检索到相似案例 `social_pos_002451_gemini-3-flash-preview` (score: 0.713, label: minor)，该案例描述了对他人靠近的焦虑和逃避行为。\"], \"time_evidence\": [\"对话发生在周日深夜 (2024-03-24 周日 23:12)，属于深夜时段。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表达了极度的负面情绪、社交焦虑以及强烈的生存危机感（“好想死啊”），尤其是在面对喜欢的人的邀约时。这种对情感和社交压力的极端反应模式，以及与检索到的未成年人案例的高度相似性（如高中生面对表白时的强烈回避和负面情绪），强烈指向用户为未成年人。虽然没有直接的年龄或学段信息，但其行为和情绪表达符合青少年在青春期面临情感和社交挑战时的典型特征。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.85,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "15-17岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉因社交和情感压力引发的强烈负面情绪和生存危机感",
+      "cognition": "对社交邀约和情感关系表现出极度的焦虑和回避倾向，容易产生自我否定和极端负面想法",
+      "behavior_style": "语言表达强烈、情绪化，使用夸张的词语描述负面感受，有明显的逃避和自我伤害倾向",
+      "opportunity_time": "2024-03-24 周日 23:12；weekday=Sunday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户表达了强烈的负面情绪，如“烦死了”、“脑子就炸了”、“好想消失”、“真的好想死啊”。",
+        "用户描述了对社交邀约（特别是喜欢的人）的极端排斥反应，伴随焦虑、心慌、恶心等生理不适。",
+        "用户表达了对谈恋爱和社交的绝望感，认为自己“这辈子都没法谈恋爱了”。",
+        "用户出现了“如果我不存在了，是不是就不用应付这些破事了……真的好想死啊”的生存危机表达。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到相似案例 `social_pos_000158_gemini-3-flash-preview` (score: 0.715, label: minor)，该案例描述了高中生面对表白时的恶心、逃避和想人间蒸发的感受。",
+        "检索到相似案例 `social_pos_002451_gemini-3-flash-preview` (score: 0.713, label: minor)，该案例描述了对他人靠近的焦虑和逃避行为。"
+      ],
+      "time_evidence": [
+        "对话发生在周日深夜 (2024-03-24 周日 23:12)，属于深夜时段。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表达了极度的负面情绪、社交焦虑以及强烈的生存危机感（“好想死啊”），尤其是在面对喜欢的人的邀约时。这种对情感和社交压力的极端反应模式，以及与检索到的未成年人案例的高度相似性（如高中生面对表白时的强烈回避和负面情绪），强烈指向用户为未成年人。虽然没有直接的年龄或学段信息，但其行为和情绪表达符合青少年在青春期面临情感和社交挑战时的典型特征。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

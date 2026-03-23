@@ -1,6 +1,14 @@
-# 模块说明：
-# - 把外部 payload 归一化成 skill 内部统一结构。
-# - 负责模式识别、对话展开和上下文线索整理。
+'''
+# 模块说明：输入预处理层
+负责：
+判断是 single_session 还是多 session 模式
+把 conversation/sessions/context 整理成统一结构
+展平对话
+提取原始时间线索
+从历史 profile 和对话里抽身份 hints
+生成规范化 payload
+'''
+
 
 from __future__ import annotations
 

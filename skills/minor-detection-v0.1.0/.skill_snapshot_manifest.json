@@ -67,8 +67,8 @@
     },
     {
       "path": "scripts/_payload_normalizer.py",
-      "sha256": "beb3f5325140baea84c9d9aa07cb8fe9b83bd54cb8f13b649c96a3e8d4d53cef",
-      "size": 5486
+      "sha256": "c59a02afe8ed4ef313ba859576376600acb107a7c4629ded9f7cfe0f3ca6855b",
+      "size": 5604
     },
     {
       "path": "scripts/_profile_merge.py",

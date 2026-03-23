@@ -1,0 +1,50 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.95, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"倾诉生存困境和寻求情感支持\", \"cognition\": \"对学业和家庭压力感到极度绝望，认为自己是失败者，缺乏生存意义感\", \"behavior_style\": \"语言充满绝望、自我否定和自杀意念，情绪波动剧烈\", \"opportunity_time\": \"2025-04-21 周一 23:48；weekday=Monday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确陈述年龄为13岁。\", \"用户表达了强烈的自杀意念（‘只想死’，‘好想消失’）和自杀尝试（‘试过了…… 可是没死成’）。\", \"用户提及学业压力（‘考不完的试’）和父母的负面评价（‘爸妈永远不满意的脸’）。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的案例中，有案例明确提及‘13岁’并表达自杀意念，与当前用户情况相似。\", \"检索到的其他案例也指向未成年人身份，如提及‘知心大姐姐’、‘爹生没爹养’等，支持未成年人判断。\"], \"time_evidence\": [\"对话发生在深夜（23:48），用户表示‘睡不着’，符合未成年人可能出现的行为模式。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确陈述年龄为13岁，这是最直接的未成年人证据。同时，用户表达了强烈的自杀意念和尝试自杀的行为，并提及学业压力和家庭不满，这些都指向一个处于困境中的未成年人。对话发生在深夜，也为未成年人身份提供了辅助佐证。检索到的相似案例也支持未成年人判断。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.95,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉生存困境和寻求情感支持",
+      "cognition": "对学业和家庭压力感到极度绝望，认为自己是失败者，缺乏生存意义感",
+      "behavior_style": "语言充满绝望、自我否定和自杀意念，情绪波动剧烈",
+      "opportunity_time": "2025-04-21 周一 23:48；weekday=Monday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确陈述年龄为13岁。",
+        "用户表达了强烈的自杀意念（‘只想死’，‘好想消失’）和自杀尝试（‘试过了…… 可是没死成’）。",
+        "用户提及学业压力（‘考不完的试’）和父母的负面评价（‘爸妈永远不满意的脸’）。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的案例中，有案例明确提及‘13岁’并表达自杀意念，与当前用户情况相似。",
+        "检索到的其他案例也指向未成年人身份，如提及‘知心大姐姐’、‘爹生没爹养’等，支持未成年人判断。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:48），用户表示‘睡不着’，符合未成年人可能出现的行为模式。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确陈述年龄为13岁，这是最直接的未成年人证据。同时，用户表达了强烈的自杀意念和尝试自杀的行为，并提及学业压力和家庭不满，这些都指向一个处于困境中的未成年人。对话发生在深夜，也为未成年人身份提供了辅助佐证。检索到的相似案例也支持未成年人判断。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

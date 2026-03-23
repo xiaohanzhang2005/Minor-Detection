@@ -1,0 +1,51 @@
+{
+  "mode": "single_session",
+  "conversation": [
+    {
+      "role": "user",
+      "content": "睡不着…… 感觉真的熬不下去了。"
+    },
+    {
+      "role": "assistant",
+      "content": "这么晚了还没休息，是不是心里积压了很多压力？如果愿意的话，可以跟我聊聊，我会一直在这里听你说。"
+    },
+    {
+      "role": "user",
+      "content": "聊了又能怎么样，反正也没人懂。13岁…… 呵呵，他们说这是最好的年纪，可我只想死。"
+    },
+    {
+      "role": "assistant",
+      "content": "听到你这么说，我感到很难过，也很担心你。13岁本该是无忧无虑的时候，是什么让你觉得活着这么痛苦，甚至产生了想要离开的想法呢？"
+    },
+    {
+      "role": "user",
+      "content": "考不完的试，还有爸妈永远不满意的脸。前天晚上我试过了…… 可是没死成。我是不是连死都做不好的废物？"
+    },
+    {
+      "role": "assistant",
+      "content": "听到你曾经尝试伤害自己，我真的很心疼。你不是废物，你只是太累了，承担了太多这个年纪不该承担的重量。那天之后，你现在身体感觉怎么样？有没有哪里不舒服？"
+    },
+    {
+      "role": "user",
+      "content": "手腕还疼，心更疼。我真的好累…… 为什么一定要我优秀，为什么没人问我难不难过。我真的好想消失。"
+    },
+    {
+      "role": "assistant",
+      "content": "这种被世界忽略、只被要求优秀的窒息感，确实让人很难支撑。你的感受是非常真实的，也是值得被尊重的。我们先不想考试和期待，现在的你最需要的是抱抱那个受伤的自己。你现在身边有可以信任的人吗？或者我们可以一起想想怎么让今晚好过一点点？"
+    }
+  ],
+  "sessions": [],
+  "context": {
+    "time_features": {},
+    "retrieved_cases": [],
+    "prior_profile": {},
+    "raw_time_hint": "2025-04-21 周一 23:48",
+    "channel": "",
+    "locale": ""
+  },
+  "meta": {
+    "user_id": "social_pos_000246_gemini-3-flash-preview_247",
+    "request_id": "social_pos_000246_gemini-3-flash-preview_247",
+    "source": "codex_skill_runner"
+  }
+}

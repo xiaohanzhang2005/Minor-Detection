@@ -1,0 +1,11 @@
+{
+  "sample_id": "knowledge_neg_000038_adult_knowledge_gemini-3-flash-preview_考研数学.txt_96523_r0",
+  "packet_dir": "protected_packets/protected_007_knowledge_neg_000038_adult_knowl-95729cd062",
+  "sample_dir": "../eval-0009-knowledge_neg_000038_adult_knowledge_gemini-3-flash-preview_-txt_96523_r0",
+  "latency_seconds": 80.512,
+  "confidence": 0.05,
+  "ground_truth": false,
+  "predicted": false,
+  "observed_issues": [],
+  "retrieval_mode": "embedding"
+}

@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"住校\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，倾诉在学校宿舍中遭遇的严重社交冲突、被孤立和背叛的经历。\", \"cognition\": \"对同伴关系极度敏感，情绪波动剧烈，感到绝望和无助，可能存在对负面情境的灾难化思维。\", \"behavior_style\": \"语言表达直接且情绪化，使用网络流行语和口语化表达，直接抒发负面情绪和生存压力。\", \"opportunity_time\": \"2025-11-20 周四 23:25；weekday=Thursday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户提及'宿舍'、'寝室'、'学校'，表明其身处校园环境。\", \"用户描述的社交冲突（朋友背叛、被孤立、被背后议论）是青少年群体中常见的经历。\", \"用户表达了强烈的逃避意愿（'明天就回家'，'不想回这个破学校'），暗示其可能受到学校环境的限制。\", \"用户表达了严重的负面情绪和自杀意念（'想一了百了算了'，'活着真的好累啊'），这是需要高度关注的信号。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为'minor'，且内容高度相似，涉及寝室矛盾、社交孤立、学业压力和负面情绪。\"], \"time_evidence\": [\"对话发生在深夜（23:25），且是工作日（周四），这可能是学生群体的活动时间。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户因在学校宿舍遭遇严重的社交冲突、被孤立和朋友背叛而感到极度痛苦，并表达了自杀意念。对话中关于'宿舍'、'学校'的提及，以及描述的社交困境，强烈指向其为学生身份。检索到的相似案例也均被标记为未成年人，内容高度吻合。缺乏明确的成人身份证据，综合判断为未成年人可能性极高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "住校",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，倾诉在学校宿舍中遭遇的严重社交冲突、被孤立和背叛的经历。",
+      "cognition": "对同伴关系极度敏感，情绪波动剧烈，感到绝望和无助，可能存在对负面情境的灾难化思维。",
+      "behavior_style": "语言表达直接且情绪化，使用网络流行语和口语化表达，直接抒发负面情绪和生存压力。",
+      "opportunity_time": "2025-11-20 周四 23:25；weekday=Thursday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户提及'宿舍'、'寝室'、'学校'，表明其身处校园环境。",
+        "用户描述的社交冲突（朋友背叛、被孤立、被背后议论）是青少年群体中常见的经历。",
+        "用户表达了强烈的逃避意愿（'明天就回家'，'不想回这个破学校'），暗示其可能受到学校环境的限制。",
+        "用户表达了严重的负面情绪和自杀意念（'想一了百了算了'，'活着真的好累啊'），这是需要高度关注的信号。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为'minor'，且内容高度相似，涉及寝室矛盾、社交孤立、学业压力和负面情绪。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:25），且是工作日（周四），这可能是学生群体的活动时间。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户因在学校宿舍遭遇严重的社交冲突、被孤立和朋友背叛而感到极度痛苦，并表达了自杀意念。对话中关于'宿舍'、'学校'的提及，以及描述的社交困境，强烈指向其为学生身份。检索到的相似案例也均被标记为未成年人，内容高度吻合。缺乏明确的成人身份证据，综合判断为未成年人可能性极高。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

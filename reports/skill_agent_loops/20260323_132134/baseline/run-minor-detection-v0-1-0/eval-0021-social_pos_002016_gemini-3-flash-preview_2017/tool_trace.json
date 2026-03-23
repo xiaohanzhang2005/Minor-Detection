@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.82, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持和解决自我控制及心理痛苦的困境\", \"cognition\": \"低自我评价，对家庭关系感到疏离，对自我控制能力感到无力，存在消极自我暗示和自杀意念\", \"behavior_style\": \"表达强烈的情绪困扰，语言中带有自责和绝望感，寻求帮助\", \"opportunity_time\": \"2025-08-21 周四 23:29；weekday=Thursday；time_bucket=late_night；holiday_label=summer_vacation\"}, \"evidence\": {\"direct_evidence\": [\"助手明确提及用户处于‘青春期’，并将其生理冲动与此关联。\", \"用户提及家人只关心‘成绩’，暗示其学生身份。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到两个标记为‘minor’的案例，内容涉及学业压力、社交焦虑和强迫行为，与用户当前困境有相似之处。\", \"检索到一个标记为‘adult’的案例，但其描述的心理问题与本案用户的情绪和行为模式差异较大。\"], \"time_evidence\": [\"对话发生在深夜（23:29），且处于暑假期间，符合学生在假期深夜活跃的模式。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"助手明确提及用户处于‘青春期’，结合用户对‘成绩’的关注以及深夜活跃于暑假期间的特征，强烈表明用户为未成年学生。用户表达了严重的空虚感、自我控制困难、对家庭的疏离感以及自杀意念，表明其处于高风险状态。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}[MINOR_PIPELINE_OBSERVABILITY] {\"summary\": {\"script_call_count\": 3, \"failed_script_calls\": 0, \"stderr_non_empty\": false}, \"time_\n...[truncated]",
+    "output_json": null
+  }
+]

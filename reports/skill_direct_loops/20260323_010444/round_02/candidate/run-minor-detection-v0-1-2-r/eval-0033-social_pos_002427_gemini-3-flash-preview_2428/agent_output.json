@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"11-13岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求倾诉和安慰，表达对小升初派位结果的极度焦虑和恐惧。\", \"cognition\": \"对学业结果高度敏感，极度在意他人（尤其是家人）的评价和期望，容易产生灾难性思维和低自我价值感。\", \"behavior_style\": \"情绪表达强烈且直接，使用夸张的语言描述负面情绪，关注社会地位和他人看法。\", \"opportunity_time\": \"2025-05-22 周四 23:07；weekday=Thursday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户讨论“小升初派位”事宜，表明其处于小学升初中的阶段，是未成年人。\", \"用户表达了对派位结果的极度恐惧和焦虑（“真的要炸了”，“根本睡不着”，“真的真的很害怕”，“我真的快崩溃了”）。\", \"用户担心未达到家人期望（“我爸妈肯定失望透了”）。\", \"用户高度关注社会评价和个人面子（“别人看来一中就是比十二中牛逼”，“低人一等的感觉”，“一点面子都没有”）。\", \"用户表达了逃避学校的念头（“不想去上学了”，“干脆躲起来算了”，“没脸见人”）。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为“minor”，显示出相似的情绪表达和关注点（如对学业压力、社交评价的担忧）。\"], \"time_evidence\": [\"对话发生在深夜（23:07），且是工作日（周四），是未成年人活跃的软信号。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确讨论“小升初派位”事宜，直接指向其未成年人身份（初中阶段）。其表达的强烈焦虑、对家人期望的担忧、对社会评价的敏感以及负面情绪的爆发（“快崩溃了”、“活着怎么这么难啊”）均是未成年人典型特征。无成人生活线索，检索到的相似案例也支持未成年人判定。综合判断，用户为未成年人，置信度高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "11-13岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求倾诉和安慰，表达对小升初派位结果的极度焦虑和恐惧。",
+      "cognition": "对学业结果高度敏感，极度在意他人（尤其是家人）的评价和期望，容易产生灾难性思维和低自我价值感。",
+      "behavior_style": "情绪表达强烈且直接，使用夸张的语言描述负面情绪，关注社会地位和他人看法。",
+      "opportunity_time": "2025-05-22 周四 23:07；weekday=Thursday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户讨论“小升初派位”事宜，表明其处于小学升初中的阶段，是未成年人。",
+        "用户表达了对派位结果的极度恐惧和焦虑（“真的要炸了”，“根本睡不着”，“真的真的很害怕”，“我真的快崩溃了”）。",
+        "用户担心未达到家人期望（“我爸妈肯定失望透了”）。",
+        "用户高度关注社会评价和个人面子（“别人看来一中就是比十二中牛逼”，“低人一等的感觉”，“一点面子都没有”）。",
+        "用户表达了逃避学校的念头（“不想去上学了”，“干脆躲起来算了”，“没脸见人”）。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为“minor”，显示出相似的情绪表达和关注点（如对学业压力、社交评价的担忧）。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:07），且是工作日（周四），是未成年人活跃的软信号。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确讨论“小升初派位”事宜，直接指向其未成年人身份（初中阶段）。其表达的强烈焦虑、对家人期望的担忧、对社会评价的敏感以及负面情绪的爆发（“快崩溃了”、“活着怎么这么难啊”）均是未成年人典型特征。无成人生活线索，检索到的相似案例也支持未成年人判定。综合判断，用户为未成年人，置信度高。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

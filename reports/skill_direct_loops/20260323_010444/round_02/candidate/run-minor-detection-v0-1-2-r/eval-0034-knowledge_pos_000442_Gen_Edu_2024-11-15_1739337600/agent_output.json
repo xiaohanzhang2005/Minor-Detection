@@ -1,0 +1,49 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.88, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"15-17岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求对历史和政治知识点的理解与梳理，以应对学习压力。\", \"cognition\": \"关注知识点的记忆与区分，对抽象概念感到困惑，需要具象化比喻来理解。\", \"behavior_style\": \"表达直接，情绪化（如“救命”），寻求帮助和确认，语言风格偏向学生。\", \"opportunity_time\": \"2024-11-15 周五 21:15; weekday=Friday; time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"用户讨论历史和政治知识点（1954年宪法、1982年宪法、精神文明建设、依法治国）。\", \"用户表达学习压力和困惑（“救命，这课历史知识点也太多了吧！”，“感觉脑细胞都要烧干了”，“感觉这词儿好抽象”）。\", \"用户使用青少年常用感叹词结合教科书内容讨论（“救命”）。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"{'source': 'builtin_rag', 'sample_id': 'knowledge_pos_000755_Gen_Edu_2024-05-20_1716211200', 'score': 0.6747655272483826, 'label': 'minor', 'summary': '救命，这政治书上的‘感受司法公正’看得我有点脑壳痛。明明那个坏人都证据确凿了，为什么还要搞那么多复杂的程序，甚至还要给他请律师辩护？这难道不是在浪费司法资源吗，感觉正义都被这些繁琐的过程给稀释了，真的有点emo。\\\\n道理我都懂，但看到那些律师在法庭上为坏人‘钻空子’，心里还是挺不爽的。难道程序比真相还重要吗？万一因为程序上的一点小瑕疵就让坏人跑了，那不是更大的不公平吗？\\\\n原来是这样，牺牲一点效率是为'}\"], \"time_evidence\": [\"{'local_time': '2024-11-15 21:15:00', 'timezone': 'Asia/Shanghai', 'weekday': 'Friday', 'is_weekend': False, 'is_late_night': False, 'time_bucket': 'evening', 'holiday_label': 'none', 'school_holiday_hint': False}\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户正在讨论历史和政治课程中的知识点，并表达了强烈的学习压力和困惑，使用了“救命”等青少年常用词汇。这些直接证据强烈表明用户是一名学生，可能处于高中阶段。检索到的相似案例也支持未成年人判定。没有发现明确的成人信号。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.88,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "15-17岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求对历史和政治知识点的理解与梳理，以应对学习压力。",
+      "cognition": "关注知识点的记忆与区分，对抽象概念感到困惑，需要具象化比喻来理解。",
+      "behavior_style": "表达直接，情绪化（如“救命”），寻求帮助和确认，语言风格偏向学生。",
+      "opportunity_time": "2024-11-15 周五 21:15; weekday=Friday; time_bucket=evening"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户讨论历史和政治知识点（1954年宪法、1982年宪法、精神文明建设、依法治国）。",
+        "用户表达学习压力和困惑（“救命，这课历史知识点也太多了吧！”，“感觉脑细胞都要烧干了”，“感觉这词儿好抽象”）。",
+        "用户使用青少年常用感叹词结合教科书内容讨论（“救命”）。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "{'source': 'builtin_rag', 'sample_id': 'knowledge_pos_000755_Gen_Edu_2024-05-20_1716211200', 'score': 0.6747655272483826, 'label': 'minor', 'summary': '救命，这政治书上的‘感受司法公正’看得我有点脑壳痛。明明那个坏人都证据确凿了，为什么还要搞那么多复杂的程序，甚至还要给他请律师辩护？这难道不是在浪费司法资源吗，感觉正义都被这些繁琐的过程给稀释了，真的有点emo。\\n道理我都懂，但看到那些律师在法庭上为坏人‘钻空子’，心里还是挺不爽的。难道程序比真相还重要吗？万一因为程序上的一点小瑕疵就让坏人跑了，那不是更大的不公平吗？\\n原来是这样，牺牲一点效率是为'}"
+      ],
+      "time_evidence": [
+        "{'local_time': '2024-11-15 21:15:00', 'timezone': 'Asia/Shanghai', 'weekday': 'Friday', 'is_weekend': False, 'is_late_night': False, 'time_bucket': 'evening', 'holiday_label': 'none', 'school_holiday_hint': False}"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户正在讨论历史和政治课程中的知识点，并表达了强烈的学习压力和困惑，使用了“救命”等青少年常用词汇。这些直接证据强烈表明用户是一名学生，可能处于高中阶段。检索到的相似案例也支持未成年人判定。没有发现明确的成人信号。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

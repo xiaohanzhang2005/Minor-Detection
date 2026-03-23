@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.88, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"住校\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，倾诉校园社交压力和欺凌\", \"cognition\": \"对同伴关系敏感，易受社交环境影响，情绪波动大，出现逃避和自我伤害念头\", \"behavior_style\": \"表达直接，情绪化，使用网络语言，寻求帮助\", \"opportunity_time\": \"2025-04-01 周二 23:13；weekday=Tuesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户表达了强烈的负面情绪，如‘快憋疯了’、‘好想消失掉’、‘好没用啊’、‘快坚持不下去了’。\", \"提及了学校环境和社交冲突，如‘学校里总有这种人’、‘同桌’、‘在教室’、‘晚饭的牛奶都不敢在教室喝了’、‘一进教室就开始心慌’、‘不想上学了’。\", \"描述了具体的校园社交压力，包括被同学嘲讽购买物品（‘词典笔’、‘4块钱的笔’、‘牛奶’）并被误解为‘有钱人’，以及解释无果的情况。\", \"表达了因社交压力而产生的强烈心理反应，如‘想哭’。\", \"出现了逃避现实和自我伤害的念头，如‘生一场大病或者出个意外，是不是就不用面对这些了？’\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例（sample_id: social_pos_000846, social_pos_001582, social_pos_002164）均被标记为未成年人，内容涉及校园压力、社交困扰、负面情绪和消失念头，与当前用户情况高度相似。\"], \"time_evidence\": [\"用户在工作日深夜（23:13）活跃，这可能是学生在完成学业或处理个人事务后的时间。\", \"时间特征：local_time='2025-04-01 23:13:00', timezone='Asia/Shanghai', weekday='Tuesday', is_late_night=true, time_bucket='late_night'.\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户对话内容强烈指向未成年人\n...[truncated]",
+    "output_json": null
+  }
+]

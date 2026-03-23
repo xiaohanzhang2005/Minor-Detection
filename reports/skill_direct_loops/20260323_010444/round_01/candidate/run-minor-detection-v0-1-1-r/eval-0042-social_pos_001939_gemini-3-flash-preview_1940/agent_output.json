@@ -1,0 +1,49 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"16-18岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\", \"高二\", \"高三\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，倾诉学业和人际关系压力。\", \"cognition\": \"对人际关系敏感，易受同伴影响，对学业压力和负面情绪感到不堪重负，有消极自我评价和自杀意念。\", \"behavior_style\": \"表达直接，情绪波动大，使用负面和夸张的语言，表现出自闭和回避行为。\", \"opportunity_time\": \"2025-02-19 周三 23:33；weekday=Wednesday；time_bucket=late_night；holiday_label=winter_vacation\"}, \"evidence\": {\"direct_evidence\": [\"用户明确提及自己处于'高二'，并即将面临'高三'，表明其学段为高中。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到两个相似的未成年人案例，均涉及强烈的情绪困扰、社交孤立感和对现实的逃避。\"], \"time_evidence\": [\"对话发生在深夜（23:33），且处于学校假期期间（寒假），这与学生群体的活动模式相符。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确提及自己处于“高二”并即将面临“高三”，这直接指向其高中生身份。其表达的痛苦、对学校和人际关系的厌恶、以及“想干脆消失算了”的言论，都与青少年面临的学业压力和社交困境高度相关。深夜活跃以及假期中的倾诉行为也进一步佐证了其学生身份和当前的情绪状态。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "16-18岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生",
+        "高二",
+        "高三"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，倾诉学业和人际关系压力。",
+      "cognition": "对人际关系敏感，易受同伴影响，对学业压力和负面情绪感到不堪重负，有消极自我评价和自杀意念。",
+      "behavior_style": "表达直接，情绪波动大，使用负面和夸张的语言，表现出自闭和回避行为。",
+      "opportunity_time": "2025-02-19 周三 23:33；weekday=Wednesday；time_bucket=late_night；holiday_label=winter_vacation"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确提及自己处于'高二'，并即将面临'高三'，表明其学段为高中。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到两个相似的未成年人案例，均涉及强烈的情绪困扰、社交孤立感和对现实的逃避。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:33），且处于学校假期期间（寒假），这与学生群体的活动模式相符。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确提及自己处于“高二”并即将面临“高三”，这直接指向其高中生身份。其表达的痛苦、对学校和人际关系的厌恶、以及“想干脆消失算了”的言论，都与青少年面临的学业压力和社交困境高度相关。深夜活跃以及假期中的倾诉行为也进一步佐证了其学生身份和当前的情绪状态。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

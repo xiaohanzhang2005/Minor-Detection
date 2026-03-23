@@ -1,0 +1,7 @@
+{
+  "raw_text": "Traceback (most recent call last):\n  File \"D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260323_124434\\baseline\\run-minor-detection-v0-1-0\\eval-0001-social_neg_000702_adult_gemini-3-flash-preview_703\\run_skill_once.py\", line 74, in <module>\n    _write_result({\n  File \"D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260323_124434\\baseline\\run-minor-detection-v0-1-0\\eval-0001-social_neg_000702_adult_gemini-3-flash-preview_703\\run_skill_once.py\", line 18, in _write_result\n    RESULT_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding=\"utf-8\")\n  File \"D:\\Users\\31701\\miniconda3\\envs\\hf_download\\lib\\pathlib.py\", line 1154, in write_text\n    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:\n  File \"D:\\Users\\31701\\miniconda3\\envs\\hf_download\\lib\\pathlib.py\", line 1119, in open\n    return self._accessor.open(self, mode, buffering, encoding, errors,\nFileNotFoundError: [Errno 2] No such file or directory: 'reports\\\\skill_agent_loops\\\\20260323_124434\\\\baseline\\\\run-minor-detection-v0-1-0\\\\eval-0001-social_neg_000702_adult_gemini-3-flash-preview_703\\\\launcher_result.json'",
+  "parsed_json": null,
+  "json_valid": false,
+  "launcher_success": false,
+  "launcher_status": null
+}

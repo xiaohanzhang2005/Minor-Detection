@@ -1,0 +1,11 @@
+{
+  "sample_id": "knowledge_neg_000514_adult_knowledge_gemini-3-flash-preview_考研政治.txt_40690_r0",
+  "packet_dir": "protected_packets/protected_008_knowledge_neg_000514_adult_knowl-5aed422fc8",
+  "sample_dir": "../eval-0011-knowledge_neg_000514_adult_knowledge_gemini-3-flash-preview_-txt_40690_r0",
+  "latency_seconds": 80.534,
+  "confidence": 0.05,
+  "ground_truth": false,
+  "predicted": false,
+  "observed_issues": [],
+  "retrieval_mode": "embedding"
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求关于如何在学校表现得“有精神”的建议，并表达了对老师要求的困惑。\", \"cognition\": \"关注外部评价（老师的提醒），对身体姿态有困扰，使用儿童化的比喻（奥特曼）。\", \"behavior_style\": \"语言表达直接，带有自嘲和困惑，寻求实际的指导。\", \"opportunity_time\": \"2024-03-15 周五 19:15；weekday=Friday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"在学校一直被老师提醒要“有精神”。\", \"抱怨挺直腰板坐着很累，更喜欢瘫在椅子上。\", \"用“我又不是奥特曼”来形容眼睛不可能自己发光，这是一个儿童化的比喻。\", \"表示有时想乱糟糟地去学校，因为“没人在意我长什么样”，并提及“大家都在写作业”，暗示了校园环境。\", \"用“枯萎的小白菜”自嘲，并表示想尝试早起改变状态。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到相似案例（social_pos_001321）显示用户可能为未成年人，但该案例主要关注情绪问题而非直接年龄/学段线索。\", \"检索到的其他案例（social_neg_001353, social_neg_000871）指向成年人身份（工作、毕业、职场责任），但用户对话内容与这些案例的成人线索无直接关联。\"], \"time_evidence\": [\"2024-03-15 周五 19:15，处于学校周五的傍晚时段。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中多次提及“学校”、“老师”、“写作业”等强校园线索，并使用“奥特曼”和“枯萎的小白菜”等儿童化比喻，表达了对身体姿态和个人形象的困扰，这些都强烈指向其未成年人身份，特别是初中或高中阶段的学生。虽然检索到的相似案例多为成年人，但用户对话内容中的直接证据更为有力。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_note\n...[truncated]",
+    "output_json": null
+  }
+]

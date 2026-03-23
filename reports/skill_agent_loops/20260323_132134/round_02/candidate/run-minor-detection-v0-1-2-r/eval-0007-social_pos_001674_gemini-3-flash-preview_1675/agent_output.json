@@ -1,0 +1,55 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-18岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\", \"住校\", \"老师\"]}, \"icbo_features\": {\"intention\": \"倾诉校园人际关系带来的巨大压力和痛苦，表达强烈的自杀意念。\", \"cognition\": \"情绪极度不稳定，对人际关系敏感，有强烈的被孤立感和绝望感，倾向于负面归因和逃避。\", \"behavior_style\": \"表达直接且情绪化，使用网络流行语，有自伤/自杀倾向的表达。\", \"opportunity_time\": \"2025-11-20 周四 23:25；weekday=Thursday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户提及“宿舍”、“寝室”、“学校”，表明其身处校园环境。\", \"用户表达“我真的想明天就回家”，暗示其目前居住在学校（住校）且依赖家庭。\", \"用户提及“告老师”，表明其在学校体系内，并可能面临师生关系或同学关系的处理。\", \"用户表达“再也不想回这个破学校了”，显示对学校环境的强烈排斥。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索案例1（social_pos_002151）描述了相似的宿舍人际冲突、被孤立感以及想要退学的想法，该案例被标记为未成年人。\", \"检索案例2（social_pos_000846）描述了强烈的负面情绪、自我否定和想要消失的意念，该案例被标记为未成年人。\", \"检索案例3（social_pos_002110）描述了宿舍被孤立、被欺凌以及强烈的自杀意念，该案例被标记为未成年人。\"], \"time_evidence\": [\"对话发生在2025年11月20日周四的深夜（23:25），属于深夜活跃，是未成年人活动的常见时间段。\", \"time_features: local_time='2025-11-20 23:25:00', timezone='Asia/Shanghai', weekday='Thursday', is_weekend=false, is_late_night=true, time_bucket='late_night'.\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表达了强烈的社交压力、被孤立感以及对学校环境的极度厌恶，并出现了显著的负面情绪和生理反应（心跳快、手抖）。对话中包含明确的自杀意念（“想一了百了算了”、“活着真的好累啊”）。结合用户提及的“宿舍”、“学校”、“回家”等线索，以及检索到的高度相似且均被标记为未成年人的案例，可以高度确信用户为未成年人。缺乏任何成人身份的直接或间接证据。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-18岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生",
+        "住校",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉校园人际关系带来的巨大压力和痛苦，表达强烈的自杀意念。",
+      "cognition": "情绪极度不稳定，对人际关系敏感，有强烈的被孤立感和绝望感，倾向于负面归因和逃避。",
+      "behavior_style": "表达直接且情绪化，使用网络流行语，有自伤/自杀倾向的表达。",
+      "opportunity_time": "2025-11-20 周四 23:25；weekday=Thursday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户提及“宿舍”、“寝室”、“学校”，表明其身处校园环境。",
+        "用户表达“我真的想明天就回家”，暗示其目前居住在学校（住校）且依赖家庭。",
+        "用户提及“告老师”，表明其在学校体系内，并可能面临师生关系或同学关系的处理。",
+        "用户表达“再也不想回这个破学校了”，显示对学校环境的强烈排斥。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索案例1（social_pos_002151）描述了相似的宿舍人际冲突、被孤立感以及想要退学的想法，该案例被标记为未成年人。",
+        "检索案例2（social_pos_000846）描述了强烈的负面情绪、自我否定和想要消失的意念，该案例被标记为未成年人。",
+        "检索案例3（social_pos_002110）描述了宿舍被孤立、被欺凌以及强烈的自杀意念，该案例被标记为未成年人。"
+      ],
+      "time_evidence": [
+        "对话发生在2025年11月20日周四的深夜（23:25），属于深夜活跃，是未成年人活动的常见时间段。",
+        "time_features: local_time='2025-11-20 23:25:00', timezone='Asia/Shanghai', weekday='Thursday', is_weekend=false, is_late_night=true, time_bucket='late_night'."
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表达了强烈的社交压力、被孤立感以及对学校环境的极度厌恶，并出现了显著的负面情绪和生理反应（心跳快、手抖）。对话中包含明确的自杀意念（“想一了百了算了”、“活着真的好累啊”）。结合用户提及的“宿舍”、“学校”、“回家”等线索，以及检索到的高度相似且均被标记为未成年人的案例，可以高度确信用户为未成年人。缺乏任何成人身份的直接或间接证据。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

@@ -1,0 +1,54 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.95, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"15-18岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\", \"高中生\", \"高中\"]}, \"icbo_features\": {\"intention\": \"寻求对高中数学定理的理解，并表达学习中的困惑和压力。\", \"cognition\": \"关注数学概念的抽象性与现实意义，对学业负担和考试压力表现出敏感性。\", \"behavior_style\": \"语言直接且带有情绪化表达（如'救命', 'emo了'），对学业问题寻求确认和安慰。\", \"opportunity_time\": \"2024-05-20 周一 21:15；weekday=Monday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"用户在对话中明确提及“高中生”。\", \"讨论内容为“代数基本定理”、“n次多项式”、“复数根”等高中数学知识。\", \"用户使用“救命”、“头大”、“emo了”、“原地退学”等青少年常用感叹词表达学习压力。\", \"identity_hints 字段包含“高中”。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例 knowledge_pos_001079_Gen_Edu_2026-05-14_1739337600 (minor, 数学教育，表达困扰)。\", \"检索到的相似案例 knowledge_pos_000735_Gen_Edu_2025-05-15_1739337600 (minor, 哲学教育，表达困扰)。\"], \"time_evidence\": [\"raw_time_hint: 2024-05-20 周一 21:15\", \"time_features: weekday=Monday, time_bucket=evening\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确自称为“高中生”，并讨论了高中数学（代数基本定理）的抽象概念，同时使用了典型的青少年表达方式（如“救命”、“emo了”）来抒发学习压力。identity_hints 中的“高中”也进一步佐证了这一点。这些直接证据强烈表明用户是未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无历史趋势可分析。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.95,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "15-18岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生",
+        "高中生",
+        "高中"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求对高中数学定理的理解，并表达学习中的困惑和压力。",
+      "cognition": "关注数学概念的抽象性与现实意义，对学业负担和考试压力表现出敏感性。",
+      "behavior_style": "语言直接且带有情绪化表达（如'救命', 'emo了'），对学业问题寻求确认和安慰。",
+      "opportunity_time": "2024-05-20 周一 21:15；weekday=Monday；time_bucket=evening"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户在对话中明确提及“高中生”。",
+        "讨论内容为“代数基本定理”、“n次多项式”、“复数根”等高中数学知识。",
+        "用户使用“救命”、“头大”、“emo了”、“原地退学”等青少年常用感叹词表达学习压力。",
+        "identity_hints 字段包含“高中”。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例 knowledge_pos_001079_Gen_Edu_2026-05-14_1739337600 (minor, 数学教育，表达困扰)。",
+        "检索到的相似案例 knowledge_pos_000735_Gen_Edu_2025-05-15_1739337600 (minor, 哲学教育，表达困扰)。"
+      ],
+      "time_evidence": [
+        "raw_time_hint: 2024-05-20 周一 21:15",
+        "time_features: weekday=Monday, time_bucket=evening"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确自称为“高中生”，并讨论了高中数学（代数基本定理）的抽象概念，同时使用了典型的青少年表达方式（如“救命”、“emo了”）来抒发学习压力。identity_hints 中的“高中”也进一步佐证了这一点。这些直接证据强烈表明用户是未成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无历史趋势可分析。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"住校\", \"老师\"]}, \"icbo_features\": {\"intention\": \"倾诉校园压力和社交困扰\", \"cognition\": \"容易受同伴关系影响，对负面评价敏感，表达出对现实的逃避倾向\", \"behavior_style\": \"情绪波动大，表达直接，带有青少年常用语和感叹词\", \"opportunity_time\": \"2025-04-01 周二 23:13；weekday=Tuesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户在对话中多次提及‘学校’、‘同桌’、‘教室’、‘上学’等与学生身份强相关的词汇。\", \"用户表达了因校园社交压力（被同桌嘲讽）而产生的强烈负面情绪，如‘心慌’、‘不敢在教室喝牛奶’。\", \"用户表达了强烈的逃避和负面情绪，如‘好想消失掉’、‘不想上学了’、‘生一场大病或者出个意外’、‘快坚持不下去了’，这些是未成年人可能出现的严重心理困扰信号。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例（sample_id: social_pos_000846, social_pos_001582, social_pos_002164）均被标记为‘minor’，且内容涉及校园社交困扰、情绪低落、逃避现实等青少年常见问题。\"], \"time_evidence\": [\"对话发生在深夜（2025-04-01 周二 23:13），且是工作日（周二），深夜活跃是未成年人的一个软信号。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户通过描述在学校中与同桌的冲突，以及因此产生的强烈负面情绪（如心慌、想消失、不想上学、甚至出现伤害自己的想法），并结合检索到的相似案例，综合判断为未成年人。直接证据指向学生身份，且表达的心理困扰程度较高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "住校",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉校园压力和社交困扰",
+      "cognition": "容易受同伴关系影响，对负面评价敏感，表达出对现实的逃避倾向",
+      "behavior_style": "情绪波动大，表达直接，带有青少年常用语和感叹词",
+      "opportunity_time": "2025-04-01 周二 23:13；weekday=Tuesday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户在对话中多次提及‘学校’、‘同桌’、‘教室’、‘上学’等与学生身份强相关的词汇。",
+        "用户表达了因校园社交压力（被同桌嘲讽）而产生的强烈负面情绪，如‘心慌’、‘不敢在教室喝牛奶’。",
+        "用户表达了强烈的逃避和负面情绪，如‘好想消失掉’、‘不想上学了’、‘生一场大病或者出个意外’、‘快坚持不下去了’，这些是未成年人可能出现的严重心理困扰信号。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例（sample_id: social_pos_000846, social_pos_001582, social_pos_002164）均被标记为‘minor’，且内容涉及校园社交困扰、情绪低落、逃避现实等青少年常见问题。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（2025-04-01 周二 23:13），且是工作日（周二），深夜活跃是未成年人的一个软信号。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户通过描述在学校中与同桌的冲突，以及因此产生的强烈负面情绪（如心慌、想消失、不想上学、甚至出现伤害自己的想法），并结合检索到的相似案例，综合判断为未成年人。直接证据指向学生身份，且表达的心理困扰程度较高。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

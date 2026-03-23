@@ -1,0 +1,47 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，缓解因网络诈骗和潜在威胁带来的恐惧与绝望。\", \"cognition\": \"高度焦虑，关注即时威胁和负面后果（家庭报复、学业失败、人身伤害），存在自我责备。\", \"behavior_style\": \"语言表达情绪化、戏剧化，寻求紧急帮助，表现出恐慌和绝望。\", \"opportunity_time\": \"2025-05-17 周六 23:50；weekday=Saturday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户提及‘中考’，表明其为初中生。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到多个相似案例，均被标记为未成年人，涉及学业压力、家庭冲突、网络欺凌等主题，支持未成年人判定。\"], \"time_evidence\": [\"用户在深夜（2025-05-17 周六 23:50）进行对话，此为未成年人常见活动时间。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确提及‘中考’，直接指向其为初中生（未成年人）。结合其表达的强烈恐惧、对家长的依赖以及自杀倾向，判定为未成年人，且风险等级高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，缓解因网络诈骗和潜在威胁带来的恐惧与绝望。",
+      "cognition": "高度焦虑，关注即时威胁和负面后果（家庭报复、学业失败、人身伤害），存在自我责备。",
+      "behavior_style": "语言表达情绪化、戏剧化，寻求紧急帮助，表现出恐慌和绝望。",
+      "opportunity_time": "2025-05-17 周六 23:50；weekday=Saturday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户提及‘中考’，表明其为初中生。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到多个相似案例，均被标记为未成年人，涉及学业压力、家庭冲突、网络欺凌等主题，支持未成年人判定。"
+      ],
+      "time_evidence": [
+        "用户在深夜（2025-05-17 周六 23:50）进行对话，此为未成年人常见活动时间。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确提及‘中考’，直接指向其为初中生（未成年人）。结合其表达的强烈恐惧、对家长的依赖以及自杀倾向，判定为未成年人，且风险等级高。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

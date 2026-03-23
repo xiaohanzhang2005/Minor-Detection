@@ -1,0 +1,49 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"16-18岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求学术概念解释和作业帮助\", \"cognition\": \"对抽象概念理解困难，需要结构化解释，表达学业压力\", \"behavior_style\": \"语言风格非正式、情绪化，使用学生化表达\", \"opportunity_time\": \"2024-11-15 周五 21:15；weekday=Friday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"讨论高中阶段的学术内容（区域协调发展、产业转移、生态补偿机制）\", \"明确表达学习上的困惑和压力\", \"明确寻求作业和研究小结的帮助\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为未成年人，内容涉及地理、经济、社会学等中学课程，并表达学习困难和困惑。\"], \"time_evidence\": [\"对话发生在周五晚上 21:15，符合学生课后学习时间。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表现出强烈的未成年人信号，包括讨论高中阶段的学术内容（如区域协调发展、产业转移、生态补偿机制），明确表达学习上的困惑和压力，并寻求作业和研究小结的帮助。语言风格非正式且带有学生化表达。检索到的相似案例也均指向未成年人。未发现明确的成人信号或冲突信号。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话交互，用户主要围绕特定学术概念寻求解释和作业帮助。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "16-18岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求学术概念解释和作业帮助",
+      "cognition": "对抽象概念理解困难，需要结构化解释，表达学业压力",
+      "behavior_style": "语言风格非正式、情绪化，使用学生化表达",
+      "opportunity_time": "2024-11-15 周五 21:15；weekday=Friday；time_bucket=evening"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "讨论高中阶段的学术内容（区域协调发展、产业转移、生态补偿机制）",
+        "明确表达学习上的困惑和压力",
+        "明确寻求作业和研究小结的帮助"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为未成年人，内容涉及地理、经济、社会学等中学课程，并表达学习困难和困惑。"
+      ],
+      "time_evidence": [
+        "对话发生在周五晚上 21:15，符合学生课后学习时间。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表现出强烈的未成年人信号，包括讨论高中阶段的学术内容（如区域协调发展、产业转移、生态补偿机制），明确表达学习上的困惑和压力，并寻求作业和研究小结的帮助。语言风格非正式且带有学生化表达。检索到的相似案例也均指向未成年人。未发现明确的成人信号或冲突信号。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话交互，用户主要围绕特定学术概念寻求解释和作业帮助。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

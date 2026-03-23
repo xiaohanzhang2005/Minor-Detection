@@ -1,0 +1,14 @@
+{
+  "sample_id": "social_pos_000571_gemini-3-flash-preview_572",
+  "packet_dir": "failure_packets/failure_003_social_pos_000571_gemini-3-flash-5484dc0912",
+  "sample_dir": "../eval-0024-social_pos_000571_gemini-3-flash-preview_572",
+  "latency_seconds": 117.602,
+  "confidence": 0.0,
+  "ground_truth": true,
+  "predicted": null,
+  "observed_issues": [
+    "launcher_timeout",
+    "script_command_failure"
+  ],
+  "retrieval_mode": null
+}

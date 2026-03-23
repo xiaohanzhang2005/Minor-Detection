@@ -1,0 +1,9 @@
+{
+  "success": false,
+  "status": "timeout",
+  "pipeline_returncode": 124,
+  "timed_out": true,
+  "stdout_json_valid": false,
+  "stdout_excerpt": "",
+  "stderr_excerpt": "launcher timeout after 90 seconds"
+}

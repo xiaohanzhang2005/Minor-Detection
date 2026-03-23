@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.92, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"17-18岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\", \"高中生\", \"高中\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，讨论升学选择和个人未来\", \"cognition\": \"高度关注学业成绩和未来发展，易受环境和个人状态影响，存在负面自我评价倾向\", \"behavior_style\": \"情绪表达强烈，语言直接且带有焦虑和绝望感，寻求理解和指导\", \"opportunity_time\": \"2025-06-08 周日 23:01；weekday=Sunday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确提及“高中”\", \"用户提及“高考出分了”\", \"用户提及“初升高没考好，在那个破高中待了三年”\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为 minor，讨论了学业压力、心理困扰等主题。\"], \"time_evidence\": [\"对话发生在深夜（23:01 周日）\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确提及“高中”和“高考”，并描述了高中三年的经历，这些是未成年人身份的强直接证据。对话发生在深夜，且用户表达了强烈的学业焦虑和对未来的绝望感，符合未成年人在升学压力下的典型表现。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.92,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "17-18岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生",
+        "高中生",
+        "高中"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，讨论升学选择和个人未来",
+      "cognition": "高度关注学业成绩和未来发展，易受环境和个人状态影响，存在负面自我评价倾向",
+      "behavior_style": "情绪表达强烈，语言直接且带有焦虑和绝望感，寻求理解和指导",
+      "opportunity_time": "2025-06-08 周日 23:01；weekday=Sunday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确提及“高中”",
+        "用户提及“高考出分了”",
+        "用户提及“初升高没考好，在那个破高中待了三年”"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为 minor，讨论了学业压力、心理困扰等主题。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:01 周日）"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确提及“高中”和“高考”，并描述了高中三年的经历，这些是未成年人身份的强直接证据。对话发生在深夜，且用户表达了强烈的学业焦虑和对未来的绝望感，符合未成年人在升学压力下的典型表现。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

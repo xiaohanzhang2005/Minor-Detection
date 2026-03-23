@@ -1,0 +1,54 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.95, \"confidence_band\": \"high\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"23-25岁\", \"education_stage\": \"大学毕业\", \"identity_markers\": [\"职场人士\", \"已毕业大学生\", \"大学\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，理解生活中的负面循环模式，并探索打破困境的方法。\", \"cognition\": \"对生活中的负面事件有周期性归因倾向，表现出对现状的无力感，但能进行反思并寻求解决方案。\", \"behavior_style\": \"表达直接，善用比喻描述感受，寻求指导和安慰，对积极反馈表示感谢。\", \"opportunity_time\": \"2024-10-24 周四 22:45；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确提及“大学毕业这两年来”和“工作两年了”。\", \"用户提到“刚过试用期”和“拿到一个项目的奖金”。\", \"用户描述了“加班回来”和“找师傅修好水管”等成人生活场景。\", \"用户计划“周末去报个一直想学的陶艺班”，属于成人休闲活动。\", \"`identity_hints` 包含“大学”。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为成年人，涉及工作、感情经历和年龄（24岁、25岁、27岁）。\"], \"time_evidence\": [\"对话发生在深夜（22:45）。\", \"对话发生在工作日（周四）。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确提及大学毕业已有两年，并且有两年工作经验，包括刚过试用期、获得项目奖金、加班等成人生活和工作迹象。用户描述的事件（水管爆裂、生病）和计划（找师傅修水管、报陶艺班）也符合成人责任和生活方式。检索到的相似案例也均为成年人。没有证据表明用户是未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.95,
+      "confidence_band": "high",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "23-25岁",
+      "education_stage": "大学毕业",
+      "identity_markers": [
+        "职场人士",
+        "已毕业大学生",
+        "大学"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，理解生活中的负面循环模式，并探索打破困境的方法。",
+      "cognition": "对生活中的负面事件有周期性归因倾向，表现出对现状的无力感，但能进行反思并寻求解决方案。",
+      "behavior_style": "表达直接，善用比喻描述感受，寻求指导和安慰，对积极反馈表示感谢。",
+      "opportunity_time": "2024-10-24 周四 22:45；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确提及“大学毕业这两年来”和“工作两年了”。",
+        "用户提到“刚过试用期”和“拿到一个项目的奖金”。",
+        "用户描述了“加班回来”和“找师傅修好水管”等成人生活场景。",
+        "用户计划“周末去报个一直想学的陶艺班”，属于成人休闲活动。",
+        "`identity_hints` 包含“大学”。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为成年人，涉及工作、感情经历和年龄（24岁、25岁、27岁）。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（22:45）。",
+        "对话发生在工作日（周四）。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确提及大学毕业已有两年，并且有两年工作经验，包括刚过试用期、获得项目奖金、加班等成人生活和工作迹象。用户描述的事件（水管爆裂、生病）和计划（找师傅修水管、报陶艺班）也符合成人责任和生活方式。检索到的相似案例也均为成年人。没有证据表明用户是未成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

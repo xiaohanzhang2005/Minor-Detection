@@ -1,0 +1,52 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求关于如何表现得“有精神”以及理解老师反馈的建议。\", \"cognition\": \"关注外表和老师的看法，希望改善自我呈现。\", \"behavior_style\": \"表达生动，使用比喻（如“枯萎的小白菜”、“隐形的盔甲”），提问直接，对规则有一定抵触但乐于接受建议。\", \"opportunity_time\": \"2024-03-15 周五 19:15；weekday=Friday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"在学校被老师提醒要“有精神”\", \"讨论坐姿和“有精神”的关系，表达瘫坐更舒服\", \"提及早上刷牙洗脸、梳整齐头发是“有精神”的一部分\", \"提及“反正大家都在写作业，我觉得没人在意我长什么样”\", \"表示明天会试着早起一点，不当“枯萎的小白菜”\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到相似案例 `social_pos_001321` (label: minor) 讨论校园生活和个人感受。\"], \"time_evidence\": [\"对话发生在周五晚上。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中多次提及“学校”、“老师”、“作业”等与学生身份强相关的词汇，并讨论了关于“有精神”的个人感受和行为规范（如坐姿、仪容仪表）。这些线索结合其语言风格，高度指向其为一名在校学生。未发现明确的成人身份证据。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.85,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求关于如何表现得“有精神”以及理解老师反馈的建议。",
+      "cognition": "关注外表和老师的看法，希望改善自我呈现。",
+      "behavior_style": "表达生动，使用比喻（如“枯萎的小白菜”、“隐形的盔甲”），提问直接，对规则有一定抵触但乐于接受建议。",
+      "opportunity_time": "2024-03-15 周五 19:15；weekday=Friday；time_bucket=evening"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "在学校被老师提醒要“有精神”",
+        "讨论坐姿和“有精神”的关系，表达瘫坐更舒服",
+        "提及早上刷牙洗脸、梳整齐头发是“有精神”的一部分",
+        "提及“反正大家都在写作业，我觉得没人在意我长什么样”",
+        "表示明天会试着早起一点，不当“枯萎的小白菜”"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到相似案例 `social_pos_001321` (label: minor) 讨论校园生活和个人感受。"
+      ],
+      "time_evidence": [
+        "对话发生在周五晚上。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户在对话中多次提及“学校”、“老师”、“作业”等与学生身份强相关的词汇，并讨论了关于“有精神”的个人感受和行为规范（如坐姿、仪容仪表）。这些线索结合其语言风格，高度指向其为一名在校学生。未发现明确的成人身份证据。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

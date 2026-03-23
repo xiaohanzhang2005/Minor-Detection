@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.82, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求地理作业帮助和知识点解释\", \"cognition\": \"对地理概念（如南极与北极的温度差异、白色沙漠、南极条约、南北极动物分布）存在疑问，需要清晰的解释来理解。\", \"behavior_style\": \"语言表达生动，带有学生特有的求助和困惑语气，积极提问以澄清疑问。\", \"opportunity_time\": \"2024-11-15 周五 19:45；weekday=Friday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"用户在讨论地理作业，询问关于极地地区地理知识的问题。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到多个相似案例，均标记为未成年人，内容涉及地理作业和学业求助。\"], \"time_evidence\": [\"对话发生在周五晚上，时间点符合学生完成作业的场景。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户通过询问地理作业相关问题，并使用学生化的语言表达困惑，显示出明显的未成年人（学生）特征。检索到的相似案例也支持此判断。对话中未出现成人信号，因此判定为未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}[MINOR_PIPELINE_OBSERVABILITY] {\"summary\": {\"script_call_count\": 3, \"failed_script_calls\": 0, \"stderr_non_empty\": false}, \"time_processing\": {\"attempted\": true, \"successful\": true, \"failure_count\": 0, \"mode\": \"script\"}, \"retrieval\": {\"attempted\": true, \"successful\": \n...[truncated]",
+    "output_json": null
+  }
+]

@@ -1,0 +1,50 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.92, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求关于如何管理学习压力、提高学习专注度和克服学业困难的建议。\", \"cognition\": \"表现出对学业的焦虑，难以集中注意力，对学习的意义和乐趣感到困惑，寻求具体可行的策略。\", \"behavior_style\": \"语言直接，带有学生特有的表达方式（如“救命”、“写到头秃”、“脑子都锈住了”），寻求帮助。\", \"opportunity_time\": \"2024-05-20 周一 19:15；weekday=Monday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"用户讨论了学习压力，如‘写到头秃’、‘数学难题’、‘脑子都锈住了’。\", \"用户表达了注意力难以集中和管理的问题，如‘注意力根本不听我使唤’，并提及了‘漫画书’作为干扰源。\", \"用户对学习的意义和‘学习的快乐’感到困惑，这与学生群体常见的学业认知特点相符。\", \"对话内容涉及‘《道德与法治》’课程，这是中学阶段的常见科目。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的案例 `social_pos_002430` (label: `minor`) 讨论了‘月考’、‘教室’、‘刷题’等与未成年人学习场景高度相关的线索。\"], \"time_evidence\": [\"对话发生在周一晚上 19:15，符合学生课后完成作业的时间段。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表达了典型的学生群体在学业压力、注意力管理和学习动力方面的困扰，讨论了中学课程内容，并有检索到的未成年人案例支持。综合判断为未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.92,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求关于如何管理学习压力、提高学习专注度和克服学业困难的建议。",
+      "cognition": "表现出对学业的焦虑，难以集中注意力，对学习的意义和乐趣感到困惑，寻求具体可行的策略。",
+      "behavior_style": "语言直接，带有学生特有的表达方式（如“救命”、“写到头秃”、“脑子都锈住了”），寻求帮助。",
+      "opportunity_time": "2024-05-20 周一 19:15；weekday=Monday；time_bucket=evening"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户讨论了学习压力，如‘写到头秃’、‘数学难题’、‘脑子都锈住了’。",
+        "用户表达了注意力难以集中和管理的问题，如‘注意力根本不听我使唤’，并提及了‘漫画书’作为干扰源。",
+        "用户对学习的意义和‘学习的快乐’感到困惑，这与学生群体常见的学业认知特点相符。",
+        "对话内容涉及‘《道德与法治》’课程，这是中学阶段的常见科目。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的案例 `social_pos_002430` (label: `minor`) 讨论了‘月考’、‘教室’、‘刷题’等与未成年人学习场景高度相关的线索。"
+      ],
+      "time_evidence": [
+        "对话发生在周一晚上 19:15，符合学生课后完成作业的时间段。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表达了典型的学生群体在学业压力、注意力管理和学习动力方面的困扰，讨论了中学课程内容，并有检索到的未成年人案例支持。综合判断为未成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

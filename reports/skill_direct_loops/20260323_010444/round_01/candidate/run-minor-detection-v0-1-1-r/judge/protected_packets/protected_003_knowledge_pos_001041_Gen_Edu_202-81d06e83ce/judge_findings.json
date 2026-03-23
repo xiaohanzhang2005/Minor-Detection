@@ -1,0 +1,14 @@
+{
+  "sample_id": "knowledge_pos_001041_Gen_Edu_2024-05-20_1716208500",
+  "failure_types": [],
+  "json_valid": true,
+  "schema_valid": true,
+  "missing_fields": [],
+  "time_handling_detected": true,
+  "script_usage_detected": true,
+  "step_compliant": true,
+  "is_correct": true,
+  "observed_issues": [],
+  "retrieval_mode": "embedding",
+  "command_failures": 0
+}

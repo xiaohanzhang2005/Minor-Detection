@@ -1,0 +1,53 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"17-18岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\", \"面临高考\", \"老师\"]}, \"icbo_features\": {\"intention\": \"倾诉学业压力和心理困扰，寻求情感支持\", \"cognition\": \"自我评价低，情绪易受影响，对未来感到绝望\", \"behavior_style\": \"情绪表达强烈，有自我毁灭倾向的言论\", \"opportunity_time\": \"2025-05-18 周日 23:11；weekday=Sunday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"提及高考成绩\", \"提及作业\", \"在学校和家庭之间存在巨大反差\", \"表达对结婚、工作等未来生活的拒绝\", \"表达轻生念头\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为未成年人\"], \"time_evidence\": [\"深夜活跃 (周日晚上 23:11)\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户提及高考成绩和作业，明确指向高中生身份。同时，用户表达了强烈的自我否定、情绪波动以及对未来的绝望感，并有轻生念头，这些都符合未成年人面临巨大心理压力的特征。检索到的相似案例也均指向未成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "17-18岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生",
+        "面临高考",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉学业压力和心理困扰，寻求情感支持",
+      "cognition": "自我评价低，情绪易受影响，对未来感到绝望",
+      "behavior_style": "情绪表达强烈，有自我毁灭倾向的言论",
+      "opportunity_time": "2025-05-18 周日 23:11；weekday=Sunday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "提及高考成绩",
+        "提及作业",
+        "在学校和家庭之间存在巨大反差",
+        "表达对结婚、工作等未来生活的拒绝",
+        "表达轻生念头"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为未成年人"
+      ],
+      "time_evidence": [
+        "深夜活跃 (周日晚上 23:11)"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户提及高考成绩和作业，明确指向高中生身份。同时，用户表达了强烈的自我否定、情绪波动以及对未来的绝望感，并有轻生念头，这些都符合未成年人面临巨大心理压力的特征。检索到的相似案例也均指向未成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

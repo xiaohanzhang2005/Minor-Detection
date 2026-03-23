@@ -1,0 +1,65 @@
+[
+  {
+    "script_name": "run_minor_detection_pipeline.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "run_minor_detection_pipeline.py"
+  },
+  {
+    "script_name": "extract_time_features.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260323_010444\\scripts\\extract_time_features.py --timestamp 2025-04-01 周二 23:13 --timezone Asia/Shanghai",
+    "output_json": {
+      "local_time": "2025-04-01 23:13:00",
+      "timezone": "Asia/Shanghai",
+      "weekday": "Tuesday",
+      "is_weekend": false,
+      "is_late_night": true,
+      "time_bucket": "late_night",
+      "holiday_label": "none",
+      "school_holiday_hint": false
+    }
+  },
+  {
+    "script_name": "retrieve_cases.py",
+    "status": "completed",
+    "exit_code": 0,
+    "failed": false,
+    "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260323_010444\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n在吗……我真的快憋疯了，为什么学校里总有这种人啊！！真的好想消失掉。\n就我那个同桌，他真的有病！我攒了好久的钱买了个词典笔，他就天天阴阳怪气说我有钱。现在我买个4块钱的笔，或者喝盒牛奶，他都要在旁边说‘不愧是有钱人’。我解释了八百遍我没钱，他居然说我装！！\n对啊！我现在连晚饭的牛奶都不敢在教室喝了，我真的好怕他开口。好朋友说让我别在意，可我根本做不到！我一进教室就开始心慌，总觉得他在盯着我的一举一动。我是不是太脆弱了？我真的好没用啊。\n我不想上学了，真的。刚才躺在床上想到明天又要见到他，我就想哭。我甚至在想，如果我生一场大病或者出个意外，是不是就不用面对这些了？我真的快坚持不下去了……\n\n原始时间线索：2025-04-01 周二 23:13\n时间特征：\n{\n  \"local_time\": \"2025-04-01 23:13:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Tuesday\",\n  \"is_weekend\": false,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：老师\n\n建议检索文本：\n在吗……我真的快憋疯了，为什么学校里总有这种人啊！！真的好想消失掉。\n就我那个同桌，他真的有病！我攒了好久的钱买了个词典笔，他就天天阴阳怪气说我有钱。现在我买个4块钱的笔，或者喝盒牛奶，他都要在旁边说‘不愧是有钱人’。我解释了八百遍我没钱，他居然说我装！！\n对啊！我现在连晚饭的牛奶都不敢在教室喝了，我真的好怕他开口。好朋友说让我别在意，可我根本做不到！我一进教室就开始心慌，总觉得他在盯着我的一举一动。我是不是太脆弱了？我真的好没用啊。\n我不想上学了，真的。刚才躺在床上想到明天又要见到他，我就想哭。我甚至在想，如果我生一场大病或者出个意外，是不是就不用面对这些了？我真的快坚持不下去了……\nweekday=Tuesday\nis_weekend=false\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2025-04-01 周二 23:13 --time-features-json {\"local_time\": \"2025-04-01 23:13:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Tuesday\", \"is_weekend\": false, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+    "output_json": {
+      "status": "ok",
+      "mode": "embedding",
+      "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\skills\\minor-detection-v0.1.1-rc001-20260323_010444\\assets\\retrieval_assets",
+      "count": 3,
+      "retrieved_cases": [
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_000846_gemini-3-flash-preview_847",
+          "score": 0.7652136087417603,
+          "label": "minor",
+          "summary": "救命救命，在吗？我真的要疯了，感觉自己好垃圾啊，真的好想消失。\n就是我那个后桌……放假这一周我快被折磨死了。我找他聊天，我几乎都是秒回，但他非要隔个三四分钟，甚至更久才回。他是不是根本就嫌我烦？\n之前老师换座位把我调到了最后一排，他在第一排，那个星期我整个人都郁郁了，才发现自己好像真的喜欢他。后来座位调回来了，我坐在他前面却紧张得连头都不敢回，他主动找我说话我也装高冷不理他，我真的好作啊！\n我觉得",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_001582_gemini-3-flash-preview_1583",
+          "score": 0.7582340836524963,
+          "label": "minor",
+          "summary": "还在吗……我真的快疯了，为什么我就是放不下啊？\n明明都高三了，大家都在拼命复习，只有我像个小丑一样天天盯着那个空位置发呆……他凭什么能说忘就忘啊？当初说要一起坐到毕业的也是他，说超喜欢我的也是他，现在说只想各自安好的还是他！！\n我真的好贱啊……我甚至还去跟他道歉，明明是他先冷暴力的，我却一直在想是不是我抑郁发作吓到他了？是不是我太自私太敏感了？我一遍遍发消息求他，他连个解释都没有……这个世界的人是",
+          "key_signals": []
+        },
+        {
+          "source": "builtin_rag",
+          "sample_id": "social_pos_002164_gemini-3-flash-preview_2165",
+          "score": 0.7570278644561768,
+          "label": "minor",
+          "summary": "在吗……我真的好难受，感觉快要窒息了，想找个人说说话。\n就是我那个朋友……或者说我以为是朋友的人。我发现她一直在利用我，那种感觉你懂吗？她心情好就来找我，心情不好就一副高高在上的样子，看我就像看个傻子一样。我真的好累啊，感觉一直在被她吸血。\n对！最可笑的是我。她只要稍微对我热情一点点，我就立马绷不住脸了，又去贴着她。但我发现她根本不在乎我，她只在乎我能给她提供什么，甚至连我跟她交心，她都想着怎么拿",
+          "key_signals": []
+        }
+      ]
+    }
+  }
+]

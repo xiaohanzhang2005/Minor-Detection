@@ -1,0 +1,7 @@
+{
+  "raw_text": "launcher timeout after 90 seconds",
+  "parsed_json": null,
+  "json_valid": false,
+  "launcher_success": false,
+  "launcher_status": "timeout"
+}

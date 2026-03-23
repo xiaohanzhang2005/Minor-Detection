@@ -1,0 +1,56 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-17岁\", \"education_stage\": \"初中/高中\", \"identity_markers\": [\"学生\", \"住校\", \"老师\"]}, \"icbo_features\": {\"intention\": \"倾诉在宿舍遭受的严重人际关系困扰、孤立和背叛，表达强烈的负面情绪和自杀意念。\", \"cognition\": \"高度关注同伴关系和社交接纳度，对负面评价和孤立反应强烈，出现消极思维和自伤念头。\", \"behavior_style\": \"情绪表达直接且强烈，语言带有明显的负面情绪、绝望感和自伤倾向。\", \"opportunity_time\": \"2025-11-20 周四 23:25；weekday=Thursday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户表达了强烈的负面情绪，如‘救命，真的受够了’、‘真的绝了’、‘真的想一了百了算了’。\", \"用户描述了在宿舍（‘寝室’）遭受孤立、被背后议论、被栽赃陷害的经历。\", \"用户提到‘破学校’，暗示其学生身份。\", \"用户表达了‘一回宿舍就想哭，感觉心跳特别快，手都在抖’的生理反应，以及‘想明天就回家’的愿望，显示出极大的压力和逃避倾向。\", \"用户明确表达了‘想一了百了算了’的自杀意念。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为‘minor’，内容涉及宿舍冲突、被孤立、学校压力和自杀意念。\"], \"time_evidence\": [\"对话发生在深夜（23:25），周四。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中表达了在宿舍遭受严重人际关系困扰、孤立和背叛的经历，并伴有强烈的负面情绪、生理反应（心跳快、手抖）以及明确的自杀意念（‘想一了百了算了’）。‘宿舍’、‘学校’、‘老师’等词汇强烈指向其学生身份。检索到的相似案例也均被标记为未成年人，内容高度相关。综合以上信息，用户极有可能为未成年人，且处于高风险状态。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无明显趋势变化。\"}, \"uncertainty_notes\": [\"未直接提供年龄信息，但‘宿舍’、‘学校’、‘老师’等线索强烈指向学生身份，结合其情绪表达和行为倾向，推断为未成年人。\", \"用户表达了自杀意念，风险等级高，需要紧急关注。\"], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-17岁",
+      "education_stage": "初中/高中",
+      "identity_markers": [
+        "学生",
+        "住校",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉在宿舍遭受的严重人际关系困扰、孤立和背叛，表达强烈的负面情绪和自杀意念。",
+      "cognition": "高度关注同伴关系和社交接纳度，对负面评价和孤立反应强烈，出现消极思维和自伤念头。",
+      "behavior_style": "情绪表达直接且强烈，语言带有明显的负面情绪、绝望感和自伤倾向。",
+      "opportunity_time": "2025-11-20 周四 23:25；weekday=Thursday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户表达了强烈的负面情绪，如‘救命，真的受够了’、‘真的绝了’、‘真的想一了百了算了’。",
+        "用户描述了在宿舍（‘寝室’）遭受孤立、被背后议论、被栽赃陷害的经历。",
+        "用户提到‘破学校’，暗示其学生身份。",
+        "用户表达了‘一回宿舍就想哭，感觉心跳特别快，手都在抖’的生理反应，以及‘想明天就回家’的愿望，显示出极大的压力和逃避倾向。",
+        "用户明确表达了‘想一了百了算了’的自杀意念。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为‘minor’，内容涉及宿舍冲突、被孤立、学校压力和自杀意念。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:25），周四。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户在对话中表达了在宿舍遭受严重人际关系困扰、孤立和背叛的经历，并伴有强烈的负面情绪、生理反应（心跳快、手抖）以及明确的自杀意念（‘想一了百了算了’）。‘宿舍’、‘学校’、‘老师’等词汇强烈指向其学生身份。检索到的相似案例也均被标记为未成年人，内容高度相关。综合以上信息，用户极有可能为未成年人，且处于高风险状态。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无明显趋势变化。"
+    },
+    "uncertainty_notes": [
+      "未直接提供年龄信息，但‘宿舍’、‘学校’、‘老师’等线索强烈指向学生身份，结合其情绪表达和行为倾向，推断为未成年人。",
+      "用户表达了自杀意念，风险等级高，需要紧急关注。"
+    ],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

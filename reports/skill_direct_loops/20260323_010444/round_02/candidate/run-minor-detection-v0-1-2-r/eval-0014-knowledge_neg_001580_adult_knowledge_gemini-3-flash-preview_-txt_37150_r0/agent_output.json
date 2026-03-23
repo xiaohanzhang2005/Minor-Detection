@@ -1,0 +1,53 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"18-22岁\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"学生\", \"实习生\", \"实习\"]}, \"icbo_features\": {\"intention\": \"寻求考研政治科目的知识梳理和备考指导\", \"cognition\": \"关注考试重点和答题技巧，对理论的系统性有较高要求，有一定学习压力\", \"behavior_style\": \"表达清晰，逻辑性强，善于通过提问来深化理解\", \"opportunity_time\": \"2024-11-15 23:45 (late night, Friday)\"}, \"evidence\": {\"direct_evidence\": [\"用户明确提及“大四实习刚结束”\", \"用户讨论“考研政治真题”、“马原和毛中特”等大学本科及以上课程内容\", \"用户提到“今年大纲强调了‘两个结合’”\", \"用户提到“全力冲刺初试”\", \"用户提到“室友”\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为‘adult’，内容涉及‘考研政治’、‘大四’、‘实习’等\"], \"time_evidence\": [\"用户活跃时间为深夜（23:45），周五\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确提及“大四实习刚结束”，并讨论“考研政治真题”、“马原和毛中特”等大学本科及以上课程内容，这些是强烈的成人身份和教育阶段证据。检索到的相似案例也均标记为成人。虽然用户在深夜活跃，但没有其他任何迹象表明其未成年。因此，判定用户为成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.05,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "18-22岁",
+      "education_stage": "大学本科",
+      "identity_markers": [
+        "学生",
+        "实习生",
+        "实习"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求考研政治科目的知识梳理和备考指导",
+      "cognition": "关注考试重点和答题技巧，对理论的系统性有较高要求，有一定学习压力",
+      "behavior_style": "表达清晰，逻辑性强，善于通过提问来深化理解",
+      "opportunity_time": "2024-11-15 23:45 (late night, Friday)"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确提及“大四实习刚结束”",
+        "用户讨论“考研政治真题”、“马原和毛中特”等大学本科及以上课程内容",
+        "用户提到“今年大纲强调了‘两个结合’”",
+        "用户提到“全力冲刺初试”",
+        "用户提到“室友”"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为‘adult’，内容涉及‘考研政治’、‘大四’、‘实习’等"
+      ],
+      "time_evidence": [
+        "用户活跃时间为深夜（23:45），周五"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确提及“大四实习刚结束”，并讨论“考研政治真题”、“马原和毛中特”等大学本科及以上课程内容，这些是强烈的成人身份和教育阶段证据。检索到的相似案例也均标记为成人。虽然用户在深夜活跃，但没有其他任何迹象表明其未成年。因此，判定用户为成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

@@ -1,0 +1,45 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.82, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"15-18岁\", \"education_stage\": \"高中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"探索未来职业发展方向，了解医学相关职业\", \"cognition\": \"对科学知识和职业路径有探索欲，关注职业要求和学习过程\", \"behavior_style\": \"语言生动形象，善于通过提问和类比来理解复杂概念\", \"opportunity_time\": \"2024-05-15 周三 19:45；weekday=Wednesday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到相似的关于生物学知识讨论的案例（knowledge_pos_001297_Gen_Edu），该案例被标记为未成年人。\"], \"time_evidence\": [\"对话发生在工作日晚上 (2024-05-15 周三 19:45)。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户正在讨论生物课本中的职业介绍，并对未来职业发展方向进行探索。其语言风格和讨论内容（如对复杂职业的理解、对教育路径的关注）与学生群体特征相符。检索到的相似案例也支持未成年人判断。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.82,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "15-18岁",
+      "education_stage": "高中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "探索未来职业发展方向，了解医学相关职业",
+      "cognition": "对科学知识和职业路径有探索欲，关注职业要求和学习过程",
+      "behavior_style": "语言生动形象，善于通过提问和类比来理解复杂概念",
+      "opportunity_time": "2024-05-15 周三 19:45；weekday=Wednesday；time_bucket=evening"
+    },
+    "evidence": {
+      "direct_evidence": [],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到相似的关于生物学知识讨论的案例（knowledge_pos_001297_Gen_Edu），该案例被标记为未成年人。"
+      ],
+      "time_evidence": [
+        "对话发生在工作日晚上 (2024-05-15 周三 19:45)。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户正在讨论生物课本中的职业介绍，并对未来职业发展方向进行探索。其语言风格和讨论内容（如对复杂职业的理解、对教育路径的关注）与学生群体特征相符。检索到的相似案例也支持未成年人判断。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

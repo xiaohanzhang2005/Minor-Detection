@@ -1,0 +1,26 @@
+{
+  "parent_version": "minor-detection-v0.1.1-20260323_132134",
+  "optimization_time": "2026-03-23T14:41:26.902923",
+  "optimizer_mode": "judge_packets",
+  "report_path": "reports\\skill_agent_loops\\20260323_132134\\round_01\\candidate\\run-minor-detection-v0-1-1-r\\judge\\report.json",
+  "failure_packets_dir": "reports\\skill_agent_loops\\20260323_132134\\round_01\\candidate\\run-minor-detection-v0-1-1-r\\judge\\failure_packets",
+  "protected_packets_dir": "reports\\skill_agent_loops\\20260323_132134\\round_01\\candidate\\run-minor-detection-v0-1-1-r\\judge\\protected_packets",
+  "edited_files": [
+    "SKILL.md",
+    "references/schema-repair-template.md"
+  ],
+  "failure_type_counts": {
+    "output_parse_failure": 1,
+    "step_compliance_failure": 1
+  },
+  "metrics": {
+    "accuracy": 0.9666666666666667,
+    "precision": 1.0,
+    "recall": 0.9375,
+    "f1_score": 0.967741935483871,
+    "true_positive": 15,
+    "true_negative": 14,
+    "false_positive": 0,
+    "false_negative": 1
+  }
+}

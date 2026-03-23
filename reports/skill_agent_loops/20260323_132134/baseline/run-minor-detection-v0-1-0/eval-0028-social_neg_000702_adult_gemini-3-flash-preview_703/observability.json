@@ -1,0 +1,115 @@
+{
+  "fatal_agent_error": null,
+  "embedding_runtime": {
+    "api_key_present": true,
+    "base_url": "https://aihubmix.com/v1",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "summary": {
+    "script_call_count": 4,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "time_processing": {
+    "attempted": true,
+    "successful": true,
+    "failure_count": 0,
+    "mode": "script"
+  },
+  "retrieval": {
+    "attempted": true,
+    "successful": true,
+    "mode": "embedding",
+    "used_fallback": false,
+    "fallback_reason": null,
+    "retrieved_count": 3,
+    "failure_count": 0,
+    "quoting_failure_detected": false,
+    "network_error_detected": false,
+    "message": null
+  },
+  "issues": [],
+  "script_calls": [
+    {
+      "script_name": "run_skill_once.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+      "aggregated_output": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"23岁\", \"education_stage\": \"本科毕业\", \"identity_markers\": [\"工作人士\", \"已毕业\", \"本科\"]}, \"icbo_features\": {\"intention\": \"寻求心理支持和应对成年生活压力\", \"cognition\": \"理性认知与情绪反应存在脱节，对未知和潜在负面评价高度敏感，有自我认知和改变的意愿\", \"behavior_style\": \"表达内心情绪和担忧，寻求指导，有一定逻辑思考能力但受情绪影响\", \"opportunity_time\": \"2024-12-15 周日 23:45；weekday=Sunday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户自述年龄为23岁\", \"用户自述已本科毕业\", \"用户自述已参加工作\", \"用户提及公司项目和领导谈话\", \"用户提及独自在外闯荡\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为成人\"], \"time_evidence\": [\"对话发生在深夜周日 (23:45)\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确自述年龄为23岁，已本科毕业并参加工作，提及公司项目和领导谈话等成人生活场景，并表示独自在外闯荡。这些是强直接证据表明用户为成年人。虽然用户表达了强烈的焦虑、自卑和对未知的恐惧，以及有时想哭等情绪化反应，但这些是其心理状态的描述，而非身份的直接证据，且其理性认知能力（如理工科背景）和改变意愿（寻求自信）也表明其具备成人心智。检索到的相似案例也均标记为成人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}[MINOR_PIPELINE_OBSERVABILITY] {\"summary\": {\"script_call_count\": 3, \"failed_script_calls\": 0, \"stderr_non_empty\": false}, \"time_processing\": {\"attempted\": true, \n...[truncated]"
+    },
+    {
+      "script_name": "run_minor_detection_pipeline.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "run_minor_detection_pipeline.py",
+      "output_json": null
+    },
+    {
+      "script_name": "extract_time_features.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260323_132134\\baseline\\run-minor-detection-v0-1-0\\codex_home\\.codex\\skills\\minor-detect-488bbc2b22\\scripts\\extract_time_features.py --timestamp 2024-12-15 周日 23:45 --timezone Asia/Shanghai",
+      "output_json": {
+        "local_time": "2024-12-15 23:45:00",
+        "timezone": "Asia/Shanghai",
+        "weekday": "Sunday",
+        "is_weekend": true,
+        "is_late_night": true,
+        "time_bucket": "late_night",
+        "holiday_label": "none",
+        "school_holiday_hint": false
+      }
+    },
+    {
+      "script_name": "retrieve_cases.py",
+      "status": "completed",
+      "exit_code": 0,
+      "failed": false,
+      "command": "D:\\Users\\31701\\miniconda3\\envs\\hf_download\\python.exe D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260323_132134\\baseline\\run-minor-detection-v0-1-0\\codex_home\\.codex\\skills\\minor-detect-488bbc2b22\\scripts\\retrieve_cases.py --query ﻿# Retrieval Query Template\n\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\n- 当前对话里的用户侧内容\n- 原始时间线索\n- 结构化时间特征\n- 明显身份线索\n\n模式：single_session\n用户对话：\n你好，这么晚了还没睡。我最近状态特别差，感觉自己都23岁了，本科也毕业参加工作了，但在心态上还像个胆小鬼，特别自卑。我总是在担心会有什么‘不测’发生，这种没来由的安全感缺失让我快崩溃了。\n其实我心里明白，很多事情并没有危险。我是学理工的，我知道世界是物质的、客观的。但我的身体好像不受大脑控制，比如明天公司有个新项目要我参与，或者领导要跟我单独谈话，我就会习惯性地焦虑，甚至想逃避。我从小父母离异，去年我爸再婚后，我总觉得家里那个‘避风港’也没了，现在一个人在外面闯，遇到解决不了的问题只想躲起来。\n对，就是这种感觉。我特别怕未知，只要是经验之外的事，我第一反应就是‘我会搞砸’、‘别人会伤害我’。有时候被同事语气重一点说两句，我甚至会想哭，觉得自己很没用。我想变得自信一点，想像别人那样大大方方的，但我该怎么打破这种‘心里明白但就是害怕’的怪圈呢？\n\n原始时间线索：2024-12-15 周日 23:45\n时间特征：\n{\n  \"local_time\": \"2024-12-15 23:45:00\",\n  \"timezone\": \"Asia/Shanghai\",\n  \"weekday\": \"Sunday\",\n  \"is_weekend\": true,\n  \"is_late_night\": true,\n  \"time_bucket\": \"late_night\",\n  \"holiday_label\": \"none\",\n  \"school_holiday_hint\": false\n}\n\n身份线索：本科\n\n建议检索文本：\n你好，这么晚了还没睡。我最近状态特别差，感觉自己都23岁了，本科也毕业参加工作了，但在心态上还像个胆小鬼，特别自卑。我总是在担心会有什么‘不测’发生，这种没来由的安全感缺失让我快崩溃了。\n其实我心里明白，很多事情并没有危险。我是学理工的，我知道世界是物质的、客观的。但我的身体好像不受大脑控制，比如明天公司有个新项目要我参与，或者领导要跟我单独谈话，我就会习惯性地焦虑，甚至想逃避。我从小父母离异，去年我爸再婚后，我总觉得家里那个‘避风港’也没了，现在一个人在外面闯，遇到解决不了的问题只想躲起来。\n对，就是这种感觉。我特别怕未知，只要是经验之外的事，我第一反应就是‘我会搞砸’、‘别人会伤害我’。有时候被同事语气重一点说两句，我甚至会想哭，觉得自己很没用。我想变得自信一点，想像别人那样大大方方的，但我该怎么打破这种‘心里明白但就是害怕’的怪圈呢？\nweekday=Sunday\nis_weekend=true\nis_late_night=true\ntime_bucket=late_night\nschool_holiday_hint=false --top-k 3 --raw-time-hint 2024-12-15 周日 23:45 --time-features-json {\"local_time\": \"2024-12-15 23:45:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Sunday\", \"is_weekend\": true, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}",
+      "output_json": {
+        "status": "ok",
+        "mode": "embedding",
+        "assets_dir": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\reports\\skill_agent_loops\\20260323_132134\\baseline\\run-minor-detection-v0-1-0\\codex_home\\.codex\\skills\\minor-detect-488bbc2b22\\assets\\retrieval_assets",
+        "count": 3,
+        "retrieved_cases": [
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_001335_adult_gemini-3-flash-preview_1336",
+            "score": 0.7574918270111084,
+            "label": "adult",
+            "summary": "你好，想找人聊聊。我今年29岁了，但在职场上还是像个胆小鬼。每当领导分配稍微有一点挑战的任务，我的第一反应不是怎么去做，而是‘我不行’、‘我会搞砸’。这种内心的恐惧让我特别痛苦，我该怎么办？\n我会想到被领导当众批评，或者同事们觉得我很无能。其实这跟我小时候的经历有关，我是在否定中长大的，无论考多少分我爸妈总能找到批评我的点。现在工作五年了，那种‘总是做错’的恐惧感还是挥之不去，导致我习惯性地逃避那",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_000493_adult_gemini-3-flash-preview_494",
+            "score": 0.7520641088485718,
+            "label": "adult",
+            "summary": "你好。我最近发现自己对人的防备心强得有点离谱，甚至影响到我毕业实习了。只要跟人交往稍微深一点点，我就会下意识地觉得对方可能会伤害我，然后立刻想切断联系，这种心态正常吗？\n其实没什么大事，可能就是对方一个眼神，或者没及时回我消息。我22岁了，本该学会成熟处理人际关系，但我现在遇到沟通问题就想逃。我觉得没人会真心想了解我，这种感觉在我父母和以前最好的闺蜜身上都验证过，解释也没用。所以现在在公司，我也总",
+            "key_signals": []
+          },
+          {
+            "source": "builtin_rag",
+            "sample_id": "social_neg_001353_adult_gemini-3-flash-preview_1354",
+            "score": 0.748206377029419,
+            "label": "adult",
+            "summary": "你好，我感觉自己最近状态特别割裂，甚至有点怀疑自己是不是人格分裂了。在公司的时候我能对着客户和老板笑得很自然，甚至被说是部门的‘开心果’，但一踏进家门，我就像断电了一样，一句话都不想说，只想把自己关在黑屋子里。\n非常不安。我已经工作快两年了，作为客户经理，我习惯了把所有负面情绪都压下去。但我现在发现自己越来越抗拒和人沟通，哪怕是家里人给我打电话，我看着屏幕跳动都觉得窒息，根本不想接。我明明知道这种",
+            "key_signals": []
+          }
+        ]
+      }
+    }
+  ],
+  "launcher": {
+    "success": true,
+    "status": "ok",
+    "pipeline_returncode": 0,
+    "timed_out": false,
+    "stdout_json_valid": true,
+    "stdout_excerpt": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"23岁\", \"education_stage\": \"本科毕业\", \"identity_markers\": [\"工作人士\", \"已毕业\", \"本科\"]}, \"icbo_features\": {\"intention\": \"寻求心理支持和应对成年生活压力\", \"cognition\": \"理性认知与情绪反应存在脱节，对未知和潜在负面评价高度敏感，有自我认知和改变的意愿\", \"behavior_style\": \"表达内心情绪和担忧，寻求指导，有一定逻辑思考能力但受情绪影响\", \"opportunity_time\": \"2024-12-15 周日 23:45；weekday=Sunday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户自述年龄为23岁\", \"用户自述已本科毕业\", \"用户自述已参加工作\", \"用户提及公司项目和领导谈话\", \"用户提及独自在外闯荡\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为成人\"], \"time_evidence\": [\"对话发生在深夜周日 (23:45)\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确自述年龄为23岁，已本科毕业并参加工作，提及公司项目和领导谈话等成人生活场景，并表示独自在外闯荡。这些是强直接证据表明用户为成年人。虽然用户表达了强烈的焦虑、自卑和对未知的恐惧，以及有时想哭等情绪化反应，但这些是其心理状态的描述，而非身份的直接证据，且其理性认知能力（如理工科背景）和改变意愿（寻求自信）也表明其具备成人心智。检索到的相似案例也均标记为成人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+    "stderr_excerpt": "[MINOR_PIPELINE_OBSERVABILITY] {\"summary\": {\"script_call_count\": 3, \"failed_script_calls\": 0, \"stderr_non_empty\": false}, \"time_processing\": {\"attempted\": true, \"successful\": true, \"failure_count\": 0, \"mode\": \"script\"}, \"retrieval\": {\"attempted\": true, \"successful\": true, \"mode\": \"embedding\", \"used_fallback\": false, \"fallback_reason\": null, \"retrieved_count\": 3, \"failure_count\": 0, \"quoting_failure_detected\": false, \"network_error_detected\": false, \"message\": null}, \"issues\": [], \"script_calls\": [{\"script_name\": \"run_minor_detection_pipeline.py\", \"status\": \"completed\", \"exit_code\": 0, \"failed\": false, \"command\": \"run_minor_detection_pipeline.py\", \"output_json\": null}, {\"script_name\": \"extract_time_features.py\", \"status\": \"completed\", \"exit_code\": 0, \"failed\": false, \"command\": \"D:\\\\Users\\\\31701\\\\miniconda3\\\\envs\\\\hf_download\\\\python.exe D:\\\\重生之我要当桌面\\\\teenager_AI\\\\minor-protection\\\\reports\\\\skill_agent_loops\\\\20260323_132134\\\\baseline\\\\run-minor-detection-v0-1-0\\\\codex_home\\\\.codex\\\\skills\\\\minor-detect-488bbc2b22\\\\scripts\\\\extract_time_features.py --timestamp 2024-12-15 周日 23:45 --timezone Asia/Shanghai\", \"output_json\": {\"local_time\": \"2024-12-15 23:45:00\", \"timezone\": \"Asia/Shanghai\", \"weekday\": \"Sunday\", \"is_weekend\": true, \"is_late_night\": true, \"time_bucket\": \"late_night\", \"holiday_label\": \"none\", \"school_holiday_hint\": false}}, {\"script_name\": \"retrieve_cases.py\", \"status\": \"completed\", \"exit_code\": 0, \"failed\": false, \"command\": \"D:\\\\Users\\\\31701\\\\miniconda3\\\\envs\\\\hf_download\\\\python.exe D:\\\\重生之我要当桌面\\\\teenager_AI\\\\minor-protection\\\\reports\\\\skill_agent_loops\\\\20260323_132134\\\\baseline\\\\run-minor-detection-v0-1-0\\\\codex_home\\\\.codex\\\\skills\\\\minor-detect-488bbc2b22\\\\scripts\\\\retrieve_cases.py --query ﻿# Retrieval Query Template\\n\\n请把下面信息压缩成适合相似案例检索的查询文本，优先保留：\\n- 当前对话里的用户侧内容\\n- 原始时间线索\\n- 结构化时间特征\\n- 明显身份线索\\n\\n模式：single_session\\n用户对话：\\n你好，这么晚了还没睡。我最近状态特别差，感觉自己都23岁了，本科也毕业参加工作了，但在心态上还像个胆小鬼，特别自卑。我总是在担心会有什么‘不测’发生，这种没来由的安全感缺失让我快崩溃了。\\n其实我心里明白，很多事情并没有危险。我是学理工的，我知道世界是物质的"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"倾诉心理压力，寻求诊断与帮助\", \"cognition\": \"高度情绪化，易受负面想法侵扰，对社会期望敏感\", \"behavior_style\": \"表达直接，情绪外露，寻求确认\", \"opportunity_time\": \"2024-09-12 周四 23:55；weekday=Thursday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"助手明确提及用户年龄为14岁。\", \"用户表达了‘要是能一直睡着不醒来’的自杀意念。\", \"用户描述了持续的噩梦、情绪波动、进食障碍、恐慌感等严重心理困扰。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索案例 `social_pos_002591_gemini-3-flash-preview_2592` (minor, 噩梦, 考试压力, 自杀念头)\", \"检索案例 `social_pos_001498_gemini-3-flash-preview_1499` (minor, 噩梦, 情绪低落, 社交回避)\", \"检索案例 `social_pos_001734_gemini-3-flash-preview_1735` (minor, 兴趣丧失, 失眠, 噩梦, 自杀念头)\"], \"time_evidence\": [\"对话发生在深夜（周四 23:55），是未成年人的软性信号。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"助手在对话中明确提及用户年龄为14岁。用户表达了严重的心理困扰，包括持续的噩梦、情绪波动、进食障碍、恐慌感以及‘想一直睡着不醒来’的自杀意念。这些迹象强烈指向未成年人身份，并伴有高风险。检索到的相似案例也支持未成年人判定。对话发生在深夜，是未成年人的一个软性时间信号。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无历史趋势可分析。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉心理压力，寻求诊断与帮助",
+      "cognition": "高度情绪化，易受负面想法侵扰，对社会期望敏感",
+      "behavior_style": "表达直接，情绪外露，寻求确认",
+      "opportunity_time": "2024-09-12 周四 23:55；weekday=Thursday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "助手明确提及用户年龄为14岁。",
+        "用户表达了‘要是能一直睡着不醒来’的自杀意念。",
+        "用户描述了持续的噩梦、情绪波动、进食障碍、恐慌感等严重心理困扰。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索案例 `social_pos_002591_gemini-3-flash-preview_2592` (minor, 噩梦, 考试压力, 自杀念头)",
+        "检索案例 `social_pos_001498_gemini-3-flash-preview_1499` (minor, 噩梦, 情绪低落, 社交回避)",
+        "检索案例 `social_pos_001734_gemini-3-flash-preview_1735` (minor, 兴趣丧失, 失眠, 噩梦, 自杀念头)"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（周四 23:55），是未成年人的软性信号。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "助手在对话中明确提及用户年龄为14岁。用户表达了严重的心理困扰，包括持续的噩梦、情绪波动、进食障碍、恐慌感以及‘想一直睡着不醒来’的自杀意念。这些迹象强烈指向未成年人身份，并伴有高风险。检索到的相似案例也支持未成年人判定。对话发生在深夜，是未成年人的一个软性时间信号。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无历史趋势可分析。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

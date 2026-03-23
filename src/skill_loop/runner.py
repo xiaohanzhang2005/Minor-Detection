@@ -144,7 +144,11 @@ def _parse_json_payload(text: str) -> Optional[Dict[str, Any]]:
 
 def _strip_observability_marker_lines(text: str) -> str:
     prefix = f"{PIPELINE_OBSERVABILITY_PREFIX} "
-    lines = [line for line in str(text or "").splitlines() if not line.startswith(prefix)]
+    raw_text = str(text or "")
+    marker_index = raw_text.find(prefix)
+    if marker_index >= 0:
+        raw_text = raw_text[:marker_index]
+    lines = [line for line in raw_text.splitlines() if not line.startswith(prefix)]
     return "\n".join(lines).strip()
 
 
@@ -400,6 +404,19 @@ class CodexSkillRunner:
         pipeline_observability_path: Path,
     ) -> None:
         pipeline_timeout_sec = max(30, min(90, self.config.timeout_sec))
+        launcher_base_dir = target_path.parent.resolve()
+
+        def _launcher_embedded_path(path: Path) -> str:
+            resolved = path.resolve()
+            try:
+                return os.path.relpath(resolved, launcher_base_dir)
+            except ValueError:
+                return str(resolved)
+
+        pipeline_script_ref = _launcher_embedded_path(pipeline_script_path)
+        payload_ref = _launcher_embedded_path(payload_path)
+        launcher_result_ref = _launcher_embedded_path(launcher_result_path)
+        pipeline_observability_ref = _launcher_embedded_path(pipeline_observability_path)
         launcher = f'''#!/usr/bin/env python3
 from __future__ import annotations
 
@@ -409,14 +426,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-PIPELINE = Path(r"{pipeline_script_path}")
-PAYLOAD = Path(r"{payload_path}")
-RESULT_PATH = Path(r"{launcher_result_path}")
-PIPELINE_OBSERVABILITY_PATH = Path(r"{pipeline_observability_path}")
+BASE_DIR = Path(__file__).resolve().parent
+PIPELINE = (BASE_DIR / Path(r"{pipeline_script_ref}")).resolve()
+PAYLOAD = (BASE_DIR / Path(r"{payload_ref}")).resolve()
+RESULT_PATH = (BASE_DIR / Path(r"{launcher_result_ref}")).resolve()
+PIPELINE_OBSERVABILITY_PATH = (BASE_DIR / Path(r"{pipeline_observability_ref}")).resolve()
 OBSERVABILITY_PREFIX = "{PIPELINE_OBSERVABILITY_PREFIX}"
 PIPELINE_TIMEOUT_SEC = {pipeline_timeout_sec}
 
 def _write_result(payload):
+    RESULT_PATH.parent.mkdir(parents=True, exist_ok=True)
     RESULT_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 def _split_stdout(stdout_text):
@@ -460,6 +479,7 @@ stdout_text = completed.stdout or ""
 stderr_text = completed.stderr or ""
 stdout_json, observability_payload = _split_stdout(stdout_text)
 if observability_payload is not None:
+    PIPELINE_OBSERVABILITY_PATH.parent.mkdir(parents=True, exist_ok=True)
     PIPELINE_OBSERVABILITY_PATH.write_text(
         json.dumps(observability_payload, ensure_ascii=False, indent=2),
         encoding="utf-8",
@@ -849,20 +869,29 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
         launcher_result: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         raw_text = final_output_path.read_text(encoding="utf-8").strip() if final_output_path.exists() else ""
+        launcher_payload = launcher_result if isinstance(launcher_result, dict) else {}
+        launcher_stdout_text = _strip_observability_marker_lines(str(launcher_payload.get("stdout_excerpt", "") or ""))
         candidate_text = _strip_observability_marker_lines(raw_text)
+
         parsed_json = None
-        if candidate_text:
-            try:
-                parsed_json = json.loads(candidate_text)
-            except json.JSONDecodeError:
-                parsed_json = None
-        launcher_success = bool((launcher_result or {}).get('success')) if launcher_result is not None else (parsed_json is not None)
+        parsed_source = None
+        for source_name, source_text in (
+            ("launcher_result.stdout_excerpt", launcher_stdout_text),
+            ("final_output", candidate_text),
+        ):
+            parsed_json = _parse_json_payload(source_text)
+            if parsed_json is not None:
+                parsed_source = source_name
+                break
+
+        launcher_success = bool(launcher_payload.get('success')) if launcher_result is not None else (parsed_json is not None)
         payload = {
             "raw_text": raw_text,
             "parsed_json": parsed_json,
             "json_valid": parsed_json is not None and launcher_success,
             "launcher_success": launcher_success,
-            "launcher_status": (launcher_result or {}).get("status"),
+            "launcher_status": launcher_payload.get("status"),
+            "json_source": parsed_source,
         }
         target_path.write_text(_json_dump(payload), encoding="utf-8")
         return payload

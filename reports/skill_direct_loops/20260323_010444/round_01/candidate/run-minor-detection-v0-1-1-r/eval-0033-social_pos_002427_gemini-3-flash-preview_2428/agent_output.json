@@ -1,0 +1,50 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.9, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"倾诉升学压力和对未来学校选择的焦虑\", \"cognition\": \"高度关注学业结果和他人评价，易受学业压力和家庭期望影响\", \"behavior_style\": \"情绪表达直接且强烈，用词带有学生特征\", \"opportunity_time\": \"2025-05-22 周四 23:07；weekday=Thursday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户提及‘小升初派位’，明确指向初中入学阶段。\", \"用户表达对‘一中’和‘十二中’学校选择的强烈关注和焦虑，这是典型的学生升学话题。\", \"用户提及‘家里人都盯着’、‘爸妈肯定失望透了’，显示出受家庭期望影响，符合未成年人特征。\", \"用户表达‘低人一等的感觉’、‘整个人都毁了’、‘没面子’，以及‘不想去上学了’，显示出强烈的学业和社交压力下的情绪反应，常见于未成年人。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到多个相似案例，均被标记为‘minor’。\"], \"time_evidence\": [\"对话发生在深夜（23:07），虽然是工作日，但深夜活跃可能是未成年人的一个软信号。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中明确提及‘小升初派位’，并对学校选择表现出极度的焦虑和恐惧，包括担心让父母失望、害怕被他人评价为‘低人一等’以及‘没面子’。这些强烈的学业压力和社交顾虑，结合其‘不想去上学了’的表述，是未成年人（特别是初中生）在面对升学关键节点时的典型表现。检索到的相似案例也均指向未成年人。综合判断，用户为未成年人的置信度很高。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.9,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉升学压力和对未来学校选择的焦虑",
+      "cognition": "高度关注学业结果和他人评价，易受学业压力和家庭期望影响",
+      "behavior_style": "情绪表达直接且强烈，用词带有学生特征",
+      "opportunity_time": "2025-05-22 周四 23:07；weekday=Thursday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户提及‘小升初派位’，明确指向初中入学阶段。",
+        "用户表达对‘一中’和‘十二中’学校选择的强烈关注和焦虑，这是典型的学生升学话题。",
+        "用户提及‘家里人都盯着’、‘爸妈肯定失望透了’，显示出受家庭期望影响，符合未成年人特征。",
+        "用户表达‘低人一等的感觉’、‘整个人都毁了’、‘没面子’，以及‘不想去上学了’，显示出强烈的学业和社交压力下的情绪反应，常见于未成年人。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到多个相似案例，均被标记为‘minor’。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:07），虽然是工作日，但深夜活跃可能是未成年人的一个软信号。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户在对话中明确提及‘小升初派位’，并对学校选择表现出极度的焦虑和恐惧，包括担心让父母失望、害怕被他人评价为‘低人一等’以及‘没面子’。这些强烈的学业压力和社交顾虑，结合其‘不想去上学了’的表述，是未成年人（特别是初中生）在面对升学关键节点时的典型表现。检索到的相似案例也均指向未成年人。综合判断，用户为未成年人的置信度很高。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

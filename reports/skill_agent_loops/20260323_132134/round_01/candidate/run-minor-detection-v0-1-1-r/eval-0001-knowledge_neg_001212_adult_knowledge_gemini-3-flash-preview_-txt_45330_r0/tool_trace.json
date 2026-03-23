@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"成年人\", \"education_stage\": \"大学及以上\", \"identity_markers\": [\"上班族\", \"备考者\", \"大学\", \"上班\"]}, \"icbo_features\": {\"intention\": \"备考教师资格证，梳理教学内容考点。\", \"cognition\": \"关注考试知识点间的逻辑关系和应用，能结合职场经验进行类比。\", \"behavior_style\": \"目标导向，语言专业且条理清晰，表达直接。\", \"opportunity_time\": \"2024-10-25 周五 晚上；weekday=Friday；time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示白天在公司上班。\", \"用户提及自己是“在职的”，记忆力不如大学生。\", \"用户提到“公司带新人”的职场经历。\", \"用户正在准备“教资笔试”（教师资格证考试）。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为成人，且与教师资格证备考相关。\"], \"time_evidence\": [\"2024-10-25 21:45，为工作日晚上，非深夜，非周末。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户提供了多项强烈的成人信号，包括明确的在职状态（“白天在公司上班”、“在职的”）、职场经历（“公司带新人”），以及正在备考教师资格证。这些证据均指向用户为成年人，且没有发现任何未成年人相关的直接或间接线索。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}[MINOR_PIPELINE_OBSERVABILITY] {\"summary\": {\"script_call_count\": 3, \"failed_script_calls\": 0, \"stderr_non_empty\": false}, \"time_processing\": {\"attempted\": true, \"successful\": true, \"failure_count\": 0\n...[truncated]",
+    "output_json": null
+  }
+]

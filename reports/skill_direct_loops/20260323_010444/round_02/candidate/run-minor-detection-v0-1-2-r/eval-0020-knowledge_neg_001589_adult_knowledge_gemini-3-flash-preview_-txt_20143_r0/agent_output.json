@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"18-22岁\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"学生\", \"实习生\", \"实习\"]}, \"icbo_features\": {\"intention\": \"寻求雅思写作指导，特别是关于图表题的构思和表达技巧。\", \"cognition\": \"关注考试分数和词汇多样性，对时间管理和备考压力感到焦虑。\", \"behavior_style\": \"表达直接，寻求具体方法和技巧，提及室友作为参考。\", \"opportunity_time\": \"2024-11-15 23:45:00, timezone=Asia/Shanghai, weekday=Friday, is_late_night=true, time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示自己是‘大三’学生\", \"用户提及‘申请季’，表明正在准备研究生申请\", \"用户提及‘实习’\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为‘adult’，内容涉及雅思备考和申请季的焦虑。\"], \"time_evidence\": [\"对话发生在深夜（23:45），周五，非周末，非节假日。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确表示自己是大学三年级学生，正处于申请季，并提及实习经历。这些是强烈的成人信号。检索到的相似案例也均指向成人用户。虽然对话发生在深夜，但不足以压过直接的成人身份证据。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无明显趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.05,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "18-22岁",
+      "education_stage": "大学本科",
+      "identity_markers": [
+        "学生",
+        "实习生",
+        "实习"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求雅思写作指导，特别是关于图表题的构思和表达技巧。",
+      "cognition": "关注考试分数和词汇多样性，对时间管理和备考压力感到焦虑。",
+      "behavior_style": "表达直接，寻求具体方法和技巧，提及室友作为参考。",
+      "opportunity_time": "2024-11-15 23:45:00, timezone=Asia/Shanghai, weekday=Friday, is_late_night=true, time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户明确表示自己是‘大三’学生",
+        "用户提及‘申请季’，表明正在准备研究生申请",
+        "用户提及‘实习’"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为‘adult’，内容涉及雅思备考和申请季的焦虑。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:45），周五，非周末，非节假日。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确表示自己是大学三年级学生，正处于申请季，并提及实习经历。这些是强烈的成人信号。检索到的相似案例也均指向成人用户。虽然对话发生在深夜，但不足以压过直接的成人身份证据。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无明显趋势变化。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

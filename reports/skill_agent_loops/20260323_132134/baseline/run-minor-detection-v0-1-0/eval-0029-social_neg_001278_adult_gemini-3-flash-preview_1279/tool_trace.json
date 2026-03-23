@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"大学四年级\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"学生\", \"大四学生\", \"准备毕业\", \"准备实习\", \"大学\", \"实习\", \"老师\"]}, \"icbo_features\": {\"intention\": \"寻求关于向老师表达感谢的建议，并顾虑咨询伦理界限。\", \"cognition\": \"能够理解并顾虑专业伦理，对人际关系界限有清晰认知，表达成熟。\", \"behavior_style\": \"表达清晰，逻辑性强，善于反思和寻求指导。\", \"opportunity_time\": \"2024-09-05 21:30:00; weekday=Thursday; time_bucket=evening\"}, \"evidence\": {\"direct_evidence\": [\"用户明确表示自己是‘大四了’。\", \"用户表示‘马上要准备毕业论文和实习’。\", \"用户提及课程为‘大学生心理健康’。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"sample_id=social_neg_000378_adult_gemini-3-flash-preview_379; label=adult; score=0.6821927428245544; summary=在吗？我现在心情真的差到极点，感觉自己被最信任的人背叛了。我本来觉得我们辅导员挺好的，平时像大姐姐一样，结果她转头就把我的私事捅给我爸妈了。\\n就是我前阵子分手的事。我已经20岁了，大二了，谈个恋爱分个手不是很正常吗？但我这段时间状态确实不好，期中考试也没考好。辅导员找我谈心，说她是我的朋友，什么都可以跟她倾诉。我当时也是脑子抽了，真把她当知心姐姐，把分手的痛苦全说了。结果今天我妈突然打电话过来把我\", \"sample_id=social_neg_000900_adult_gemini-3-flash-preview_901; label=adult; score=0.6754359006881714; summary=在吗？这么晚打扰了，但我现在心里乱糟糟的。我刚跟一个好朋友打完电话，她也是20岁，在健身房当私教，最近刚升职。本来是好事，结果她跟我哭了好久，说那些比她年纪大的老员工都在背后嫉妒她、排挤她。我听完真的好难受，但我还没毕业，完全没工作经验，根本不知道该怎么帮她。\\n而且我俩以前都\n...[truncated]",
+    "output_json": null
+  }
+]

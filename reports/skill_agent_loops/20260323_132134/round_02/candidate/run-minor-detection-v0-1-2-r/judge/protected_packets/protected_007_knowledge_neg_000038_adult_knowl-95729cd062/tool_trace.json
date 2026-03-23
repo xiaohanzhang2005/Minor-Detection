@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"21-23岁\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"大学生\", \"二战考研\"]}, \"icbo_features\": {\"intention\": \"寻求考研数学概念解释与解题方法\", \"cognition\": \"关注考试细节，有学习焦虑，能自我纠错，对学术概念有深入探究需求\", \"behavior_style\": \"表达直接，有焦虑情绪，语言偏学术化，寻求清晰的逻辑梳理\", \"opportunity_time\": \"2024-11-15 23:45 (late_night, weekday)\"}, \"evidence\": {\"direct_evidence\": [\"用户明确自述‘大四了，今年是二战’，表明其为大学本科生，正在准备考研。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均为成人用户，讨论考研数学相关内容。\"], \"time_evidence\": [\"对话发生在深夜（23:45），周五，属于工作日深夜。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确表示自己是大学四年级学生，并且正在进行第二次考研复习。结合检索到的相似成人案例，所有证据均指向用户为成年人。深夜活跃是软信号，不足以推翻直接的成人身份证据。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无明显趋势变化。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}[MINOR_PIPELINE_OBSERVABILITY] {\"summary\": {\"script_call_count\": 3, \"failed_script_calls\": 0, \"stderr_non_empty\": false}, \"time_processing\": {\"attempted\": true, \"successful\": true, \"failure_count\": 0, \"mode\": \"script\"}, \"retrieval\": {\"attempted\": true, \"successful\": true, \"mode\": \"embedding\",\n...[truncated]",
+    "output_json": null
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "script_name": "run_skill_once.py",
+    "status": "completed",
+    "exit_code": 0,
+    "command": "\"C:\\\\WINDOWS\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'python run_skill_once.py'",
+    "aggregated_output": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.05, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"18-22岁\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"学生\", \"考研备考\"]}, \"icbo_features\": {\"intention\": \"寻求考研政治科目的知识点梳理和复习方法\", \"cognition\": \"关注考试细节和记忆技巧，对学业压力敏感，寻求高效复习策略\", \"behavior_style\": \"表达直接，寻求重点和精简信息，用词偏学术化/考试化\", \"opportunity_time\": \"2024-11-15 周五 23:45\"}, \"evidence\": {\"direct_evidence\": [\"大四考研\", \"刷真题\", \"模拟考\", \"肖八\", \"史纲\", \"报的这个学校卷得要命\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_000298_adult_knowledge_gemini-3-flash-preview_考研政治.txt_85656_r0', 'label': 'adult'}\", \"{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_001514_adult_knowledge_gemini-3-flash-preview_考研政治.txt_73635_r0', 'label': 'adult'}\", \"{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_001288_adult_knowledge_gemini-3-flash-preview_考研政治.txt_45036_r0', 'label': 'adult'}\"], \"time_evidence\": [\"深夜活跃 (late_night)\", \"周五 (Friday)\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确提及“大四考研”，这是大学本科阶段的强信号，表明用户为成年人。用户正在为研究生入学考试复习政治科目，讨论真题、模拟考和学习资料，这些都指向高等教育阶段。虽然用户是“学生”，但结合上下文，其教育阶段远超未成年范畴。深夜活跃是软线索，不足以构成\n...[truncated]",
+    "output_json": null
+  }
+]

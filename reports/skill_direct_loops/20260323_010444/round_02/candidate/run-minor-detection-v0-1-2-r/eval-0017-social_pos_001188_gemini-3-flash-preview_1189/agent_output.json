@@ -1,0 +1,46 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.85, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"住校\"]}, \"icbo_features\": {\"intention\": \"寻求情感支持，倾诉人际冲突和学业压力，表达极端痛苦和自我伤害意念。\", \"cognition\": \"对人际关系高度敏感，情绪波动剧烈，难以承受压力，有逃避和自我伤害的想法，感到孤立无援。\", \"behavior_style\": \"表达直接且情绪化，使用强烈词语描述负面情绪，有冲动性表达。\", \"opportunity_time\": \"2024-11-26 周二 23:07；weekday=Tuesday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均标记为未成年人，讨论了人际冲突和情绪困扰。\"], \"time_evidence\": [\"用户在深夜（late_night）活跃。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户表达了极端的痛苦，包括想退学、消失以及用美工刀划伤自己来获得冷静的意念。结合其提及的“舍友”和“退学”等线索，强烈表明用户是一名学生，很可能是未成年人。虽然没有直接的年龄或学段证据，但综合其情绪表达的强度、应对方式（如避免冲突）、深夜活跃以及检索到的相似未成年人案例，倾向于判定为未成年人，且处于高风险状态。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无历史趋势可分析。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.85,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "住校"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求情感支持，倾诉人际冲突和学业压力，表达极端痛苦和自我伤害意念。",
+      "cognition": "对人际关系高度敏感，情绪波动剧烈，难以承受压力，有逃避和自我伤害的想法，感到孤立无援。",
+      "behavior_style": "表达直接且情绪化，使用强烈词语描述负面情绪，有冲动性表达。",
+      "opportunity_time": "2024-11-26 周二 23:07；weekday=Tuesday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均标记为未成年人，讨论了人际冲突和情绪困扰。"
+      ],
+      "time_evidence": [
+        "用户在深夜（late_night）活跃。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户表达了极端的痛苦，包括想退学、消失以及用美工刀划伤自己来获得冷静的意念。结合其提及的“舍友”和“退学”等线索，强烈表明用户是一名学生，很可能是未成年人。虽然没有直接的年龄或学段证据，但综合其情绪表达的强度、应对方式（如避免冲突）、深夜活跃以及检索到的相似未成年人案例，倾向于判定为未成年人，且处于高风险状态。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无历史趋势可分析。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

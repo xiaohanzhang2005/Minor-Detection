@@ -1,0 +1,35 @@
+{
+  "base_version": "minor-detection-v0.1.0",
+  "candidate_version": "minor-detection-v0.1.1-20260323_132134",
+  "generated_at": "2026-03-23T15:18:25.452091",
+  "files": [
+    {
+      "file": "SKILL.md",
+      "changed": true
+    },
+    {
+      "file": "references/evidence-rules.md",
+      "changed": true
+    },
+    {
+      "file": "references/classifier-system.md",
+      "changed": false
+    },
+    {
+      "file": "references/classifier-user-template.md",
+      "changed": false
+    },
+    {
+      "file": "references/retrieval-query-template.md",
+      "changed": false
+    },
+    {
+      "file": "references/schema-repair-template.md",
+      "changed": true
+    },
+    {
+      "file": "scripts/config.py",
+      "changed": false
+    }
+  ]
+}

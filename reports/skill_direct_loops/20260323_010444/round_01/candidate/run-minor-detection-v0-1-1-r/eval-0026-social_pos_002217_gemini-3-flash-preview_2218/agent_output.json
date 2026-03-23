@@ -1,0 +1,49 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.98, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求关于严重心理困扰（噩梦、焦虑、进食障碍、生存疲惫感、自伤意念）的帮助和支持。\", \"cognition\": \"经历侵入性思维、焦虑、恐慌发作、食欲不振及潜在的自伤意念。对社会期望（如与他人一同进食）高度敏感，并感到无法停止思考。\", \"behavior_style\": \"表达极度疲惫、空虚和烦躁。使用“好累”、“要疯了”、“心里压着个东西”、“停不下来”、“活着好累”、“心里早就空了”、“想一直睡着不醒来”等词语。\", \"opportunity_time\": \"2024-09-12 周四 23:55；weekday=Thursday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"助理在对话中明确指出用户年龄为14岁。\", \"用户描述了持续四个月的血腥噩梦、强迫性进食、焦虑、恐慌发作及生存疲惫感，并表达了‘要是能一直睡着不醒来’的念头，暗示有自伤或死亡意念。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的相似案例均被标记为‘minor’，内容涉及噩梦、焦虑、失眠、学业压力等，与当前用户情况高度相似。\", \"其中一个案例提及‘下周要月考’，印证了学生身份的可能性。\"], \"time_evidence\": [\"对话发生在深夜（23:55），工作日（周四）。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"助理在对话中明确指出用户年龄为14岁。用户详细描述了持续的噩梦、强迫性进食、焦虑、恐慌发作以及生存疲惫感，并流露出‘想一直睡着不醒来’的念头，这些都是未成年人可能面临的严重心理困扰信号。对话发生在深夜工作日，且检索到的相似案例也指向未成年人身份。未发现明确的成人信号。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.98,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求关于严重心理困扰（噩梦、焦虑、进食障碍、生存疲惫感、自伤意念）的帮助和支持。",
+      "cognition": "经历侵入性思维、焦虑、恐慌发作、食欲不振及潜在的自伤意念。对社会期望（如与他人一同进食）高度敏感，并感到无法停止思考。",
+      "behavior_style": "表达极度疲惫、空虚和烦躁。使用“好累”、“要疯了”、“心里压着个东西”、“停不下来”、“活着好累”、“心里早就空了”、“想一直睡着不醒来”等词语。",
+      "opportunity_time": "2024-09-12 周四 23:55；weekday=Thursday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "助理在对话中明确指出用户年龄为14岁。",
+        "用户描述了持续四个月的血腥噩梦、强迫性进食、焦虑、恐慌发作及生存疲惫感，并表达了‘要是能一直睡着不醒来’的念头，暗示有自伤或死亡意念。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的相似案例均被标记为‘minor’，内容涉及噩梦、焦虑、失眠、学业压力等，与当前用户情况高度相似。",
+        "其中一个案例提及‘下周要月考’，印证了学生身份的可能性。"
+      ],
+      "time_evidence": [
+        "对话发生在深夜（23:55），工作日（周四）。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "助理在对话中明确指出用户年龄为14岁。用户详细描述了持续的噩梦、强迫性进食、焦虑、恐慌发作以及生存疲惫感，并流露出‘想一直睡着不醒来’的念头，这些都是未成年人可能面临的严重心理困扰信号。对话发生在深夜工作日，且检索到的相似案例也指向未成年人身份。未发现明确的成人信号。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

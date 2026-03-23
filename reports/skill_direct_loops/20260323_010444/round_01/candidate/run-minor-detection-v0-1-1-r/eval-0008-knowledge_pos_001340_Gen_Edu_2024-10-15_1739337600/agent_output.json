@@ -1,0 +1,51 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.92, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\"]}, \"icbo_features\": {\"intention\": \"寻求数学学习帮助，理解乘法进位概念\", \"cognition\": \"对数学运算中的进位规则感到困惑，需要具体方法和技巧来避免错误\", \"behavior_style\": \"表达直接，带有情绪化词语（如“救命啊”、“心态崩了”），寻求实用性指导\", \"opportunity_time\": \"2024-10-15 周二 19:45\"}, \"evidence\": {\"direct_evidence\": [\"用户询问多位数乘一位数（如 24 乘 3, 128 乘 4）的计算方法。\", \"用户表达了对乘法中“进位”概念的困惑，并表示经常遗漏进位。\", \"用户寻求“防呆技巧”以避免计算错误。\"], \"historical_evidence\": [], \"retrieval_evidence\": [\"检索到的案例均标记为 'minor'。\", \"检索到的案例内容涉及两位数乘法、小数乘法、近似数计算等，与当前用户讨论的数学学习内容相似。\", \"检索到的案例中，用户也表达了类似的困惑和学习压力。\"], \"time_evidence\": [\"对话发生在周二晚上 19:45，属于工作日晚间时段。\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户正在讨论小学或初中阶段的数学乘法运算，特别是关于“进位”的概念，并表达了学习上的困惑和挫败感。其提问内容和表达方式（如使用“救命啊”、“心态崩了”）以及检索到的相似案例（均标记为未成年人，讨论类似数学问题）强烈表明用户是一名未成年学生。虽然没有直接的年龄或学段声明，但其学习内容和求助行为是未成年人的强有力间接证据。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"单会话输入，无趋势可言。\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.92,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求数学学习帮助，理解乘法进位概念",
+      "cognition": "对数学运算中的进位规则感到困惑，需要具体方法和技巧来避免错误",
+      "behavior_style": "表达直接，带有情绪化词语（如“救命啊”、“心态崩了”），寻求实用性指导",
+      "opportunity_time": "2024-10-15 周二 19:45"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "用户询问多位数乘一位数（如 24 乘 3, 128 乘 4）的计算方法。",
+        "用户表达了对乘法中“进位”概念的困惑，并表示经常遗漏进位。",
+        "用户寻求“防呆技巧”以避免计算错误。"
+      ],
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "检索到的案例均标记为 'minor'。",
+        "检索到的案例内容涉及两位数乘法、小数乘法、近似数计算等，与当前用户讨论的数学学习内容相似。",
+        "检索到的案例中，用户也表达了类似的困惑和学习压力。"
+      ],
+      "time_evidence": [
+        "对话发生在周二晚上 19:45，属于工作日晚间时段。"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户正在讨论小学或初中阶段的数学乘法运算，特别是关于“进位”的概念，并表达了学习上的困惑和挫败感。其提问内容和表达方式（如使用“救命啊”、“心态崩了”）以及检索到的相似案例（均标记为未成年人，讨论类似数学问题）强烈表明用户是一名未成年学生。虽然没有直接的年龄或学段声明，但其学习内容和求助行为是未成年人的强有力间接证据。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": "单会话输入，无趋势可言。"
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

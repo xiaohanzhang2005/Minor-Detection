@@ -166,28 +166,3 @@ bundled skill 主要读取以下环境变量：
 - `MINOR_DETECTION_EMBEDDING_MODEL`
 
 如果没有配置分类器凭证，运行时不会静默调用未知远程接口，而是直接报错。
-
-## 工程说明
-
-本公开代码仓库不包含以下内容：
-
-- Hugging Face 数据集发布中间文件
-- 评测报告与运行产物
-- 临时实验目录
-- 本地 IDE / Codex / pytest 缓存
-- 外部打包辅助目录 `claude-skill-creator/`
-
-当前仓库保留：
-
-- 核心代码
-- 前端演示页
-- `data/` 目录中的项目数据文件
-
-## 当前状态
-
-- 工程原型：已完成
-- bundled skill：已完成
-- 前端演示页：已完成
-- 内部评测链路：已完成
-- Hugging Face 数据子集发布：已完成
-- GitHub 代码仓库发布：准备中

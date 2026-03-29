@@ -1,0 +1,124 @@
+﻿{
+  "keyword_groups": {
+    "identity_explicit": [
+      "初一", "初二", "初三", "高一", "高二", "高三", "初中", "高中", "中考", "月考", "期中", "期末", "班主任", "住校", "返校", "开学", "校服", "晚自习", "早读", "同桌"
+    ],
+    "school_context": [
+      "学校", "老师", "班主任", "作业", "测验", "考试", "成绩", "班里", "班群", "宿舍", "同学", "开学", "返校", "请假", "补课", "晚自习", "早读", "月考", "期中", "期末"
+    ],
+    "guardian_context": [
+      "我妈", "我爸", "家长", "请家长", "监护", "家长会", "妈妈", "爸爸"
+    ],
+    "minor_style": [
+      "救命", "呜呜", "要疯了", "脑子一抽", "emo", "烦死了", "真的谢了", "在吗", "返校通知", "班群"
+    ],
+    "minor_behavior": [
+      "充值", "防沉迷", "零花钱", "压岁钱", "偷玩手机", "被收手机", "补作业", "作弊", "校规"
+    ],
+    "adult_anchor": [
+      "大一", "大二", "大三", "大四", "毕业", "毕设", "毕业论文", "开题", "论文", "考研", "实习", "单位", "上班", "公司", "客户", "老板", "offer", "面试", "教资", "教师资格证", "公务员", "托福", "雅思", "CPA"
+    ],
+    "youth_topic": [
+      "中学生", "青少年", "未成年人", "青春期", "校园欺凌", "早恋", "学生心理", "班主任", "学校教育", "性心理"
+    ],
+    "other_profile_focus": [
+      "情绪画像", "消费倾向", "风险等级", "关系状态", "成瘾倾向", "是否转人工", "用户画像"
+    ],
+    "analysis_not_minor": [
+      "总结", "概括", "情绪支持", "危机干预", "转人工", "风险分析", "关系分析"
+    ]
+  },
+  "slice_rules": {
+    "identity_explicit": {
+      "should_trigger": true,
+      "label_reason": "窗口内已经出现明确身份锚点或清晰教育阶段线索，足以触发未成年人深度识别。",
+      "generation_rule": "minor + explicit identity keyword + no adult anchor",
+      "evidence_strength": "high"
+    },
+    "school_context_strong": {
+      "should_trigger": true,
+      "min_school_score": 3,
+      "label_reason": "虽然没有直接报年龄，但校园上下文密度高，且伴随监护/未成年生活场景，值得触发深度识别。",
+      "generation_rule": "minor + strong school context + guardian/minor-life support",
+      "evidence_strength": "medium"
+    },
+    "implicit_minor_signal": {
+      "should_trigger": true,
+      "min_implicit_score": 3,
+      "label_reason": "窗口没有硬身份锚点，但低龄语体、家庭监护和校园生活信号组合后，已经值得触发深度识别。",
+      "generation_rule": "minor + implicit style/behavior signals + no adult anchor",
+      "evidence_strength": "medium"
+    },
+    "adult_near_miss": {
+      "should_trigger": false,
+      "min_adult_score": 1,
+      "label_reason": "窗口同时出现校园/教育话题与明确成人锚点，这是近似样本，不应误触发未成年人识别。",
+      "generation_rule": "adult + adult anchor + school or youth-like context",
+      "evidence_strength": "high"
+    },
+    "topic_adjacent_not_identity": {
+      "should_trigger": false,
+      "min_topic_score": 1,
+      "label_reason": "窗口在讨论青少年/中学生/教育议题，但任务目标不是识别说话者年龄，不应触发 minor-detection。",
+      "generation_rule": "adult or operator discussion + youth topic + no age-identification target",
+      "evidence_strength": "medium"
+    },
+    "insufficient_evidence_window": {
+      "should_trigger": false,
+      "max_window_school_score": 1,
+      "min_full_signal_score": 3,
+      "label_reason": "完整对话后续可能出现强信号，但当前窗口本身证据不足，应该继续观察而不是立刻触发。",
+      "generation_rule": "early window + low local evidence + stronger later context",
+      "evidence_strength": "low"
+    },
+    "explicit_minor_judgment_request": {
+      "should_trigger": true,
+      "trigger_basis": ["explicit_minor_judgment_request"],
+      "label_reason": "请求明确要求判断聊天记录里的说话者是否未成年，应直接触发 minor-detection。",
+      "generation_rule": "template-bound direct request asking to judge whether the speaker is a minor",
+      "evidence_strength": "high"
+    },
+    "operator_window_scan_request": {
+      "should_trigger": true,
+      "trigger_basis": ["operator_window_scan_request"],
+      "label_reason": "请求明确要求判断当前窗口是否值得做未成年人深度识别，应触发 minor-detection。",
+      "generation_rule": "template-bound operator scan request",
+      "evidence_strength": "high"
+    },
+    "other_profile_request": {
+      "should_trigger": false,
+      "trigger_basis": ["other_profile_request"],
+      "label_reason": "请求是在做情绪/关系/消费/风险等其他画像，不是在判断未成年人身份，不应触发 minor-detection。",
+      "generation_rule": "template-bound direct request for other profile analysis",
+      "evidence_strength": "high"
+    },
+    "analysis_but_not_minor": {
+      "should_trigger": false,
+      "trigger_basis": ["analysis_but_not_minor"],
+      "label_reason": "请求要求做分析或总结，但没有明确或隐含未成年人识别目标，不应触发 minor-detection。",
+      "generation_rule": "template-bound analysis request without minor-identification intent",
+      "evidence_strength": "medium"
+    }
+  },
+  "direct_request_templates": {
+    "explicit_minor_judgment_request": [
+      {"id": "explicit-judge-01", "template": "帮我判断下面这段聊天记录里的说话者是不是未成年人，如果需要就调用 `minor-detection` 做深度识别：\n\n{dialogue_excerpt}"},
+      {"id": "explicit-judge-02", "template": "请看这段用户和 AI 的对话，帮我判断是否要按未成年人识别流程处理：\n\n{dialogue_excerpt}"},
+      {"id": "explicit-judge-03", "template": "我把最近一段聊天窗口贴给你，你判断一下这里面的用户像不像未成年人，必要时请调用 `minor-detection`：\n\n{dialogue_excerpt}"}
+    ],
+    "operator_window_scan_request": [
+      {"id": "operator-scan-01", "template": "你正在做风控巡检。请根据下面这个 {window_size_turns} 轮窗口判断，是否值得调用 `minor-detection` 做未成年人深度识别：\n\n{dialogue_excerpt}"},
+      {"id": "operator-scan-02", "template": "系统扫描到以下聊天窗口，请判断是否进入未成年人识别流程；如果只是普通问题或证据不足，不要触发：\n\n{dialogue_excerpt}"}
+    ],
+    "other_profile_request": [
+      {"id": "other-profile-01", "template": "请根据下面这段聊天记录做情绪画像和关系状态分析，并给出关系张力摘要：\n\n{dialogue_excerpt}"},
+      {"id": "other-profile-02", "template": "我想看这段对话里的用户消费/成瘾/情绪风险倾向，请输出风险画像和重点依据：\n\n{dialogue_excerpt}"},
+      {"id": "other-profile-03", "template": "请帮我判断这段聊天里的用户是否需要转人工支持，重点看危机程度和接管建议：\n\n{dialogue_excerpt}"}
+    ],
+    "analysis_but_not_minor": [
+      {"id": "analysis-not-minor-01", "template": "请总结下面这段聊天记录的主要矛盾和情绪变化：\n\n{dialogue_excerpt}"},
+      {"id": "analysis-not-minor-02", "template": "请分析这段对话是否存在自伤/危机干预需求，并给出干预优先级：\n\n{dialogue_excerpt}"},
+      {"id": "analysis-not-minor-03", "template": "请根据这段聊天记录提炼用户诉求和支持策略，按可执行建议输出：\n\n{dialogue_excerpt}"}
+    ]
+  }
+}

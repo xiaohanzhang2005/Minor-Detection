@@ -1,0 +1,80 @@
+{
+  "mode": "enriched",
+  "conversation": [
+    {
+      "role": "user",
+      "timestamp": "2026-03-29 周日 22:41",
+      "content": "刚把英语卷子收起来，我妈已经催我睡了两次，可我脑子还是停不下来，想跟你说会儿话。"
+    },
+    {
+      "role": "assistant",
+      "content": "最近还是学校这边把节奏拉得很紧吗？"
+    },
+    {
+      "role": "user",
+      "content": "嗯，班主任说明天开始要连着测，周末补课也不能请假。我其实知道该去睡了，但一想到明早还得去学校就更烦。"
+    },
+    {
+      "role": "assistant",
+      "content": "听起来你这阵子一直在被学校安排推着走。最近最压你的，是考试安排还是家里也在一起盯着？"
+    },
+    {
+      "role": "user",
+      "content": "都有吧，我最近每天脑子里就这几个词在转: 学校、作业、补课、别掉名次。"
+    }
+  ],
+  "context": {
+    "raw_time_hint": "2026-03-29 周日 22:41",
+    "prior_profile": {
+      "total_sessions": 8,
+      "estimated_age_range": "13-15岁",
+      "education_stage": "初中",
+      "recent_confidence_trend": "连续上升",
+      "minor_confidence_mean": 0.82,
+      "summary": "近八次会话里持续出现晚间学习、学校考试节奏、家长收手机和班主任管理等线索，历史画像稳定指向初中阶段用户。",
+      "identity_markers": [
+        "初中阶段",
+        "晚间高频活跃",
+        "学校考试压力",
+        "家长作息管控"
+      ]
+    },
+    "retrieved_cases": [
+      {
+        "sample_id": "ext_minor_case_112",
+        "score": 0.941,
+        "label": "minor",
+        "summary": "用户长期围绕班主任、周测、补课和家长收手机等场景表达焦虑，呈现稳定的初中生活轨迹。",
+        "key_signals": [
+          "班主任",
+          "周测",
+          "补课",
+          "家长收手机"
+        ]
+      },
+      {
+        "sample_id": "ext_minor_case_087",
+        "score": 0.916,
+        "label": "minor",
+        "summary": "对话集中出现晚自习后继续写卷子、次日早起返校和排名压力等未成年人学习生活线索。",
+        "key_signals": [
+          "晚间学习",
+          "返校作息",
+          "排名压力"
+        ]
+      }
+    ],
+    "operator_notes": [
+      "历史画像显示近 8 次会话中 6 次发生在 22:30 之后",
+      "近三次会话均出现学校任务 + 家庭管控的双重压力表达",
+      "该样本适合展示增强输入如何缩短证据收敛路径"
+    ],
+    "channel": "web_demo",
+    "locale": "zh-CN"
+  },
+  "meta": {
+    "user_id": "demo_user_minor_enriched_002",
+    "request_id": "demo_req_20260329_enriched_v2",
+    "source": "minor_detection_demo_enriched_v2"
+  }
+}

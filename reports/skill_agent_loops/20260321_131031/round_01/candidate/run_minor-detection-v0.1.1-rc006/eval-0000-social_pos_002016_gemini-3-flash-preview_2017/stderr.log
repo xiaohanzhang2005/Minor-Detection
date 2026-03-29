@@ -1,5 +1,0 @@
-error: the argument '--full-auto' cannot be used with '--dangerously-bypass-approvals-and-sandbox'
-
-Usage: codex exec --json --full-auto --skip-git-repo-check --cd <DIR> --output-schema <FILE> --output-last-message <FILE> --add-dir <DIR> <PROMPT>
-
-For more information, try '--help'.

@@ -64,7 +64,20 @@ def _ensure_trajectory(output: Dict[str, Any], normalized_payload: Dict[str, Any
     trajectory = trend.get("trajectory")
     if isinstance(trajectory, list) and trajectory:
         return output
-    trend["trajectory"] = []
+    if normalized_payload["mode"] != "multi_session":
+        trend["trajectory"] = []
+        trend["trend_summary"] = _safe_text(trend.get("trend_summary"))
+        return output
+
+    confidence = float(output.get("decision", {}).get("minor_confidence", 0.5) or 0.5)
+    trend["trajectory"] = [
+        {
+            "session_id": _safe_text(session.get("session_id")) or f"session_{index + 1}",
+            "session_time": _safe_text(session.get("session_time")) or None,
+            "minor_confidence": confidence,
+        }
+        for index, session in enumerate(normalized_payload.get("sessions", []))
+    ]
     trend["trend_summary"] = _safe_text(trend.get("trend_summary"))
     return output
 

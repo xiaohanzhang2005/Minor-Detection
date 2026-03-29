@@ -1,1 +1,0 @@
-{"packet_id": "failure_001_knowledge_pos_001379_Gen_Edu_202-2f77deea32", "sample_id": "knowledge_pos_001379_Gen_Edu_2024-05-15_1739337600", "failure_types": ["false_negative"], "confidence": 0.15, "observed_issues": [], "retrieval_mode": "embedding", "packet_dir": "failure_packets/failure_001_knowledge_pos_001379_Gen_Edu_202-2f77deea32"}

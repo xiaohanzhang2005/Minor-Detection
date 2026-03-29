@@ -1,9 +1,3 @@
-﻿'''
-负责“基线评测 -> 触发优化器 -> 候选评测 -> judge 聚合 -> compare 决策 -> 
-promote/rollback -> 版本清理预览”
-modeA 主链：loop.py -> runner.py -> judge.py -> compare.py -> optimizer.py -> versioning.py
-modeB 主链：direct_runner.py -> judge.py -> compare.py -> optimizer.py
-'''
 from __future__ import annotations
 
 import json
@@ -12,38 +6,24 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 from src.config import ROOT_DIR, SKILLS_DIR, get_active_skill_version
 from src.evolution.optimizer import SkillOptimizer
-from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
-
-from .compare import compare_reports
-from .judge import judge_run_artifacts
-from .runner import CodexRunnerConfig, CodexSkillRunner
-from .versioning import (
+from src.skill_loop.compare import compare_reports
+from src.skill_loop.versioning import (
     build_stamped_stable_version_name,
     build_version_inventory,
     ensure_version_snapshot,
-    next_patch_version_name,
     next_available_candidate_version_name,
+    next_patch_version_name,
     parse_version_name,
     publish_candidate_to_stable,
 )
+from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
 
-
-@dataclass
-class SkillAgentLoopConfig:
-    baseline_source_dir: Path = SKILLS_DIR / "minor-detection"
-    baseline_version: str = "minor-detection-v0.1.0"
-    dataset_path: Path = ROOT_DIR / "data" / "benchmark" / "val.jsonl"
-    max_rounds: int = 1
-    max_errors: Optional[int] = None
-    protected_count: int = 8
-    workspace_root: Path = ROOT_DIR / "reports" / "skill_agent_loops"
-    packages_root: Path = ROOT_DIR / "reports" / "skill_packages"
-    refresh_baseline_version: bool = False
-    runner_config: Any = field(default_factory=CodexRunnerConfig)
+from .judge import judge_trigger_run_artifacts
+from .runner import TriggerEvalCodexRunner, TriggerEvalRunnerConfig
 
 
 def _display_path(value: Any) -> str:
@@ -51,23 +31,56 @@ def _display_path(value: Any) -> str:
         path = Path(value)
     except TypeError:
         return str(value)
-    return to_relative_posix_path(path, ROOT_DIR) if path.is_absolute() else str(value).replace("\\", "/")
+    if not path.is_absolute():
+        return str(value).replace("\\", "/")
+    try:
+        return to_relative_posix_path(path, ROOT_DIR)
+    except ValueError:
+        return path.as_posix()
+
+
+def _relative_or_display(path: Path, base: Path) -> str:
+    try:
+        return to_relative_posix_path(path, base)
+    except ValueError:
+        return path.as_posix()
 
 
 def _log(message: str) -> None:
-    print(f"[skill-loop] {message}", file=sys.stderr, flush=True)
+    print(f"[trigger-description-loop] {message}", file=sys.stderr, flush=True)
 
 
-class SkillAgentLoop:
+@dataclass
+class TriggerDescriptionLoopConfig:
+    baseline_source_dir: Path = SKILLS_DIR / "minor-detection"
+    baseline_version: str = "minor-detection-v0.1.0"
+    optimization_set_path: Path = ROOT_DIR / "data" / "trigger_eval" / "minor_detection_trigger_eval_v1_optimization_set.json"
+    final_validation_set_path: Optional[Path] = ROOT_DIR / "data" / "trigger_eval" / "minor_detection_trigger_eval_v1_final_validation_set.json"
+    max_rounds: int = 1
+    max_errors: Optional[int] = None
+    protected_count: int = 8
+    workspace_root: Path = ROOT_DIR / "reports" / "trigger_description_loops"
+    refresh_baseline_version: bool = False
+    runner_config: TriggerEvalRunnerConfig = field(default_factory=TriggerEvalRunnerConfig)
+    judge_fn: Callable[..., Dict[str, Any]] = judge_trigger_run_artifacts
+    compare_fn: Callable[..., Dict[str, Any]] = compare_reports
+    manual_smoke_validation_script: str = "scripts/run_trigger_eval.py"
+    manual_smoke_validation_command_template: Optional[str] = None
+    manual_final_test_script: str = "scripts/run_trigger_description_validation.py"
+    manual_final_test_command_template: Optional[str] = None
+    repeat_runs_per_sample: int = 1
+
+
+class TriggerDescriptionLoop:
     def __init__(
         self,
         *,
-        config: Optional[SkillAgentLoopConfig] = None,
-        runner: Optional[Any] = None,
+        config: Optional[TriggerDescriptionLoopConfig] = None,
+        runner: Optional[TriggerEvalCodexRunner] = None,
         optimizer: Optional[SkillOptimizer] = None,
     ):
-        self.config = config or SkillAgentLoopConfig()
-        self.runner = runner or CodexSkillRunner(config=self.config.runner_config)
+        self.config = config or TriggerDescriptionLoopConfig()
+        self.runner = runner or TriggerEvalCodexRunner(config=self.config.runner_config)
         self.optimizer = optimizer or SkillOptimizer()
 
     def _workspace(self) -> Path:
@@ -90,23 +103,23 @@ class SkillAgentLoop:
             project_root=ROOT_DIR,
             skill_source_dir=skill_source_dir,
             skill_version=version_name,
-            dataset_path=self.config.dataset_path,
+            dataset_path=self.config.optimization_set_path,
             workspace_dir=workspace,
         )
         run_manifest_path = run_root / "run_manifest.json"
         run_manifest = json.loads(run_manifest_path.read_text(encoding="utf-8")) if run_manifest_path.exists() else {}
-        judged = judge_run_artifacts(
+        judged = self.config.judge_fn(
             run_root=run_root,
             skill_version=version_name,
             parent_version=parent_version,
-            dataset_name=self.config.dataset_path.stem,
+            dataset_name=self.config.optimization_set_path.stem,
             max_errors=self.config.max_errors,
             protected_count=self.config.protected_count,
             project_root=ROOT_DIR,
         )
-        judged["skill_source_dir"] = to_relative_posix_path(skill_source_dir, workspace)
-        judged["run_root"] = to_relative_posix_path(run_root, workspace)
-        judged["run_manifest_path"] = to_relative_posix_path(run_manifest_path, workspace) if run_manifest_path.exists() else None
+        judged["skill_source_dir"] = _relative_or_display(skill_source_dir, workspace)
+        judged["run_root"] = _relative_or_display(run_root, workspace)
+        judged["run_manifest_path"] = _relative_or_display(run_manifest_path, workspace) if run_manifest_path.exists() else None
         judged["runtime_summary"] = run_manifest.get("timing", {}) if isinstance(run_manifest, dict) else {}
         judged["runtime_counts"] = run_manifest.get("counts", {}) if isinstance(run_manifest, dict) else {}
         return judged
@@ -127,6 +140,20 @@ class SkillAgentLoop:
             runner_label = str(getattr(self.runner, "runner_label", "runtime") or "runtime")
             return f"baseline {runner_label} invocation failed before any valid output; fix runtime/model/skill loading before optimization"
         return None
+
+    def _manual_smoke_validation_command(self, version_name: str) -> str:
+        template = self.config.manual_smoke_validation_command_template
+        if not template:
+            script = self.config.manual_smoke_validation_script
+            template = f"python {script} --version {{version}}"
+        return template.format(version=version_name)
+
+    def _manual_final_validation_command(self, version_name: str) -> str:
+        template = self.config.manual_final_test_command_template
+        if not template:
+            script = self.config.manual_final_test_script
+            template = f"python {script} --version {{version}}"
+        return template.format(version=version_name)
 
     def run(self) -> Dict[str, Any]:
         loop_started_at = time.time()
@@ -220,7 +247,7 @@ class SkillAgentLoop:
                     parent_version=accepted_version,
                     workspace=workspace / f"round_{round_index:02d}" / "candidate",
                 )
-                comparison = compare_reports(
+                comparison = self.config.compare_fn(
                     accepted_report_path=accepted_eval["report_path"],
                     candidate_report_path=candidate_eval["report_path"],
                     accepted_protected_index_path=accepted_eval["protected_index_path"],
@@ -268,14 +295,14 @@ class SkillAgentLoop:
             only_run_tag=run_tag,
             scope_active_version=True,
         )
+        manual_smoke_validation_command = None
+        manual_smoke_validation_script = self.config.manual_smoke_validation_script
         manual_final_test_command = None
         manual_review_approve_command = None
         manual_review_reject_command = None
         if manual_review_candidate_version:
-            runner_mode = str(getattr(self.runner, "runner_mode", "agent") or "agent")
-            manual_final_test_command = (
-                f"python scripts/run_final_test.py --version {manual_review_candidate_version} --runner-mode {runner_mode}"
-            )
+            manual_smoke_validation_command = self._manual_smoke_validation_command(manual_review_candidate_version)
+            manual_final_test_command = self._manual_final_validation_command(manual_review_candidate_version)
             manual_review_approve_command = (
                 "python -m src.evolution.optimizer "
                 f"--review-base-version {manual_review_base_version} "
@@ -289,11 +316,22 @@ class SkillAgentLoop:
                 "--review-decision reject"
             )
         summary = {
-            "runner_mode": str(getattr(self.runner, "runner_mode", "agent") or "agent"),
+            "loop_type": "trigger_description_optimization",
+            "runner_mode": str(getattr(self.runner, "runner_mode", "trigger_agent") or "trigger_agent"),
+            "optimization_scope": "trigger_decision_and_skill_invocation_success_only",
+            "optimization_target": "SKILL.md frontmatter description",
+            "evaluation_contract": "trigger_decision_and_skill_invocation_success_only",
+            "optimizer_feedback_enabled": True,
+            "post_loop_validation_role": "standalone_description_validation",
             "baseline_version": self.config.baseline_version,
             "final_version": final_version,
-            "dataset": to_relative_posix_path(self.config.dataset_path, workspace),
+            "optimization_set": _relative_or_display(self.config.optimization_set_path, workspace),
+            "final_validation_set": _relative_or_display(self.config.final_validation_set_path, workspace)
+            if self.config.final_validation_set_path
+            else None,
+            "dataset": _relative_or_display(self.config.optimization_set_path, workspace),
             "workspace": ".",
+            "repeat_runs_per_sample": self.config.repeat_runs_per_sample,
             "baseline_runtime": baseline_eval.get("runtime_summary", {}),
             "baseline_runtime_counts": baseline_eval.get("runtime_counts", {}),
             "rounds": rounds,
@@ -302,7 +340,9 @@ class SkillAgentLoop:
             "manual_review_status": manual_review_status,
             "manual_review_base_version": manual_review_base_version,
             "manual_review_candidate_version": manual_review_candidate_version,
-            "manual_final_test_script": "scripts/run_final_test.py",
+            "manual_smoke_validation_script": manual_smoke_validation_script,
+            "manual_smoke_validation_command": manual_smoke_validation_command,
+            "manual_final_test_script": self.config.manual_final_test_script,
             "manual_final_test_command": manual_final_test_command,
             "manual_review_approve_command": manual_review_approve_command,
             "manual_review_reject_command": manual_review_reject_command,
@@ -324,6 +364,14 @@ class SkillAgentLoop:
                 "manual review pending: "
                 f"base={manual_review_base_version} candidate={manual_review_candidate_version}"
             )
+            _log(
+                "recommended final validation on final_validation_set: "
+                f"{manual_final_test_command}"
+            )
+            _log(
+                "recommended standalone full smoke: "
+                f"{manual_smoke_validation_command}"
+            )
         summary_path = workspace / "loop_summary.json"
         with summary_path.open("w", encoding="utf-8") as f:
             json.dump(
@@ -332,7 +380,5 @@ class SkillAgentLoop:
                 ensure_ascii=False,
                 indent=2,
             )
-        summary["summary_path"] = to_relative_posix_path(summary_path, ROOT_DIR)
+        summary["summary_path"] = _display_path(summary_path)
         return summary
-
-

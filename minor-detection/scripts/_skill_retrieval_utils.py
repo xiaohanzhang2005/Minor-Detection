@@ -1,4 +1,4 @@
-# 模块说明：RAG检索层-工具
+﻿# 模块说明：RAG检索层-工具
 # - skill 内部共享的检索文本构造和 retriever 工具。
 # - 给 retrieve_cases.py 和 pipeline 共用。
 
@@ -137,16 +137,12 @@ class SkillSemanticRetriever:
         self.api_key = (
             api_key
             or os.getenv("SKILL_EMBEDDING_API_KEY")
-            or os.getenv("AIHUBMIX_API_KEY")
-            or os.getenv("OPENAI_API_KEY")
             or ""
         )
         self.base_url = (
             base_url
             or os.getenv("SKILL_EMBEDDING_BASE_URL")
-            or os.getenv("AIHUBMIX_BASE_URL")
-            or os.getenv("OPENAI_BASE_URL")
-            or "https://aihubmix.com/v1"
+            or ""
         ).rstrip("/")
         self.embeddings = None
         self.samples: List[Dict[str, Any]] = []
@@ -187,6 +183,8 @@ class SkillSemanticRetriever:
             raise RuntimeError("embedding dependencies unavailable")
         if not self.api_key:
             raise RuntimeError("missing embedding api key")
+        if not self.base_url:
+            raise RuntimeError("missing embedding base url")
 
         url = f"{self.base_url}/embeddings"
         headers = {
@@ -252,3 +250,4 @@ class SkillSemanticRetriever:
                 )
             )
         return results
+

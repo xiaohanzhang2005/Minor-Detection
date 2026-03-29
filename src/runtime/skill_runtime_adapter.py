@@ -466,8 +466,16 @@ def _flatten_sessions_to_conversation(sessions: List[Dict[str, Any]]) -> List[Di
     flattened: List[Dict[str, Any]] = []
     for session in sessions:
         conversation = session.get("conversation", [])
+        session_time = str(session.get("session_time", "") or "").strip()
         if isinstance(conversation, list):
-            flattened.extend(conversation)
+            for turn in conversation:
+                if not isinstance(turn, dict):
+                    continue
+                normalized_turn = dict(turn)
+                # 多会话场景下优先继承 session_time，避免时间特征完全丢失。
+                if session_time and not any(str(normalized_turn.get(field, "") or "").strip() for field in TIMESTAMP_FIELD_CANDIDATES):
+                    normalized_turn["timestamp"] = session_time
+                flattened.append(normalized_turn)
     return flattened
 
 

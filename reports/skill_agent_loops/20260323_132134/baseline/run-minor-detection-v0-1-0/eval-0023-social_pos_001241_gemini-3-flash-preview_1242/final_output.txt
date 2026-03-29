@@ -1,1 +1,0 @@
-launcher timeout after 90 seconds

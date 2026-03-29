@@ -13,10 +13,14 @@ from types import SimpleNamespace
 from unittest import mock
 
 from src.models import AnalysisPayload, ICBOFeatures, RiskLevel, SkillOutput, UserPersona
+from src.executor.executor import _coerce_trend_trajectory
 from src.runtime import (
     analyze_formal_payload,
+    analyze_multi_session_formal_auto,
     analyze_single_session_formal_auto,
+    build_formal_multi_session_payload,
     build_formal_single_session_payload,
+    enrich_multi_session_context,
     enrich_single_session_context,
     get_formal_skill_path,
 )
@@ -28,6 +32,7 @@ RETRIEVE_CASES_PATH = ROOT_DIR / "skills" / "minor-detection" / "scripts" / "ret
 TIME_SCRIPT_PATH = ROOT_DIR / "skills" / "minor-detection" / "scripts" / "extract_time_features.py"
 PIPELINE_SCRIPT_PATH = ROOT_DIR / "skills" / "minor-detection" / "scripts" / "run_minor_detection_pipeline.py"
 RETRIEVAL_CORPUS_PATH = ROOT_DIR / "skills" / "minor-detection" / "assets" / "retrieval_assets" / "corpus.jsonl"
+PROFILE_MERGE_PATH = ROOT_DIR / "skills" / "minor-detection" / "scripts" / "_profile_merge.py"
 
 
 def make_skill_output(is_minor: bool, confidence: float) -> SkillOutput:
@@ -68,6 +73,14 @@ def load_classifier_client_module():
     return module
 
 
+def load_profile_merge_module():
+    spec = importlib.util.spec_from_file_location("minor_detection_profile_merge", PROFILE_MERGE_PATH)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
+
+
 def run_time_script(timestamp: str) -> dict:
     completed = subprocess.run(
         [sys.executable, str(TIME_SCRIPT_PATH), "--timestamp", timestamp],
@@ -79,6 +92,38 @@ def run_time_script(timestamp: str) -> dict:
 
 
 class FormalSkillRuntimeTests(unittest.TestCase):
+    def test_coerce_trend_trajectory_discards_string_placeholder_items(self):
+        parsed = {
+            "trend": {
+                "trajectory": ["trajectory_1", "trajectory_2", "trajectory_3"],
+                "trend_summary": "placeholder",
+            }
+        }
+
+        coerced = _coerce_trend_trajectory(parsed)
+
+        self.assertEqual(coerced["trend"]["trajectory"], [])
+
+    def test_profile_merge_does_not_fabricate_multi_session_trajectory(self):
+        profile_merge = load_profile_merge_module()
+        output = {
+            "decision": {"is_minor": True, "minor_confidence": 0.9},
+            "trend": {"trajectory": [], "trend_summary": ""},
+        }
+        normalized_payload = {
+            "mode": "multi_session",
+            "sessions": [
+                {"session_id": "s1", "session_time": "2026-03-19T22:18:00+08:00"},
+                {"session_id": "s2", "session_time": "2026-03-22T23:36:00+08:00"},
+            ],
+            "context": {},
+            "identity_hints": [],
+        }
+
+        merged = profile_merge.merge_output(output, normalized_payload)
+
+        self.assertEqual(merged["trend"]["trajectory"], [])
+
     def test_formal_skill_path_points_to_new_skill_package(self):
         skill_path = get_formal_skill_path()
         self.assertTrue(skill_path.exists())
@@ -144,6 +189,34 @@ class FormalSkillRuntimeTests(unittest.TestCase):
         self.assertEqual(payload.context.retrieved_cases[0]["sample_id"], "s1")
         self.assertEqual(payload.context.prior_profile["summary"], "疑似中学生画像")
         self.assertEqual(payload.context.raw_time_hint, "2026-03-18 周三 08:59")
+
+    def test_build_formal_multi_session_payload_merges_meta_and_context(self):
+        payload = build_formal_multi_session_payload(
+            sessions=[
+                {
+                    "session_id": "s1",
+                    "session_time": "2026-03-18T23:10:00+08:00",
+                    "conversation": [{"role": "user", "content": "我今天补课到很晚。"}],
+                }
+            ],
+            user_id="u-ms-1",
+            request_id="r-ms-1",
+            source="web-demo",
+            context={
+                "channel": "site",
+                "locale": "zh-CN",
+                "prior_profile": {"summary": "疑似初中画像"},
+            },
+        )
+
+        self.assertEqual(payload.mode, "multi_session")
+        self.assertEqual(payload.meta.user_id, "u-ms-1")
+        self.assertEqual(payload.meta.request_id, "r-ms-1")
+        self.assertEqual(payload.meta.source, "web-demo")
+        self.assertEqual(payload.context.channel, "site")
+        self.assertEqual(payload.context.locale, "zh-CN")
+        self.assertEqual(payload.context.prior_profile["summary"], "疑似初中画像")
+        self.assertEqual(payload.sessions[0].session_id, "s1")
 
     def test_analyze_formal_payload_uses_normalized_payload_boundary(self):
         fake_executor = SimpleNamespace(run_payload=mock.Mock(return_value=make_skill_output(True, 0.88)))
@@ -245,6 +318,71 @@ class FormalSkillRuntimeTests(unittest.TestCase):
         self.assertEqual(forwarded_payload.context.retrieved_cases[0]["sample_id"], "minor_case_2")
         self.assertTrue(result.is_minor)
 
+    def test_enrich_multi_session_context_uses_session_time_when_turn_has_no_timestamp(self):
+        sessions = [
+            {
+                "session_id": "s1",
+                "session_time": "2026-03-18 周三 23:10",
+                "conversation": [{"role": "user", "content": "我今天又和 AI 聊到很晚。"}],
+            },
+            {
+                "session_id": "s2",
+                "session_time": "2026-03-22 周日 22:40",
+                "conversation": [{"role": "user", "content": "明天还要上学。"}],
+            },
+        ]
+
+        with mock.patch(
+            "src.runtime.skill_runtime_adapter._run_skill_script",
+            side_effect=[
+                {"weekday": "Wednesday", "is_late_night": True},
+                {"retrieved_cases": [{"sample_id": "minor_case_multi_1"}]},
+            ],
+        ) as run_script, mock.patch(
+            "src.runtime.skill_runtime_adapter._builtin_retrieval_resources_available",
+            return_value=True,
+        ):
+            enriched = enrich_multi_session_context(sessions)
+
+        self.assertTrue(enriched["time_features"]["is_late_night"])
+        self.assertEqual(enriched["retrieved_cases"][0]["sample_id"], "minor_case_multi_1")
+        self.assertEqual(run_script.call_args_list[0].args[1], ["--timestamp", "2026-03-18 周三 23:10"])
+
+    def test_analyze_multi_session_formal_auto_forwards_enriched_context(self):
+        fake_executor = SimpleNamespace(run_payload=mock.Mock(return_value=make_skill_output(True, 0.89)))
+        sessions = [
+            {
+                "session_id": "s1",
+                "session_time": "2026-03-18 周三 23:10",
+                "conversation": [{"role": "user", "content": "我初二，最近总是晚上补作业。"}],
+            },
+            {
+                "session_id": "s2",
+                "session_time": "2026-03-22 周日 22:40",
+                "conversation": [{"role": "user", "content": "明天还要月考，我有点紧张。"}],
+            },
+        ]
+
+        with mock.patch(
+            "src.runtime.skill_runtime_adapter._run_skill_script",
+            side_effect=[
+                {"weekday": "Wednesday", "is_late_night": True},
+                {"retrieved_cases": [{"sample_id": "minor_case_multi_2"}]},
+            ],
+        ), mock.patch(
+            "src.runtime.skill_runtime_adapter._builtin_retrieval_resources_available",
+            return_value=True,
+        ), mock.patch("src.runtime.skill_runtime_adapter.get_formal_executor", return_value=fake_executor):
+            result = analyze_multi_session_formal_auto(sessions, user_id="u-ms-2")
+
+        forwarded_payload = fake_executor.run_payload.call_args.args[0]
+        self.assertEqual(forwarded_payload.meta.user_id, "u-ms-2")
+        self.assertEqual(forwarded_payload.mode, "multi_session")
+        self.assertTrue(forwarded_payload.context.time_features["is_late_night"])
+        self.assertEqual(forwarded_payload.context.retrieved_cases[0]["sample_id"], "minor_case_multi_2")
+        self.assertEqual(forwarded_payload.sessions[0].session_id, "s1")
+        self.assertTrue(result.is_minor)
+
     def test_analyze_single_session_formal_auto_logs_mode_and_internal_rag(self):
         fake_executor = SimpleNamespace(run_payload=mock.Mock(return_value=make_skill_output(True, 0.83)))
         conversation = [
@@ -330,6 +468,15 @@ class FormalSkillRuntimeTests(unittest.TestCase):
         self.assertEqual(payload["time_bucket"], "early_morning")
         self.assertEqual(payload["holiday_label"], "none")
         self.assertFalse(payload["school_holiday_hint"])
+
+    def test_extract_time_features_script_accepts_iso8601_timestamp(self):
+        payload = run_time_script("2026-03-19T22:18:00+08:00")
+
+        self.assertEqual(payload["weekday"], "Thursday")
+        self.assertFalse(payload["is_weekend"])
+        self.assertTrue(payload["is_late_night"])
+        self.assertEqual(payload["time_bucket"], "late_night")
+        self.assertEqual(payload["local_time"], "2026-03-19 22:18:00")
 
 
     def test_extract_time_features_script_emits_ascii_safe_json(self):

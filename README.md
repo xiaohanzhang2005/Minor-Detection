@@ -1,129 +1,193 @@
 # minor-protection
 
-这个项目现在围绕两条主线运行：
+`minor-protection` 是一套面向 AI 对话产品的未成年人识别与自进化优化工具链。
 
-- 模式 A：Agent full loop 分层采样 -> Agent 调 skill -> skill 内总控脚本 -> Agent 返回结果 -> judge -> optimizer -> compare 或 rollback -> 人审
-- 模式 B：Direct full loop 分层采样 -> skill 内总控脚本 -> judge -> optimizer -> compare 或 rollback -> 人审
+项目要解决的核心问题是：
 
-当前真正的主链是 `src/skill_loop/*`、`scripts/run_skill_iteration_loop.py`、`scripts/run_direct_iteration_loop.py`、`scripts/run_final_test.py`，以及 `skills/minor-detection/*` 这套 bundled skill。
+> 当 AI 产品正在和用户持续互动时，系统能否识别说话者是否疑似未成年人，并自动触发适龄保护、风险分级和证据留存流程？
 
-## 两种模式
+## 项目简介
 
-### Mode A
+本仓库主要开源以下内容：
 
-入口：`scripts/run_skill_iteration_loop.py` （目前使用的是 Codex-Agent 后期可扩展 ）
+- 未成年人识别自进化工具链
+- `minor-detection` bundled skill
+- 正式运行时桥接层
+- Streamlit 前端演示界面
+- 配套测试与核心脚本
 
-主流程：
+本仓库定位为**代码仓库**。  
+公开数据集已单独发布在 Hugging Face，不随本仓库一起提供。
 
-1. `src/skill_loop/loop.py` 创建工作区、冻结 baseline、调用 runner。
-2. `src/skill_loop/runner.py` 对验证集做分层采样，把 skill 快照安装到隔离环境，逐样本让 Agent 只执行一次预制 launcher。
-3. launcher 调 `skills/minor-detection/scripts/run_minor_detection_pipeline.py`。
-4. pipeline 内部按顺序执行：payload 归一化 -> 时间脚本 -> 检索脚本（RAG） -> 分类器 -> schema repair -> 输出 observability。
-5. `src/skill_loop/judge.py` 把 run artifacts 转成 judge report、failure packets、protected packets。
-6. `src/evolution/optimizer.py` 根据 judge 产物生成 candidate skill 版本。
-7. `src/skill_loop/compare.py` 决定 promote 还是 rollback。
-8. 最终结果交给人审，并可再用 `scripts/run_final_test.py` 跑 test 集。
+## 已发布资源
 
-### Mode B
+- Hugging Face 知识子集：<https://huggingface.co/datasets/xiao2005/minor-detection-knowledge-subset>
+- Hugging Face 社交子集：<https://huggingface.co/datasets/xiao2005/minor-detection-social-subset>
+- ClawHub Skill：<https://clawhub.ai/xiaohanzhang2005/minor-detection>
 
-入口：`scripts/run_direct_iteration_loop.py`
+## 核心能力
 
-和 Mode A 的区别只有执行层：
+- 判断当前聊天窗口或任务请求是否需要触发未成年人深度识别
+- 支持单会话、多会话未成年人识别
+- 综合多维证据进行判断，包括：
+  - 当前对话
+  - 历史画像
+  - 时间特征
+  - 相似案例检索
+- 输出结构化结果，包括：
+  - 是否疑似未成年人
+  - 用户画像
+  - 证据链
+  - 风险等级
+  - 下一步建议
+- 支持离线自进化闭环，包括：
+  - 自动评测
+  - judge 报告
+  - candidate 优化
+  - promote / rollback 门禁
+  - 人审接口
 
-- Mode A 用 `src/skill_loop/runner.py`，由 Agent 去调一次预制 launcher。
-- Mode B 用 `src/skill_loop/direct_runner.py`，直接跑 `run_minor_detection_pipeline.py`。
-- judge、optimizer、compare、versioning、报告结构都是同一套。
-
-## 目录结构
+## 仓库结构
 
 ```text
 .
-├── README.md
-├── app_formal.py                      # 正式 runtime 演示页，便于人工查看 payload/context/output
-├── app_v2.py                          # 旧版 executor/RAG/memory 演示页，已不在当前主链
-├── scripts/
-│   ├── run_skill_iteration_loop.py    # Mode A 入口
-│   ├── run_direct_iteration_loop.py   # Mode B 入口
-│   ├── run_final_test.py              # 手动 final test 入口
-│   ├── list_skill_versions.py         # 版本盘点
-│   ├── cleanup_skill_versions.py      # 版本清理
-│   ├── prepare_mode_a_validation_seed.py
-│   ├── inspect_formal_sample.py
-│   ├── export_retrieval_assets.py
-│   ├── prepare_data.py                # 数据集准备
-│   ├── run_acceptance_suite.py        # 旧验收链路
-│   └── run_pipeline.py                # 旧离线总控链路
-├── src/
-│   ├── config.py
-│   ├── models.py
-│   ├── utils/
-│   ├── evolution/
-│   ├── executor/                      # 旧 executor 兼容层
-│   ├── retriever/                     # 旧 external RAG 兼容层
-│   ├── memory/                        # 旧 memory 兼容层
-│   ├── runtime/                       # formal runtime 适配层，给 demo/inspection 用
-│   └── skill_loop/                    # 当前主线核心
-├── skills/
-│   ├── active_version.txt
-│   ├── minor-detection/               # 当前 source-of-truth skill 目录
-│   ├── minor-detection-v0.1.0/        # baseline 快照
-│   └── 其他带版本号目录                 # 历史候选 / 验证 seed / 已发布快照
-├── test/
-│   ├── test_skill_loop.py             # 当前主链最重要测试
-│   ├── test_validation_seed.py
-│   ├── test_versioning.py
-│   ├── test_formal_skill_runtime.py
-│   └── 若干旧 demo/旧技术文档测试
-├── reports/                           # 各次 loop / final test 输出
-├── tmp/                               # 临时实验、历史草稿、validation seed 残留
-└── claude-skill-creator/              # 打包/校验 bundled skill 需要的外部工具
+├── src/                         # 核心运行时、loop、optimizer、models
+├── scripts/                     # CLI 入口和维护脚本
+├── skills/minor-detection/      # 当前 source-of-truth skill
+├── test/                        # 运行时和 loop 测试
+├── demo_inputs/                 # 最小 demo 输入
+├── app_minor_detection.py       # Streamlit 前端演示页
+├── app_formal.py                # formal runtime 调试页
+└── requirements.txt             # 依赖列表
 ```
 
-## 当前应该重点看的文件
+## 主要执行链路
 
-### 主线入口
+### 1. Direct Loop
 
-- `scripts/run_skill_iteration_loop.py`：Mode A CLI 入口。
-- `scripts/run_direct_iteration_loop.py`：Mode B CLI 入口。
-- `scripts/run_final_test.py`：在 test 集上做最终人工前检查。
+Direct Loop 直接调用 bundled skill 的总控脚本：
 
-### Loop 核心
+```text
+scripts/run_direct_iteration_loop.py
+  -> src/skill_loop/loop.py
+  -> direct runner
+  -> skills/minor-detection/scripts/run_minor_detection_pipeline.py
+  -> judge
+  -> optimizer
+  -> compare / rollback / promote
+```
 
-- `src/skill_loop/loop.py`：把 runner、judge、optimizer、compare 串成完整闭环。
-- `src/skill_loop/runner.py`：Mode A 的 Agent 执行器。
-- `src/skill_loop/direct_runner.py`：Mode B 的 Direct 执行器。
-- `src/skill_loop/judge.py`：从样本级 artifacts 聚合成 judge report 和 packet。
-- `src/skill_loop/compare.py`：是否 promote 的门禁逻辑。
-- `src/skill_loop/versioning.py`：skill 版本命名、快照、库存、清理预览。
-- `src/skill_loop/schema_consistency.py`：保证 prompt 合同和 formal schema 没漂。
-- `src/skill_loop/validation_seed.py`：Mode A 自迭代验收专用坏 baseline 生成器。
-- `src/skill_loop/packaging.py`：调用 `claude-skill-creator` 做校验和打包。
+### 2. Agent Loop
 
-### 优化器与共享契约
+Agent Loop 通过预制 launcher 调用同一套 skill：
 
-- `src/evolution/optimizer.py`：根据 judge failure / protected packets 改 skill。
-- `src/models.py`：formal 输出、legacy 输出、payload 的统一数据模型。
-- `src/config.py`：全局路径和 active skill 指针。
-- `src/utils/path_utils.py`：把报告里的绝对路径转成稳定相对路径。
+```text
+scripts/run_skill_iteration_loop.py
+  -> src/skill_loop/loop.py
+  -> agent runner
+  -> launcher
+  -> skills/minor-detection/scripts/run_minor_detection_pipeline.py
+  -> judge
+  -> optimizer
+  -> compare / rollback / promote
+```
 
-### Skill 内部总控
+## 前端与运行时
 
-- `skills/minor-detection/scripts/run_minor_detection_pipeline.py`：真正被 Mode A / B 调起的 skill 总控脚本。
-- `skills/minor-detection/scripts/extract_time_features.py`：时间特征脚本。
-- `skills/minor-detection/scripts/retrieve_cases.py`：内置检索脚本。
-- `skills/minor-detection/scripts/_payload_normalizer.py`：payload 标准化。
-- `skills/minor-detection/scripts/_classifier_client.py`：分类模型请求封装。
-- `skills/minor-detection/scripts/_schema_repair.py`：输出修复。
-- `skills/minor-detection/scripts/_profile_merge.py`：补齐 profile / evidence / risk 字段。
-- `skills/minor-detection/scripts/config.py`：skill 内部运行时配置。
+当前对外演示前端入口：
 
-### skill版本
+- `app_minor_detection.py`
 
-- `skills/minor-detection/`：当前 source-of-truth。
-- `skills/minor-detection-v0.1.0/`：当前 loop 默认 baseline。
-- `skills/active_version.txt`：旧 runtime 仍会读它。
-- `claude-skill-creator/`：`src/skill_loop/packaging.py` 依赖它做校验和打包。
+该页面用于展示：
 
-## 更详细的结构说明
+- 单会话检测
+- 多会话检测
+- 外部上下文注入
+- 风险等级与证据链展示
 
-详细版请看：`docx/项目结构代码介绍.md`
+补充调试页：
+
+- `app_formal.py`
+
+## Bundled Skill
+
+当前核心 skill 位于：
+
+- `skills/minor-detection/`
+
+其主流程包括：
+
+- payload 归一化
+- 时间特征提取
+- 相似案例检索
+- 分类器调用
+- schema 修复
+- formal 输出合并
+
+主要入口脚本：
+
+- `skills/minor-detection/scripts/run_minor_detection_pipeline.py`
+
+## 快速开始
+
+安装依赖：
+
+```bash
+pip install -r requirements.txt
+```
+
+运行前端演示：
+
+```bash
+streamlit run app_minor_detection.py
+```
+
+运行 formal 调试页：
+
+```bash
+streamlit run app_formal.py
+```
+
+运行测试：
+
+```bash
+python -m unittest discover -s test
+```
+
+## 环境变量
+
+bundled skill 主要读取以下环境变量：
+
+- `MINOR_DETECTION_CLASSIFIER_BASE_URL`
+- `MINOR_DETECTION_CLASSIFIER_API_KEY`
+- `MINOR_DETECTION_CLASSIFIER_MODEL`
+- `MINOR_DETECTION_EMBEDDING_BASE_URL`
+- `MINOR_DETECTION_EMBEDDING_API_KEY`
+- `MINOR_DETECTION_EMBEDDING_MODEL`
+
+如果没有配置分类器凭证，运行时不会静默调用未知远程接口，而是直接报错。
+
+## 工程说明
+
+本公开代码仓库不包含以下内容：
+
+- Hugging Face 数据集发布中间文件
+- 评测报告与运行产物
+- 临时实验目录
+- 本地 IDE / Codex / pytest 缓存
+- 外部打包辅助目录 `claude-skill-creator/`
+
+当前仓库保留：
+
+- 核心代码
+- 前端演示页
+- `data/` 目录中的项目数据文件
+
+## 当前状态
+
+- 工程原型：已完成
+- bundled skill：已完成
+- 前端演示页：已完成
+- 内部评测链路：已完成
+- Hugging Face 数据子集发布：已完成
+- GitHub 代码仓库发布：准备中

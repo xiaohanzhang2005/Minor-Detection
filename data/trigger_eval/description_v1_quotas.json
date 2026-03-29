@@ -1,0 +1,17 @@
+﻿{
+  "version": "v1",
+  "window_scan": {
+    "identity_explicit": 20,
+    "school_context_strong": 20,
+    "implicit_minor_signal": 20,
+    "adult_near_miss": 24,
+    "topic_adjacent_not_identity": 20,
+    "insufficient_evidence_window": 16
+  },
+  "direct_request": {
+    "explicit_minor_judgment_request": 12,
+    "operator_window_scan_request": 8,
+    "other_profile_request": 10,
+    "analysis_but_not_minor": 10
+  }
+}

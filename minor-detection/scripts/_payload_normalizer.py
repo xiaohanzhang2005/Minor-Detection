@@ -50,14 +50,9 @@ def flatten_conversation(mode: str, conversation: List[Dict[str, Any]], sessions
         return [item for item in conversation if isinstance(item, dict)]
     flattened: List[Dict[str, Any]] = []
     for session in sessions:
-        session_dict = _safe_dict(session)
-        session_time = _safe_text(session_dict.get("session_time"))
-        for turn in _safe_list(session_dict.get("conversation")):
+        for turn in _safe_list(_safe_dict(session).get("conversation")):
             if isinstance(turn, dict):
-                normalized_turn = dict(turn)
-                if session_time and not any(_safe_text(normalized_turn.get(key)) for key in ("timestamp", "time", "created_at", "datetime")):
-                    normalized_turn["timestamp"] = session_time
-                flattened.append(normalized_turn)
+                flattened.append(turn)
     return flattened
 
 

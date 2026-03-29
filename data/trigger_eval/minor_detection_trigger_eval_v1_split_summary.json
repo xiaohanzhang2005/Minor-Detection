@@ -1,0 +1,89 @@
+{
+  "parent_sample_count": 160,
+  "optimization_set_count": 112,
+  "final_validation_set_count": 48,
+  "optimization_set_scenario_counts": {
+    "window_scan": 84,
+    "direct_request": 28
+  },
+  "final_validation_set_scenario_counts": {
+    "window_scan": 36,
+    "direct_request": 12
+  },
+  "optimization_set_slice_counts": {
+    "adult_near_miss": 17,
+    "analysis_but_not_minor": 7,
+    "explicit_minor_judgment_request": 8,
+    "identity_explicit": 14,
+    "implicit_minor_signal": 14,
+    "insufficient_evidence_window": 11,
+    "operator_window_scan_request": 6,
+    "other_profile_request": 7,
+    "school_context_strong": 14,
+    "topic_adjacent_not_identity": 14
+  },
+  "final_validation_set_slice_counts": {
+    "adult_near_miss": 7,
+    "analysis_but_not_minor": 3,
+    "explicit_minor_judgment_request": 4,
+    "identity_explicit": 6,
+    "implicit_minor_signal": 6,
+    "insufficient_evidence_window": 5,
+    "operator_window_scan_request": 2,
+    "other_profile_request": 3,
+    "school_context_strong": 6,
+    "topic_adjacent_not_identity": 6
+  },
+  "stratum_counts": {
+    "direct_request::no_trigger::analysis_but_not_minor": {
+      "total": 10,
+      "optimization_set": 7,
+      "final_validation_set": 3
+    },
+    "direct_request::no_trigger::other_profile_request": {
+      "total": 10,
+      "optimization_set": 7,
+      "final_validation_set": 3
+    },
+    "direct_request::trigger::explicit_minor_judgment_request": {
+      "total": 12,
+      "optimization_set": 8,
+      "final_validation_set": 4
+    },
+    "direct_request::trigger::operator_window_scan_request": {
+      "total": 8,
+      "optimization_set": 6,
+      "final_validation_set": 2
+    },
+    "window_scan::no_trigger::adult_near_miss": {
+      "total": 24,
+      "optimization_set": 17,
+      "final_validation_set": 7
+    },
+    "window_scan::no_trigger::insufficient_evidence_window": {
+      "total": 16,
+      "optimization_set": 11,
+      "final_validation_set": 5
+    },
+    "window_scan::no_trigger::topic_adjacent_not_identity": {
+      "total": 20,
+      "optimization_set": 14,
+      "final_validation_set": 6
+    },
+    "window_scan::trigger::identity_explicit": {
+      "total": 20,
+      "optimization_set": 14,
+      "final_validation_set": 6
+    },
+    "window_scan::trigger::implicit_minor_signal": {
+      "total": 20,
+      "optimization_set": 14,
+      "final_validation_set": 6
+    },
+    "window_scan::trigger::school_context_strong": {
+      "total": 20,
+      "optimization_set": 14,
+      "final_validation_set": 6
+    }
+  }
+}

@@ -98,6 +98,14 @@ def infer_time_bucket(hour: int) -> str:
 
 def parse_timestamp(text: str) -> datetime:
     normalized = normalize_timestamp_text(text)
+    iso_candidate = normalized
+    if iso_candidate.endswith("Z"):
+        iso_candidate = iso_candidate[:-1] + "+00:00"
+    try:
+        return datetime.fromisoformat(iso_candidate)
+    except ValueError:
+        pass
+
     patterns = [
         "%Y-%m-%d %H:%M:%S",
         "%Y-%m-%d %H:%M",

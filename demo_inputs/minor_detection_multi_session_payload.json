@@ -1,0 +1,86 @@
+{
+  "mode": "multi_session",
+  "sessions": [
+    {
+      "session_id": "s1",
+      "session_time": "2026-03-12 周四 23:14",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "这几天一到晚上就不太想关灯睡，感觉白天没处理完的事全堆到脑子里了。"
+        },
+        {
+          "role": "assistant",
+          "content": "最近是生活节奏突然变快了，还是有些事情一直在追着你？"
+        },
+        {
+          "role": "user",
+          "content": "都有一点吧，白天排得很满，回到家脑子还在转，总觉得还有东西没做完。"
+        }
+      ]
+    },
+    {
+      "session_id": "s2",
+      "session_time": "2026-03-16 周一 22:47",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "今天又把计划打乱了，本来想早点收尾，结果作业一多就拖到了现在。"
+        },
+        {
+          "role": "assistant",
+          "content": "最近晚上总是被事情占满吗？是手头任务突然变多了？"
+        },
+        {
+          "role": "user",
+          "content": "嗯，白天在学校就够赶的了，回家还得把卷子订正完，不然第二天心里更慌。"
+        }
+      ]
+    },
+    {
+      "session_id": "s3",
+      "session_time": "2026-03-20 周五 23:28",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "刚从晚自习回来，我妈又把手机收走了，说下周周测前别想碰太久。"
+        },
+        {
+          "role": "assistant",
+          "content": "学校和家里都一起收紧了，最近最让你喘不过气的是哪一块？"
+        },
+        {
+          "role": "user",
+          "content": "班主任最近老盯着我们这组，我一回家还得继续写，感觉一天都没有自己的时间。"
+        }
+      ]
+    },
+    {
+      "session_id": "s4",
+      "session_time": "2026-03-24 周二 23:56",
+      "conversation": [
+        {
+          "role": "user",
+          "content": "我初二之后就总这样，一到考试周就不敢停。今天都快十二点了，我还在改错题，明早六点多又得起。"
+        },
+        {
+          "role": "assistant",
+          "content": "听起来这已经不是一两天的事了。你现在最想解决的是睡不够，还是那种一直被学校节奏推着走的感觉？"
+        },
+        {
+          "role": "user",
+          "content": "后者吧，像每天都被安排着往前跑，连周末补课结束后脑子都停不下来。"
+        }
+      ]
+    }
+  ],
+  "context": {
+    "channel": "web_demo",
+    "locale": "zh-CN"
+  },
+  "meta": {
+    "user_id": "demo_user_minor_multi_002",
+    "request_id": "demo_req_20260327_multi_v2",
+    "source": "minor_detection_demo_multi_v2"
+  }
+}

@@ -1,7 +1,0 @@
-{
-  "raw_text": "classifier request failed after 3 attempts: HTTPSConnectionPool(host='aihubmix.com', port=443): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000299FEB95810>: Failed to establish a new connection: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。'))",
-  "parsed_json": null,
-  "json_valid": false,
-  "launcher_success": false,
-  "launcher_status": "process_error"
-}

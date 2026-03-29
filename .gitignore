@@ -1,17 +1,49 @@
 # Python bytecode and caches
 __pycache__/
+**/__pycache__/
 *.py[cod]
+*.pyo
 
 # Test and pytest artifacts
 .pytest_cache/
+**/.pytest_cache/
 pytest-cache-files-*/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtual environments and local env files
+.env
+.env.*
+.venv/
+venv/
+ENV/
+.vscode/
 
 # Local temporary artifacts
 tmp/unit_test_artifacts/
 minor_protection_eval_memory_*/
-
-# Local sandbox and scratch runs
 .tmp_tests/
+
+# Local IDE / Codex state
+.codex/
+**/.codex/
+
+# Build / runtime leftovers
+*.log
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Evaluation artifacts and temporary skill snapshots
+reports/
+skills/tmp/
+skills/minor-detection-v*/
+tmp/
+docx/
+release/
+claude-skill-creator/
+data/minor_detection_profile_store.json
 
 # Embedded Codex runtime homes captured inside evaluation reports
 reports/**/codex_home/

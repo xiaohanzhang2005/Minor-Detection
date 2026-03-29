@@ -1,0 +1,63 @@
+{
+  "mode": "single_session",
+  "conversation": [
+    {
+      "role": "user",
+      "content": "我今晚刚写完学校留的卷子，脑子还是停不下来，想找你聊一会儿。"
+    },
+    {
+      "role": "assistant",
+      "content": "最近还是一直被学校和作业压着吗？"
+    },
+    {
+      "role": "user",
+      "content": "差不多吧，这学期班主任抓得更紧了，家里也盯着我别玩手机。"
+    }
+  ],
+  "context": {
+    "raw_time_hint": "2026-03-29 周日 22:46",
+    "prior_profile": {
+      "total_sessions": 6,
+      "estimated_age_range": "13-15岁",
+      "education_stage": "初中",
+      "recent_confidence_trend": "较历史上升",
+      "summary": "历史记录显示该用户长期围绕学校作业、班主任管理、家长手机管控等话题进行表达，整体更接近初中阶段画像。",
+      "identity_markers": [
+        "初中生",
+        "作业压力",
+        "家长管控"
+      ]
+    },
+    "retrieved_cases": [
+      {
+        "sample_id": "ext_minor_case_021",
+        "score": 0.928,
+        "label": "minor",
+        "summary": "用户多次提到班主任、学校作业、家长限制手机使用，呈现明显的初中阶段生活线索。",
+        "key_signals": [
+          "班主任",
+          "学校作业",
+          "家长限制手机"
+        ]
+      },
+      {
+        "sample_id": "ext_minor_case_034",
+        "score": 0.901,
+        "label": "minor",
+        "summary": "对话中出现考试节奏、作息被学校安排牵引、家庭监管增强等连续未成年人线索。",
+        "key_signals": [
+          "考试节奏",
+          "学校安排",
+          "家庭监管"
+        ]
+      }
+    ],
+    "channel": "external_context_demo",
+    "locale": "zh-CN"
+  },
+  "meta": {
+    "user_id": "demo_user_external_ctx_001",
+    "request_id": "demo_req_20260329_external",
+    "source": "minor_detection_demo_external_context"
+  }
+}

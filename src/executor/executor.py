@@ -37,6 +37,38 @@ from src.utils.llm_client import LLMClient
 PIPELINE_SCRIPT_NAME = "run_minor_detection_pipeline.py"
 
 
+def _coerce_trend_trajectory(parsed: Dict[str, Any]) -> Dict[str, Any]:
+    """兼容早期/漂移输出，把非法 trajectory 纠正为可消费结构。"""
+    trend = parsed.get("trend")
+    if not isinstance(trend, dict):
+        parsed["trend"] = {"trajectory": [], "trend_summary": ""}
+        return parsed
+
+    trajectory = trend.get("trajectory")
+    if not isinstance(trajectory, list):
+        trend["trajectory"] = []
+        return parsed
+
+    normalized_items: List[Dict[str, Any]] = []
+    for item in trajectory:
+        if isinstance(item, dict):
+            confidence = item.get("minor_confidence", 0.5)
+            try:
+                confidence_value = float(confidence)
+            except Exception:
+                confidence_value = 0.5
+            normalized_items.append(
+                {
+                    "session_id": item.get("session_id"),
+                    "session_time": item.get("session_time"),
+                    "minor_confidence": max(0.0, min(1.0, confidence_value)),
+                }
+            )
+
+    trend["trajectory"] = normalized_items
+    return parsed
+
+
 class ExecutorSkill:
     """
     青少年识别 Skill 执行器
@@ -221,6 +253,7 @@ class ExecutorSkill:
 
         output_text = stdout.splitlines()[-1].strip()
         parsed = json.loads(output_text)
+        parsed = _coerce_trend_trajectory(parsed if isinstance(parsed, dict) else {})
         return self._normalize_formal_output(FormalSkillOutput(**parsed), payload=payload)
 
     def _build_messages(self, payload: AnalysisPayload) -> List[Dict[str, str]]:

@@ -1,9 +1,0 @@
-{"type":"thread.started","thread_id":"019d101a-8396-70b1-8869-0b375edd638a"}
-{"type":"turn.started"}
-{"type":"error","message":"Reconnecting... 1/5 (unexpected status 503 Service Unavailable: 当前分组 codex 下对于模型 gpt-5-nano 计费模式 [按量计费,按次计费] 无可用渠道 (request id: 2026032119142747346191470664124), url: https://code.ddsst.online/v1/responses, cf-ray: 9dfc8878ecb41a5b-HKG)"}
-{"type":"error","message":"Reconnecting... 2/5 (unexpected status 503 Service Unavailable: 当前分组 codex 下对于模型 gpt-5-nano 计费模式 [按量计费,按次计费] 无可用渠道 (request id: 2026032119143218391864570461529), url: https://code.ddsst.online/v1/responses, cf-ray: 9dfc88965caf5e01-HKG)"}
-{"type":"error","message":"Reconnecting... 3/5 (unexpected status 503 Service Unavailable: 当前分组 codex 下对于模型 gpt-5-nano 计费模式 [按量计费,按次计费] 无可用渠道 (request id: 2026032119143715304888841602401), url: https://code.ddsst.online/v1/responses, cf-ray: 9dfc88b5691485f8-HKG)"}
-{"type":"error","message":"Reconnecting... 4/5 (unexpected status 503 Service Unavailable: 当前分组 codex 下对于模型 gpt-5-nano 计费模式 [按量计费,按次计费] 无可用渠道 (request id: 2026032119144287762309013523154), url: https://code.ddsst.online/v1/responses, cf-ray: 9dfc88d92bd54639-HKG)"}
-{"type":"error","message":"Reconnecting... 5/5 (unexpected status 503 Service Unavailable: 当前分组 codex 下对于模型 gpt-5-nano 计费模式 [按量计费,按次计费] 无可用渠道 (request id: 2026032119144925872073667326477), url: https://code.ddsst.online/v1/responses, cf-ray: 9dfc89010df82119-HKG)"}
-{"type":"error","message":"unexpected status 503 Service Unavailable: 当前分组 codex 下对于模型 gpt-5-nano 计费模式 [按量计费,按次计费] 无可用渠道 (request id: 20260321191457818312482633609), url: https://code.ddsst.online/v1/responses, cf-ray: 9dfc89317e968529-HKG"}
-{"type":"turn.failed","error":{"message":"unexpected status 503 Service Unavailable: 当前分组 codex 下对于模型 gpt-5-nano 计费模式 [按量计费,按次计费] 无可用渠道 (request id: 20260321191457818312482633609), url: https://code.ddsst.online/v1/responses, cf-ray: 9dfc89317e968529-HKG"}}

@@ -195,6 +195,64 @@ class SkillOptimizer:
         optimized_content = self.llm_client.chat(messages, temperature=0.7)
         return self._strip_markdown_fence(optimized_content)
 
+    def _extract_frontmatter_description(self, content: str) -> str:
+        text = str(content or "")
+        frontmatter_match = re.match(r"\A---\n(?P<frontmatter>.*?)\n---(?:\n|\Z)", text, flags=re.DOTALL)
+        if not frontmatter_match:
+            return ""
+        frontmatter = frontmatter_match.group("frontmatter")
+        description_match = re.search(r"(?m)^description:\s*(.+?)\s*$", frontmatter)
+        if not description_match:
+            return ""
+        return str(description_match.group(1) or "").strip()
+
+    def _normalize_description_value(self, value: str) -> str:
+        normalized = str(value or "").strip()
+        normalized = re.sub(r"^description:\s*", "", normalized)
+        normalized = re.sub(r"\s+", " ", normalized).strip()
+        return normalized
+
+    def _replace_frontmatter_description(self, content: str, new_description: str) -> str:
+        text = str(content or "")
+        normalized_description = self._normalize_description_value(new_description)
+        if not normalized_description:
+            raise ValueError("description cannot be empty")
+        frontmatter_match = re.match(r"\A---\n(?P<frontmatter>.*?)\n---(?P<rest>(?:\n.*)?|\Z)", text, flags=re.DOTALL)
+        if not frontmatter_match:
+            raise ValueError("SKILL.md is missing YAML frontmatter")
+        frontmatter = frontmatter_match.group("frontmatter")
+        if not re.search(r"(?m)^description:\s*.+$", frontmatter):
+            raise ValueError("SKILL.md frontmatter is missing description")
+        updated_frontmatter = re.sub(
+            r"(?m)^description:\s*.+$",
+            f"description: {normalized_description}",
+            frontmatter,
+            count=1,
+        )
+        return f"---\n{updated_frontmatter}\n---{frontmatter_match.group('rest')}"
+
+    def _description_only_skill_content(self, content: str) -> str:
+        description = self._extract_frontmatter_description(content)
+        if not description:
+            return str(content or "")
+        return self._replace_frontmatter_description(content, "__DESCRIPTION_PLACEHOLDER__")
+
+    def _is_description_only_skill_change(self, base_content: str, candidate_content: str) -> bool:
+        base_description = self._extract_frontmatter_description(base_content)
+        candidate_description = self._extract_frontmatter_description(candidate_content)
+        if not base_description or not candidate_description:
+            return False
+        if self._normalize_description_value(base_description) == self._normalize_description_value(candidate_description):
+            return False
+        return self._description_only_skill_content(base_content) == self._description_only_skill_content(candidate_content)
+
+    def _apply_description_only_revision(self, current_skill: str, revised_content: str) -> str:
+        revised_text = str(revised_content or "").strip()
+        new_description = self._extract_frontmatter_description(revised_text)
+        if not new_description:
+            new_description = self._normalize_description_value(revised_text)
+        return self._replace_frontmatter_description(current_skill, new_description)
+
     def _build_reference_prompt_sections(self, reference_materials: Dict[str, str]) -> List[str]:
         if not reference_materials:
             return []
@@ -219,6 +277,25 @@ class SkillOptimizer:
             )
 
         return prompt_parts
+
+    def _build_trigger_description_only_prompt_sections(
+        self,
+        *,
+        editable_target: str,
+        optimization_packet: Dict[str, Any],
+    ) -> List[str]:
+        if editable_target != "SKILL.md" or str(optimization_packet.get("task_type", "") or "") != "trigger_eval":
+            return []
+
+        return [
+            "# Trigger Description Editing Rules",
+            "- This is a trigger-eval optimization round.",
+            "- You must edit only the YAML frontmatter `description` field in `SKILL.md`.",
+            "- Do not change the skill title, headings, body sections, execution flow, scripts, output rules, references, or any other file.",
+            "- The goal is only to improve whether the agent correctly triggers this skill.",
+            "- Keep the description broad enough to catch true trigger intents, but do not make it globally over-trigger.",
+            "- Return either the full revised `SKILL.md` or just the revised `description` value; only the description will be applied.",
+        ]
 
     def _build_formal_skill_prompt_sections(
         self,
@@ -339,12 +416,21 @@ class SkillOptimizer:
         review_dir = candidate_dir / "review"
         review_dir.mkdir(parents=True, exist_ok=True)
 
+        candidate_history_path = candidate_dir / "optimization_history.json"
+        candidate_history = json.loads(candidate_history_path.read_text(encoding="utf-8")) if candidate_history_path.exists() else {}
+        description_only_expected = bool(candidate_history.get("description_only_mode")) or str(candidate_history.get("task_type", "") or "") == "trigger_eval"
+
         file_diffs: List[Dict[str, Any]] = []
+        base_skill_text = ""
+        candidate_skill_text = ""
         for relative_path in FORMAL_REVIEW_FILES:
             base_path = base_dir / relative_path
             candidate_path = candidate_dir / relative_path
             base_text = base_path.read_text(encoding="utf-8") if base_path.exists() else ""
             candidate_text = candidate_path.read_text(encoding="utf-8") if candidate_path.exists() else ""
+            if relative_path == "SKILL.md":
+                base_skill_text = base_text
+                candidate_skill_text = candidate_text
             diff_lines = list(
                 difflib.unified_diff(
                     base_text.splitlines(),
@@ -362,6 +448,11 @@ class SkillOptimizer:
                 }
             )
 
+        non_description_changed_files = [item["file"] for item in file_diffs if item["changed"] and item["file"] != "SKILL.md"]
+        description_only_passed = None
+        if description_only_expected:
+            description_only_passed = self._is_description_only_skill_change(base_skill_text, candidate_skill_text) and not non_description_changed_files
+
         review_path = review_dir / f"formal_skill_review_vs_{base_version}.md"
         review_path.write_text(
             self._build_review_diff_markdown(
@@ -377,6 +468,13 @@ class SkillOptimizer:
             "base_version": base_version,
             "candidate_version": candidate_version,
             "generated_at": datetime.now().isoformat(),
+            "task_type": candidate_history.get("task_type"),
+            "optimization_focus": candidate_history.get("optimization_focus"),
+            "description_only_check": {
+                "expected": description_only_expected,
+                "passed": description_only_passed,
+                "non_description_changed_files": non_description_changed_files,
+            },
             "files": [
                 {
                     "file": item["file"],
@@ -414,6 +512,12 @@ class SkillOptimizer:
         candidate_dir, _ = self._resolve_skill_paths(candidate_version)
         if not self._is_formal_skill_bundle(base_dir) or not self._is_formal_skill_bundle(candidate_dir):
             raise ValueError("formal skill review can only be finalized for bundled formal skills")
+
+        review_summary_path = candidate_dir / "review" / f"formal_skill_review_vs_{base_version}.json"
+        review_summary = json.loads(review_summary_path.read_text(encoding="utf-8")) if review_summary_path.exists() else {}
+        description_only_check = review_summary.get("description_only_check") or {}
+        if normalized_decision == "approve" and description_only_check.get("expected") and not description_only_check.get("passed"):
+            raise ValueError("trigger-eval review approval blocked: candidate changed content beyond SKILL.md description")
 
         adopted_version = candidate_version if normalized_decision == "approve" else base_version
         set_active_skill_version(adopted_version)
@@ -880,6 +984,12 @@ class SkillOptimizer:
         ]
 
         prompt_parts.extend(
+            self._build_trigger_description_only_prompt_sections(
+                editable_target=editable_target,
+                optimization_packet=optimization_packet,
+            )
+        )
+        prompt_parts.extend(
             self._build_formal_skill_prompt_sections(
                 editable_target=editable_target,
             )
@@ -1246,6 +1356,7 @@ class SkillOptimizer:
             "missing_script_usage",
             "step_compliance_failure",
         }
+        task_type = str(report_payload.get("task_type", "") or "")
         schema_failure_types = {
             "schema_invalid",
             "fields_missing",
@@ -1257,6 +1368,9 @@ class SkillOptimizer:
         }
 
         targets: List[str] = []
+        if task_type == "trigger_eval":
+            return ["SKILL.md"]
+
         if active_failure_types.intersection(workflow_failure_types):
             targets.append("SKILL.md")
         if active_failure_types.intersection(decision_failure_types):
@@ -1283,6 +1397,7 @@ class SkillOptimizer:
         dry_run: bool = False,
     ) -> Dict[str, Any]:
         report_payload = self._load_packet_json(Path(report_path), default={}) or {}
+        task_type = str(report_payload.get("task_type", "") or "")
         failure_examples = self._load_packet_examples(Path(failure_packets_dir))
         protected_examples = self._load_packet_examples(Path(protected_packets_dir))
 
@@ -1358,7 +1473,10 @@ class SkillOptimizer:
                     "Return the full revised markdown for this editable file only."
                 )
 
-            edited_files[editable_target] = self._request_revised_markdown(optimization_prompt)
+            revised_content = self._request_revised_markdown(optimization_prompt)
+            if task_type == "trigger_eval" and editable_target == "SKILL.md":
+                revised_content = self._apply_description_only_revision(current_content, revised_content)
+            edited_files[editable_target] = revised_content
 
         if dry_run:
             return {
@@ -1395,6 +1513,9 @@ class SkillOptimizer:
                 "edited_files": sorted(edited_files.keys()),
                 "failure_type_counts": report_payload.get("failure_type_counts", {}),
                 "metrics": report_payload.get("metrics", {}),
+                "task_type": task_type,
+                "optimization_focus": report_payload.get("optimization_focus"),
+                "description_only_mode": task_type == "trigger_eval",
             },
             project_root=ROOT_DIR,
             start=ROOT_DIR,

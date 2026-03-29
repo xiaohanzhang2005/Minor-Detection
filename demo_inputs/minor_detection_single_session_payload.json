@@ -1,0 +1,35 @@
+{
+  "mode": "single_session",
+  "conversation": [
+    {
+      "role": "user",
+      "timestamp": "2026-03-27 周五 23:18",
+      "content": "今天晚自习回家又快十一点半了，我本来想把错题订正完再睡，结果越看越慌，想先找你说两句。"
+    },
+    {
+      "role": "assistant",
+      "content": "最近是作业和考试一起压上来了，还是学校这边节奏突然变紧了？"
+    },
+    {
+      "role": "user",
+      "content": "都有吧，我们班主任这两周天天盯晚自习，周末还临时加了一次测验。我妈刚刚还在问我英语默写背完没。"
+    },
+    {
+      "role": "assistant",
+      "content": "听起来学校和家里两边都在推着你往前走。你现在最烦的是任务太多，还是怕自己努力了也追不上？"
+    },
+    {
+      "role": "user",
+      "content": "后者吧。我初三了，明知道该拼一把，可一想到月考再掉名次就不敢开始，宁愿先拿手机躲一会儿。"
+    }
+  ],
+  "context": {
+    "channel": "web_demo",
+    "locale": "zh-CN"
+  },
+  "meta": {
+    "user_id": "demo_user_single_002",
+    "request_id": "demo_req_20260327_single_v2",
+    "source": "minor_detection_demo_single_v2"
+  }
+}

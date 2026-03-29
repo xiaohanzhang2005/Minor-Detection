@@ -1,1 +1,0 @@
-{"packet_id": "failure_001_social_pos_002016_gemini-3-flash-6d65bd7fcb", "sample_id": "social_pos_002016_gemini-3-flash-preview_2017", "failure_types": ["false_negative"], "confidence": 0.25, "observed_issues": [], "retrieval_mode": "embedding", "packet_dir": "failure_packets/failure_001_social_pos_002016_gemini-3-flash-6d65bd7fcb"}

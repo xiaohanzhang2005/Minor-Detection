@@ -1,4 +1,0 @@
-2026-03-23T05:04:20.811225Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.2 personality=pragmatic
-2026-03-23T05:04:21.022000Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
-2026-03-23T05:05:00.940070Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.2 personality=pragmatic
-2026-03-23T05:05:25.109526Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.2 personality=pragmatic

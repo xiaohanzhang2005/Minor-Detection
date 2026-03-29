@@ -739,7 +739,7 @@ class SkillLoopJudgeTests(unittest.TestCase):
         sample_dir.mkdir(parents=True, exist_ok=True)
         sample_input = {
             "mode": "single_session",
-            "conversation": [{"role": "user", "content": "浠婂ぉ鏄?2025-11-20 23:20 鎴戝緢鐑?}],
+            "conversation": [{"role": "user", "content": "今天是 2025-11-20 23:20，我很烦。"}],
             "context": {"raw_time_hint": "2025-11-20 23:20"},
         }
         gold = {"sample_id": name, "is_minor": is_minor}
@@ -750,7 +750,7 @@ class SkillLoopJudgeTests(unittest.TestCase):
                 "confidence_band": "high" if predicted else "low",
                 "risk_level": "Low",
             },
-            "user_profile": {"age_range": "13-15宀?, "education_stage": "鍒濅腑", "identity_markers": []},
+            "user_profile": {"age_range": "13-15岁", "education_stage": "初中", "identity_markers": []},
             "icbo_features": {
                 "intention": "intent",
                 "cognition": "cognition",

@@ -53,48 +53,36 @@
   <table>
     <tr>
       <td align="center" width="50%">
-        <div align="center">
-          <div style="display:block;width:100%;padding:12px 0;background:#0A66C2;color:#FFFFFF;font-weight:700;border-radius:8px;text-align:center;">工作台上传文件</div>
-        </div>
+        <img src="picture/demo-title-workbench.svg" alt="工作台上传文件" width="100%"/>
         <br/>
         <img src="GIF/workbench-upload.gif" alt="workbench upload" width="100%"/>
       </td>
       <td align="center" width="50%">
-        <div align="center">
-          <div style="display:block;width:100%;padding:12px 0;background:#0A66C2;color:#FFFFFF;font-weight:700;border-radius:8px;text-align:center;">输入预览</div>
-        </div>
+        <img src="picture/demo-title-input-preview.svg" alt="输入预览" width="100%"/>
         <br/>
         <img src="GIF/input-preview.gif" alt="input preview" width="100%"/>
       </td>
     </tr>
     <tr>
       <td align="center" width="50%">
-        <div align="center">
-          <div style="display:block;width:100%;padding:12px 0;background:#0A66C2;color:#FFFFFF;font-weight:700;border-radius:8px;text-align:center;">多会话识别中</div>
-        </div>
+        <img src="picture/demo-title-processing.svg" alt="多会话识别中" width="100%"/>
         <br/>
         <img src="GIF/multi-session-processing.gif" alt="multi session processing" width="100%"/>
       </td>
       <td align="center" width="50%">
-        <div align="center">
-          <div style="display:block;width:100%;padding:12px 0;background:#0A66C2;color:#FFFFFF;font-weight:700;border-radius:8px;text-align:center;">识别结果</div>
-        </div>
+        <img src="picture/demo-title-result.svg" alt="识别结果" width="100%"/>
         <br/>
         <img src="GIF/result-overview.gif" alt="result overview" width="100%"/>
       </td>
     </tr>
     <tr>
       <td align="center" width="50%">
-        <div align="center">
-          <div style="display:block;width:100%;padding:12px 0;background:#0A66C2;color:#FFFFFF;font-weight:700;border-radius:8px;text-align:center;">未成年人概率曲线</div>
-        </div>
+        <img src="picture/demo-title-curve.svg" alt="未成年人概率曲线" width="100%"/>
         <br/>
         <img src="GIF/minor-probability-curve.gif" alt="minor probability curve" width="100%"/>
       </td>
       <td align="center" width="50%">
-        <div align="center">
-          <div style="display:block;width:100%;padding:12px 0;background:#0A66C2;color:#FFFFFF;font-weight:700;border-radius:8px;text-align:center;">多维证据链与外部上下文注入</div>
-        </div>
+        <img src="picture/demo-title-evidence.svg" alt="多维证据链与外部上下文注入" width="100%"/>
         <br/>
         <img src="GIF/evidence-and-context.gif" alt="evidence and context" width="100%"/>
       </td>

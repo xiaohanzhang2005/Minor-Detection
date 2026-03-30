@@ -22,6 +22,24 @@ def _quoted(value: str) -> str:
     return f'"{escaped}"'
 
 
+def _emit_json(payload: object) -> None:
+    text = json.dumps(payload, ensure_ascii=False, indent=2)
+    stream = sys.stdout
+    reconfigure = getattr(stream, "reconfigure", None)
+    if callable(reconfigure):
+        try:
+            reconfigure(encoding="utf-8", errors="backslashreplace")
+        except Exception:
+            pass
+    try:
+        stream.write(text + "\n")
+    except UnicodeEncodeError:
+        buffer = getattr(stream, "buffer", None)
+        if buffer is None:
+            raise
+        buffer.write((text + "\n").encode("utf-8", errors="backslashreplace"))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
@@ -122,7 +140,7 @@ def main() -> None:
         repeat_runs_per_sample=1,
     )
     result = TriggerDescriptionLoop(config=config, runner=runner).run()
-    print(json.dumps(normalize_project_paths(result, project_root=ROOT_DIR, start=ROOT_DIR), ensure_ascii=False, indent=2))
+    _emit_json(normalize_project_paths(result, project_root=ROOT_DIR, start=ROOT_DIR))
 
 
 if __name__ == "__main__":

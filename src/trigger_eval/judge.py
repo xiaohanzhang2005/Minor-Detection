@@ -99,6 +99,14 @@ def _predicted_minor_label(parsed_json: Optional[Dict[str, Any]]) -> Optional[bo
     return bool(decision["is_minor"])
 
 
+def _coerce_returncode(metadata: Dict[str, Any]) -> int:
+    raw_value = metadata.get("returncode", 1)
+    try:
+        return int(raw_value)
+    except (TypeError, ValueError):
+        return 1
+
+
 def _build_outcome(sample_dir: Path) -> Dict[str, Any]:
     sample_input = _load_json(sample_dir / "sample_input.json", default={}) or {}
     gold = _load_json(sample_dir / "gold.json", default={}) or {}
@@ -134,7 +142,7 @@ def _build_outcome(sample_dir: Path) -> Dict[str, Any]:
     elif predicted is None:
         invocation_matches_decision = False
 
-    final_returncode = int(metadata.get("returncode", 1) or 1)
+    final_returncode = _coerce_returncode(metadata)
     step_compliant = json_valid and schema_valid and not missing_fields and invocation_matches_decision
     invocation_success = final_returncode == 0 and step_compliant
 

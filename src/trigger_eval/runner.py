@@ -1,6 +1,7 @@
 ﻿from __future__ import annotations
 
 import json
+import shutil
 import sys
 import time
 from dataclasses import dataclass
@@ -19,6 +20,7 @@ from src.skill_loop.runner import (
     _json_dump,
     _parse_json_payload,
     _safe_slug,
+    _strip_observability_marker_lines,
     _truncate_text,
 )
 from src.skill_loop.schema_consistency import validate_skill_schema_contract
@@ -210,22 +212,44 @@ print(json.dumps(payload, ensure_ascii=False))
     def _write_skill_output(self, *, events, target_path: Path, launcher_invoked: bool) -> Dict[str, Any]:
         raw_text = ""
         parsed_json: Optional[Dict[str, Any]] = None
+        parsed_source: Optional[str] = None
         if launcher_invoked:
             for item in reversed(self._extract_command_execution_items(events)):
                 command = str(item.get("command", "") or "")
                 if self._script_name_from_command(command) != TRIGGER_LAUNCHER_SCRIPT_NAME:
                     continue
-                raw_text = str(item.get("aggregated_output", "") or "").strip()
-                parsed_json = _parse_json_payload(raw_text)
+                aggregated_output = _strip_observability_marker_lines(str(item.get("aggregated_output", "") or "").strip())
+                parsed_json = _parse_json_payload(aggregated_output)
+                if parsed_json is not None:
+                    raw_text = aggregated_output
+                    parsed_source = "launcher_aggregated_output"
                 break
         payload = {
             "raw_text": raw_text,
             "parsed_json": parsed_json,
             "json_valid": parsed_json is not None,
-            "json_source": "launcher_output" if parsed_json is not None else None,
+            "json_source": parsed_source,
         }
         target_path.write_text(_json_dump(payload), encoding="utf-8")
         return payload
+
+    def _extract_event_error_messages(self, events: List[Dict[str, Any]]) -> List[str]:
+        messages: List[str] = []
+        for event in events:
+            if not isinstance(event, dict):
+                continue
+            if event.get("type") == "error":
+                message = str(event.get("message", "") or "").strip()
+                if message:
+                    messages.append(message)
+                continue
+            if event.get("type") == "turn.failed":
+                error_payload = event.get("error") or {}
+                if isinstance(error_payload, dict):
+                    message = str(error_payload.get("message", "") or "").strip()
+                    if message:
+                        messages.append(message)
+        return messages
 
     def _build_observability(self, *, events, stderr_text: str, launcher_result: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         script_calls: List[Dict[str, Any]] = []
@@ -260,10 +284,14 @@ print(json.dumps(payload, ensure_ascii=False))
             issues.add("launcher_failed")
             failed_script_calls += 1
 
+        event_error_messages = self._extract_event_error_messages(list(events))
+        if event_error_messages:
+            issues.add("agent_event_error")
+
         stderr_non_empty = bool(str(stderr_text or "").strip())
         if stderr_non_empty:
             issues.add("stderr_non_empty")
-        fatal_agent_error = _detect_fatal_agent_error(stderr_text)
+        fatal_agent_error = _detect_fatal_agent_error("\n".join([str(stderr_text or ""), *event_error_messages]))
         if fatal_agent_error:
             issues.add(fatal_agent_error)
 
@@ -304,6 +332,8 @@ print(json.dumps(payload, ensure_ascii=False))
     ) -> Path:
         workspace_dir.mkdir(parents=True, exist_ok=True)
         run_root = workspace_dir / f"run-trigger-{_safe_slug(skill_version)[:24]}"
+        if run_root.exists():
+            shutil.rmtree(run_root)
         run_root.mkdir(parents=True, exist_ok=True)
 
         isolated_codex_dir = self._build_isolated_codex_home(run_root)

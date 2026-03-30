@@ -263,6 +263,34 @@ class TriggerEvalJudgeTests(unittest.TestCase):
             self.assertAlmostEqual(report["step_compliance_rate"], 0.0)
             self.assertEqual(report["failure_type_counts"]["step_compliance_failure"], 1)
 
+    def test_invocation_success_rate_counts_zero_returncode_as_success(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            run_root = Path(tmp_dir) / "run"
+            run_root.mkdir(parents=True, exist_ok=True)
+            self._write_sample(
+                run_root,
+                "s1",
+                should_trigger=True,
+                predicted=True,
+                skill_invoked=True,
+                invocation_status="invoked_success",
+                launcher_success=True,
+                slice_name="identity_explicit",
+            )
+
+            judged = judge_trigger_run_artifacts(
+                run_root=run_root,
+                skill_version="minor-detection-v0.1.0",
+                parent_version=None,
+                dataset_name="trigger_eval",
+                project_root=ROOT_DIR,
+            )
+
+            report = judged["report_payload"]
+            self.assertAlmostEqual(report["invocation_success_rate"], 1.0)
+            self.assertAlmostEqual(report["step_compliance_rate"], 1.0)
+            self.assertNotIn("agent_returncode_nonzero", report["observed_issue_counts"])
+
     def test_judge_trigger_full_smoke_artifacts_reports_end_to_end_metrics(self):
         with tempfile.TemporaryDirectory() as tmp_dir:
             run_root = Path(tmp_dir) / "run"
@@ -462,6 +490,34 @@ class TriggerEvalScriptContractTests(unittest.TestCase):
 
 
 class TriggerEvalLoopHookTests(unittest.TestCase):
+    def test_trigger_runner_skill_output_strips_observability_suffix(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            target_path = root / "skill_output.json"
+            runner = TriggerEvalCodexRunner()
+            events = [
+                {
+                    "type": "item.completed",
+                    "item": {
+                        "type": "command_execution",
+                        "command": "python run_skill_once.py",
+                        "aggregated_output": (
+                            '{"decision":{"is_minor":true},"user_profile":{"age_range":"13-15岁"},'
+                            '"icbo_features":{"intention":"求助","cognition":"压力","behavior_style":"直接表达","opportunity_time":"课后"},'
+                            '"evidence":{"direct_evidence":[],"historical_evidence":[],"retrieval_evidence":[],"time_evidence":[],"conflicting_signals":[]},'
+                            '"reasoning_summary":"ok","trend":{"trajectory":[],"trend_summary":""},"uncertainty_notes":[],"recommended_next_step":"review_by_human"}'
+                            '[MINOR_PIPELINE_OBSERVABILITY] {"summary":{"script_call_count":1}}'
+                        ),
+                    },
+                }
+            ]
+
+            payload = runner._write_skill_output(events=events, target_path=target_path, launcher_invoked=True)
+
+            self.assertTrue(payload["json_valid"])
+            self.assertEqual(payload["json_source"], "launcher_aggregated_output")
+            self.assertTrue(payload["parsed_json"]["decision"]["is_minor"])
+
     def test_trigger_eval_runner_uses_trigger_dataset_strata(self):
         key = TriggerEvalCodexRunner._resolve_stratum_key(
             {
@@ -709,6 +765,61 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
 
 
 class TriggerEvalRunnerLoggingTests(unittest.TestCase):
+    def test_trigger_eval_runner_clears_existing_run_root_before_new_run(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            skill_dir = root / "skills" / "minor-detection-v0.1.0"
+            skill_dir.mkdir(parents=True, exist_ok=True)
+            dataset_path = root / "data" / "trigger_eval.json"
+            dataset_path.parent.mkdir(parents=True, exist_ok=True)
+            dataset_path.write_text("{}", encoding="utf-8")
+            workspace_dir = root / "workspace"
+            stale_run_root = workspace_dir / "run-trigger-minor-detection-v0-1-0"
+            stale_sample_dir = stale_run_root / "stale-sample"
+            stale_sample_dir.mkdir(parents=True, exist_ok=True)
+            (stale_sample_dir / "sample_input.json").write_text("{}", encoding="utf-8")
+
+            runner = TriggerEvalCodexRunner()
+
+            def fake_command_runner(command, **kwargs):
+                return subprocess.CompletedProcess(args=command, returncode=0, stdout="", stderr="")
+
+            runner.command_runner = fake_command_runner
+
+            samples = [
+                {
+                    "id": "sample-alpha",
+                    "query": "query a",
+                    "should_trigger": True,
+                    "slice": "identity_explicit",
+                    "scenario": "window_scan",
+                    "skill_input_turns": [{"role": "user", "content": "我高二了"}],
+                    "skill_input_base_sample_id": "alpha-base",
+                    "expected_is_minor": True,
+                }
+            ]
+
+            with (
+                mock.patch("src.trigger_eval.runner.validate_skill_schema_contract", return_value={"ok": True, "warnings": []}),
+                mock.patch.object(runner, "_build_isolated_codex_home", return_value=root / "isolated" / ".codex"),
+                mock.patch.object(runner, "_install_skill", return_value=root / "installed-skill"),
+                mock.patch.object(runner, "_output_schema_path", return_value=root / "schema.json"),
+                mock.patch.object(runner, "_load_dataset_samples", return_value=samples),
+                mock.patch.object(runner, "_load_json_file", return_value={"invoked": False, "success": False, "status": "not_invoked"}),
+                mock.patch.object(runner, "_write_trigger_probe_launcher"),
+                mock.patch.object(runner, "_write_agent_output", return_value={"json_valid": True}),
+            ):
+                run_root = runner.run_dataset(
+                    project_root=root,
+                    skill_source_dir=skill_dir,
+                    skill_version="minor-detection-v0.1.0",
+                    dataset_path=dataset_path,
+                    workspace_dir=workspace_dir,
+                )
+
+            self.assertEqual(run_root, stale_run_root)
+            self.assertFalse(stale_sample_dir.exists())
+
     def test_trigger_eval_runner_emits_progress_logs(self):
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)

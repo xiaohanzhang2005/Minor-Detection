@@ -1,1 +1,1 @@
-minor-detection-v0.1.0
+minor-detection-v0.1.1-20260330_142227

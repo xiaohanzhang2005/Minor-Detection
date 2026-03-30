@@ -39,6 +39,12 @@
 - 如何衔接未成年人模式、人工复核和风险运营
 - 如何围绕真实边界样本持续优化能力
 
+更具体地说，项目希望回答一个现实而尖锐的问题：
+
+> 当用户不会直接说出年龄，只会在持续对话里留下“晚自习、补课、班主任、宿舍、家长管控、考试安排、校园作息”等隐性线索时，系统能否稳定识别疑似未成年人，并把判断结果转化为真正可执行的保护动作？
+
+因此，Minor Detection 的定位不是“再做一个分类器”，而是把**识别、解释、干预、复核、迭代**连成一套可以上线的工程闭环。
+
 ---
 
 ## Demo
@@ -47,31 +53,31 @@
   <table>
     <tr>
       <td align="center" width="50%">
-        <strong>工作台上传文件</strong><br/><br/>
+        <img src="https://img.shields.io/badge/Demo-%E5%B7%A5%E4%BD%9C%E5%8F%B0%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6-0A66C2?style=for-the-badge" alt="工作台上传文件"/><br/><br/>
         <img src="GIF/workbench-upload.gif" alt="workbench upload" width="100%"/>
       </td>
       <td align="center" width="50%">
-        <strong>输入预览</strong><br/><br/>
+        <img src="https://img.shields.io/badge/Demo-%E8%BE%93%E5%85%A5%E9%A2%84%E8%A7%88-0A66C2?style=for-the-badge" alt="输入预览"/><br/><br/>
         <img src="GIF/input-preview.gif" alt="input preview" width="100%"/>
       </td>
     </tr>
     <tr>
       <td align="center" width="50%">
-        <strong>多会话识别中</strong><br/><br/>
+        <img src="https://img.shields.io/badge/Demo-%E5%A4%9A%E4%BC%9A%E8%AF%9D%E8%AF%86%E5%88%AB%E4%B8%AD-0A66C2?style=for-the-badge" alt="多会话识别中"/><br/><br/>
         <img src="GIF/multi-session-processing.gif" alt="multi session processing" width="100%"/>
       </td>
       <td align="center" width="50%">
-        <strong>识别结果</strong><br/><br/>
+        <img src="https://img.shields.io/badge/Demo-%E8%AF%86%E5%88%AB%E7%BB%93%E6%9E%9C-0A66C2?style=for-the-badge" alt="识别结果"/><br/><br/>
         <img src="GIF/result-overview.gif" alt="result overview" width="100%"/>
       </td>
     </tr>
     <tr>
       <td align="center" width="50%">
-        <strong>未成年人概率曲线</strong><br/><br/>
+        <img src="https://img.shields.io/badge/Demo-%E6%9C%AA%E6%88%90%E5%B9%B4%E4%BA%BA%E6%A6%82%E7%8E%87%E6%9B%B2%E7%BA%BF-0A66C2?style=for-the-badge" alt="未成年人概率曲线"/><br/><br/>
         <img src="GIF/minor-probability-curve.gif" alt="minor probability curve" width="100%"/>
       </td>
       <td align="center" width="50%">
-        <strong>多维证据链与外部上下文注入</strong><br/><br/>
+        <img src="https://img.shields.io/badge/Demo-%E5%A4%9A%E7%BB%B4%E8%AF%81%E6%8D%AE%E9%93%BE%E4%B8%8E%E5%A4%96%E9%83%A8%E4%B8%8A%E4%B8%8B%E6%96%87%E6%B3%A8%E5%85%A5-0A66C2?style=for-the-badge" alt="多维证据链与外部上下文注入"/><br/><br/>
         <img src="GIF/evidence-and-context.gif" alt="evidence and context" width="100%"/>
       </td>
     </tr>
@@ -110,6 +116,17 @@
 - 不是只看单轮文本，而是支持单会话、多会话、时间线索、长期画像与 RAG 证据融合
 - 不是规则写死上线即冻结，而是围绕数据集、评测、优化和人审持续进化
 - 不是难以接入业务的研究原型，而是支持 Skill、工作台、运行时桥接和版本化迭代的工程方案
+
+从产品与工程视角看，这带来三个直接收益：
+
+- **更容易接入现有业务**
+  企业不需要先建立实名体系或平台级账户控制，就能在已有文本对话流中接入未成年人识别能力
+
+- **更容易解释与复核**
+  系统输出的不只是标签，还包括用户画像、证据链、风险等级和下一步建议，更适合进入审核与运营链路
+
+- **更容易持续提升**
+  能力优化不再依赖人工拍脑袋改规则，而是通过真实边界样本、judge 报告、compare 与人审门禁逐轮收敛
 
 ---
 
@@ -153,6 +170,9 @@
 - **离线自进化**
   围绕固定数据集执行 `评测 → 诊断 → 优化 → 晋级 / 回滚 → 人工审核`
 
+- **多场景下游衔接**
+  可继续接到未成年人模式切换、人工复核、家长侧提醒、审核中台与风险运营
+
 ---
 
 ## Data And Open Resources
@@ -183,6 +203,12 @@
 - 知识领域：`2004` 正样本 + `1986` 负样本
 - Trigger-Eval：`window_scan = 120`，`direct_request = 40`
 
+这些数据分别承担不同职责：
+
+- **Benchmark** 用来评估系统在真实未成年人信号与成人近似样本之间的区分能力
+- **Trigger-Eval** 用来优化“什么时候该启动深度识别”这一触发边界问题
+- **RAG 案例库** 用来提供运行时相似案例辅助判断，也为离线优化提供参考证据
+
 ### Why Open All Three
 
 - **Hugging Face 数据集**：提供可复核、可评测、可复现实验的数据基座
@@ -195,14 +221,17 @@
 
 与常见路线相比，Minor Detection 更适合文本对话场景中的 B 端嵌入：
 
-- 相比平台级年龄预测或账户治理方案
-  我们不依赖平台账户体系，更适合已有对话产品的外嵌接入
+| 路线 | 典型代表 | 更适合的场景 | 与 Minor Detection 的差异 |
+| --- | --- | --- | --- |
+| 平台级年龄预测 / 账户治理 | OpenAI、Meta | 自营平台、账号体系完备的消费级产品 | 我们不依赖平台账户体系，更适合已有文本对话流的外嵌接入 |
+| 自拍 / 人脸年龄估计 | Yoti 等 | 注册、支付、成人内容等高强校验场景 | 我们不采集生物特征，交互摩擦更低，更适合连续互动与隐私敏感场景 |
+| 规则 / 关键词识别 | 常规风控规则库 | 简单初筛与基础风控 | 我们更能处理隐性校园信号、多会话趋势、时段异常和复杂证据链 |
 
-- 相比自拍 / 人脸年龄估计方案
-  我们不采集生物特征，交互摩擦更低，更适合连续互动和隐私敏感场景
+从工程视角进一步概括：
 
-- 相比传统规则 / 关键词方案
-  我们更能处理隐性校园信号、多会话趋势、时段异常和复杂证据链
+- 如果你的产品已经是平台级超级应用，账户治理路线可能更自然
+- 如果你的场景是强实名或成人内容门禁，人脸估龄路线可能更直接
+- 如果你的产品是 AI 陪伴、教育、客服或审核类对话系统，Minor Detection 这种低摩擦、可嵌入、可解释、可持续优化的方案通常更合适
 
 ---
 

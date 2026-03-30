@@ -69,18 +69,33 @@
 
 ### 前端工作台 GIF
 
-| 工作流 | 演示 |
-| --- | --- |
-| 上传文件与工作台入口 | ![](GIF/1-工作台上传文件.gif) |
-| 输入预览 | ![](GIF/2-输入预览.gif) |
-| 多会话识别中 | ![](GIF/3-多会话识别中.gif) |
-| 识别结果 | ![](GIF/4-识别结果.gif) |
-| 未成年人概率曲线 | ![](GIF/5-多会话输出未成年人概率曲线.gif) |
-| 多维证据链与外部上下文注入 | ![](GIF/6-多维证据链与外部上下文注入汇总.gif) |
+**上传文件与工作台入口**
+
+![上传文件与工作台入口](GIF/workbench-upload.gif)
+
+**输入预览**
+
+![输入预览](GIF/input-preview.gif)
+
+**多会话识别中**
+
+![多会话识别中](GIF/multi-session-processing.gif)
+
+**识别结果**
+
+![识别结果](GIF/result-overview.gif)
+
+**未成年人概率曲线**
+
+![未成年人概率曲线](GIF/minor-probability-curve.gif)
+
+**多维证据链与外部上下文注入**
+
+![多维证据链与外部上下文注入](GIF/evidence-and-context.gif)
 
 ### 演示视频
 
-- 项目演示视频：[Minor-Detection-字幕配音版.mp4](video/Minor-Detection-字幕配音版.mp4)
+- 项目演示视频：当前仓库内文件较大，建议后续迁移到 GitHub Release、夸克网盘、Bilibili 或其他稳定外链后再挂到首页
 
 ## 一句话看懂方案
 

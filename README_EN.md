@@ -55,36 +55,36 @@ So the role of Minor Detection is not simply to "build another classifier." It i
   <table width="100%" align="center" style="width:100%; table-layout:fixed;">
     <tr>
       <td align="center" width="50%">
-        <img src="picture/demo-title-workbench.svg" alt="Workbench Upload" width="100%"/>
+        <img src="picture/demo-title-workbench-en.svg" alt="Workbench Upload" width="100%"/>
         <br/>
         <img src="GIF/workbench-upload.gif" alt="workbench upload" width="100%"/>
       </td>
       <td align="center" width="50%">
-        <img src="picture/demo-title-input-preview.svg" alt="Input Preview" width="100%"/>
+        <img src="picture/demo-title-input-preview-en.svg" alt="Input Preview" width="100%"/>
         <br/>
         <img src="GIF/input-preview.gif" alt="input preview" width="100%"/>
       </td>
     </tr>
     <tr>
       <td align="center" width="50%">
-        <img src="picture/demo-title-processing.svg" alt="Multi-Session Processing" width="100%"/>
+        <img src="picture/demo-title-processing-en.svg" alt="Multi-Session Processing" width="100%"/>
         <br/>
         <img src="GIF/multi-session-processing.gif" alt="multi session processing" width="100%"/>
       </td>
       <td align="center" width="50%">
-        <img src="picture/demo-title-result.svg" alt="Result Overview" width="100%"/>
+        <img src="picture/demo-title-result-en.svg" alt="Result Overview" width="100%"/>
         <br/>
         <img src="GIF/result-overview.gif" alt="result overview" width="100%"/>
       </td>
     </tr>
     <tr>
       <td align="center" width="50%">
-        <img src="picture/demo-title-curve.svg" alt="Minor Probability Curve" width="100%"/>
+        <img src="picture/demo-title-curve-en.svg" alt="Minor Probability Curve" width="100%"/>
         <br/>
         <img src="GIF/minor-probability-curve.gif" alt="minor probability curve" width="100%"/>
       </td>
       <td align="center" width="50%">
-        <img src="picture/demo-title-evidence.svg" alt="Evidence and Context" width="100%"/>
+        <img src="picture/demo-title-evidence-en.svg" alt="Evidence and Context" width="100%"/>
         <br/>
         <img src="GIF/evidence-and-context.gif" alt="evidence and context" width="100%"/>
       </td>

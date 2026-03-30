@@ -190,7 +190,7 @@ ICBO 是本项目组织用户画像与证据解释的核心视角：
 
 <br/>
 
-Trigger-Eval 回答的问题不是“这个人最终是不是未成年人”，而是“当前输入是否已经值得调用 `minor-detection` 这个 Skill”。
+Trigger-Eval 回答的问题不是“这个人是不是未成年人”，而是“当前输入是否已值得调用 `minor-detection` 这个 Skill”。
 
 它直接对应 `skills/minor-detection/SKILL.md` 中 `description` 的触发边界优化，而不是最终分类器能力本身。  
 当前这套 description 触发数据集共 `160` 条，专门用于训练和评估：

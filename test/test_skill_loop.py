@@ -982,4 +982,111 @@ class PacketOptimizerTests(unittest.TestCase):
         self.assertTrue(cleaned.startswith("---"))
         self.assertIn("# Minor Detection", cleaned)
 
+    def test_description_substantive_change_rejects_quote_only_edits(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 即使用户没有直接说“未成年人识别”，但需求本质上是判断“像不像未成年用户”时也应激活此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 即使用户没有直接说\"未成年人识别\"，但需求本质上是判断\"像不像未成年用户\"时也应激活此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        self.assertTrue(optimizer._is_description_only_skill_change(base_skill, candidate_skill))
+        self.assertFalse(optimizer._has_substantive_description_change(base_skill, candidate_skill))
+        self.assertEqual(
+            optimizer._analyze_description_change(base_skill, candidate_skill)["trivial_change_reason"],
+            "punctuation_or_format_only",
+        )
+
+    def test_trigger_eval_optimizer_skips_non_substantive_description_candidate(self):
+        root = make_test_dir(self)
+        skills_root = root / "skills"
+        current_dir = skills_root / "minor-detection-v0.1.0"
+        current_dir.mkdir(parents=True, exist_ok=True)
+        skill_text = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 即使用户没有直接说“未成年人识别”，但需求本质上是判断“像不像未成年用户”时也应激活此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        (current_dir / "SKILL.md").write_text(skill_text, encoding="utf-8")
+        report_path = root / "report.json"
+        report_path.write_text(
+            json.dumps(
+                {
+                    "task_type": "trigger_eval",
+                    "optimization_focus": "description",
+                    "total_errors": 1,
+                    "max_errors": 1,
+                    "failure_type_counts": {"false_positive": 1},
+                    "metrics": {
+                        "accuracy": 0.8,
+                        "precision": 0.7,
+                        "recall": 1.0,
+                        "f1_score": 0.82,
+                    },
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        failure_packets_dir = root / "failure_packets"
+        protected_packets_dir = root / "protected_packets"
+        failure_packets_dir.mkdir(parents=True, exist_ok=True)
+        protected_packets_dir.mkdir(parents=True, exist_ok=True)
+
+        optimizer = SkillOptimizer(skills_dir=str(skills_root), llm_client=DummyLLMClient())
+        revised_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 即使用户没有直接说\"未成年人识别\"，但需求本质上是判断\"像不像未成年用户\"时也应激活此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        failure_examples = [
+            {
+                "packet_id": "failure_001",
+                "sample_id": "trigger-001",
+                "ground_truth": "adult",
+                "predicted": "unknown",
+                "label": "adult",
+                "confidence": 0.9,
+                "failure_types": ["false_positive"],
+                "reasoning": "fake reasoning",
+                "missing_fields": [],
+            }
+        ]
+
+        with (
+            mock.patch.object(optimizer, "_load_packet_examples", side_effect=[failure_examples, []]),
+            mock.patch.object(optimizer, "_load_reference_materials", return_value={}),
+            mock.patch.object(optimizer, "_request_revised_markdown", return_value=revised_skill),
+        ):
+            result = optimizer.optimize_from_judge_artifacts(
+                report_path=report_path,
+                failure_packets_dir=failure_packets_dir,
+                protected_packets_dir=protected_packets_dir,
+                current_version="minor-detection-v0.1.0",
+                new_version="minor-detection-v0.1.1-rc001-20260330_190000",
+                dry_run=False,
+            )
+
+        self.assertFalse(result["success"])
+        self.assertEqual(result["message"], "description revision is not substantive")
+        self.assertEqual(
+            result["description_change"]["trivial_change_reason"],
+            "punctuation_or_format_only",
+        )
+        self.assertFalse((skills_root / "minor-detection-v0.1.1-rc001-20260330_190000").exists())
+
 

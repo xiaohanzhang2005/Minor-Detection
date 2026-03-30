@@ -61,6 +61,48 @@ class FormalReviewFinalizeTests(unittest.TestCase):
         self.assertTrue(decision_payload["candidate_adopted_directly"])
         self.assertFalse(decision_payload["candidate_synced_to_base"])
 
+    def test_approve_blocks_non_substantive_trigger_description_candidate(self):
+        root = make_test_dir(self)
+        skills_root = root / "skills"
+        base_dir = skills_root / "minor-detection-v0.1.0"
+        candidate_dir = skills_root / "minor-detection-v0.1.1-20260330_184830"
+
+        for skill_dir in (base_dir, candidate_dir):
+            (skill_dir / "references").mkdir(parents=True, exist_ok=True)
+            (skill_dir / "review").mkdir(parents=True, exist_ok=True)
+            (skill_dir / "references" / "output-schema.md").write_text("schema\n", encoding="utf-8")
+            (skill_dir / "SKILL.md").write_text(
+                "---\nname: minor-detection\ndescription: test\n---\n\n# Minor Detection\n",
+                encoding="utf-8",
+            )
+
+        review_summary_path = candidate_dir / "review" / "formal_skill_review_vs_minor-detection-v0.1.0.json"
+        review_summary_path.write_text(
+            json.dumps(
+                {
+                    "description_only_check": {
+                        "expected": True,
+                        "passed": True,
+                        "substantive_change_required": True,
+                        "substantive_change_passed": False,
+                        "substantive_change_reason": "punctuation_or_format_only",
+                    }
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+
+        optimizer = SkillOptimizer(skills_dir=str(skills_root))
+
+        with self.assertRaisesRegex(ValueError, "candidate description change is not substantive"):
+            optimizer.finalize_formal_skill_review(
+                base_version="minor-detection-v0.1.0",
+                candidate_version="minor-detection-v0.1.1-20260330_184830",
+                decision="approve",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

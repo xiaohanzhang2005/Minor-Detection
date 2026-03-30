@@ -230,6 +230,8 @@ class TriggerDescriptionLoop:
                         comparison = self._skip_comparison("no errors to optimize on current eval slice")
                     elif optimize_message == "no editable targets resolved from judge report":
                         comparison = self._skip_comparison("no editable targets resolved from judge report")
+                    elif optimize_message == "description revision is not substantive":
+                        comparison = self._skip_comparison("optimizer candidate description change was not substantive")
                     rounds.append(
                         {
                             "round": round_index,

@@ -763,6 +763,68 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
             self.assertIsNone(summary["manual_review_reject_command"])
             self.assertIsNone(summary["review_artifact"])
 
+    def test_trigger_description_loop_skips_non_substantive_optimizer_candidate(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            skills_root = root / "skills"
+            source_dir = skills_root / "minor-detection"
+            baseline_dir = skills_root / "minor-detection-v0.1.0"
+            source_dir.mkdir(parents=True, exist_ok=True)
+            baseline_dir.mkdir(parents=True, exist_ok=True)
+
+            baseline_eval = {
+                "report_path": root / "baseline-report.json",
+                "failure_packets_dir": root / "failure_packets",
+                "protected_packets_dir": root / "protected_packets",
+                "protected_index_path": root / "protected_index.jsonl",
+                "runtime_summary": {"total_wall_seconds": 1.0},
+                "runtime_counts": {"sample_count": 2},
+                "report_payload": {
+                    "sample_count": 2,
+                    "invocation_success_rate": 1.0,
+                },
+            }
+
+            optimizer = mock.Mock()
+            optimizer.optimize_from_judge_artifacts.return_value = {
+                "success": False,
+                "message": "description revision is not substantive",
+                "current_version": "minor-detection-v0.1.0",
+                "edited_files": [],
+            }
+
+            config = TriggerDescriptionLoopConfig(
+                baseline_source_dir=source_dir,
+                baseline_version="minor-detection-v0.1.0",
+                optimization_set_path=root / "data" / "trigger_eval_optimization.json",
+                final_validation_set_path=root / "data" / "trigger_eval_final_validation.json",
+                max_rounds=1,
+                workspace_root=root / "workspace",
+            )
+            loop = TriggerDescriptionLoop(config=config, runner=mock.Mock(runner_mode="trigger_agent"), optimizer=optimizer)
+            workspace = root / "workspace" / "20260330_190500"
+            workspace.mkdir(parents=True, exist_ok=True)
+
+            with (
+                mock.patch("src.trigger_eval.loop.SKILLS_DIR", skills_root),
+                mock.patch("src.trigger_eval.loop.ensure_version_snapshot"),
+                mock.patch("src.trigger_eval.loop.get_active_skill_version", return_value="minor-detection"),
+                mock.patch.object(loop, "_workspace", return_value=workspace),
+                mock.patch.object(loop, "_evaluate_version", return_value=baseline_eval),
+            ):
+                summary = loop.run()
+
+            self.assertEqual(summary["final_version"], "minor-detection-v0.1.0")
+            self.assertFalse(summary["manual_review_required"])
+            self.assertEqual(
+                summary["rounds"][0]["comparison"]["reason"],
+                "optimizer candidate description change was not substantive",
+            )
+            self.assertEqual(
+                summary["rounds"][0]["optimize_result"]["message"],
+                "description revision is not substantive",
+            )
+
 
 class TriggerEvalRunnerLoggingTests(unittest.TestCase):
     def test_trigger_eval_runner_clears_existing_run_root_before_new_run(self):

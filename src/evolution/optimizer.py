@@ -13,6 +13,7 @@ import math
 import random
 import re
 import shutil
+import unicodedata
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, List, Dict, Any, Tuple
@@ -212,6 +213,47 @@ class SkillOptimizer:
         normalized = re.sub(r"\s+", " ", normalized).strip()
         return normalized
 
+    def _semantic_description_fingerprint(self, value: str) -> str:
+        normalized = unicodedata.normalize("NFKC", self._normalize_description_value(value))
+        normalized = normalized.casefold()
+        kept_chars: List[str] = []
+        for ch in normalized:
+            category = unicodedata.category(ch)
+            if category[:1] in {"P", "S", "Z", "C"}:
+                continue
+            kept_chars.append(ch)
+        return "".join(kept_chars)
+
+    def _analyze_description_change(self, base_content: str, candidate_content: str) -> Dict[str, Any]:
+        base_description = self._extract_frontmatter_description(base_content)
+        candidate_description = self._extract_frontmatter_description(candidate_content)
+        base_normalized = self._normalize_description_value(base_description)
+        candidate_normalized = self._normalize_description_value(candidate_description)
+        exact_changed = bool(base_normalized and candidate_normalized and base_normalized != candidate_normalized)
+        semantic_changed = False
+        trivial_change_reason = None
+        if exact_changed:
+            semantic_changed = (
+                self._semantic_description_fingerprint(base_normalized)
+                != self._semantic_description_fingerprint(candidate_normalized)
+            )
+            if not semantic_changed:
+                trivial_change_reason = "punctuation_or_format_only"
+        elif base_normalized == candidate_normalized:
+            trivial_change_reason = "no_change"
+        else:
+            trivial_change_reason = "missing_description"
+        return {
+            "base_description": base_normalized,
+            "candidate_description": candidate_normalized,
+            "exact_changed": exact_changed,
+            "semantic_changed": semantic_changed,
+            "trivial_change_reason": trivial_change_reason,
+        }
+
+    def _has_substantive_description_change(self, base_content: str, candidate_content: str) -> bool:
+        return bool(self._analyze_description_change(base_content, candidate_content).get("semantic_changed"))
+
     def _replace_frontmatter_description(self, content: str, new_description: str) -> str:
         text = str(content or "")
         normalized_description = self._normalize_description_value(new_description)
@@ -294,6 +336,8 @@ class SkillOptimizer:
             "- Do not change the skill title, headings, body sections, execution flow, scripts, output rules, references, or any other file.",
             "- The goal is only to improve whether the agent correctly triggers this skill.",
             "- Keep the description broad enough to catch true trigger intents, but do not make it globally over-trigger.",
+            "- The revision must be semantically substantive. Quote-style-only, punctuation-only, whitespace-only, or formatting-only edits will be rejected.",
+            "- If the current wording is already close, rewrite it into clearer trigger and non-trigger boundary rules grounded in the judge failure packets.",
             "- Return either the full revised `SKILL.md` or just the revised `description` value; only the description will be applied.",
         ]
 
@@ -374,6 +418,7 @@ class SkillOptimizer:
         base_version: str,
         candidate_version: str,
         file_diffs: List[Dict[str, Any]],
+        description_only_check: Optional[Dict[str, Any]] = None,
     ) -> str:
         lines = [
             "# Formal Skill Review Diff",
@@ -384,6 +429,18 @@ class SkillOptimizer:
             "",
             "请人工审核以下差异，再决定 approve / reject。",
         ]
+
+        if description_only_check:
+            lines.extend(
+                [
+                    "",
+                    "## Description Review Checks",
+                    f"- expected: `{str(description_only_check.get('expected')).lower()}`",
+                    f"- description_only_passed: `{str(description_only_check.get('passed')).lower()}`",
+                    f"- substantive_change_passed: `{str(description_only_check.get('substantive_change_passed')).lower()}`",
+                    f"- substantive_change_reason: `{description_only_check.get('substantive_change_reason')}`",
+                ]
+            )
 
         for item in file_diffs:
             lines.extend(
@@ -450,8 +507,22 @@ class SkillOptimizer:
 
         non_description_changed_files = [item["file"] for item in file_diffs if item["changed"] and item["file"] != "SKILL.md"]
         description_only_passed = None
+        substantive_change_passed = None
+        substantive_change_reason = None
         if description_only_expected:
             description_only_passed = self._is_description_only_skill_change(base_skill_text, candidate_skill_text) and not non_description_changed_files
+            description_change = self._analyze_description_change(base_skill_text, candidate_skill_text)
+            substantive_change_passed = bool(description_change.get("semantic_changed"))
+            substantive_change_reason = description_change.get("trivial_change_reason")
+
+        description_only_check = {
+            "expected": description_only_expected,
+            "passed": description_only_passed,
+            "non_description_changed_files": non_description_changed_files,
+            "substantive_change_required": description_only_expected,
+            "substantive_change_passed": substantive_change_passed,
+            "substantive_change_reason": substantive_change_reason,
+        }
 
         review_path = review_dir / f"formal_skill_review_vs_{base_version}.md"
         review_path.write_text(
@@ -459,6 +530,7 @@ class SkillOptimizer:
                 base_version=base_version,
                 candidate_version=candidate_version,
                 file_diffs=file_diffs,
+                description_only_check=description_only_check,
             ),
             encoding="utf-8",
         )
@@ -470,11 +542,7 @@ class SkillOptimizer:
             "generated_at": datetime.now().isoformat(),
             "task_type": candidate_history.get("task_type"),
             "optimization_focus": candidate_history.get("optimization_focus"),
-            "description_only_check": {
-                "expected": description_only_expected,
-                "passed": description_only_passed,
-                "non_description_changed_files": non_description_changed_files,
-            },
+            "description_only_check": description_only_check,
             "files": [
                 {
                     "file": item["file"],
@@ -518,6 +586,12 @@ class SkillOptimizer:
         description_only_check = review_summary.get("description_only_check") or {}
         if normalized_decision == "approve" and description_only_check.get("expected") and not description_only_check.get("passed"):
             raise ValueError("trigger-eval review approval blocked: candidate changed content beyond SKILL.md description")
+        if (
+            normalized_decision == "approve"
+            and description_only_check.get("expected")
+            and description_only_check.get("substantive_change_passed") is False
+        ):
+            raise ValueError("trigger-eval review approval blocked: candidate description change is not substantive")
 
         adopted_version = candidate_version if normalized_decision == "approve" else base_version
         set_active_skill_version(adopted_version)
@@ -1477,6 +1551,18 @@ class SkillOptimizer:
             if task_type == "trigger_eval" and editable_target == "SKILL.md":
                 revised_content = self._apply_description_only_revision(current_content, revised_content)
             edited_files[editable_target] = revised_content
+
+        if task_type == "trigger_eval" and "SKILL.md" in edited_files:
+            description_change = self._analyze_description_change(current_skill, edited_files["SKILL.md"])
+            if not description_change.get("semantic_changed"):
+                return {
+                    "success": False,
+                    "message": "description revision is not substantive",
+                    "current_version": current_version,
+                    "edited_files": [],
+                    "edit_targets": edit_targets,
+                    "description_change": description_change,
+                }
 
         if dry_run:
             return {

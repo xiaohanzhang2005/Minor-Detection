@@ -4,6 +4,8 @@
 
 ### 面向 AI 拟人化互动的自进化未成年人识别智能体
 
+### [简体中文](README.md) | [English](README_EN.md)
+
 <p>
   <a href="https://huggingface.co/datasets/xiao2005/minor-detection-social-subset">
     <img src="https://img.shields.io/badge/HuggingFace-Social_Subset-0A66C2?style=for-the-badge" alt="Social Subset" />

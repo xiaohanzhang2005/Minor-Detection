@@ -9,16 +9,16 @@
 <p><a href="README.md"><strong>简体中文</strong></a> | <a href="README_EN.md"><strong>English</strong></a></p>
 
 <p>
-  <a href="https://huggingface.co/datasets/xiao2005/minor-detection-social-subset">
+  <a href="https://huggingface.co/datasets/xiao2005/minor-detection-social-subset" style="text-decoration:none;">
     <img src="https://img.shields.io/badge/HuggingFace-Social_Subset-0A66C2?style=flat-square" alt="Social Subset" />
   </a>
-  <a href="https://huggingface.co/datasets/xiao2005/minor-detection-knowledge-subset">
+  <a href="https://huggingface.co/datasets/xiao2005/minor-detection-knowledge-subset" style="text-decoration:none;">
     <img src="https://img.shields.io/badge/HuggingFace-Knowledge_Subset-146356?style=flat-square" alt="Knowledge Subset" />
   </a>
-  <a href="https://clawhub.ai/xiaohanzhang2005/minor-detection">
+  <a href="https://clawhub.ai/xiaohanzhang2005/minor-detection" style="text-decoration:none;">
     <img src="https://img.shields.io/badge/ClawHub-Minor_Detection_Skill-DB4437?style=flat-square" alt="ClawHub Skill" />
   </a>
-  <a href="https://www.bilibili.com/video/BV1MRXYBgEQk/?spm_id_from=333.1387.homepage.video_card.click">
+  <a href="https://www.bilibili.com/video/BV1MRXYBgEQk/?spm_id_from=333.1387.homepage.video_card.click" style="text-decoration:none;">
     <img src="https://img.shields.io/badge/Demo-Video-111111?style=flat-square" alt="Demo Video" />
   </a>
 </p>

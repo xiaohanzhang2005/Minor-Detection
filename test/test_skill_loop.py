@@ -1089,4 +1089,44 @@ class PacketOptimizerTests(unittest.TestCase):
         )
         self.assertFalse((skills_root / "minor-detection-v0.1.1-rc001-20260330_190000").exists())
 
+    def test_trigger_eval_packet_prompt_includes_rewrite_contract_and_slice_contrast(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        prompt = optimizer._build_packet_prompt_sections(
+            editable_target="SKILL.md",
+            report_payload={"task_type": "trigger_eval", "failure_type_counts": {"false_positive": 2}},
+            failure_examples=[
+                {
+                    "packet_id": "failure_001",
+                    "sample_id": "trigger-topic_adjacent_not_identity-102",
+                    "ground_truth": "adult",
+                    "predicted": "unknown",
+                    "label": "adult",
+                    "confidence": 0.88,
+                    "slice": "topic_adjacent_not_identity",
+                    "scenario": "window_scan",
+                    "failure_types": ["false_positive"],
+                    "reasoning": "failure reasoning",
+                }
+            ],
+            protected_examples=[
+                {
+                    "packet_id": "protected_001",
+                    "sample_id": "trigger-topic_adjacent_not_identity-104",
+                    "label": "adult",
+                    "confidence": 0.9,
+                    "slice": "topic_adjacent_not_identity",
+                    "scenario": "window_scan",
+                    "reasoning": "protected reasoning",
+                }
+            ],
+        )
+
+        self.assertIn("## Trigger Description Rewrite Contract", prompt)
+        self.assertIn("Include at least 2 explicit non-trigger boundaries", prompt)
+        self.assertIn("Current failure slices to address: topic_adjacent_not_identity", prompt)
+        self.assertIn("Current protected slices to preserve: topic_adjacent_not_identity", prompt)
+        self.assertIn("## Trigger Slice Contrast Checks", prompt)
+        self.assertIn("Failure sample IDs to fix: trigger-topic_adjacent_not_identity-102", prompt)
+        self.assertIn("Protected sample IDs to preserve: trigger-topic_adjacent_not_identity-104", prompt)
+
 

@@ -1145,6 +1145,10 @@ class SkillOptimizer:
                 prompt_parts.append(f"- Sample ID: {ex['sample_id']}")
                 prompt_parts.append(f"- Label: {ex['label']}")
                 prompt_parts.append(f"- Confidence: {ex['confidence']:.2f}")
+                if ex.get("slice"):
+                    prompt_parts.append(f"- Slice: {ex['slice']}")
+                if ex.get("scenario"):
+                    prompt_parts.append(f"- Scenario: {ex['scenario']}")
                 prompt_parts.append(f"- Reasoning: {ex['reasoning'][:300]}")
 
         prompt_parts.extend(self._build_reference_prompt_sections(reference_materials or {}))
@@ -1225,6 +1229,20 @@ class SkillOptimizer:
                 predicted_label = "minor" if bool(predicted_bool) else "adult"
             ground_truth_bool = bool(gold.get("is_minor", False))
             ground_truth_label = "minor" if ground_truth_bool else "adult"
+            sample_slice = str(
+                artifact_summary.get("slice")
+                or judge_findings.get("slice")
+                or sample_input.get("slice")
+                or gold.get("slice")
+                or ""
+            ).strip()
+            sample_scenario = str(
+                artifact_summary.get("scenario")
+                or judge_findings.get("scenario")
+                or sample_input.get("scenario")
+                or gold.get("scenario")
+                or ""
+            ).strip()
 
             failure_types = list(judge_findings.get("failure_types", []) or [])
             missing_fields = list(judge_findings.get("missing_fields", []) or [])
@@ -1252,6 +1270,10 @@ class SkillOptimizer:
                 f"predicted={predicted_label}",
                 f"confidence={confidence_value:.2f}",
             ]
+            if sample_slice:
+                reasoning_lines.append(f"slice={sample_slice}")
+            if sample_scenario:
+                reasoning_lines.append(f"scenario={sample_scenario}")
             if missing_fields:
                 reasoning_lines.append(f"missing_fields={', '.join(missing_fields)}")
             if judge_findings.get("schema_valid") is False:
@@ -1289,6 +1311,8 @@ class SkillOptimizer:
                     "predicted": predicted_label,
                     "label": ground_truth_label,
                     "confidence": confidence_value,
+                    "slice": sample_slice,
+                    "scenario": sample_scenario,
                     "failure_types": failure_types,
                     "reasoning": "\n".join(reasoning_lines),
                     "missing_fields": missing_fields,
@@ -1329,6 +1353,8 @@ class SkillOptimizer:
                     "sample_id": item["sample_id"],
                     "label": item["label"],
                     "confidence": item["confidence"],
+                    "slice": item.get("slice", ""),
+                    "scenario": item.get("scenario", ""),
                     "reasoning": item["reasoning"],
                 }
                 for item in protected_examples
@@ -1340,6 +1366,89 @@ class SkillOptimizer:
                 "f1": float(metrics.get("f1_score", 0.0) or 0.0),
             },
         }
+
+    def _build_trigger_slice_contrast_sections(
+        self,
+        *,
+        failure_examples: List[Dict[str, Any]],
+        protected_examples: List[Dict[str, Any]],
+    ) -> List[str]:
+        failure_by_slice: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
+        for example in failure_examples:
+            key = (
+                str(example.get("slice", "") or "").strip(),
+                str(example.get("scenario", "") or "").strip(),
+            )
+            if not key[0]:
+                continue
+            failure_by_slice.setdefault(key, []).append(example)
+
+        protected_by_slice: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
+        for example in protected_examples:
+            key = (
+                str(example.get("slice", "") or "").strip(),
+                str(example.get("scenario", "") or "").strip(),
+            )
+            if not key[0]:
+                continue
+            protected_by_slice.setdefault(key, []).append(example)
+
+        shared_keys = [key for key in sorted(failure_by_slice.keys()) if key in protected_by_slice]
+        if not shared_keys:
+            return []
+
+        prompt_parts = [
+            "",
+            "## Trigger Slice Contrast Checks",
+            "- Some failure packets and protected packets come from the same slice/scenario.",
+            "- Any new description rule must fix the failure examples without breaking the protected examples in that same slice.",
+            "- Do not overfit to one sample ID; write slice-level boundaries that cover all cited examples together.",
+        ]
+        for slice_name, scenario_name in shared_keys:
+            failure_ids = [str(item.get("sample_id", "") or "").strip() for item in failure_by_slice[(slice_name, scenario_name)]]
+            protected_ids = [str(item.get("sample_id", "") or "").strip() for item in protected_by_slice[(slice_name, scenario_name)]]
+            prompt_parts.extend(
+                [
+                    f"### Slice `{slice_name}` ({scenario_name or 'unknown_scenario'})",
+                    f"- Failure sample IDs to fix: {', '.join(sample_id for sample_id in failure_ids if sample_id)}",
+                    f"- Protected sample IDs to preserve: {', '.join(sample_id for sample_id in protected_ids if sample_id)}",
+                ]
+            )
+        return prompt_parts
+
+    def _build_trigger_description_rewrite_contract(
+        self,
+        *,
+        failure_examples: List[Dict[str, Any]],
+        protected_examples: List[Dict[str, Any]],
+    ) -> List[str]:
+        failure_slices = sorted(
+            {
+                str(example.get("slice", "") or "").strip()
+                for example in failure_examples
+                if str(example.get("slice", "") or "").strip()
+            }
+        )
+        protected_slices = sorted(
+            {
+                str(example.get("slice", "") or "").strip()
+                for example in protected_examples
+                if str(example.get("slice", "") or "").strip()
+            }
+        )
+        return [
+            "",
+            "## Trigger Description Rewrite Contract",
+            "- Rewrite the `description` as a compact Chinese trigger policy, not a cosmetic restatement of the old sentence.",
+            "- The revised description must contain both: trigger conditions and explicit non-trigger conditions.",
+            "- Include at least 2 explicit non-trigger boundaries in the description itself.",
+            "- At least 1 non-trigger boundary must directly address one of the observed failure slices in this round.",
+            "- At least 1 non-trigger boundary must be written broadly enough to preserve the protected slices shown below.",
+            "- Prefer wording like `仅当...才触发` / `以下情况不触发` / `不应触发` / `除非...否则不触发` instead of vague narrative prose.",
+            f"- Current failure slices to address: {', '.join(failure_slices) if failure_slices else 'none'}",
+            f"- Current protected slices to preserve: {', '.join(protected_slices) if protected_slices else 'none'}",
+            "- If you cannot state a concrete new boundary rule, do not paraphrase the old wording.",
+        ]
 
     def _build_packet_prompt_sections(
         self,
@@ -1380,6 +1489,8 @@ class SkillOptimizer:
                         f"### Failure Packet {index}",
                         f"- Packet ID: {example['packet_id']}",
                         f"- Sample ID: {example['sample_id']}",
+                        f"- Slice: {example.get('slice') or 'unknown'}",
+                        f"- Scenario: {example.get('scenario') or 'unknown'}",
                         f"- Failure types: {', '.join(example.get('failure_types') or ['unknown'])}",
                         f"- Gold label: {example['ground_truth']}",
                         f"- Predicted label: {example['predicted']}",
@@ -1400,6 +1511,8 @@ class SkillOptimizer:
                         f"### Protected Packet {index}",
                         f"- Packet ID: {example['packet_id']}",
                         f"- Sample ID: {example['sample_id']}",
+                        f"- Slice: {example.get('slice') or 'unknown'}",
+                        f"- Scenario: {example.get('scenario') or 'unknown'}",
                         f"- Label: {example['label']}",
                         f"- Confidence: {example['confidence']:.2f}",
                         "```text",
@@ -1407,6 +1520,20 @@ class SkillOptimizer:
                         "```",
                     ]
                 )
+
+        if str(report_payload.get("task_type", "") or "") == "trigger_eval" and editable_target == "SKILL.md":
+            prompt_parts.extend(
+                self._build_trigger_description_rewrite_contract(
+                    failure_examples=failure_examples,
+                    protected_examples=protected_examples,
+                )
+            )
+            prompt_parts.extend(
+                self._build_trigger_slice_contrast_sections(
+                    failure_examples=failure_examples,
+                    protected_examples=protected_examples,
+                )
+            )
 
         return "\n".join(prompt_parts)
 

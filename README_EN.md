@@ -317,11 +317,38 @@ Our position is straightforward: **models should surface risks and evidence, whi
 
 ### Data Scale
 
-| Data Module | Role | Main Scale | Breakdown |
-| --- | --- | --- | --- |
-| Benchmark data base | evaluates the ability to distinguish true minor signals from adult near-miss samples | `8,328` samples | social/psychology: `2603` positive + `1735` negative; knowledge: `2004` positive + `1986` negative |
-| RAG retrieval case base | supports runtime similar-case judgment and provides reference evidence for offline optimization | `5,829` samples | covers minor-detection-related cases for runtime retrieval and offline refinement |
-| Trigger-Eval trigger-boundary dataset | optimizes the question of when deeper identification should be launched | `160` samples | `window_scan = 120`, `direct_request = 40` |
+<table width="100%" align="center" style="width:100%; table-layout:fixed;">
+  <colgroup>
+    <col width="18%"/>
+    <col width="30%"/>
+    <col width="10%"/>
+    <col width="42%"/>
+  </colgroup>
+  <tr>
+    <th align="center">Data Module</th>
+    <th align="center">Role</th>
+    <th align="center">Main Scale</th>
+    <th align="center">Breakdown</th>
+  </tr>
+  <tr>
+    <td>Benchmark data base</td>
+    <td>evaluates the ability to distinguish true minor signals from adult near-miss samples</td>
+    <td align="center"><code>8,328</code> samples</td>
+    <td>social/psychology: <code>2603</code> positive + <code>1735</code> negative; knowledge: <code>2004</code> positive + <code>1986</code> negative</td>
+  </tr>
+  <tr>
+    <td>RAG retrieval case base</td>
+    <td>supports runtime similar-case judgment and provides reference evidence for offline optimization</td>
+    <td align="center"><code>5,829</code> samples</td>
+    <td>covers minor-detection-related cases for runtime retrieval and offline refinement</td>
+  </tr>
+  <tr>
+    <td>Trigger-Eval trigger-boundary dataset</td>
+    <td>optimizes the question of when deeper identification should be launched</td>
+    <td align="center"><code>160</code> samples</td>
+    <td><code>window_scan = 120</code>, <code>direct_request = 40</code></td>
+  </tr>
+</table>
 
 These three parts play different roles: Benchmark evaluates discrimination ability, the RAG case base supports runtime similar-case reasoning and offline optimization, and Trigger-Eval optimizes the trigger boundary.
 

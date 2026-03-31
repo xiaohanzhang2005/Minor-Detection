@@ -1,12 +1,12 @@
 <div align="center">
 
 <p>
-  <img src="picture/LOGO.png" alt="Minor Detection" width="520"/>
+  <img src="picture/LOGO.png" alt="Minor Detection" width="420"/>
 </p>
 
-### 面向 AI 拟人化互动的自进化未成年人识别智能体
+<p><strong>面向 AI 拟人化互动的自进化未成年人识别智能体</strong></p>
 
-### [简体中文](README.md) | [English](README_EN.md)
+<p><a href="README.md"><strong>简体中文</strong></a> | <a href="README_EN.md"><strong>English</strong></a></p>
 
 <p>
   <a href="https://huggingface.co/datasets/xiao2005/minor-detection-social-subset">

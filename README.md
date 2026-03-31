@@ -1,6 +1,8 @@
 <div align="center">
 
-# Minor Detection
+<p>
+  <img src="picture/LOGO.png" alt="Minor Detection" width="520"/>
+</p>
 
 ### 面向 AI 拟人化互动的自进化未成年人识别智能体
 

@@ -10,16 +10,16 @@
 
 <p>
   <a href="https://huggingface.co/datasets/xiao2005/minor-detection-social-subset">
-    <img src="https://img.shields.io/badge/HuggingFace-Social_Subset-0A66C2?style=for-the-badge" alt="Social Subset" />
+    <img src="https://img.shields.io/badge/HuggingFace-Social_Subset-0A66C2?style=flat-square" alt="Social Subset" />
   </a>
   <a href="https://huggingface.co/datasets/xiao2005/minor-detection-knowledge-subset">
-    <img src="https://img.shields.io/badge/HuggingFace-Knowledge_Subset-146356?style=for-the-badge" alt="Knowledge Subset" />
+    <img src="https://img.shields.io/badge/HuggingFace-Knowledge_Subset-146356?style=flat-square" alt="Knowledge Subset" />
   </a>
   <a href="https://clawhub.ai/xiaohanzhang2005/minor-detection">
-    <img src="https://img.shields.io/badge/ClawHub-Minor_Detection_Skill-DB4437?style=for-the-badge" alt="ClawHub Skill" />
+    <img src="https://img.shields.io/badge/ClawHub-Minor_Detection_Skill-DB4437?style=flat-square" alt="ClawHub Skill" />
   </a>
   <a href="https://www.bilibili.com/video/BV1MRXYBgEQk/?spm_id_from=333.1387.homepage.video_card.click">
-    <img src="https://img.shields.io/badge/Demo-Video-111111?style=for-the-badge" alt="Demo Video" />
+    <img src="https://img.shields.io/badge/Demo-Video-111111?style=flat-square" alt="Demo Video" />
   </a>
 </p>
 

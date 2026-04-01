@@ -603,19 +603,19 @@ def inject_styles() -> None:
         }
         .st-key-input_template_card,
         .st-key-input_template_card[data-testid="stVerticalBlockBorderWrapper"] {
-            min-height: 214px !important;
+            min-height: 194px !important;
         }
         .st-key-input_template_card > [data-testid="stVerticalBlockBorderWrapper"],
         .st-key-input_template_card [data-testid="stVerticalBlockBorderWrapper"] {
-            min-height: 214px !important;
+            min-height: 194px !important;
         }
         .st-key-input_profile_card,
         .st-key-input_profile_card[data-testid="stVerticalBlockBorderWrapper"] {
-            min-height: 156px !important;
+            min-height: 138px !important;
         }
         .st-key-input_profile_card > [data-testid="stVerticalBlockBorderWrapper"],
         .st-key-input_profile_card [data-testid="stVerticalBlockBorderWrapper"] {
-            min-height: 156px !important;
+            min-height: 138px !important;
         }
         .control-card-head {
             margin-bottom: 0.95rem;
@@ -636,7 +636,7 @@ def inject_styles() -> None:
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.02),
                 0 6px 14px rgba(3, 9, 18, 0.12) !important;
-            padding: 12px 14px 10px !important;
+            padding: 12px 14px 6px !important;
         }
         .st-key-input_template_controls[data-testid="stVerticalBlock"],
         .st-key-input_profile_controls[data-testid="stVerticalBlock"] {
@@ -1355,7 +1355,45 @@ def inject_styles() -> None:
             height: 1.2rem;
         }
         .result-actions-shell {
-            height: 1.1rem;
+            height: 0;
+        }
+        .st-key-result_action_bar[data-testid="stVerticalBlock"],
+        .st-key-result_action_bar > [data-testid="stVerticalBlock"] {
+            gap: 0 !important;
+        }
+        .st-key-result_action_bar [data-testid="stHorizontalBlock"] {
+            margin-bottom: 0 !important;
+        }
+        .st-key-result_action_bar .stButton {
+            margin-bottom: 0 !important;
+        }
+        .st-key-result_feedback_shell[data-testid="stVerticalBlock"],
+        .st-key-result_feedback_shell > [data-testid="stVerticalBlock"] {
+            gap: 0 !important;
+        }
+        .result-feedback {
+            margin: -0.3rem 0 1.1rem;
+            padding: 0.68rem 1rem;
+            border-radius: 16px;
+            border: 1px solid rgba(118, 177, 255, 0.18);
+            background: linear-gradient(180deg, rgba(16, 40, 72, 0.92), rgba(11, 30, 54, 0.94));
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.03),
+                0 8px 18px rgba(4, 11, 20, 0.12);
+            color: #edf5ff;
+            font-size: 0.92rem;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+        .result-feedback.success {
+            border-color: rgba(112, 182, 255, 0.24);
+            background: linear-gradient(180deg, rgba(14, 54, 96, 0.92), rgba(10, 38, 68, 0.95));
+            color: #edf5ff;
+        }
+        .result-feedback.warning {
+            border-color: rgba(255, 196, 62, 0.24);
+            background: linear-gradient(180deg, rgba(79, 53, 18, 0.9), rgba(61, 40, 14, 0.93));
+            color: #ffefc2;
         }
         .result-panel-shell {
             height: 0.7rem;
@@ -2429,26 +2467,18 @@ def render_input_panel() -> None:
                     """
                     <div class='control-card-head'>
                       <div class='entity-info-value'>画像操作</div>
-                      <div class='entity-info-meta'>围绕当前 user_id 读取历史画像，或将最新识别结果回写到本地画像库。</div>
+                      <div class='entity-info-meta'>围绕当前 user_id 读取历史画像，并将其注入到当前输入。</div>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
                 with st.container(border=True, key="input_profile_controls"):
-                    action_left, action_right = st.columns([1, 1])
-                    with action_left:
-                        if st.button("从画像库注入", use_container_width=True, type="primary"):
-                            if inject_profile_from_store_into_input():
-                                st.success("已将本地画像库中的历史画像注入当前输入。")
-                                st.rerun()
-                            else:
-                                st.warning("当前 user_id 没有可注入的本地画像记录。")
-                    with action_right:
-                        if st.button("写入当前结果到画像库", use_container_width=True, type="secondary"):
-                            if save_last_result_to_store():
-                                st.success("当前识别结果已写入本地画像库。")
-                            else:
-                                st.warning("请先完成一次识别，并确保输入中带有 user_id。")
+                    if st.button("从画像库注入", use_container_width=True, type="primary"):
+                        if inject_profile_from_store_into_input():
+                            st.success("已将本地画像库中的历史画像注入当前输入。")
+                            st.rerun()
+                        else:
+                            st.warning("当前 user_id 没有可注入的本地画像记录。")
 
     with top_right:
         chip_class = "identity-status-chip" if injected_available else "identity-status-chip muted"
@@ -3388,20 +3418,42 @@ def main() -> None:
 
     else:
         st.markdown("<div class='page-spacer-sm'></div>", unsafe_allow_html=True)
-        top_left, top_mid, top_right = st.columns([1, 1, 1.2])
-        with top_left:
-            if st.button("开始下一次识别", type="primary", use_container_width=True):
-                reset_workflow_to_input()
-                st.rerun()
-        with top_mid:
-            if st.button("返回配置输入", use_container_width=True):
-                jump_to_step(1)
-                st.rerun()
-        with top_right:
-            if st.button("回到输入概览", use_container_width=True, disabled=preview_payload is None):
-                jump_to_step(2)
-                st.rerun()
+        last_result = st.session_state.get("minor_detection_last_result")
+        can_save_result = isinstance(last_result, dict) and "formal_output" in last_result
+        save_feedback: Optional[Tuple[str, str]] = None
+        with st.container(key="result_action_bar"):
+            top_left, top_mid, top_right, top_save = st.columns([1, 1, 1.2, 1.4])
+            with top_left:
+                if st.button("开始下一次识别", type="primary", use_container_width=True):
+                    reset_workflow_to_input()
+                    st.rerun()
+            with top_mid:
+                if st.button("返回配置输入", use_container_width=True):
+                    jump_to_step(1)
+                    st.rerun()
+            with top_right:
+                if st.button("回到输入概览", use_container_width=True, disabled=preview_payload is None):
+                    jump_to_step(2)
+                    st.rerun()
+            with top_save:
+                if st.button(
+                    "写入当前结果到画像库",
+                    type="secondary",
+                    use_container_width=True,
+                    disabled=not can_save_result,
+                ):
+                    if save_last_result_to_store():
+                        save_feedback = ("success", "当前识别结果已写入本地画像库。")
+                    else:
+                        save_feedback = ("warning", "当前结果暂不可写入，请确认本次识别已完成且输入中带有 user_id。")
         st.markdown("<div class='result-actions-shell'></div>", unsafe_allow_html=True)
+        if save_feedback:
+            level, message = save_feedback
+            with st.container(key="result_feedback_shell"):
+                st.markdown(
+                    f"<div class='result-feedback {escape(level)}'>{escape(message)}</div>",
+                    unsafe_allow_html=True,
+                )
 
         if not st.session_state.minor_detection_last_result:
             render_results_waiting()

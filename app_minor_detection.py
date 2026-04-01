@@ -1830,6 +1830,8 @@ def ensure_state() -> None:
         st.session_state.minor_detection_last_result = None
     if "minor_detection_uploaded_snapshot" not in st.session_state:
         st.session_state.minor_detection_uploaded_snapshot = ""
+    if "minor_detection_uploaded_name" not in st.session_state:
+        st.session_state.minor_detection_uploaded_name = ""
     if "minor_detection_selected_demo" not in st.session_state:
         st.session_state.minor_detection_selected_demo = "增强输入模式"
     if "minor_detection_input_origin" not in st.session_state:
@@ -1895,6 +1897,7 @@ def commit_input_editor() -> None:
         reset_workflow_to_input()
         st.session_state.minor_detection_input_text = current_text
         st.session_state.minor_detection_last_input_snapshot = current_text
+        st.session_state.minor_detection_uploaded_name = ""
         set_input_origin("editor")
 
 
@@ -2162,6 +2165,7 @@ def inject_profile_from_store_into_input() -> bool:
     set_input_origin("profile_injected")
     st.session_state.minor_detection_last_input_snapshot = formatted
     st.session_state.minor_detection_uploaded_snapshot = ""
+    st.session_state.minor_detection_uploaded_name = ""
     reset_workflow_to_input()
     st.session_state.minor_detection_last_input_snapshot = formatted
     return True
@@ -2569,11 +2573,12 @@ def render_input_panel() -> None:
         label_visibility="collapsed",
     )
     if uploaded_file is not None:
-        uploaded_text = uploaded_file.getvalue().decode("utf-8")
+        uploaded_text = sanitize_json_text(uploaded_file.getvalue().decode("utf-8-sig"))
         if uploaded_text != st.session_state.minor_detection_uploaded_snapshot:
             set_input_text(uploaded_text)
             set_input_origin("upload")
             st.session_state.minor_detection_uploaded_snapshot = uploaded_text
+            st.session_state.minor_detection_uploaded_name = str(uploaded_file.name or "").strip()
             st.session_state.minor_detection_last_input_snapshot = uploaded_text
             reset_workflow_to_input()
 
@@ -2627,6 +2632,7 @@ def render_input_panel() -> None:
                             set_input_text(demo_text)
                             set_input_origin(f"template:{selected_demo}")
                             st.session_state.minor_detection_uploaded_snapshot = ""
+                            st.session_state.minor_detection_uploaded_name = ""
                             st.session_state.minor_detection_last_input_snapshot = demo_text
                             reset_workflow_to_input()
                             st.rerun()
@@ -3024,6 +3030,11 @@ def render_run_context_strip(payload_dict: Dict[str, Any], source_context: Dict[
     mode = payload_dict.get("mode", "-")
     external_rag_count = len(source_context.get("retrieved_cases", []) or [])
     has_profile = bool(source_context.get("prior_profile"))
+    input_origin = get_input_origin()
+    if input_origin == "upload":
+        request_source_meta = str(st.session_state.get("minor_detection_uploaded_name", "") or "").strip() or "未命名文件"
+    else:
+        request_source_meta = format_source_display(str(meta.get("source") or "minor_detection_frontend"))
     cards = [
         (
             "运行模式",
@@ -3037,8 +3048,8 @@ def render_run_context_strip(payload_dict: Dict[str, Any], source_context: Dict[
         ),
         (
             "请求来源",
-            format_source_display(str(meta.get("source") or "minor_detection_frontend")),
-            str(meta.get("source") or "minor_detection_frontend"),
+            format_input_origin_display(input_origin),
+            request_source_meta,
         ),
         (
             "外部上下文",

@@ -168,7 +168,9 @@ chat window / multi-session history / upstream task request
 
 <br/>
 
-ICBO is the core framework we use to organize user profiling and evidence interpretation:
+The `ICBO` used in this project is not a literal repetition of the original `ICBO/TIC` definition. Instead, it is an operational extension for minor-detection tasks, inspired by the original idea of understanding trustworthy intent through multiple observable dimensions.
+
+In this task-oriented formulation, `I` and `B` largely inherit the original meaning, `C` moves from content-related cues toward auditable cognitive-feature extraction, and `O` concretizes observer-accessible contextual information into structured variables such as opportunity time. Under this operational framing, we use the following four dimensions to organize user profiling and evidence interpretation:
 
 - **I - Intention**: the user's immediate intent, such as homework help, school-pressure disclosure, or exam-schedule discussion.
 - **C - Cognition**: a restrained and auditable description of cognitive characteristics rather than overreaching psychological diagnosis.
@@ -178,6 +180,8 @@ ICBO is the core framework we use to organize user profiling and evidence interp
 <br/>
 
 <img src="picture/ICBO.png" alt="ICBO" width="100%"/>
+
+The figure above illustrates the original `TIC/ICBO` relationship. This project adopts an engineering-oriented, task-specific extension for minor detection. Accordingly, `Content` / `Observer` in the figure are not meant to be taken as word-for-word equivalents of the `Cognition` / `Opportunity Time` dimensions used here; rather, they reflect a relationship of inheritance and extension from the original theory to an operational representation.
 
 </details>
 

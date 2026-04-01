@@ -44,6 +44,7 @@ docx/
 release/
 claude-skill-creator/
 data/minor_detection_profile_store.json
+data/minor_detection_profile_store.sqlite
 
 # Embedded Codex runtime homes captured inside evaluation reports
 reports/**/codex_home/

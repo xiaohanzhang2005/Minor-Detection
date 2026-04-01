@@ -1,6 +1,7 @@
 import html
 import json
 import re
+import sqlite3
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
@@ -32,7 +33,8 @@ DEMO_PAYLOAD_PATH = ROOT_DIR / "demo_inputs" / "minor_detection_demo_payload.jso
 DEMO_SINGLE_SESSION_PATH = ROOT_DIR / "demo_inputs" / "minor_detection_single_session_payload.json"
 DEMO_MULTI_SESSION_PATH = ROOT_DIR / "demo_inputs" / "minor_detection_multi_session_payload.json"
 DEMO_EXTERNAL_CONTEXT_PATH = ROOT_DIR / "demo_inputs" / "minor_detection_external_context_payload.json"
-PROFILE_STORE_PATH = ROOT_DIR / "data" / "minor_detection_profile_store.json"
+PROFILE_STORE_DB_PATH = ROOT_DIR / "data" / "minor_detection_profile_store.sqlite"
+PROFILE_STORE_LEGACY_PATH = ROOT_DIR / "data" / "minor_detection_profile_store.json"
 DEMO_PAYLOADS = {
     "单会话模式示例模板": DEMO_SINGLE_SESSION_PATH,
     "多会话模式示例模板": DEMO_MULTI_SESSION_PATH,
@@ -1911,18 +1913,194 @@ def pretty_json(data: Any) -> str:
     return json.dumps(data, ensure_ascii=False, indent=2)
 
 
-def load_profile_store() -> Dict[str, Any]:
-    if not PROFILE_STORE_PATH.exists():
+def _normalize_profile_entry(raw_entry: Any) -> Optional[Dict[str, Any]]:
+    if not isinstance(raw_entry, dict):
+        return None
+    raw_identity_markers = raw_entry.get("identity_markers") or []
+    if not isinstance(raw_identity_markers, list):
+        raw_identity_markers = []
+    return {
+        "total_sessions": int(raw_entry.get("total_sessions", 0) or 0),
+        "estimated_age_range": str(raw_entry.get("estimated_age_range", "") or ""),
+        "education_stage": str(raw_entry.get("education_stage", "") or ""),
+        "recent_confidence_trend": str(raw_entry.get("recent_confidence_trend", "") or ""),
+        "summary": str(raw_entry.get("summary", "") or ""),
+        "identity_markers": [str(item) for item in raw_identity_markers],
+        "last_minor_probability": (
+            round(float(raw_entry["last_minor_probability"]), 4)
+            if raw_entry.get("last_minor_probability") not in (None, "")
+            else None
+        ),
+        "updated_at": str(raw_entry.get("updated_at", "") or ""),
+    }
+
+
+def _load_legacy_profile_store() -> Dict[str, Any]:
+    if not PROFILE_STORE_LEGACY_PATH.exists():
         return {}
     try:
-        return json.loads(PROFILE_STORE_PATH.read_text(encoding="utf-8"))
+        raw_store = json.loads(PROFILE_STORE_LEGACY_PATH.read_text(encoding="utf-8"))
     except Exception:
         return {}
+    if not isinstance(raw_store, dict):
+        return {}
+
+    normalized_store: Dict[str, Any] = {}
+    for user_id, entry in raw_store.items():
+        normalized_entry = _normalize_profile_entry(entry)
+        if normalized_entry is not None:
+            normalized_store[str(user_id)] = normalized_entry
+    return normalized_store
+
+
+def _profile_store_connection() -> sqlite3.Connection:
+    PROFILE_STORE_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(PROFILE_STORE_DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS profile_store (
+            user_id TEXT PRIMARY KEY,
+            total_sessions INTEGER NOT NULL DEFAULT 0,
+            estimated_age_range TEXT NOT NULL DEFAULT '',
+            education_stage TEXT NOT NULL DEFAULT '',
+            recent_confidence_trend TEXT NOT NULL DEFAULT '',
+            summary TEXT NOT NULL DEFAULT '',
+            identity_markers_json TEXT NOT NULL DEFAULT '[]',
+            last_minor_probability REAL,
+            updated_at TEXT NOT NULL DEFAULT ''
+        )
+        """
+    )
+
+    row_count = conn.execute("SELECT COUNT(*) FROM profile_store").fetchone()[0]
+    if row_count == 0:
+        legacy_store = _load_legacy_profile_store()
+        if legacy_store:
+            conn.executemany(
+                """
+                INSERT OR REPLACE INTO profile_store (
+                    user_id,
+                    total_sessions,
+                    estimated_age_range,
+                    education_stage,
+                    recent_confidence_trend,
+                    summary,
+                    identity_markers_json,
+                    last_minor_probability,
+                    updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                [
+                    (
+                        user_id,
+                        entry["total_sessions"],
+                        entry["estimated_age_range"],
+                        entry["education_stage"],
+                        entry["recent_confidence_trend"],
+                        entry["summary"],
+                        json.dumps(entry["identity_markers"], ensure_ascii=False),
+                        entry["last_minor_probability"],
+                        entry["updated_at"],
+                    )
+                    for user_id, entry in legacy_store.items()
+                ],
+            )
+            conn.commit()
+    return conn
+
+
+def load_profile_store() -> Dict[str, Any]:
+    store: Dict[str, Any] = {}
+    conn: Optional[sqlite3.Connection] = None
+    try:
+        conn = _profile_store_connection()
+        rows = conn.execute(
+            """
+            SELECT
+                user_id,
+                total_sessions,
+                estimated_age_range,
+                education_stage,
+                recent_confidence_trend,
+                summary,
+                identity_markers_json,
+                last_minor_probability,
+                updated_at
+            FROM profile_store
+            ORDER BY user_id
+            """
+        ).fetchall()
+    except Exception:
+        return {}
+    finally:
+        if conn is not None:
+            conn.close()
+
+    for row in rows:
+        try:
+            identity_markers = json.loads(row["identity_markers_json"] or "[]")
+        except Exception:
+            identity_markers = []
+        if not isinstance(identity_markers, list):
+            identity_markers = []
+
+        store[str(row["user_id"])] = {
+            "total_sessions": int(row["total_sessions"] or 0),
+            "estimated_age_range": row["estimated_age_range"] or "",
+            "education_stage": row["education_stage"] or "",
+            "recent_confidence_trend": row["recent_confidence_trend"] or "",
+            "summary": row["summary"] or "",
+            "identity_markers": [str(item) for item in identity_markers],
+            "last_minor_probability": row["last_minor_probability"],
+            "updated_at": row["updated_at"] or "",
+        }
+    return store
 
 
 def save_profile_store(store: Dict[str, Any]) -> None:
-    PROFILE_STORE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    PROFILE_STORE_PATH.write_text(json.dumps(store, ensure_ascii=False, indent=2), encoding="utf-8")
+    normalized_rows = []
+    for user_id, raw_entry in store.items():
+        normalized_entry = _normalize_profile_entry(raw_entry)
+        if normalized_entry is None:
+            continue
+        normalized_rows.append(
+            (
+                str(user_id),
+                normalized_entry["total_sessions"],
+                normalized_entry["estimated_age_range"],
+                normalized_entry["education_stage"],
+                normalized_entry["recent_confidence_trend"],
+                normalized_entry["summary"],
+                json.dumps(normalized_entry["identity_markers"], ensure_ascii=False),
+                normalized_entry["last_minor_probability"],
+                normalized_entry["updated_at"],
+            )
+        )
+
+    conn = _profile_store_connection()
+    try:
+        conn.execute("DELETE FROM profile_store")
+        if normalized_rows:
+            conn.executemany(
+                """
+                INSERT INTO profile_store (
+                    user_id,
+                    total_sessions,
+                    estimated_age_range,
+                    education_stage,
+                    recent_confidence_trend,
+                    summary,
+                    identity_markers_json,
+                    last_minor_probability,
+                    updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                normalized_rows,
+            )
+        conn.commit()
+    finally:
+        conn.close()
 
 
 def normalize_uploaded_payload(raw_data: Any) -> Dict[str, Any]:

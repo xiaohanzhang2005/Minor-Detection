@@ -1,7 +1,7 @@
 <div align="center">
 
 <p>
-  <img src="picture/LOGO.png" alt="Minor Detection" width="520"/>
+  <img src="picture/LOGO.png" alt="Minor Detection" width="500"/>
 </p>
 
 <p><strong>面向 AI 拟人化互动的自进化未成年人识别智能体</strong></p>

@@ -151,23 +151,24 @@ def inject_styles() -> None:
         [data-testid="stFileUploaderDropzone"] > div {
             background: transparent !important;
         }
-        [data-testid="stFileUploader"] section *,
-        [data-testid="stFileUploaderDropzone"] * {
+        [data-testid="stFileUploader"] section,
+        [data-testid="stFileUploaderDropzone"] {
             color: #eef5ff !important;
-            opacity: 1 !important;
-            text-shadow: none !important;
         }
         [data-testid="stFileUploaderDropzoneInstructions"],
         [data-testid="stFileUploaderDropzoneInstructions"] span,
         [data-testid="stFileUploaderDropzoneInstructions"] small,
         [data-testid="stFileUploaderDropzoneInstructions"] p,
         [data-testid="stFileUploaderDropzoneInstructions"] div,
+        [data-testid="stFileUploaderDropzoneInstructions"] label,
         [data-testid="stFileUploaderDropzone"] small,
         [data-testid="stFileUploaderDropzone"] span,
-        [data-testid="stFileUploaderDropzone"] p {
+        [data-testid="stFileUploaderDropzone"] p,
+        [data-testid="stFileUploaderDropzone"] label {
             color: #f3f8ff !important;
             opacity: 1 !important;
             font-weight: 600 !important;
+            text-shadow: none !important;
         }
         [data-testid="stFileUploaderDropzone"] svg,
         [data-testid="stFileUploaderDropzone"] path,
@@ -197,20 +198,220 @@ def inject_styles() -> None:
             font-weight: 700 !important;
             opacity: 1 !important;
         }
+        [data-testid="stFileUploaderDropzone"] button *,
+        [data-testid="stFileUploader"] button * {
+            color: #18395f !important;
+            fill: #18395f !important;
+            stroke: #18395f !important;
+            opacity: 1 !important;
+        }
         [data-testid="stFileUploaderDropzone"] button:hover,
         [data-testid="stFileUploader"] button:hover {
             background: #ffffff !important;
             color: #15324f !important;
         }
+        [data-testid="stFileUploaderDropzone"] button:hover *,
+        [data-testid="stFileUploader"] button:hover * {
+            color: #15324f !important;
+            fill: #15324f !important;
+            stroke: #15324f !important;
+        }
+        .st-key-welcome_upload_stage[data-testid="stVerticalBlock"] {
+            width: 100%;
+            margin: 0 0 0.2rem 0;
+            position: relative;
+        }
+        .welcome-upload-static-shell,
+        .st-key-welcome_upload_stage [data-testid="stFileUploader"] section,
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderDropzone"] {
+            min-height: 112px !important;
+            border-radius: 24px !important;
+            border: 1px dashed rgba(122, 176, 255, 0.5) !important;
+            background: linear-gradient(180deg, rgba(14, 34, 61, 0.98), rgba(8, 22, 42, 0.98)) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.02),
+                0 12px 28px rgba(4, 11, 22, 0.14) !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+        .welcome-upload-static-shell {
+            width: 100%;
+        }
+        .welcome-upload-static-copy {
+            position: absolute;
+            left: 34px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .welcome-upload-static-title {
+            color: #f1f7ff;
+            font-size: 1rem;
+            line-height: 1.25;
+            font-weight: 760;
+        }
+        .welcome-upload-static-meta {
+            margin-top: 0.24rem;
+            color: rgba(221, 233, 255, 0.74);
+            font-size: 0.83rem;
+            line-height: 1.3;
+            font-weight: 650;
+        }
+        .st-key-welcome_upload_stage .welcome-upload-static-button {
+            position: absolute;
+            right: 34px;
+            top: 50%;
+            transform: translateY(-50%);
+            min-height: 56px;
+            padding: 0.78rem 1.2rem;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #204a80 0%, #17385f 100%) !important;
+            color: #f6fbff !important;
+            border: 1px solid rgba(116, 177, 255, 0.28) !important;
+            font-size: 0.96rem;
+            font-weight: 780;
+            box-shadow: 0 10px 24px rgba(9, 27, 50, 0.18);
+            opacity: 1;
+            pointer-events: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: none;
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+            color: #f6fbff !important;
+            -webkit-text-fill-color: #f6fbff !important;
+        }
+        .st-key-welcome_upload_stage .welcome-upload-static-button,
+        .st-key-welcome_upload_stage .welcome-upload-static-button *,
+        .st-key-welcome_upload_stage .welcome-upload-static-button span {
+            color: #f6fbff !important;
+            -webkit-text-fill-color: #f6fbff !important;
+        }
+        .st-key-welcome_upload_stage .welcome-upload-static-button span {
+            display: inline-block;
+            transform: translateY(-0.5px);
+        }
+        .st-key-welcome_upload_stage [data-testid="stFileUploader"] {
+            position: absolute !important;
+            inset: 0 !important;
+            width: 100% !important;
+            z-index: 5 !important;
+            opacity: 0 !important;
+        }
+        .st-key-welcome_upload_live_layer[data-testid="stVerticalBlock"] {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+        }
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploader"] section,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDropzone"] {
+            min-height: 112px !important;
+            width: 100% !important;
+            opacity: 0 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploader"] section > div,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDropzone"] > div,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploader"] section > div > div,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDropzone"] > div > div {
+            min-height: 112px !important;
+            width: 100% !important;
+            background: transparent !important;
+            opacity: 0 !important;
+        }
+        .upload-status-copy {
+            color: #eef5ff;
+            font-size: 0.9rem;
+            line-height: 1.35;
+            font-weight: 700;
+            word-break: break-word;
+            min-height: 34px;
+            display: flex;
+            align-items: center;
+            padding: 0;
+        }
+        .st-key-upload_status_shell[data-testid="stVerticalBlockBorderWrapper"] {
+            margin-top: 0.7rem !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(117, 172, 255, 0.16) !important;
+            background: linear-gradient(180deg, rgba(12, 31, 55, 0.94), rgba(9, 24, 42, 0.96)) !important;
+            padding: 6px 8px !important;
+        }
+        .st-key-upload_status_shell[data-testid="stVerticalBlock"] {
+            gap: 0 !important;
+        }
+        .st-key-upload_status_shell [data-testid="stHorizontalBlock"] {
+            align-items: center !important;
+        }
+        .st-key-upload_status_shell [data-testid="column"] {
+            padding: 0 !important;
+        }
+        .st-key-upload_status_shell [data-testid="stMarkdownContainer"] p {
+            margin: 0 !important;
+        }
+        .st-key-upload_status_action .stButton > button {
+            min-height: 34px !important;
+            min-width: 34px !important;
+            width: 34px !important;
+            padding: 0 !important;
+            border-radius: 999px !important;
+            box-shadow: none !important;
+            font-size: 1.1rem !important;
+            line-height: 1 !important;
+            font-weight: 700 !important;
+        }
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderDropzoneInstructions"],
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDropzoneInstructions"] {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderDropzoneInstructions"] span,
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderDropzoneInstructions"] p,
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderDropzoneInstructions"] small,
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderDropzoneInstructions"] div,
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderDropzoneInstructions"] label,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDropzoneInstructions"] span,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDropzoneInstructions"] p,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDropzoneInstructions"] small,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDropzoneInstructions"] div,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDropzoneInstructions"] label {
+            text-align: left !important;
+            margin: 0 !important;
+            opacity: 0 !important;
+            font-size: 0 !important;
+            line-height: 0 !important;
+            height: 0 !important;
+        }
+        .st-key-welcome_upload_stage [data-testid="stFileUploader"] button,
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderDropzone"] button,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploader"] button,
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDropzone"] button {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderFile"],
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderFileData"],
+        .st-key-welcome_upload_stage [data-testid="stFileUploaderDeleteBtn"],
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderFile"],
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderFileData"],
+        .st-key-welcome_upload_live_layer [data-testid="stFileUploaderDeleteBtn"] {
+            display: none !important;
+        }
         .upload-helper-card {
-            margin: 0.35rem 0 0.85rem 0;
+            margin: 0 0 1rem 0;
             padding: 16px 18px 15px;
             border-radius: 20px;
             background: linear-gradient(180deg, rgba(15, 35, 62, 0.94), rgba(10, 25, 45, 0.94));
             border: 1px solid rgba(120, 174, 255, 0.18);
         }
         .workspace-intro {
-            margin: 0.15rem 0 1rem;
+            margin: 0 0 1rem 0;
             padding: 19px 22px 17px;
             border-radius: 22px;
             background: linear-gradient(180deg, rgba(14, 33, 59, 0.95), rgba(10, 25, 45, 0.92));
@@ -1842,6 +2043,8 @@ def ensure_state() -> None:
         st.session_state.minor_detection_current_step = 1
     if "minor_detection_pending_run" not in st.session_state:
         st.session_state.minor_detection_pending_run = False
+    if "minor_detection_upload_widget_nonce" not in st.session_state:
+        st.session_state.minor_detection_upload_widget_nonce = 0
 
 
 def clear_last_result() -> None:
@@ -1865,6 +2068,21 @@ def reset_workflow_to_input() -> None:
         if key.startswith("minor_detection_preview_window_"):
             del st.session_state[key]
     jump_to_step(1)
+
+
+def clear_uploaded_file_state(*, keep_current_input: bool = True) -> None:
+    st.session_state.minor_detection_uploaded_snapshot = ""
+    st.session_state.minor_detection_uploaded_name = ""
+    st.session_state.minor_detection_upload_widget_nonce = int(
+        st.session_state.get("minor_detection_upload_widget_nonce", 0)
+    ) + 1
+    if not keep_current_input:
+        demo_text = load_demo_payload_text()
+        set_input_text(demo_text)
+        st.session_state.minor_detection_last_input_snapshot = demo_text
+        set_input_origin("template:增强输入模式")
+    elif get_input_origin() == "upload":
+        set_input_origin("editor")
 
 
 def get_input_text() -> str:
@@ -2134,6 +2352,36 @@ def normalize_uploaded_payload(raw_data: Any) -> Dict[str, Any]:
     raise ValueError("上传内容必须是 analysis_payload，或 conversation/sessions JSON。")
 
 
+def format_runtime_error_message(exc: Exception) -> str:
+    raw = str(exc or "").strip()
+    text = raw
+
+    if text.startswith("Skill pipeline failed:"):
+        text = text.split("Skill pipeline failed:", 1)[1].strip()
+
+    lowered = text.lower()
+
+    if "missing classifier api key" in lowered:
+        return "识别执行失败：缺少分类模型 API Key。请先配置 `AIHUBMIX_API_KEY`、`OPENAI_API_KEY` 或 `MINOR_DETECTION_CLASSIFIER_API_KEY`。"
+
+    if "missing embedding api key" in lowered:
+        return "识别执行失败：缺少 embedding API Key。请先配置 `AIHUBMIX_API_KEY`、`OPENAI_API_KEY` 或 `MINOR_DETECTION_EMBEDDING_API_KEY`。"
+
+    if any(token in lowered for token in ("httpsconnectionpool", "ssl:", "sslerror", "connecterror", "connection aborted", "unexpected_eof_while_reading")):
+        return "识别执行失败：模型服务连接异常。请检查当前网络环境，或确认 API 网关 / SSL 连接是否正常后重试。"
+
+    if any(token in lowered for token in ("timed out", "timeout", "readtimeout", "connecttimeout")):
+        return "识别执行失败：请求模型服务超时。请稍后重试，或检查当前模型网关是否响应过慢。"
+
+    if any(token in lowered for token in ("401", "unauthorized", "authentication", "invalid api key", "forbidden")):
+        return "识别执行失败：模型服务鉴权失败。请检查 API Key、Base URL 和模型配置是否正确。"
+
+    cleaned = re.sub(r"\s+", " ", text).strip()
+    if len(cleaned) > 220:
+        cleaned = cleaned[:217] + "..."
+    return f"识别执行失败：{cleaned or '未知错误'}"
+
+
 def get_current_input_payload() -> Dict[str, Any]:
     raw_payload = json.loads(sanitize_json_text(get_input_text()) or "{}")
     return normalize_uploaded_payload(raw_payload)
@@ -2378,7 +2626,7 @@ def build_multi_session_curve(
                     "risk_level": "Unknown",
                     "education_stage": "",
                     "is_minor": None,
-                    "error": str(exc),
+                    "error": format_runtime_error_message(exc),
                 }
             )
     if progress_callback is not None:
@@ -2561,17 +2809,37 @@ def render_input_panel() -> None:
           <div class='upload-helper-copy'>
             可直接上传待分析 JSON；载入后会自动进入当前工作台，
             支持标准分析输入、对话数组与多会话结构。
+            若只想快速体验，也可以直接在下方“系统模板”中载入示例输入。
           </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
-
-    uploaded_file = st.file_uploader(
-        "上传待分析 JSON 文件",
-        type=["json"],
-        label_visibility="collapsed",
-    )
+    uploaded_name = str(st.session_state.get("minor_detection_uploaded_name", "") or "").strip()
+    with st.container(key="welcome_upload_stage"):
+        st.markdown(
+            """
+            <div class='welcome-upload-static-shell'>
+              <div class='welcome-upload-static-copy'>
+                <div class='welcome-upload-static-title'>Drag and drop file here</div>
+                <div class='welcome-upload-static-meta'>Limit 200MB per file · JSON</div>
+              </div>
+              <div class='welcome-upload-static-button'><span>Upload</span></div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        if uploaded_name:
+            uploaded_file = None
+        else:
+            with st.container(key="welcome_upload_live_layer"):
+                upload_widget_key = f"minor_detection_file_uploader_{st.session_state.minor_detection_upload_widget_nonce}"
+                uploaded_file = st.file_uploader(
+                    "上传待分析 JSON 文件",
+                    type=["json"],
+                    label_visibility="collapsed",
+                key=upload_widget_key,
+            )
     if uploaded_file is not None:
         uploaded_text = sanitize_json_text(uploaded_file.getvalue().decode("utf-8-sig"))
         if uploaded_text != st.session_state.minor_detection_uploaded_snapshot:
@@ -2581,6 +2849,23 @@ def render_input_panel() -> None:
             st.session_state.minor_detection_uploaded_name = str(uploaded_file.name or "").strip()
             st.session_state.minor_detection_last_input_snapshot = uploaded_text
             reset_workflow_to_input()
+            st.session_state.minor_detection_upload_widget_nonce = int(
+                st.session_state.get("minor_detection_upload_widget_nonce", 0)
+            ) + 1
+            st.rerun()
+    if uploaded_name:
+        with st.container(border=True, key="upload_status_shell"):
+            status_left, status_right = st.columns([0.94, 0.06])
+            with status_left:
+                st.markdown(
+                    f"<div class='upload-status-copy'>{escape(uploaded_name)} 已上传</div>",
+                    unsafe_allow_html=True,
+                )
+            with status_right:
+                with st.container(key="upload_status_action"):
+                    if st.button("×", use_container_width=True):
+                        clear_uploaded_file_state(keep_current_input=True)
+                        st.rerun()
 
     store = load_profile_store()
     current_user = current_input_user_id()
@@ -3598,7 +3883,7 @@ def main() -> None:
                 st.rerun()
             except Exception as exc:
                 st.session_state.minor_detection_pending_run = False
-                st.session_state.minor_detection_last_result = {"error": str(exc)}
+                st.session_state.minor_detection_last_result = {"error": format_runtime_error_message(exc)}
                 jump_to_step(4)
                 st.rerun()
         else:
@@ -3614,6 +3899,7 @@ def main() -> None:
             top_left, top_mid, top_right, top_save = st.columns([1, 1, 1.2, 1.4])
             with top_left:
                 if st.button("开始下一次识别", type="primary", use_container_width=True):
+                    clear_uploaded_file_state(keep_current_input=True)
                     reset_workflow_to_input()
                     st.rerun()
             with top_mid:

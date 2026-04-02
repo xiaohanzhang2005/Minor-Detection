@@ -72,6 +72,14 @@ def main() -> None:
     parser.add_argument("--workspace-root", default=str(ROOT_DIR / "reports" / "trigger_description_loops"))
     parser.add_argument("--codex-cmd", default="codex")
     parser.add_argument("--codex-model", default=None, help="Override the Codex/agent model for this run only.")
+    parser.add_argument("--agent-backend", choices=["codex", "cli"], default="codex")
+    parser.add_argument("--agent-cmd", default=None, help="Alternative agent CLI executable when --agent-backend=cli.")
+    parser.add_argument(
+        "--agent-args-template",
+        default=None,
+        help="Optional generic agent command template. Available placeholders: {agent_cmd} {workspace_dir} {prompt_file} {final_output_path} {installed_skill_dir} {output_schema_path} {sandbox_mode} {execution_mode} {agent_model}.",
+    )
+    parser.add_argument("--agent-model", default=None, help="Vendor-neutral agent model label passed through to generic templates.")
     parser.add_argument(
         "--execution-mode",
         choices=["sandbox", "bypass"],
@@ -105,19 +113,31 @@ def main() -> None:
             execution_mode=args.execution_mode,
             sandbox_mode=args.sandbox_mode,
             codex_model=args.codex_model,
+            agent_backend=args.agent_backend,
+            agent_cmd=args.agent_cmd,
+            agent_args_template=args.agent_args_template,
+            agent_model=args.agent_model or args.codex_model,
         )
     )
     manual_final_test_command_template = (
         "python scripts/run_trigger_description_validation.py "
         f"--version {{version}} --dataset {_quoted(str(final_validation_set_path))} "
-        f"--codex-cmd {_quoted(args.codex_cmd)} "
+        + f"--agent-backend {args.agent_backend} "
+        + (f"--agent-cmd {_quoted(args.agent_cmd)} " if args.agent_cmd else "")
+        + (f"--agent-args-template {_quoted(args.agent_args_template)} " if args.agent_args_template else "")
+        + (f"--agent-model {_quoted(args.agent_model)} " if args.agent_model else "")
+        + f"--codex-cmd {_quoted(args.codex_cmd)} "
         + (f"--codex-model {_quoted(args.codex_model)} " if args.codex_model else "")
         + f"--execution-mode {args.execution_mode} --sandbox-mode {args.sandbox_mode} --timeout-sec {args.timeout_sec}"
     )
     manual_smoke_validation_command_template = (
         "python scripts/run_trigger_eval.py "
         f"--version {{version}} --dataset {_quoted(str(final_validation_set_path or optimization_set_path))} "
-        f"--codex-cmd {_quoted(args.codex_cmd)} "
+        + f"--agent-backend {args.agent_backend} "
+        + (f"--agent-cmd {_quoted(args.agent_cmd)} " if args.agent_cmd else "")
+        + (f"--agent-args-template {_quoted(args.agent_args_template)} " if args.agent_args_template else "")
+        + (f"--agent-model {_quoted(args.agent_model)} " if args.agent_model else "")
+        + f"--codex-cmd {_quoted(args.codex_cmd)} "
         + (f"--codex-model {_quoted(args.codex_model)} " if args.codex_model else "")
         + f"--execution-mode {args.execution_mode} --sandbox-mode {args.sandbox_mode} --timeout-sec {args.timeout_sec}"
     )

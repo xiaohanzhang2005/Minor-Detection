@@ -35,6 +35,13 @@ from src.utils.llm_client import LLMClient
 
 
 PIPELINE_SCRIPT_NAME = "run_minor_detection_pipeline.py"
+PIPELINE_OBSERVABILITY_PREFIX = "[MINOR_PIPELINE_OBSERVABILITY]"
+
+
+def _strip_pipeline_observability(text: str) -> str:
+    raw_text = str(text or "")
+    lines = [line for line in raw_text.splitlines() if not line.startswith(PIPELINE_OBSERVABILITY_PREFIX)]
+    return "\n".join(lines).strip()
 
 
 def _coerce_trend_trajectory(parsed: Dict[str, Any]) -> Dict[str, Any]:
@@ -246,7 +253,7 @@ class ExecutorSkill:
         stdout = (completed.stdout or "").strip()
         stderr = (completed.stderr or "").strip()
         if completed.returncode != 0:
-            detail = stderr or stdout or "pipeline execution failed"
+            detail = _strip_pipeline_observability(stderr) or _strip_pipeline_observability(stdout) or "pipeline execution failed"
             raise RuntimeError(f"Skill pipeline failed: {detail}")
         if not stdout:
             raise RuntimeError("Skill pipeline returned empty stdout")

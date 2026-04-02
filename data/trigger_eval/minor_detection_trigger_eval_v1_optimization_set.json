@@ -7,7 +7,7 @@
       12
     ],
     "record_count": 9161,
-    "parent_dataset_path": "D:\\重生之我要当桌面\\teenager_AI\\minor-protection\\data\\trigger_eval\\minor_detection_trigger_eval_v1.json",
+    "parent_dataset_path": "data/trigger_eval/minor_detection_trigger_eval_v1.json",
     "split_seed": 42,
     "final_validation_ratio": 0.3,
     "split_name": "optimization_set"

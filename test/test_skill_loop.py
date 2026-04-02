@@ -88,26 +88,26 @@ class SkillLoopRunnerTests(unittest.TestCase):
     def test_codex_command_contains_output_schema_and_add_dir(self):
         runner = CodexSkillRunner(config=CodexRunnerConfig(codex_cmd="codex"))
         command = runner._build_codex_command(
-            workspace_dir=Path("D:/workspace"),
-            output_schema_path=Path("D:/workspace/schema.json"),
-            final_output_path=Path("D:/workspace/final.txt"),
-            installed_skill_dir=Path("D:/home/.codex/skills/minor-detection-v0.1.0"),
+            workspace_dir=Path("workspace"),
+            output_schema_path=Path("workspace/schema.json"),
+            final_output_path=Path("workspace/final.txt"),
+            installed_skill_dir=Path(".codex/skills/minor-detection-v0.1.0"),
         )
         self.assertNotIn("--output-schema", command)
         self.assertIn("--add-dir", command)
         self.assertTrue(command[0].lower().endswith("cmd.exe"))
 
     def test_codex_command_wraps_cmd_entrypoint_on_windows(self):
-        runner = CodexSkillRunner(config=CodexRunnerConfig(codex_cmd=r"C:/Users/test/AppData/Roaming/npm/codex.cmd"))
+        runner = CodexSkillRunner(config=CodexRunnerConfig(codex_cmd="tools/codex.cmd"))
         command = runner._build_codex_command(
-            workspace_dir=Path("D:/workspace"),
-            output_schema_path=Path("D:/workspace/schema.json"),
-            final_output_path=Path("D:/workspace/final.txt"),
-            installed_skill_dir=Path("D:/home/.codex/skills/minor-detection-v0.1.0"),
+            workspace_dir=Path("workspace"),
+            output_schema_path=Path("workspace/schema.json"),
+            final_output_path=Path("workspace/final.txt"),
+            installed_skill_dir=Path(".codex/skills/minor-detection-v0.1.0"),
         )
         self.assertTrue(command[0].lower().endswith("cmd.exe"))
         self.assertEqual(command[1], "/c")
-        self.assertEqual(command[2], r"C:/Users/test/AppData/Roaming/npm/codex.cmd")
+        self.assertEqual(command[2], "tools/codex.cmd")
         self.assertIn("exec", command)
 
     def test_codex_command_resolves_bare_codex_to_powershell_shim(self):
@@ -115,31 +115,31 @@ class SkillLoopRunnerTests(unittest.TestCase):
 
         def fake_which(name: str):
             mapping = {
-                "codex.ps1": r"C:/Users/test/AppData/Roaming/npm/codex.ps1",
+                "codex.ps1": "tools/codex.ps1",
             }
             return mapping.get(name)
 
         with mock.patch("src.skill_loop.runner.shutil.which", side_effect=fake_which):
             command = runner._build_codex_command(
-                workspace_dir=Path("D:/workspace"),
-                output_schema_path=Path("D:/workspace/schema.json"),
-                final_output_path=Path("D:/workspace/final.txt"),
-                installed_skill_dir=Path("D:/home/.codex/skills/minor-detection-v0.1.0"),
+                workspace_dir=Path("workspace"),
+                output_schema_path=Path("workspace/schema.json"),
+                final_output_path=Path("workspace/final.txt"),
+                installed_skill_dir=Path(".codex/skills/minor-detection-v0.1.0"),
             )
 
         self.assertTrue(command[0].lower().endswith("powershell.exe"))
         self.assertEqual(command[1], "-NoProfile")
         self.assertEqual(command[2], "-File")
-        self.assertEqual(command[3], r"C:/Users/test/AppData/Roaming/npm/codex.ps1")
+        self.assertEqual(command[3], "tools/codex.ps1")
         self.assertIn("exec", command)
 
     def test_codex_command_uses_bypass_mode_without_sandbox_flag(self):
         runner = CodexSkillRunner(config=CodexRunnerConfig(codex_cmd="codex", execution_mode="bypass"))
         command = runner._build_codex_command(
-            workspace_dir=Path("D:/workspace"),
-            output_schema_path=Path("D:/workspace/schema.json"),
-            final_output_path=Path("D:/workspace/final.txt"),
-            installed_skill_dir=Path("D:/home/.codex/skills/minor-detection-v0.1.0"),
+            workspace_dir=Path("workspace"),
+            output_schema_path=Path("workspace/schema.json"),
+            final_output_path=Path("workspace/final.txt"),
+            installed_skill_dir=Path(".codex/skills/minor-detection-v0.1.0"),
         )
         self.assertIn("--dangerously-bypass-approvals-and-sandbox", command)
         self.assertNotIn("--sandbox", command)
@@ -157,13 +157,60 @@ class SkillLoopRunnerTests(unittest.TestCase):
     def test_codex_command_includes_model_override_when_configured(self):
         runner = CodexSkillRunner(config=CodexRunnerConfig(codex_cmd="codex", codex_model="gpt-5-mini"))
         command = runner._build_codex_command(
-            workspace_dir=Path("D:/workspace"),
-            output_schema_path=Path("D:/workspace/schema.json"),
-            final_output_path=Path("D:/workspace/final.txt"),
-            installed_skill_dir=Path("D:/home/.codex/skills/minor-detection-v0.1.0"),
+            workspace_dir=Path("workspace"),
+            output_schema_path=Path("workspace/schema.json"),
+            final_output_path=Path("workspace/final.txt"),
+            installed_skill_dir=Path(".codex/skills/minor-detection-v0.1.0"),
         )
         self.assertIn("--model", command)
         self.assertIn("gpt-5-mini", command)
+
+    def test_cli_agent_backend_uses_plain_executable_by_default(self):
+        runner = CodexSkillRunner(
+            config=CodexRunnerConfig(
+                agent_backend="cli",
+                agent_cmd="vendor-agent",
+            )
+        )
+        command = runner._build_agent_command(
+            workspace_dir=Path("workspace"),
+            output_schema_path=Path("workspace/schema.json"),
+            final_output_path=Path("workspace/final.txt"),
+            installed_skill_dir=Path(".codex/skills/minor-detection-v0.1.0"),
+            prompt_file_path=Path("workspace/agent_prompt.txt"),
+        )
+        self.assertEqual(command, ["vendor-agent"])
+
+    def test_cli_agent_backend_formats_template_placeholders(self):
+        runner = CodexSkillRunner(
+            config=CodexRunnerConfig(
+                agent_backend="cli",
+                agent_cmd="vendor-agent",
+                agent_args_template="{agent_cmd} --workspace {workspace_dir} --prompt-file {prompt_file} --output-file {final_output_path} --model {agent_model}",
+                agent_model="vendor-pro-1",
+            )
+        )
+        command = runner._build_agent_command(
+            workspace_dir=Path("workspace"),
+            output_schema_path=Path("workspace/schema.json"),
+            final_output_path=Path("workspace/final.txt"),
+            installed_skill_dir=Path(".codex/skills/minor-detection-v0.1.0"),
+            prompt_file_path=Path("workspace/agent_prompt.txt"),
+        )
+        self.assertEqual(
+            command,
+            [
+                "vendor-agent",
+                "--workspace",
+                "workspace",
+                "--prompt-file",
+                "workspace/agent_prompt.txt",
+                "--output-file",
+                "workspace/final.txt",
+                "--model",
+                "vendor-pro-1",
+            ],
+        )
 
     def test_write_agent_output_strips_observability_marker_lines(self):
         runner = CodexSkillRunner(config=CodexRunnerConfig())
@@ -496,7 +543,7 @@ class SkillLoopRunnerTests(unittest.TestCase):
                 "type": "item.completed",
                 "item": {
                     "type": "command_execution",
-                    "command": "\"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -Command 'python run_skill_once.py'",
+                    "command": "\"powershell.exe\" -Command 'python run_skill_once.py'",
                     "status": "completed",
                     "exit_code": 0,
                     "aggregated_output": '{"decision": {"is_minor": true}}' + marker,

@@ -403,93 +403,281 @@ Minor Detection can serve as part of a broader risk-governance infrastructure fo
 
 ## Quick Start
 
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
+We recommend following this order: environment setup -> credential setup -> frontend demo -> advanced developer workflows.
 
 <details>
-<summary><strong>1. Frontend Demo</strong></summary>
+<summary><strong>0. Environment setup and dependency installation</strong></summary>
 
 <br/>
 
+We recommend `Python 3.10+` and a dedicated virtual environment.
+
+You can create one with either:
+
 ```bash
-streamlit run app_minor_detection.py
+conda create -n minor-detection python=3.10
+conda activate minor-detection
 ```
 
-Use this to launch the Streamlit workbench and inspect the full frontend demo flow.
+or:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+```
 
 </details>
 
 <details>
-<summary><strong>2. Mainline Capability Iteration: Mode A / Mode B</strong></summary>
+<summary><strong>1. Configure model credentials</strong></summary>
 
 <br/>
+
+Before the first run, configure your own API key.  
+The simplest setup is to provide one OpenAI-compatible key that will be reused by both classification and retrieval:
+
+```bash
+export AIHUBMIX_API_KEY="your-api-key"
+```
+
+If you prefer, you can also provide:
+
+```bash
+export OPENAI_API_KEY="your-api-key"
+```
+
+Windows PowerShell:
+
+```powershell
+$env:AIHUBMIX_API_KEY="your-api-key"
+```
+
+If you want separate endpoints or keys for classification and embeddings, you can configure:
+
+- `MINOR_DETECTION_CLASSIFIER_BASE_URL`
+- `MINOR_DETECTION_CLASSIFIER_API_KEY`
+- `MINOR_DETECTION_CLASSIFIER_MODEL`
+- `MINOR_DETECTION_EMBEDDING_BASE_URL`
+- `MINOR_DETECTION_EMBEDDING_API_KEY`
+- `MINOR_DETECTION_EMBEDDING_MODEL`
+
+If classifier credentials are not configured, the runtime will not silently call an unknown remote endpoint. It will fail explicitly.
+
+</details>
+
+<details>
+<summary><strong>2. Frontend demo: recommended first-run experience</strong></summary>
+
+<br/>
+
+```bash
+python -m streamlit run app_minor_detection.py
+```
+
+Use this to launch the Streamlit workbench and inspect the full frontend demo flow.
+
+After the UI is up, we recommend loading one of these demo payloads first:
+
+- `demo_inputs/minor_detection_single_session_payload.json`
+- `demo_inputs/minor_detection_multi_session_payload.json`
+- `demo_inputs/minor_detection_demo_payload.json`
+
+</details>
+
+<details>
+<summary><strong>3. Agent CLI compatibility: shared by Mode A and Description flows</strong></summary>
+
+<br/>
+
+This section only applies to the agent-based flows:
+
+- `Mode A`
+- `Description mainline`
+- `Description side flow`
+- `Description final validation`
+
+`Mode B` is a pure Python direct-runner path and does not require any external agent CLI.
+
+The project now supports two agent backends:
+
+- `--agent-backend codex`
+  - default mode
+  - use this when `codex` is already installed and authenticated
+- `--agent-backend cli`
+  - use this to plug in another vendor's agent CLI
+  - pass `--agent-cmd`, and optionally `--agent-args-template`
+
+For non-Codex CLIs, the current adapter expects:
+
+- the project will send the prompt through `stdin`
+- ideally the CLI returns the final JSON object on `stdout`
+- if the CLI can write the final answer to a file, you may use `{final_output_path}` in the template
+- available placeholders are:
+  - `{agent_cmd}`
+  - `{workspace_dir}`
+  - `{prompt_file}`
+  - `{final_output_path}`
+  - `{installed_skill_dir}`
+  - `{output_schema_path}`
+  - `{sandbox_mode}`
+  - `{execution_mode}`
+  - `{agent_model}`
+
+The following generic CLI form has already been verified. It still uses `codex` underneath, but it demonstrates how to switch to the vendor-neutral `cli` adapter:
+
+```bash
+--agent-backend cli \
+--agent-cmd codex \
+--agent-args-template '{agent_cmd} exec - --json --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --cd {workspace_dir} --output-last-message {final_output_path} --add-dir {installed_skill_dir} --add-dir {workspace_dir}'
+```
+
+If you already use `codex`, you can simply omit these three arguments and stay on the default backend.
+
+</details>
+
+<details>
+<summary><strong>4. Advanced developer workflow: Mode A / Mode B</strong></summary>
+
+<br/>
+
+This section is intended for project development and optimization, not for a first-time product walkthrough.
+The commands below are smoke commands meant to verify that the workflow is wired correctly before you scale up.
 
 **Mode A: agent-in-the-loop mainline iteration**
 
 ```bash
-python scripts/run_skill_iteration_loop.py --max-rounds 1
+python scripts/run_skill_iteration_loop.py \
+  --baseline-version minor-detection-v0.1.0 \
+  --baseline-source-dir skills/minor-detection \
+  --dataset data/benchmark/val.jsonl \
+  --max-rounds 1 \
+  --max-samples 3 \
+  --sample-strategy stratified \
+  --sample-seed 42 \
+  --workspace-root reports/skill_agent_loops \
+  --execution-mode bypass \
+  --timeout-sec 600
 ```
 
 - Entry: `scripts/run_skill_iteration_loop.py`
-- Default dataset: `data/benchmark/val.jsonl`
+- Dataset used: `data/benchmark/val.jsonl`
 - Purpose: run the main Skill iteration loop with an agent participating in diagnosis and optimization
+- Default requirement: `codex` must be installed and authenticated on your machine
+- To switch to another vendor CLI, append the adapter arguments from the previous section
 
 **Mode B: direct-runner mainline iteration**
 
 ```bash
-python scripts/run_direct_iteration_loop.py --max-rounds 1
+python scripts/run_direct_iteration_loop.py \
+  --baseline-version minor-detection-v0.1.0 \
+  --baseline-source-dir skills/minor-detection \
+  --refresh-baseline-version \
+  --dataset data/benchmark/val.jsonl \
+  --max-rounds 1 \
+  --max-samples 5 \
+  --sample-strategy stratified \
+  --sample-seed 42 \
+  --workspace-root reports/skill_direct_loops \
+  --timeout-sec 600
 ```
 
 - Entry: `scripts/run_direct_iteration_loop.py`
-- Default dataset: `data/benchmark/val.jsonl`
+- Dataset used: `data/benchmark/val.jsonl`
 - Purpose: run the direct-runner version of the mainline loop for Mode A / Mode B comparison
 
 </details>
 
 <details>
-<summary><strong>3. Description Trigger-Boundary Mainline and Side Flows</strong></summary>
+<summary><strong>5. Advanced developer workflow: description trigger-boundary flows</strong></summary>
 
 <br/>
+
+These commands are for trigger-boundary research and iteration rather than the first demo experience.
+They are also written as smoke commands first, so you do not accidentally start with a full-dataset run.
 
 **Description mainline: trigger-boundary optimization**
 
 ```bash
-python scripts/run_trigger_description_iteration_loop.py --max-rounds 1
+python scripts/run_trigger_description_iteration_loop.py \
+  --baseline-version minor-detection-v0.1.0 \
+  --baseline-source-dir skills/minor-detection \
+  --refresh-baseline-version \
+  --optimization-set data/trigger_eval/minor_detection_trigger_eval_v1_optimization_set.json \
+  --final-validation-set data/trigger_eval/minor_detection_trigger_eval_v1_final_validation_set.json \
+  --max-rounds 1 \
+  --max-samples 4 \
+  --sample-strategy stratified \
+  --sample-seed 42 \
+  --workspace-root reports/trigger_description_loops \
+  --execution-mode bypass \
+  --timeout-sec 600
 ```
 
 - Entry: `scripts/run_trigger_description_iteration_loop.py`
 - Optimization target: the `description` field in the frontmatter of `skills/minor-detection/SKILL.md`
-- Default datasets:
+- Datasets used:
   - `data/trigger_eval/minor_detection_trigger_eval_v1_optimization_set.json`
   - `data/trigger_eval/minor_detection_trigger_eval_v1_final_validation_set.json`
+- Default requirement: `codex` must be installed and authenticated on your machine
+- To switch to another vendor CLI, append the adapter arguments from the previous section
 
 **Description side flow: standalone full smoke**
 
 ```bash
-python scripts/run_trigger_eval.py --version minor-detection
+python scripts/run_trigger_eval.py \
+  --version minor-detection-v0.1.0 \
+  --dataset data/trigger_eval/minor_detection_trigger_eval_v1.json \
+  --workspace reports/trigger_eval_runs \
+  --max-samples 4 \
+  --sample-strategy stratified \
+  --sample-seed 42 \
+  --execution-mode bypass \
+  --timeout-sec 600
 ```
 
 - Entry: `scripts/run_trigger_eval.py`
-- Default dataset: `data/trigger_eval/minor_detection_trigger_eval_v1.json`
+- Dataset used: `data/trigger_eval/minor_detection_trigger_eval_v1.json`
 - Purpose: validate trigger judgment, Skill activation, and the full minor-detection JSON output
+- Default requirement: `codex` must be installed and authenticated on your machine
+- To switch to another vendor CLI, append the adapter arguments from the previous section
 
 **Description final validation**
 
 ```bash
-python scripts/run_trigger_description_validation.py --version minor-detection
+python scripts/run_trigger_description_validation.py \
+  --version minor-detection-v0.1.0 \
+  --dataset data/trigger_eval/minor_detection_trigger_eval_v1_final_validation_set.json \
+  --workspace reports/trigger_description_validations \
+  --max-samples 4 \
+  --sample-strategy stratified \
+  --sample-seed 42 \
+  --execution-mode bypass \
+  --timeout-sec 600
 ```
 
 - Entry: `scripts/run_trigger_description_validation.py`
-- Default dataset: `data/trigger_eval/minor_detection_trigger_eval_v1_final_validation_set.json`
+- Dataset used: `data/trigger_eval/minor_detection_trigger_eval_v1_final_validation_set.json`
 - Purpose: run an independent validation pass on the final description version
+- Default requirement: `codex` must be installed and authenticated on your machine
+- To switch to another vendor CLI, append the adapter arguments from the previous section
 
 </details>
 
 <details>
-<summary><strong>4. Tests and Common Arguments</strong></summary>
+<summary><strong>6. Tests and Common Arguments</strong></summary>
 
 <br/>
 
@@ -507,17 +695,28 @@ Common arguments:
 - `--execution-mode sandbox|bypass`
 - `--sandbox-mode read-only|workspace-write|danger-full-access`
 - `--codex-model`
+- `--agent-backend codex|cli`
+- `--agent-cmd`
+- `--agent-args-template`
+- `--agent-model`
 - `--timeout-sec`
 
 </details>
 
-For a first walkthrough, the recommended order is:
+<details>
+<summary><strong>7. Shortest reproduction path</strong></summary>
+
+<br/>
+
+If your goal is simply to reproduce the project from GitHub and experience it end to end, use:
 
 ```bash
-streamlit run app_minor_detection.py
-python scripts/run_skill_iteration_loop.py --max-rounds 1
-python scripts/run_trigger_description_iteration_loop.py --max-rounds 1
+python -m pip install -r requirements.txt
+export AIHUBMIX_API_KEY="your-api-key"
+python -m streamlit run app_minor_detection.py
 ```
+
+</details>
 
 ---
 
@@ -525,6 +724,8 @@ python scripts/run_trigger_description_iteration_loop.py --max-rounds 1
 
 The bundled Skill mainly reads the following environment variables:
 
+- `AIHUBMIX_API_KEY`
+- `OPENAI_API_KEY`
 - `MINOR_DETECTION_CLASSIFIER_BASE_URL`
 - `MINOR_DETECTION_CLASSIFIER_API_KEY`
 - `MINOR_DETECTION_CLASSIFIER_MODEL`

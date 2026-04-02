@@ -61,6 +61,10 @@ class TriggerEvalRunnerConfig:
     sandbox_mode: str = "workspace-write"
     skill_execution_mode: str = "probe"
     codex_model: Optional[str] = None
+    agent_backend: str = "codex"
+    agent_cmd: Optional[str] = None
+    agent_args_template: Optional[str] = None
+    agent_model: Optional[str] = None
     actual_codex_home: Optional[Path] = None
     prompt_template: str = (
         "The installed `minor-detection` skill is available in this workspace.\n"
@@ -377,6 +381,8 @@ print(json.dumps(payload, ensure_ascii=False))
             "execution_mode": self.config.execution_mode,
             "sandbox_mode": self.config.sandbox_mode if self.config.execution_mode == "sandbox" else None,
             "codex_model": self.config.codex_model,
+            "agent_backend": self._agent_backend(),
+            "agent_model": str(getattr(self.config, "agent_model", None) or getattr(self.config, "codex_model", None) or "") or None,
             "sampling": sampling_info,
             "schema_consistency_path": to_relative_posix_path(schema_consistency_path, run_root),
             "schema_consistency_ok": bool(schema_consistency.get("ok")),
@@ -425,6 +431,8 @@ print(json.dumps(payload, ensure_ascii=False))
                 expected_is_minor = None
                 self._write_trigger_probe_launcher(target_path=launcher_path, result_path=launcher_result_path)
             prompt = self._build_prompt(query_path=query_path, launcher_path=launcher_path)
+            prompt_file_path = sample_dir / "agent_prompt.txt"
+            prompt_file_path.write_text(prompt, encoding="utf-8")
 
             gold_payload = {
                 "sample_id": sample_id,
@@ -447,11 +455,12 @@ print(json.dumps(payload, ensure_ascii=False))
             metadata_path = sample_dir / "run_metadata.json"
             agent_output_path = sample_dir / "agent_output.json"
 
-            command = self._build_codex_command(
+            command = self._build_agent_command(
                 workspace_dir=sample_dir,
                 output_schema_path=output_schema_path,
                 final_output_path=final_output_path,
                 installed_skill_dir=installed_skill_dir,
+                prompt_file_path=prompt_file_path,
             )
             env = self._build_env(isolated_codex_dir)
             started_at = time.time()
@@ -470,6 +479,8 @@ print(json.dumps(payload, ensure_ascii=False))
 
             stdout_text = completed.stdout or ""
             stderr_text = completed.stderr or ""
+            if not final_output_path.exists() and stdout_text.strip():
+                final_output_path.write_text(stdout_text.strip(), encoding="utf-8")
             stdout_path.write_text(stdout_text, encoding="utf-8")
             stderr_path.write_text(stderr_text, encoding="utf-8")
             transcript_md_path.write_text(stdout_text, encoding="utf-8")
@@ -536,6 +547,7 @@ print(json.dumps(payload, ensure_ascii=False))
                 "sample_input_path": to_relative_posix_path(sample_input_path, sample_dir),
                 "payload_path": to_relative_posix_path(payload_path, sample_dir) if payload_path else None,
                 "query_path": to_relative_posix_path(query_path, sample_dir),
+                "prompt_file_path": to_relative_posix_path(prompt_file_path, sample_dir),
                 "launcher_path": to_relative_posix_path(launcher_path, sample_dir),
                 "launcher_result_path": to_relative_posix_path(launcher_result_path, sample_dir),
                 "pipeline_observability_path": to_relative_posix_path(pipeline_observability_path, sample_dir) if pipeline_observability_path else None,
@@ -543,6 +555,8 @@ print(json.dumps(payload, ensure_ascii=False))
                 "launcher_success": launcher_success,
                 "launcher_invoked": launcher_invoked,
                 "json_valid": agent_output["json_valid"],
+                "agent_backend": self._agent_backend(),
+                "agent_model": str(getattr(self.config, "agent_model", None) or getattr(self.config, "codex_model", None) or "") or None,
                 "skill_execution_mode": self.config.skill_execution_mode,
                 "skill_output_json_valid": bool(skill_output.get("json_valid")),
             }

@@ -403,93 +403,275 @@ Minor Detection 适合作为风险治理基础设施的一部分，用于：
 
 ## 快速开始
 
-安装依赖：
-
-```bash
-pip install -r requirements.txt
-```
+建议按“环境准备 -> 配置密钥 -> 启动前端 -> 再看进阶链路”的顺序体验项目。
 
 <details>
-<summary><strong>1. 前端演示</strong></summary>
+<summary><strong>0. 环境准备与安装依赖</strong></summary>
 
 <br/>
 
+建议使用 `Python 3.10+`，并在独立虚拟环境中体验本项目。
+
+可任选一种方式创建环境：
+
 ```bash
-streamlit run app_minor_detection.py
+conda create -n minor-detection python=3.10
+conda activate minor-detection
 ```
 
-用于启动 Streamlit 前端工作台，查看系统演示效果。
+或：
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Windows PowerShell：
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+安装依赖：
+
+```bash
+python -m pip install -r requirements.txt
+```
 
 </details>
 
 <details>
-<summary><strong>2. 主线能力迭代：Mode A / Mode B</strong></summary>
+<summary><strong>1. 配置模型凭证</strong></summary>
 
 <br/>
+
+首次体验前，请先配置你自己的 API Key。  
+最简单的方式是配置一个统一的 OpenAI-compatible Key，项目会自动复用到分类与检索流程：
+
+```bash
+export AIHUBMIX_API_KEY="your-api-key"
+```
+
+如果你使用的是 OpenAI-compatible 网关，也可以配置：
+
+```bash
+export OPENAI_API_KEY="your-api-key"
+```
+
+Windows PowerShell：
+
+```powershell
+$env:AIHUBMIX_API_KEY="your-api-key"
+```
+
+如果你希望分类器和 embedding 使用不同配置，也可以分别设置：
+
+- `MINOR_DETECTION_CLASSIFIER_BASE_URL`
+- `MINOR_DETECTION_CLASSIFIER_API_KEY`
+- `MINOR_DETECTION_CLASSIFIER_MODEL`
+- `MINOR_DETECTION_EMBEDDING_BASE_URL`
+- `MINOR_DETECTION_EMBEDDING_API_KEY`
+- `MINOR_DETECTION_EMBEDDING_MODEL`
+
+如果没有配置分类器凭证，运行时不会静默调用未知远程接口，而是直接报错。
+
+</details>
+
+<details>
+<summary><strong>2. 前端演示：最推荐的首次体验方式</strong></summary>
+
+<br/>
+
+```bash
+python -m streamlit run app_minor_detection.py
+```
+
+用于启动 Streamlit 前端工作台，查看系统演示效果。
+
+启动后，建议直接加载以下示例输入体验完整流程：
+
+- `demo_inputs/minor_detection_single_session_payload.json`
+- `demo_inputs/minor_detection_multi_session_payload.json`
+- `demo_inputs/minor_detection_demo_payload.json`
+
+</details>
+
+<details>
+<summary><strong>3. Agent CLI 适配说明：Mode A / Description 线路通用</strong></summary>
+
+<br/>
+
+只有 `Mode A`、`Description 主线`、`Description 副线`、`Description 最终验证` 这几条 Agent 线路需要这一节。  
+`Mode B` 是纯 Python direct runner，不依赖外部 Agent CLI。
+
+本项目现在支持两种 Agent 后端：
+
+- `--agent-backend codex`
+  - 默认模式
+  - 适合本机已经安装并登录 `codex` 的情况
+- `--agent-backend cli`
+  - 适合接入其他厂商的 Agent CLI
+  - 需要你显式传入 `--agent-cmd`，必要时再传 `--agent-args-template`
+
+如果使用其他厂商 CLI，当前适配层的约定是：
+
+- Agent prompt 会由本项目通过 `stdin` 传入，不需要你自己重定向文件
+- 你的 CLI 最好直接把最终 JSON 打到 `stdout`
+- 如果该 CLI 支持把最终回答写到文件，也可以在模板里使用 `{final_output_path}`
+- 可用占位符包括：
+  - `{agent_cmd}`
+  - `{workspace_dir}`
+  - `{prompt_file}`
+  - `{final_output_path}`
+  - `{installed_skill_dir}`
+  - `{output_schema_path}`
+  - `{sandbox_mode}`
+  - `{execution_mode}`
+  - `{agent_model}`
+
+一个已经验证通过的通用 CLI 写法如下。它本质上走的是 `cli` 适配层，只是底层 CLI 仍然填写 `codex`，方便你参考如何替换成其他厂商：
+
+```bash
+--agent-backend cli \
+--agent-cmd codex \
+--agent-args-template '{agent_cmd} exec - --json --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox --cd {workspace_dir} --output-last-message {final_output_path} --add-dir {installed_skill_dir} --add-dir {workspace_dir}'
+```
+
+如果你已经安装并登录 `codex`，也可以直接不传上面这组三个参数，使用默认的 `codex` 后端。
+
+</details>
+
+<details>
+<summary><strong>4. 开发者进阶：主线能力迭代 Mode A / Mode B</strong></summary>
+
+<br/>
+
+这一部分更适合项目开发和能力优化，不是普通用户首次体验的必经步骤。
+下面给出的命令是“先确认链路是否跑通”的 smoke 命令，不是一次性跑完整数据集。
 
 **Mode A：Agent 参与的主线迭代**
 
 ```bash
-python scripts/run_skill_iteration_loop.py --max-rounds 1
+python scripts/run_skill_iteration_loop.py \
+  --baseline-version minor-detection-v0.1.0 \
+  --baseline-source-dir skills/minor-detection \
+  --dataset data/benchmark/val.jsonl \
+  --max-rounds 1 \
+  --max-samples 3 \
+  --sample-strategy stratified \
+  --sample-seed 42 \
+  --workspace-root reports/skill_agent_loops \
+  --execution-mode bypass \
+  --timeout-sec 600
 ```
 
 - 入口：`scripts/run_skill_iteration_loop.py`
-- 默认数据集：`data/benchmark/val.jsonl`
+- 使用数据集：`data/benchmark/val.jsonl`
 - 用途：运行 Agent 参与的 Skill 主线迭代流程
+- 默认前提：本机已安装并登录 `codex`
+- 如果要切换到其他厂商 Agent CLI，请在命令后追加上一节的 `--agent-backend cli --agent-cmd ... --agent-args-template ...`
 
 **Mode B：Direct Runner 主线迭代**
 
 ```bash
-python scripts/run_direct_iteration_loop.py --max-rounds 1
+python scripts/run_direct_iteration_loop.py \
+  --baseline-version minor-detection-v0.1.0 \
+  --baseline-source-dir skills/minor-detection \
+  --refresh-baseline-version \
+  --dataset data/benchmark/val.jsonl \
+  --max-rounds 1 \
+  --max-samples 5 \
+  --sample-strategy stratified \
+  --sample-seed 42 \
+  --workspace-root reports/skill_direct_loops \
+  --timeout-sec 600
 ```
 
 - 入口：`scripts/run_direct_iteration_loop.py`
-- 默认数据集：`data/benchmark/val.jsonl`
+- 使用数据集：`data/benchmark/val.jsonl`
 - 用途：运行 direct runner 版本的主线迭代，用于对比 modeA / modeB 主链表现
 
 </details>
 
 <details>
-<summary><strong>3. Description 触发边界主线与副线</strong></summary>
+<summary><strong>5. 开发者进阶：Description 触发边界主线与副线</strong></summary>
 
 <br/>
+
+这一部分用于优化 skill 触发边界，适合研究或迭代阶段使用。
+下面同样优先给出 smoke 命令，避免首次上手就直接跑完整数据集。
 
 **Description 主线：触发边界优化**
 
 ```bash
-python scripts/run_trigger_description_iteration_loop.py --max-rounds 1
+python scripts/run_trigger_description_iteration_loop.py \
+  --baseline-version minor-detection-v0.1.0 \
+  --baseline-source-dir skills/minor-detection \
+  --refresh-baseline-version \
+  --optimization-set data/trigger_eval/minor_detection_trigger_eval_v1_optimization_set.json \
+  --final-validation-set data/trigger_eval/minor_detection_trigger_eval_v1_final_validation_set.json \
+  --max-rounds 1 \
+  --max-samples 4 \
+  --sample-strategy stratified \
+  --sample-seed 42 \
+  --workspace-root reports/trigger_description_loops \
+  --execution-mode bypass \
+  --timeout-sec 600
 ```
 
 - 入口：`scripts/run_trigger_description_iteration_loop.py`
 - 优化目标：`skills/minor-detection/SKILL.md` frontmatter 中的 `description`
-- 默认数据集：
+- 使用数据集：
   - `data/trigger_eval/minor_detection_trigger_eval_v1_optimization_set.json`
   - `data/trigger_eval/minor_detection_trigger_eval_v1_final_validation_set.json`
+- 默认前提：本机已安装并登录 `codex`
+- 如果要切换到其他厂商 Agent CLI，请在命令后追加上一节的 `--agent-backend cli --agent-cmd ... --agent-args-template ...`
 
 **Description 副线：standalone full smoke**
 
 ```bash
-python scripts/run_trigger_eval.py --version minor-detection
+python scripts/run_trigger_eval.py \
+  --version minor-detection-v0.1.0 \
+  --dataset data/trigger_eval/minor_detection_trigger_eval_v1.json \
+  --workspace reports/trigger_eval_runs \
+  --max-samples 4 \
+  --sample-strategy stratified \
+  --sample-seed 42 \
+  --execution-mode bypass \
+  --timeout-sec 600
 ```
 
 - 入口：`scripts/run_trigger_eval.py`
-- 默认数据集：`data/trigger_eval/minor_detection_trigger_eval_v1.json`
+- 使用数据集：`data/trigger_eval/minor_detection_trigger_eval_v1.json`
 - 用途：验证 trigger 判断、skill 激活与完整 minor-detection JSON 输出
+- 默认前提：本机已安装并登录 `codex`
+- 如果要切换到其他厂商 Agent CLI，请在命令后追加上一节的 `--agent-backend cli --agent-cmd ... --agent-args-template ...`
 
 **Description 最终验证**
 
 ```bash
-python scripts/run_trigger_description_validation.py --version minor-detection
+python scripts/run_trigger_description_validation.py \
+  --version minor-detection-v0.1.0 \
+  --dataset data/trigger_eval/minor_detection_trigger_eval_v1_final_validation_set.json \
+  --workspace reports/trigger_description_validations \
+  --max-samples 4 \
+  --sample-strategy stratified \
+  --sample-seed 42 \
+  --execution-mode bypass \
+  --timeout-sec 600
 ```
 
 - 入口：`scripts/run_trigger_description_validation.py`
-- 默认数据集：`data/trigger_eval/minor_detection_trigger_eval_v1_final_validation_set.json`
+- 使用数据集：`data/trigger_eval/minor_detection_trigger_eval_v1_final_validation_set.json`
 - 用途：对最终 description 版本执行独立 validation
+- 默认前提：本机已安装并登录 `codex`
+- 如果要切换到其他厂商 Agent CLI，请在命令后追加上一节的 `--agent-backend cli --agent-cmd ... --agent-args-template ...`
 
 </details>
 
 <details>
-<summary><strong>4. 测试与常用参数</strong></summary>
+<summary><strong>6. 测试与常用参数</strong></summary>
 
 <br/>
 
@@ -507,17 +689,28 @@ python -m unittest discover -s test
 - `--execution-mode sandbox|bypass`
 - `--sandbox-mode read-only|workspace-write|danger-full-access`
 - `--codex-model`
+- `--agent-backend codex|cli`
+- `--agent-cmd`
+- `--agent-args-template`
+- `--agent-model`
 - `--timeout-sec`
 
 </details>
 
-首次体验建议按以下顺序执行：
+<details>
+<summary><strong>7. 最短复现路径</strong></summary>
+
+<br/>
+
+如果你只想确认“从 GitHub clone 后能否复现并体验项目”，建议按以下顺序执行：
 
 ```bash
-streamlit run app_minor_detection.py
-python scripts/run_skill_iteration_loop.py --max-rounds 1
-python scripts/run_trigger_description_iteration_loop.py --max-rounds 1
+python -m pip install -r requirements.txt
+export AIHUBMIX_API_KEY="your-api-key"
+python -m streamlit run app_minor_detection.py
 ```
+
+</details>
 
 ---
 
@@ -525,6 +718,8 @@ python scripts/run_trigger_description_iteration_loop.py --max-rounds 1
 
 bundled skill 主要读取以下环境变量：
 
+- `AIHUBMIX_API_KEY`
+- `OPENAI_API_KEY`
 - `MINOR_DETECTION_CLASSIFIER_BASE_URL`
 - `MINOR_DETECTION_CLASSIFIER_API_KEY`
 - `MINOR_DETECTION_CLASSIFIER_MODEL`

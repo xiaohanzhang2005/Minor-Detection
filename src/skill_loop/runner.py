@@ -9,6 +9,7 @@ import math
 import os
 import random
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -175,6 +176,10 @@ class CodexRunnerConfig:
     execution_mode: str = "sandbox"
     sandbox_mode: str = "workspace-write"
     codex_model: Optional[str] = None
+    agent_backend: str = "codex"
+    agent_cmd: Optional[str] = None
+    agent_args_template: Optional[str] = None
+    agent_model: Optional[str] = None
     actual_codex_home: Optional[Path] = None
     prompt_template: str = (
         "The installed `minor-detection` skill has already been wired into the prepared launcher.\n"
@@ -527,6 +532,21 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
                 return resolved
         return codex_cmd
 
+    def _resolved_agent_cmd(self) -> str:
+        configured = str(self.config.agent_cmd or self.config.codex_cmd or "codex").strip()
+        if not configured:
+            configured = "codex"
+        if Path(configured).suffix:
+            return configured
+        resolved = shutil.which(configured)
+        return resolved or configured
+
+    def _agent_backend(self) -> str:
+        backend = str(getattr(self.config, "agent_backend", "codex") or "codex").strip().lower()
+        if backend not in {"codex", "cli"}:
+            raise ValueError(f"Unsupported agent backend: {backend}")
+        return backend
+
     def _codex_entrypoint(self) -> List[str]:
         codex_cmd = self._resolved_codex_cmd()
         suffix = Path(codex_cmd).suffix.lower()
@@ -536,8 +556,35 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
             powershell_cmd = shutil.which("pwsh") or shutil.which("powershell")
             if powershell_cmd:
                 return [powershell_cmd, "-NoProfile", "-File", codex_cmd]
-            return [r"C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe", "-NoProfile", "-File", codex_cmd]
+            return ["powershell.exe", "-NoProfile", "-File", codex_cmd]
         return [codex_cmd]
+
+    def _build_cli_agent_command(
+        self,
+        *,
+        workspace_dir: Path,
+        output_schema_path: Path,
+        final_output_path: Path,
+        installed_skill_dir: Path,
+        prompt_file_path: Path,
+    ) -> List[str]:
+        template = str(getattr(self.config, "agent_args_template", "") or "").strip()
+        agent_cmd = self._resolved_agent_cmd()
+        agent_model = str(getattr(self.config, "agent_model", None) or getattr(self.config, "codex_model", None) or "").strip()
+        format_payload = {
+            "agent_cmd": agent_cmd,
+            "workspace_dir": workspace_dir.as_posix(),
+            "output_schema_path": output_schema_path.as_posix(),
+            "final_output_path": final_output_path.as_posix(),
+            "installed_skill_dir": installed_skill_dir.as_posix(),
+            "prompt_file": prompt_file_path.as_posix(),
+            "sandbox_mode": str(self.config.sandbox_mode),
+            "execution_mode": str(self.config.execution_mode),
+            "agent_model": agent_model,
+        }
+        if not template:
+            return [agent_cmd]
+        return shlex.split(template.format(**format_payload), posix=(os.name != "nt"))
 
     def _build_codex_command(
         self,
@@ -577,8 +624,36 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
         )
         return command
 
+    def _build_agent_command(
+        self,
+        *,
+        workspace_dir: Path,
+        output_schema_path: Path,
+        final_output_path: Path,
+        installed_skill_dir: Path,
+        prompt_file_path: Path,
+    ) -> List[str]:
+        if self._agent_backend() == "codex":
+            return self._build_codex_command(
+                workspace_dir=workspace_dir,
+                output_schema_path=output_schema_path,
+                final_output_path=final_output_path,
+                installed_skill_dir=installed_skill_dir,
+            )
+        return self._build_cli_agent_command(
+            workspace_dir=workspace_dir,
+            output_schema_path=output_schema_path,
+            final_output_path=final_output_path,
+            installed_skill_dir=installed_skill_dir,
+            prompt_file_path=prompt_file_path,
+        )
+
     def _build_env(self, isolated_codex_dir: Path) -> Dict[str, str]:
         env = dict(os.environ)
+        if self._agent_backend() != "codex":
+            env.setdefault("PYTHONIOENCODING", "utf-8")
+            env.setdefault("PYTHONUTF8", "1")
+            return env
         home_root = str(isolated_codex_dir.parent)
         env["HOME"] = home_root
         env["USERPROFILE"] = home_root
@@ -950,6 +1025,8 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
             "execution_mode": self.config.execution_mode,
             "sandbox_mode": self.config.sandbox_mode if self.config.execution_mode == "sandbox" else None,
             "codex_model": self.config.codex_model,
+            "agent_backend": self._agent_backend(),
+            "agent_model": str(getattr(self.config, "agent_model", None) or getattr(self.config, "codex_model", None) or "") or None,
             "sampling": sampling_info,
             "schema_consistency_path": to_relative_posix_path(schema_consistency_path, run_root),
             "schema_consistency_ok": bool(schema_consistency.get('ok')),
@@ -980,6 +1057,8 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
                 pipeline_observability_path=pipeline_observability_path,
             )
             prompt = self._build_prompt(payload_path=payload_path, launcher_path=launcher_path)
+            prompt_file_path = sample_dir / "agent_prompt.txt"
+            prompt_file_path.write_text(prompt, encoding="utf-8")
 
             gold_payload = {
                 "sample_id": sample_id,
@@ -998,11 +1077,12 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
             metadata_path = sample_dir / "run_metadata.json"
             agent_output_path = sample_dir / "agent_output.json"
 
-            command = self._build_codex_command(
+            command = self._build_agent_command(
                 workspace_dir=sample_dir,
                 output_schema_path=output_schema_path,
                 final_output_path=final_output_path,
                 installed_skill_dir=installed_skill_dir,
+                prompt_file_path=prompt_file_path,
             )
             env = self._build_env(isolated_codex_dir)
             embedding_runtime = self._embedding_runtime_snapshot(env)
@@ -1022,6 +1102,8 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
 
             stdout_text = completed.stdout or ""
             stderr_text = completed.stderr or ""
+            if not final_output_path.exists() and stdout_text.strip():
+                final_output_path.write_text(stdout_text.strip(), encoding="utf-8")
             stdout_path.write_text(stdout_text, encoding="utf-8")
             stderr_path.write_text(stderr_text, encoding="utf-8")
             transcript_md_path.write_text(stdout_text, encoding="utf-8")
@@ -1072,12 +1154,15 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
                 "timing_path": to_relative_posix_path(timing_path, sample_dir),
                 "sample_input_path": to_relative_posix_path(sample_input_path, sample_dir),
                 "payload_path": to_relative_posix_path(payload_path, sample_dir),
+                "prompt_file_path": to_relative_posix_path(prompt_file_path, sample_dir),
                 "launcher_path": to_relative_posix_path(launcher_path, sample_dir),
                 "launcher_result_path": to_relative_posix_path(launcher_result_path, sample_dir),
                 "pipeline_observability_path": to_relative_posix_path(pipeline_observability_path, sample_dir),
                 "launcher_status": (launcher_result or {}).get("status"),
                 "launcher_success": bool((launcher_result or {}).get('success')),
                 "json_valid": agent_output["json_valid"],
+                "agent_backend": self._agent_backend(),
+                "agent_model": str(getattr(self.config, "agent_model", None) or getattr(self.config, "codex_model", None) or "") or None,
             }
             metadata_path.write_text(_json_dump(metadata_payload), encoding="utf-8")
 

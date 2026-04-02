@@ -32,6 +32,10 @@ from src.utils.llm_client import LLMClient
 from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
 from src.evolution.evaluator import EvaluationReport
 
+MANAGED_VERSION_RE = re.compile(
+    r"^(?P<base>.+)-v(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(?:-rc(?P<rc>\d+))?(?:-(?P<run_tag>\d{8}_\d{6}))?$"
+)
+
 OPTIMIZER_SYSTEM_PROMPT = """You are a prompt optimizer for a teen/adult classification skill.
 
 Revise the existing skill prompt using the evaluation report and its error cases.
@@ -98,6 +102,21 @@ FORMAL_DELIVERABLE_SYNC_ITEMS = (
 )
 
 
+def _parse_managed_version_name(version_name: str) -> Optional[Dict[str, Any]]:
+    match = MANAGED_VERSION_RE.match(str(version_name or "").strip())
+    if not match:
+        return None
+    payload = match.groupdict()
+    return {
+        "base": payload["base"],
+        "major": int(payload["major"]),
+        "minor": int(payload["minor"]),
+        "patch": int(payload["patch"]),
+        "rc": int(payload["rc"]) if payload.get("rc") else None,
+        "run_tag": payload.get("run_tag") or None,
+    }
+
+
 class SkillOptimizer:
     """
     Skill 优化器
@@ -145,6 +164,9 @@ class SkillOptimizer:
         new_version: str,
     ) -> Path:
         if self._is_formal_skill_bundle(current_skill_dir) and current_skill_path.name == "SKILL.md":
+            parsed_version = _parse_managed_version_name(new_version)
+            if parsed_version is None:
+                return self.skills_dir / new_version
             root = self._formal_iterations_root()
             root.mkdir(parents=True, exist_ok=True)
             return root / new_version
@@ -2044,7 +2066,7 @@ def run_optimization_cycle(
     print("=" * 60)
     
     # 1. 获取当前版本的评估结果
-    optimizer = SkillOptimizer()
+    optimizer = SkillOptimizer(skills_dir=str(SKILLS_DIR))
     _, skill_path = optimizer._resolve_skill_paths(current_version)
 
     if baseline_report is None:

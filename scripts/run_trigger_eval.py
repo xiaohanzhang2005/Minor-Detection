@@ -24,6 +24,14 @@ def main() -> None:
     parser.add_argument("--workspace", default=str(ROOT_DIR / "reports" / "trigger_eval_runs"))
     parser.add_argument("--codex-cmd", default="codex")
     parser.add_argument("--codex-model", default=None, help="Override the Codex/agent model, e.g. gpt-5.2 or gpt-5.4.")
+    parser.add_argument("--agent-backend", choices=["codex", "cli"], default="codex")
+    parser.add_argument("--agent-cmd", default=None, help="Alternative agent CLI executable when --agent-backend=cli.")
+    parser.add_argument(
+        "--agent-args-template",
+        default=None,
+        help="Optional generic agent command template. Available placeholders: {agent_cmd} {workspace_dir} {prompt_file} {final_output_path} {installed_skill_dir} {output_schema_path} {sandbox_mode} {execution_mode} {agent_model}.",
+    )
+    parser.add_argument("--agent-model", default=None, help="Vendor-neutral agent model label passed through to generic templates.")
     parser.add_argument(
         "--execution-mode",
         choices=["sandbox", "bypass"],
@@ -59,6 +67,10 @@ def main() -> None:
             sandbox_mode=args.sandbox_mode,
             skill_execution_mode="full",
             codex_model=args.codex_model,
+            agent_backend=args.agent_backend,
+            agent_cmd=args.agent_cmd,
+            agent_args_template=args.agent_args_template,
+            agent_model=args.agent_model or args.codex_model,
         )
     )
     workspace = Path(args.workspace) / args.version

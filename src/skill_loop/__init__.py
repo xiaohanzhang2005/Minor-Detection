@@ -14,6 +14,13 @@ from .loop import SkillAgentLoop, SkillAgentLoopConfig
 from .packaging import install_skill_snapshot, package_skill_version, unpack_skill_package, validate_skill_source
 from .schema_consistency import validate_skill_schema_contract
 from .runner import CodexRunnerConfig, CodexSkillRunner
+from .validation_seed import (
+    ValidationSeedBundle,
+    build_mode_a_validation_command,
+    build_mode_a_validation_payload,
+    build_validation_seed_version_name,
+    create_mode_a_validation_seed,
+)
 from .versioning import (
     build_candidate_version_name,
     build_stable_version_name,
@@ -32,11 +39,16 @@ __all__ = [
     "DirectSkillRunner",
     "SkillAgentLoop",
     "SkillAgentLoopConfig",
+    "ValidationSeedBundle",
     "build_candidate_version_name",
+    "build_mode_a_validation_command",
+    "build_mode_a_validation_payload",
     "build_judge_artifacts",
     "build_stable_version_name",
+    "build_validation_seed_version_name",
     "calc_default_max_errors",
     "compare_reports",
+    "create_mode_a_validation_seed",
     "ensure_version_snapshot",
     "judge_run_artifacts",
     "install_skill_snapshot",

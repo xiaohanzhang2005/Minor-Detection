@@ -44,28 +44,56 @@ def compare_reports(
     candidate_metrics = candidate.get("metrics", {})
     accepted_f1 = float(accepted_metrics.get("f1_score", 0.0) or 0.0)
     candidate_f1 = float(candidate_metrics.get("f1_score", 0.0) or 0.0)
+    accepted_invocation_success = float(accepted.get("invocation_success_rate", 0.0) or 0.0)
+    candidate_invocation_success = float(candidate.get("invocation_success_rate", 0.0) or 0.0)
+    accepted_step_compliance = float(accepted.get("step_compliance_rate", 0.0) or 0.0)
+    candidate_step_compliance = float(candidate.get("step_compliance_rate", 0.0) or 0.0)
+    accepted_schema_validity = float(accepted.get("schema_validity_rate", 0.0) or 0.0)
+    candidate_schema_validity = float(candidate.get("schema_validity_rate", 0.0) or 0.0)
 
     gates = {
+        "f1_non_regression": candidate_f1 >= accepted_f1,
         "f1_improved": candidate_f1 > accepted_f1,
-        "schema_non_regression": float(candidate.get("schema_validity_rate", 0.0) or 0.0)
-        >= float(accepted.get("schema_validity_rate", 0.0) or 0.0),
-        "invocation_non_regression": float(candidate.get("invocation_success_rate", 0.0) or 0.0)
-        >= float(accepted.get("invocation_success_rate", 0.0) or 0.0),
-        "step_compliance_non_regression": float(candidate.get("step_compliance_rate", 0.0) or 0.0)
-        >= float(accepted.get("step_compliance_rate", 0.0) or 0.0),
+        "invocation_non_regression": candidate_invocation_success >= accepted_invocation_success,
+        "invocation_improved": candidate_invocation_success > accepted_invocation_success,
+        "step_compliance_non_regression": candidate_step_compliance >= accepted_step_compliance,
+        "step_compliance_improved": candidate_step_compliance > accepted_step_compliance,
+        "schema_non_regression": candidate_schema_validity >= accepted_schema_validity,
     }
 
     protected_ids = _load_jsonl_sample_ids(accepted_protected_index_path)
     candidate_error_ids = _load_jsonl_sample_ids(candidate_error_index_path)
     protected_regressions = sorted(protected_ids.intersection(candidate_error_ids))
     gates["protected_non_regression"] = not protected_regressions
+    gates["core_metric_improved"] = any(
+        (
+            gates["f1_improved"],
+            gates["invocation_improved"],
+            gates["step_compliance_improved"],
+        )
+    )
 
-    promoted = all(gates.values())
+    promoted = all(
+        (
+            gates["core_metric_improved"],
+            gates["f1_non_regression"],
+            gates["invocation_non_regression"],
+            gates["step_compliance_non_regression"],
+            gates["schema_non_regression"],
+            gates["protected_non_regression"],
+        )
+    )
     return {
         "decision": "promote" if promoted else "rollback",
         "accepted_f1": accepted_f1,
         "candidate_f1": candidate_f1,
         "f1_delta": candidate_f1 - accepted_f1,
+        "accepted_invocation_success_rate": accepted_invocation_success,
+        "candidate_invocation_success_rate": candidate_invocation_success,
+        "invocation_success_delta": candidate_invocation_success - accepted_invocation_success,
+        "accepted_step_compliance_rate": accepted_step_compliance,
+        "candidate_step_compliance_rate": candidate_step_compliance,
+        "step_compliance_delta": candidate_step_compliance - accepted_step_compliance,
         "gates": gates,
         "protected_regressions": protected_regressions,
     }

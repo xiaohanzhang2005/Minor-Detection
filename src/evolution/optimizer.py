@@ -1227,7 +1227,46 @@ class SkillOptimizer:
                 lines.append(f"{role}: {content}")
         return "\n".join(lines)
 
-    def _load_packet_examples(self, packets_dir: Path) -> List[Dict[str, Any]]:
+    def _packet_label_fields(
+        self,
+        *,
+        task_type: str,
+        gold: Dict[str, Any],
+        parsed_json: Optional[Dict[str, Any]],
+        artifact_summary: Dict[str, Any],
+    ) -> Tuple[str, str, str, float]:
+        normalized_task_type = str(task_type or "").strip()
+        if normalized_task_type == "trigger_eval":
+            predicted_bool = parsed_json.get("should_trigger") if isinstance(parsed_json, dict) else None
+            if predicted_bool is None:
+                predicted_label = "unknown"
+            else:
+                predicted_label = "trigger" if bool(predicted_bool) else "no_trigger"
+            ground_truth_label = "trigger" if bool(gold.get("should_trigger", False)) else "no_trigger"
+            label = ground_truth_label
+            confidence = artifact_summary.get("confidence")
+            if confidence is None and isinstance(parsed_json, dict):
+                confidence = parsed_json.get("decision_confidence", 0.0)
+        else:
+            decision = parsed_json.get("decision") if isinstance(parsed_json, dict) else {}
+            predicted_bool = decision.get("is_minor") if isinstance(decision, dict) else None
+            if predicted_bool is None:
+                predicted_label = "unknown"
+            else:
+                predicted_label = "minor" if bool(predicted_bool) else "adult"
+            ground_truth_label = "minor" if bool(gold.get("is_minor", False)) else "adult"
+            label = ground_truth_label
+            confidence = artifact_summary.get("confidence")
+            if confidence is None and isinstance(decision, dict):
+                confidence = decision.get("minor_confidence", 0.0)
+
+        try:
+            confidence_value = float(confidence or 0.0)
+        except Exception:
+            confidence_value = 0.0
+        return ground_truth_label, predicted_label, label, confidence_value
+
+    def _load_packet_examples(self, packets_dir: Path, *, task_type: str = "") -> List[Dict[str, Any]]:
         if not packets_dir.exists():
             return []
 
@@ -1243,14 +1282,12 @@ class SkillOptimizer:
             transcript_text = self._read_packet_text(packet_dir / "transcript.md")
 
             parsed_json = agent_output.get("parsed_json") if isinstance(agent_output, dict) else None
-            decision = parsed_json.get("decision") if isinstance(parsed_json, dict) else {}
-            predicted_bool = decision.get("is_minor") if isinstance(decision, dict) else None
-            if predicted_bool is None:
-                predicted_label = "unknown"
-            else:
-                predicted_label = "minor" if bool(predicted_bool) else "adult"
-            ground_truth_bool = bool(gold.get("is_minor", False))
-            ground_truth_label = "minor" if ground_truth_bool else "adult"
+            ground_truth_label, predicted_label, label, confidence_value = self._packet_label_fields(
+                task_type=task_type,
+                gold=gold,
+                parsed_json=parsed_json,
+                artifact_summary=artifact_summary,
+            )
             sample_slice = str(
                 artifact_summary.get("slice")
                 or judge_findings.get("slice")
@@ -1268,13 +1305,6 @@ class SkillOptimizer:
 
             failure_types = list(judge_findings.get("failure_types", []) or [])
             missing_fields = list(judge_findings.get("missing_fields", []) or [])
-            confidence = artifact_summary.get("confidence")
-            if confidence is None and isinstance(decision, dict):
-                confidence = decision.get("minor_confidence", 0.0)
-            try:
-                confidence_value = float(confidence or 0.0)
-            except Exception:
-                confidence_value = 0.0
 
             sample_preview = self._packet_conversation_preview(sample_input)
             agent_output_preview = self._truncate_prompt_text(
@@ -1331,7 +1361,7 @@ class SkillOptimizer:
                     ),
                     "ground_truth": ground_truth_label,
                     "predicted": predicted_label,
-                    "label": ground_truth_label,
+                    "label": label,
                     "confidence": confidence_value,
                     "slice": sample_slice,
                     "scenario": sample_scenario,
@@ -1621,8 +1651,8 @@ class SkillOptimizer:
     ) -> Dict[str, Any]:
         report_payload = self._load_packet_json(Path(report_path), default={}) or {}
         task_type = str(report_payload.get("task_type", "") or "")
-        failure_examples = self._load_packet_examples(Path(failure_packets_dir))
-        protected_examples = self._load_packet_examples(Path(protected_packets_dir))
+        failure_examples = self._load_packet_examples(Path(failure_packets_dir), task_type=task_type)
+        protected_examples = self._load_packet_examples(Path(protected_packets_dir), task_type=task_type)
 
         total_errors = int(report_payload.get("total_errors", len(failure_examples)) or 0)
         if total_errors <= 0 or not failure_examples:

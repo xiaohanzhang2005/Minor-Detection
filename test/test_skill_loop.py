@@ -991,6 +991,132 @@ class SkillLoopCompareTests(unittest.TestCase):
         )
         self.assertEqual(result["decision"], "rollback")
 
+    def test_compare_reports_allows_invocation_improvement_without_f1_gain(self):
+        root = make_test_dir(self)
+        accepted_report = root / "accepted.json"
+        candidate_report = root / "candidate.json"
+        accepted_report.write_text(
+            json.dumps(
+                {
+                    "metrics": {"f1_score": 0.8},
+                    "schema_validity_rate": 1.0,
+                    "invocation_success_rate": 0.6,
+                    "step_compliance_rate": 0.7,
+                }
+            ),
+            encoding="utf-8",
+        )
+        candidate_report.write_text(
+            json.dumps(
+                {
+                    "metrics": {"f1_score": 0.8},
+                    "schema_validity_rate": 1.0,
+                    "invocation_success_rate": 0.85,
+                    "step_compliance_rate": 0.7,
+                }
+            ),
+            encoding="utf-8",
+        )
+        protected_index = root / "protected.jsonl"
+        protected_index.write_text("", encoding="utf-8")
+        candidate_error_index = root / "errors.jsonl"
+        candidate_error_index.write_text("", encoding="utf-8")
+
+        result = compare_reports(
+            accepted_report_path=accepted_report,
+            candidate_report_path=candidate_report,
+            accepted_protected_index_path=protected_index,
+            candidate_error_index_path=candidate_error_index,
+        )
+
+        self.assertEqual(result["decision"], "promote")
+        self.assertFalse(result["gates"]["f1_improved"])
+        self.assertTrue(result["gates"]["invocation_improved"])
+        self.assertTrue(result["gates"]["core_metric_improved"])
+
+    def test_compare_reports_blocks_step_compliance_regression_even_when_f1_improves(self):
+        root = make_test_dir(self)
+        accepted_report = root / "accepted.json"
+        candidate_report = root / "candidate.json"
+        accepted_report.write_text(
+            json.dumps(
+                {
+                    "metrics": {"f1_score": 0.8},
+                    "schema_validity_rate": 1.0,
+                    "invocation_success_rate": 0.9,
+                    "step_compliance_rate": 0.95,
+                }
+            ),
+            encoding="utf-8",
+        )
+        candidate_report.write_text(
+            json.dumps(
+                {
+                    "metrics": {"f1_score": 0.88},
+                    "schema_validity_rate": 1.0,
+                    "invocation_success_rate": 0.9,
+                    "step_compliance_rate": 0.8,
+                }
+            ),
+            encoding="utf-8",
+        )
+        protected_index = root / "protected.jsonl"
+        protected_index.write_text("", encoding="utf-8")
+        candidate_error_index = root / "errors.jsonl"
+        candidate_error_index.write_text("", encoding="utf-8")
+
+        result = compare_reports(
+            accepted_report_path=accepted_report,
+            candidate_report_path=candidate_report,
+            accepted_protected_index_path=protected_index,
+            candidate_error_index_path=candidate_error_index,
+        )
+
+        self.assertEqual(result["decision"], "rollback")
+        self.assertTrue(result["gates"]["f1_improved"])
+        self.assertFalse(result["gates"]["step_compliance_non_regression"])
+
+    def test_compare_reports_blocks_when_no_core_metric_improves(self):
+        root = make_test_dir(self)
+        accepted_report = root / "accepted.json"
+        candidate_report = root / "candidate.json"
+        accepted_report.write_text(
+            json.dumps(
+                {
+                    "metrics": {"f1_score": 0.8},
+                    "schema_validity_rate": 1.0,
+                    "invocation_success_rate": 0.9,
+                    "step_compliance_rate": 0.95,
+                }
+            ),
+            encoding="utf-8",
+        )
+        candidate_report.write_text(
+            json.dumps(
+                {
+                    "metrics": {"f1_score": 0.8},
+                    "schema_validity_rate": 1.0,
+                    "invocation_success_rate": 0.9,
+                    "step_compliance_rate": 0.95,
+                }
+            ),
+            encoding="utf-8",
+        )
+        protected_index = root / "protected.jsonl"
+        protected_index.write_text("", encoding="utf-8")
+        candidate_error_index = root / "errors.jsonl"
+        candidate_error_index.write_text("", encoding="utf-8")
+
+        result = compare_reports(
+            accepted_report_path=accepted_report,
+            candidate_report_path=candidate_report,
+            accepted_protected_index_path=protected_index,
+            candidate_error_index_path=candidate_error_index,
+        )
+
+        self.assertEqual(result["decision"], "rollback")
+        self.assertFalse(result["gates"]["core_metric_improved"])
+
 
 class PacketOptimizerTests(unittest.TestCase):
     def test_packet_routing_limits_editable_targets(self):
@@ -1052,6 +1178,82 @@ class PacketOptimizerTests(unittest.TestCase):
             optimizer._analyze_description_change(base_skill, candidate_skill)["trivial_change_reason"],
             "punctuation_or_format_only",
         )
+
+    def test_trigger_eval_packet_examples_use_trigger_labels_and_decision_confidence(self):
+        root = make_test_dir(self)
+        packets_dir = root / "failure_packets"
+        packet_dir = packets_dir / "failure_001"
+        packet_dir.mkdir(parents=True, exist_ok=True)
+        (packet_dir / "sample_input.json").write_text(
+            json.dumps({"query": "帮我判断要不要触发这个 skill"}, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        (packet_dir / "gold.json").write_text(
+            json.dumps(
+                {
+                    "sample_id": "trigger-001",
+                    "should_trigger": True,
+                    "expected_is_minor": False,
+                    "slice": "identity_explicit",
+                    "scenario": "window_scan",
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        (packet_dir / "agent_output.json").write_text(
+            json.dumps(
+                {
+                    "parsed_json": {
+                        "should_trigger": False,
+                        "skill_invoked": False,
+                        "decision_confidence": 0.73,
+                        "decision_reason": "no trigger",
+                        "invocation_status": "not_invoked",
+                    },
+                    "json_valid": True,
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        (packet_dir / "judge_findings.json").write_text(
+            json.dumps(
+                {
+                    "sample_id": "trigger-001",
+                    "failure_types": ["false_negative"],
+                    "missing_fields": [],
+                    "slice": "identity_explicit",
+                    "scenario": "window_scan",
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        (packet_dir / "artifact_summary.json").write_text(
+            json.dumps(
+                {
+                    "sample_id": "trigger-001",
+                    "slice": "identity_explicit",
+                    "scenario": "window_scan",
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        examples = optimizer._load_packet_examples(packets_dir, task_type="trigger_eval")
+
+        self.assertEqual(len(examples), 1)
+        self.assertEqual(examples[0]["ground_truth"], "trigger")
+        self.assertEqual(examples[0]["predicted"], "no_trigger")
+        self.assertEqual(examples[0]["label"], "trigger")
+        self.assertAlmostEqual(examples[0]["confidence"], 0.73)
 
     def test_trigger_eval_optimizer_skips_non_substantive_description_candidate(self):
         root = make_test_dir(self)

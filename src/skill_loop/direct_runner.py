@@ -242,7 +242,9 @@ class DirectSkillRunner:
             metadata_path = sample_dir / "run_metadata.json"
             agent_output_path = sample_dir / "agent_output.json"
 
-            command = [sys.executable, str(pipeline_script_path), "--payload-file", str(payload_path)]
+            pipeline_script_arg = os.path.relpath(pipeline_script_path.resolve(), sample_dir.resolve())
+            payload_arg = payload_path.name
+            command = [sys.executable, pipeline_script_arg, "--payload-file", payload_arg]
             env = dict(os.environ)
             env.setdefault("PYTHONIOENCODING", "utf-8")
             env.setdefault("PYTHONUTF8", "1")

@@ -94,6 +94,8 @@ def main() -> None:
         "report_path": to_relative_posix_path(judged["report_path"], ROOT_DIR),
         "run_root": to_relative_posix_path(run_root, ROOT_DIR),
         "skill_source_dir": to_relative_posix_path(version_dir, ROOT_DIR),
+        "final_validation_metrics": judged["report_payload"].get("final_validation_metrics", {}),
+        "release_contract_gate_results": judged["report_payload"].get("release_contract_gate_results", {}),
         "trigger_metrics": judged["report_payload"].get("trigger_metrics", {}),
         "full_output_json_valid_rate_on_invoked": judged["report_payload"].get("full_output_json_valid_rate_on_invoked"),
         "full_output_schema_valid_rate_on_invoked": judged["report_payload"].get("full_output_schema_valid_rate_on_invoked"),

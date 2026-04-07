@@ -1,0 +1,11 @@
+{
+  "sample_id": "trigger-other_profile_request-146",
+  "packet_dir": "protected_packets/protected_008_trigger-other_profile_request-146",
+  "sample_dir": "../eval-0011-trigger-other_profile_request-146",
+  "latency_seconds": 86.546,
+  "confidence": 0.85,
+  "ground_truth": false,
+  "predicted": false,
+  "slice": "other_profile_request",
+  "scenario": "direct_request"
+}

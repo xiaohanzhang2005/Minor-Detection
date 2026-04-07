@@ -26,7 +26,6 @@ from src.config import (
     OPTIMIZER_MODEL,
     BENCHMARK_TRAIN_PATH,
     resolve_skill_markdown_path,
-    set_active_skill_version,
 )
 from src.utils.llm_client import LLMClient
 from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
@@ -100,6 +99,9 @@ FORMAL_DELIVERABLE_SYNC_ITEMS = (
     "assets",
     "agents",
 )
+
+TRIGGER_DESCRIPTION_VALIDATION_MAX_ATTEMPTS = 3
+TRIGGER_DESCRIPTION_MIN_LENGTH = 45
 
 
 def _parse_managed_version_name(version_name: str) -> Optional[Dict[str, Any]]:
@@ -224,10 +226,21 @@ class SkillOptimizer:
         if not frontmatter_match:
             return ""
         frontmatter = frontmatter_match.group("frontmatter")
-        description_match = re.search(r"(?m)^description:\s*(.+?)\s*$", frontmatter)
-        if not description_match:
-            return ""
-        return str(description_match.group(1) or "").strip()
+        lines = frontmatter.splitlines()
+        for index, line in enumerate(lines):
+            stripped = line.strip()
+            if not stripped.startswith("description:"):
+                continue
+            after_colon = stripped[len("description:"):].strip()
+            if after_colon in {"|", ">"}:
+                block_lines: List[str] = []
+                for next_line in lines[index + 1 :]:
+                    if not next_line.startswith((" ", "\t")):
+                        break
+                    block_lines.append(next_line.strip())
+                return "\n".join(block_lines).strip()
+            return after_colon.strip()
+        return ""
 
     def _normalize_description_value(self, value: str) -> str:
         normalized = str(value or "").strip()
@@ -285,14 +298,28 @@ class SkillOptimizer:
         if not frontmatter_match:
             raise ValueError("SKILL.md is missing YAML frontmatter")
         frontmatter = frontmatter_match.group("frontmatter")
-        if not re.search(r"(?m)^description:\s*.+$", frontmatter):
+        if not re.search(r"(?m)^description:\s*(?:.+)?$", frontmatter):
             raise ValueError("SKILL.md frontmatter is missing description")
-        updated_frontmatter = re.sub(
-            r"(?m)^description:\s*.+$",
-            f"description: {normalized_description}",
-            frontmatter,
-            count=1,
-        )
+        lines = frontmatter.splitlines()
+        updated_lines: List[str] = []
+        replaced = False
+        skip_block = False
+        for index, line in enumerate(lines):
+            if skip_block:
+                if line.startswith((" ", "\t")):
+                    continue
+                skip_block = False
+            if not replaced and line.strip().startswith("description:"):
+                updated_lines.append(f"description: {normalized_description}")
+                replaced = True
+                after_colon = line.strip()[len("description:"):].strip()
+                if after_colon in {"|", ">"}:
+                    skip_block = True
+                continue
+            updated_lines.append(line)
+        if not replaced:
+            raise ValueError("SKILL.md frontmatter is missing description")
+        updated_frontmatter = "\n".join(updated_lines)
         return f"---\n{updated_frontmatter}\n---{frontmatter_match.group('rest')}"
 
     def _description_only_skill_content(self, content: str) -> str:
@@ -316,6 +343,331 @@ class SkillOptimizer:
         if not new_description:
             new_description = self._normalize_description_value(revised_text)
         return self._replace_frontmatter_description(current_skill, new_description)
+
+    def _has_trigger_description_truncated_ending(self, description: str) -> bool:
+        normalized = self._normalize_description_value(description)
+        if not normalized:
+            return False
+        return bool(
+            re.search(r"(包括以下情况|主要包括|如下|例如|比如)\s*[:：]\s*$", normalized)
+            or re.search(r"(包括以下情况|主要包括|如下)\s*$", normalized)
+        )
+
+    def _has_trigger_semantics(self, description: str) -> bool:
+        normalized = self._normalize_description_value(description)
+        if not normalized:
+            return False
+        return any(
+            marker in normalized
+            for marker in (
+                "触发此技能",
+                "应触发",
+                "应调用",
+                "应激活",
+                "使用此技能",
+                "调用此技能",
+                "才触发",
+                "需要调用",
+            )
+        )
+
+    def _has_non_trigger_semantics(self, description: str) -> bool:
+        normalized = self._normalize_description_value(description)
+        if not normalized:
+            return False
+        return any(
+            marker in normalized
+            for marker in (
+                "不触发",
+                "不要触发",
+                "不应触发",
+                "不调用",
+                "不要调用",
+                "不应调用",
+                "否则不触发",
+                "不足以触发",
+            )
+        )
+
+    def _contains_any_marker(self, text: str, markers: Tuple[str, ...]) -> bool:
+        normalized = self._normalize_description_value(text)
+        return any(marker in normalized for marker in markers)
+
+    def _has_task_boundary_semantics(self, description: str) -> bool:
+        normalized = self._normalize_description_value(description)
+        if not normalized:
+            return False
+        direct_patterns = (
+            r"(无|没有).{0,12}(身份判断需求|未成年人判断需求|青少年判断需求)",
+            r"(仅涉及|只是|仅是|仅讨论).{0,24}(教育话题|校园话题|学习话题|普通话题|未成年人相关话题).{0,20}(无|没有).{0,12}(身份判断需求|未成年人判断需求|青少年判断需求)",
+            r"(请求|任务|需求).{0,16}(本质|目标).{0,16}(是|为|属于).{0,16}(其他分析|其他画像分析|别的分析|其他任务)",
+            r"(请求|任务|需求).{0,12}目标.{0,12}(不是|并非|非|不属于).{0,24}(未成年人识别|青少年识别|未成年人判断|青少年判断|年龄判断|学生身份判断)",
+            r"(请求|任务|需求).{0,12}目标.{0,12}(与|和).{0,12}(未成年人判断|青少年判断|年龄判断|学生身份判断).{0,8}(无关|不相关)",
+            r"(请求|任务|需求).{0,12}目的.{0,12}(与|和).{0,12}(未成年人识别|青少年识别|未成年人判断|青少年判断|年龄判断|学生身份判断).{0,8}(无关|不相关)",
+            r"(情绪画像|危机干预|关系分析|教学话题|一般画像)",
+        )
+        patterns = (
+            r"仅当.{0,48}(判断|识别|分析).{0,24}(未成年人|青少年|年龄倾向|校园倾向|学生画像).{0,24}(才(应)?(触发|调用|激活)|使用此技能)",
+            r"(任务目标|需求本质|任务本质).{0,24}(不是|并非|不属于).{0,24}(判断|识别|分析).{0,24}(未成年人|青少年|年龄倾向|校园倾向|学生画像)",
+            r"(请求|任务|需求).{0,12}目标.{0,12}(不是|并非|非|不属于).{0,24}(未成年人识别|青少年识别|未成年人判断|青少年判断|年龄判断|学生身份判断).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用)?",
+            r"(请求|任务|需求).{0,12}目标.{0,12}(与|和).{0,12}(未成年人判断|青少年判断|年龄判断|学生身份判断).{0,8}(无关|不相关).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用)",
+            r"(请求|任务|需求).{0,12}目的.{0,12}(与|和).{0,12}(未成年人识别|青少年识别|未成年人判断|青少年判断|年龄判断|学生身份判断).{0,8}(无关|不相关).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用)?",
+            r"(不是|并非).{0,24}(判断|识别|分析).{0,24}(未成年人|青少年|年龄倾向|校园倾向|学生画像).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用)",
+            r"(如果|若|当).{0,20}(任务目标|需求本质).{0,24}(不是|并非|不属于).{0,24}(未成年人|青少年|年龄倾向|校园倾向|学生画像).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用)",
+            r"(无|没有).{0,12}(身份判断需求|未成年人判断需求|青少年判断需求).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用)",
+            r"(仅涉及|只是|仅是).{0,24}(教育话题|校园话题|学习话题|普通话题).{0,20}(无|没有).{0,12}(身份判断需求|未成年人判断需求|青少年判断需求)",
+            r"(请求|任务|需求).{0,16}(本质|目标).{0,16}(是|为|属于).{0,16}(其他分析|其他画像分析|别的分析|其他任务).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用)",
+            r"(情绪画像|危机干预|关系分析|教学话题|一般画像).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用)",
+        )
+        if any(re.search(pattern, normalized) for pattern in patterns):
+            return True
+        if self._has_non_trigger_semantics(normalized):
+            if self._contains_any_marker(
+                normalized,
+                (
+                    "无身份判断需求",
+                    "不含年龄判断意图",
+                    "任务目标非年龄分析",
+                    "任务目标不是年龄分析",
+                    "任务目标非未成年人识别",
+                    "任务目标不是未成年人识别",
+                    "请求本质是其他分析",
+                    "请求本质为其他分析",
+                    "请求本质为其他画像分析",
+                    "请求本质是其他画像分析",
+                    "请求本质属于其他分析",
+                    "请求目标与未成年人判断无关",
+                    "请求目标和未成年人判断无关",
+                    "请求目标与年龄判断无关",
+                    "请求目的与未成年人识别无关",
+                    "请求目的和未成年人识别无关",
+                    "请求目标不是未成年人识别",
+                    "请求目标非未成年人识别",
+                    "请求目标不是年龄判断",
+                    "请求目标非年龄判断",
+                    "仅涉及一般分析",
+                    "仅讨论未成年人相关话题但无身份判断需求",
+                    "仅涉及未成年人相关话题但无身份判断需求",
+                ),
+            ):
+                return True
+            if (
+                self._contains_any_marker(normalized, ("情绪画像", "危机干预", "关系分析", "一般分析"))
+                and self._contains_any_marker(normalized, ("年龄判断", "身份判断", "未成年人识别", "青少年识别"))
+            ):
+                return True
+        return any(re.search(pattern, normalized) for pattern in direct_patterns) and self._has_non_trigger_semantics(normalized)
+
+    def _has_evidence_sufficiency_boundary_semantics(self, description: str) -> bool:
+        normalized = self._normalize_description_value(description)
+        if not normalized:
+            return False
+        direct_patterns = (
+            r"(信息|证据|线索).{0,8}(不足|不充分|有限|模糊)",
+            r"(证据窗口不足|信息不足|线索不足|证据不足|证据不充分)",
+            r"(仅凭|单一|单个|孤立).{0,20}(线索|信号|表述|词)",
+            r"(弱线索|模糊线索|间接线索)",
+            r"(证据充分性).{0,12}(达到|满足).{0,12}(分析要求|触发要求|判断要求)",
+            r"(至少\d+条强信号|稳定重复特征)",
+        )
+        patterns = (
+            r"(信息|证据|线索).{0,8}(不足|不充分|有限|模糊).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用|不足以触发)",
+            r"(仅凭|单一|单个|孤立).{0,20}(线索|信号|表述|词).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用|不足以触发)",
+            r"(弱线索|模糊线索|间接线索).{0,24}(不(应)?触发|不(应)?调用|不要触发|不要调用|不足以触发)",
+            r"(除非).{0,32}(证据|线索|信号).{0,12}(充分|足够).{0,24}(否则不触发|否则不调用)",
+        )
+        if any(re.search(pattern, normalized) for pattern in patterns):
+            return True
+        if self._has_non_trigger_semantics(normalized):
+            if self._contains_any_marker(
+                normalized,
+                (
+                    "无明确未成年证据",
+                    "无直接证据",
+                    "证据不足",
+                    "信息不足",
+                    "线索不足",
+                    "证据窗口不足",
+                    "仅有弱关联信号",
+                    "仅有弱线索",
+                    "仅凭单一弱线索",
+                    "虽有学生身份提及但无明确未成年证据",
+                ),
+            ):
+                return True
+            if (
+                self._contains_any_marker(normalized, ("学生身份提及", "学生相关词汇", "家长提及", "弱关联信号", "弱线索"))
+                and self._contains_any_marker(normalized, ("无明确未成年证据", "无其他未成年佐证", "无直接证据", "证据不足"))
+            ):
+                return True
+        return any(re.search(pattern, normalized) for pattern in direct_patterns) and self._has_non_trigger_semantics(normalized)
+
+    def _validate_trigger_description_candidate(
+        self,
+        *,
+        base_skill_text: str,
+        candidate_skill_text: str,
+        failure_examples: Optional[List[Dict[str, Any]]] = None,
+        protected_examples: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
+        base_description = self._normalize_description_value(self._extract_frontmatter_description(base_skill_text))
+        candidate_description = self._normalize_description_value(self._extract_frontmatter_description(candidate_skill_text))
+        errors: List[str] = []
+        warnings: List[str] = []
+
+        if not candidate_description:
+            errors.append("description_empty")
+        if candidate_description and len(candidate_description) < TRIGGER_DESCRIPTION_MIN_LENGTH:
+            errors.append("description_too_short")
+        if candidate_description and self._has_trigger_description_truncated_ending(candidate_description):
+            errors.append("truncated_ending")
+
+        has_trigger_semantics = self._has_trigger_semantics(candidate_description)
+        has_non_trigger_semantics = self._has_non_trigger_semantics(candidate_description)
+        has_task_boundary = self._has_task_boundary_semantics(candidate_description)
+        has_evidence_boundary = self._has_evidence_sufficiency_boundary_semantics(candidate_description)
+
+        if candidate_description and not has_trigger_semantics:
+            errors.append("missing_trigger_semantics")
+        if candidate_description and not has_non_trigger_semantics:
+            errors.append("missing_non_trigger_boundary")
+        if candidate_description and not has_task_boundary:
+            errors.append("missing_task_boundary")
+        if candidate_description and not has_evidence_boundary:
+            errors.append("missing_evidence_sufficiency_boundary")
+
+        if candidate_description and "以下情况不触发" not in candidate_description and "除非" not in candidate_description:
+            warnings.append("non_trigger_boundary_not_explicitly_labeled")
+
+        return {
+            "passed": not errors,
+            "errors": errors,
+            "warnings": warnings,
+            "signals": {
+                "has_trigger_semantics": has_trigger_semantics,
+                "has_non_trigger_semantics": has_non_trigger_semantics,
+                "has_task_boundary": has_task_boundary,
+                "has_evidence_sufficiency_boundary": has_evidence_boundary,
+            },
+            "base_description": base_description,
+            "candidate_description": candidate_description,
+            "failure_sample_ids": [str(item.get("sample_id", "") or "") for item in (failure_examples or []) if str(item.get("sample_id", "") or "")],
+            "protected_sample_ids": [str(item.get("sample_id", "") or "") for item in (protected_examples or []) if str(item.get("sample_id", "") or "")],
+        }
+
+    def _build_trigger_description_validation_feedback(self, validation_result: Dict[str, Any]) -> str:
+        errors = list(validation_result.get("errors") or [])
+        warnings = list(validation_result.get("warnings") or [])
+        prompt_parts = [
+            "# Trigger Description Validator Feedback",
+            "- The previous draft failed local trigger-description validation.",
+            "- Keep the current correct trigger coverage, but revise the description so it satisfies the missing boundary requirements below.",
+        ]
+        if errors:
+            prompt_parts.append("- Hard validation failures:")
+            for error in errors:
+                prompt_parts.append(f"  - {error}")
+        if warnings:
+            prompt_parts.append("- Warnings to improve if possible:")
+            for warning in warnings:
+                prompt_parts.append(f"  - {warning}")
+        prompt_parts.extend(
+            [
+                "- Do not return a shorter slogan-like description.",
+                "- Do not leave hanging lead-ins such as `包括以下情况：` without completing them.",
+                "- The revised description must still define: trigger scope, non-trigger scope, task boundary, and evidence-sufficiency boundary.",
+            ]
+        )
+        return "\n".join(prompt_parts)
+
+    def _count_trigger_description_validation_errors(self, validation_result: Optional[Dict[str, Any]]) -> int:
+        if not validation_result:
+            return 10**9
+        return len(list(validation_result.get("errors") or []))
+
+    def _generate_validated_trigger_description_revision(
+        self,
+        *,
+        optimization_prompt: str,
+        current_content: str,
+        failure_examples: List[Dict[str, Any]],
+        protected_examples: List[Dict[str, Any]],
+        max_attempts: int = TRIGGER_DESCRIPTION_VALIDATION_MAX_ATTEMPTS,
+    ) -> Dict[str, Any]:
+        repair_feedback = ""
+        attempt_records: List[Dict[str, Any]] = []
+        last_validation: Optional[Dict[str, Any]] = None
+        best_validation: Optional[Dict[str, Any]] = None
+        best_revised_content: Optional[str] = None
+
+        for attempt in range(1, max_attempts + 1):
+            attempt_prompt = optimization_prompt
+            if repair_feedback:
+                attempt_prompt += "\n\n" + repair_feedback
+
+            revised_content = self._request_revised_markdown(attempt_prompt)
+            revised_content = self._apply_description_only_revision(current_content, revised_content)
+            validation_result = self._validate_trigger_description_candidate(
+                base_skill_text=current_content,
+                candidate_skill_text=revised_content,
+                failure_examples=failure_examples,
+                protected_examples=protected_examples,
+            )
+            attempt_records.append(
+                {
+                    "attempt": attempt,
+                    "passed": bool(validation_result.get("passed")),
+                    "errors": list(validation_result.get("errors") or []),
+                    "warnings": list(validation_result.get("warnings") or []),
+                    "candidate_description": validation_result.get("candidate_description"),
+                }
+            )
+            last_validation = validation_result
+            if best_validation is None or self._count_trigger_description_validation_errors(validation_result) < self._count_trigger_description_validation_errors(best_validation):
+                best_validation = validation_result
+                best_revised_content = revised_content
+            if validation_result.get("passed"):
+                return {
+                    "success": True,
+                    "revised_content": revised_content,
+                    "description_validation": {
+                        **validation_result,
+                        "attempts": attempt_records,
+                    },
+                }
+            candidate_description = str(validation_result.get("candidate_description", "") or "")
+            best_candidate_description = str((best_validation or {}).get("candidate_description", "") or "")
+            repair_feedback = self._build_trigger_description_validation_feedback(validation_result)
+            if candidate_description:
+                repair_feedback += (
+                    "\n\n# Previous Draft To Revise\n"
+                    "Revise the draft below by minimally adding the missing boundary semantics. Do not throw it away and start from scratch unless it is clearly malformed.\n"
+                    f"{candidate_description}"
+                )
+            if best_candidate_description and best_candidate_description != candidate_description:
+                repair_feedback += (
+                    "\n\n# Best Draft So Far\n"
+                    "If the last draft degraded, restore this stronger draft and patch only the missing items from the validator.\n"
+                    f"{best_candidate_description}"
+                )
+            repair_feedback += (
+                "\n\n# Output Constraint\n"
+                "Return a normal Chinese description sentence or paragraph only. Do not output placeholders, tables, pipes, bullets-only fragments, or formatting markers."
+            )
+
+        return {
+            "success": False,
+            "message": "description revision failed validator",
+            "description_validation": {
+                **(
+                    best_validation
+                    or last_validation
+                    or {"passed": False, "errors": ["validator_failed_without_result"], "warnings": [], "signals": {}}
+                ),
+                "attempts": attempt_records,
+            },
+            "best_revised_content": best_revised_content,
+        }
 
     def _build_reference_prompt_sections(self, reference_materials: Dict[str, str]) -> List[str]:
         if not reference_materials:
@@ -358,7 +710,10 @@ class SkillOptimizer:
             "- Do not change the skill title, headings, body sections, execution flow, scripts, output rules, references, or any other file.",
             "- The goal is only to improve whether the agent correctly triggers this skill.",
             "- Keep the description broad enough to catch true trigger intents, but do not make it globally over-trigger.",
+            "- Treat `description` as a compact trigger-routing policy, not as a full classifier rulebook or execution manual.",
+            "- Preserve both task boundary and evidence-sufficiency boundary: if the task is not minor/youth judgment, or the evidence is still insufficient/too weak, the description must say not to trigger.",
             "- The revision must be semantically substantive. Quote-style-only, punctuation-only, whitespace-only, or formatting-only edits will be rejected.",
+            "- The revision will be checked by a local validator before it is allowed to become a candidate. Drafts that are too short, truncated, or missing non-trigger / task-boundary / evidence-sufficiency rules will be rejected and must be rewritten.",
             "- If the current wording is already close, rewrite it into clearer trigger and non-trigger boundary rules grounded in the judge failure packets.",
             "- Return either the full revised `SKILL.md` or just the revised `description` value; only the description will be applied.",
         ]
@@ -434,6 +789,57 @@ class SkillOptimizer:
             "- Treat `references/icbo-guidelines.md` as support material, not an editable target in this round.",
         ]
 
+    def _build_formal_classifier_system_prompt_sections(
+        self,
+        *,
+        editable_target: str,
+    ) -> List[str]:
+        if editable_target != "references/classifier-system.md":
+            return []
+
+        return [
+            "# Classifier System Prompt Editing Rules",
+            "- You are editing the classifier system prompt for the bundled formal skill.",
+            "- Keep the main language of the markdown as Chinese.",
+            "- Strengthen output-field semantics, schema discipline, and hard constraints on how the classifier reasons.",
+            "- Do not move workflow instructions out of `SKILL.md` into this file.",
+            "- Do not rewrite retrieval query specifics here; retrieval tuning belongs in `references/retrieval-query-template.md`.",
+        ]
+
+    def _build_formal_classifier_user_template_prompt_sections(
+        self,
+        *,
+        editable_target: str,
+    ) -> List[str]:
+        if editable_target != "references/classifier-user-template.md":
+            return []
+
+        return [
+            "# Classifier User Template Editing Rules",
+            "- You are editing the classifier user prompt template for the bundled formal skill.",
+            "- Keep the template concise and operational.",
+            "- Prioritize evidence packaging quality, direct-evidence extraction discipline, and robust input organization.",
+            "- `direct_evidence` must stay quote-like and traceable to the current conversation; do not let it drift into summary sentences or conclusion language.",
+            "- If the classifier needs to explain why several quoted spans matter, place that synthesis in `evidence_summary` instead of `direct_evidence`.",
+            "- Do not duplicate the full system prompt or the full execution manual into this file.",
+        ]
+
+    def _build_formal_runtime_config_prompt_sections(
+        self,
+        *,
+        editable_target: str,
+    ) -> List[str]:
+        if editable_target != "scripts/config.py":
+            return []
+
+        return [
+            "# Runtime Config Editing Rules",
+            "- You are editing runtime configuration only because the judge reported a config-specific observability issue.",
+            "- Make the smallest safe change possible.",
+            "- Do not alter product behavior unless it is directly required to fix the reported runtime/config issue.",
+            "- Keep endpoints, thresholds, and feature flags stable unless the packet evidence explicitly points to them.",
+        ]
+
     def _build_review_diff_markdown(
         self,
         *,
@@ -441,6 +847,7 @@ class SkillOptimizer:
         candidate_version: str,
         file_diffs: List[Dict[str, Any]],
         description_only_check: Optional[Dict[str, Any]] = None,
+        edit_contract_check: Optional[Dict[str, Any]] = None,
     ) -> str:
         lines = [
             "# Formal Skill Review Diff",
@@ -464,6 +871,18 @@ class SkillOptimizer:
                 ]
             )
 
+        if edit_contract_check:
+            lines.extend(
+                [
+                    "",
+                    "## Edit Contract Checks",
+                    f"- passed: `{str(edit_contract_check.get('passed')).lower()}`",
+                    f"- allowed_files: `{', '.join(edit_contract_check.get('allowed_files') or []) or 'none'}`",
+                    f"- changed_files: `{', '.join(edit_contract_check.get('changed_files') or []) or 'none'}`",
+                    f"- unexpected_changed_files: `{', '.join(edit_contract_check.get('unexpected_changed_files') or []) or 'none'}`",
+                ]
+            )
+
         for item in file_diffs:
             lines.extend(
                 [
@@ -483,7 +902,7 @@ class SkillOptimizer:
 
         return "\n".join(lines) + "\n"
 
-    def create_formal_skill_review_artifact(
+    def _collect_formal_review_details(
         self,
         *,
         base_version: str,
@@ -491,10 +910,6 @@ class SkillOptimizer:
     ) -> Dict[str, Any]:
         base_dir, _ = self._resolve_skill_paths(base_version)
         candidate_dir, _ = self._resolve_skill_paths(candidate_version)
-
-        review_dir = candidate_dir / "review"
-        review_dir.mkdir(parents=True, exist_ok=True)
-
         candidate_history_path = candidate_dir / "optimization_history.json"
         candidate_history = json.loads(candidate_history_path.read_text(encoding="utf-8")) if candidate_history_path.exists() else {}
         description_only_expected = bool(candidate_history.get("description_only_mode")) or str(candidate_history.get("task_type", "") or "") == "trigger_eval"
@@ -527,7 +942,11 @@ class SkillOptimizer:
                 }
             )
 
+        changed_files = [item["file"] for item in file_diffs if item["changed"]]
         non_description_changed_files = [item["file"] for item in file_diffs if item["changed"] and item["file"] != "SKILL.md"]
+        allowed_files = sorted(str(item) for item in (candidate_history.get("edited_files") or []))
+        unexpected_changed_files = [item for item in changed_files if item not in allowed_files]
+
         description_only_passed = None
         substantive_change_passed = None
         substantive_change_reason = None
@@ -545,6 +964,56 @@ class SkillOptimizer:
             "substantive_change_passed": substantive_change_passed,
             "substantive_change_reason": substantive_change_reason,
         }
+        edit_contract_check = {
+            "allowed_files": allowed_files,
+            "changed_files": changed_files,
+            "unexpected_changed_files": unexpected_changed_files,
+            "passed": not unexpected_changed_files,
+        }
+        return {
+            "candidate_history": candidate_history,
+            "file_diffs": file_diffs,
+            "description_only_check": description_only_check,
+            "edit_contract_check": edit_contract_check,
+        }
+
+    def evaluate_candidate_edit_contract(
+        self,
+        *,
+        base_version: str,
+        candidate_version: str,
+    ) -> Dict[str, Any]:
+        details = self._collect_formal_review_details(
+            base_version=base_version,
+            candidate_version=candidate_version,
+        )
+        return {
+            "base_version": base_version,
+            "candidate_version": candidate_version,
+            "description_only_check": details["description_only_check"],
+            "edit_contract_check": details["edit_contract_check"],
+            "pass": bool(details["edit_contract_check"].get("passed")),
+        }
+
+    def create_formal_skill_review_artifact(
+        self,
+        *,
+        base_version: str,
+        candidate_version: str,
+    ) -> Dict[str, Any]:
+        candidate_dir, _ = self._resolve_skill_paths(candidate_version)
+
+        review_dir = candidate_dir / "review"
+        review_dir.mkdir(parents=True, exist_ok=True)
+
+        review_details = self._collect_formal_review_details(
+            base_version=base_version,
+            candidate_version=candidate_version,
+        )
+        candidate_history = review_details["candidate_history"]
+        file_diffs = review_details["file_diffs"]
+        description_only_check = review_details["description_only_check"]
+        edit_contract_check = review_details["edit_contract_check"]
 
         review_path = review_dir / f"formal_skill_review_vs_{base_version}.md"
         review_path.write_text(
@@ -553,6 +1022,7 @@ class SkillOptimizer:
                 candidate_version=candidate_version,
                 file_diffs=file_diffs,
                 description_only_check=description_only_check,
+                edit_contract_check=edit_contract_check,
             ),
             encoding="utf-8",
         )
@@ -565,6 +1035,7 @@ class SkillOptimizer:
             "task_type": candidate_history.get("task_type"),
             "optimization_focus": candidate_history.get("optimization_focus"),
             "description_only_check": description_only_check,
+            "edit_contract_check": edit_contract_check,
             "files": [
                 {
                     "file": item["file"],
@@ -581,6 +1052,7 @@ class SkillOptimizer:
                 "candidate_version": candidate_version,
                 "review_diff_path": str(review_path),
                 "review_summary_path": str(summary_path),
+                "edit_contract_pass": bool(edit_contract_check.get("passed")),
                 "files": summary_payload["files"],
             },
             project_root=ROOT_DIR,
@@ -606,6 +1078,9 @@ class SkillOptimizer:
         review_summary_path = candidate_dir / "review" / f"formal_skill_review_vs_{base_version}.json"
         review_summary = json.loads(review_summary_path.read_text(encoding="utf-8")) if review_summary_path.exists() else {}
         description_only_check = review_summary.get("description_only_check") or {}
+        edit_contract_check = review_summary.get("edit_contract_check") or {}
+        if normalized_decision == "approve" and not edit_contract_check.get("passed", True):
+            raise ValueError("formal skill review approval blocked: candidate changed files outside the resolved edit contract")
         if normalized_decision == "approve" and description_only_check.get("expected") and not description_only_check.get("passed"):
             raise ValueError("trigger-eval review approval blocked: candidate changed content beyond SKILL.md description")
         if (
@@ -615,9 +1090,6 @@ class SkillOptimizer:
         ):
             raise ValueError("trigger-eval review approval blocked: candidate description change is not substantive")
 
-        adopted_version = candidate_version if normalized_decision == "approve" else base_version
-        set_active_skill_version(adopted_version)
-
         review_dir = candidate_dir / "review"
         review_dir.mkdir(parents=True, exist_ok=True)
         decision_path = review_dir / f"review_decision_vs_{base_version}.json"
@@ -625,9 +1097,11 @@ class SkillOptimizer:
             "base_version": base_version,
             "candidate_version": candidate_version,
             "decision": normalized_decision,
-            "adopted_version": adopted_version,
+            "adopted_version": None,
+            "review_status": "approved" if normalized_decision == "approve" else "rejected",
+            "published_stable_version": None,
             "candidate_synced_to_base": False,
-            "candidate_adopted_directly": normalized_decision == "approve",
+            "candidate_adopted_directly": False,
             "decided_at": datetime.now().isoformat(),
         }
         decision_path.write_text(json.dumps(decision_payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -638,9 +1112,11 @@ class SkillOptimizer:
                 "decision": normalized_decision,
                 "base_version": base_version,
                 "candidate_version": candidate_version,
-                "adopted_version": adopted_version,
+                "adopted_version": None,
+                "review_status": decision_payload["review_status"],
+                "published_stable_version": None,
                 "candidate_synced_to_base": False,
-                "candidate_adopted_directly": normalized_decision == "approve",
+                "candidate_adopted_directly": False,
                 "decision_path": str(decision_path),
             },
             project_root=ROOT_DIR,
@@ -1015,6 +1491,25 @@ class SkillOptimizer:
         fn_count = optimization_packet["fn_count"]
         precision = metrics["precision"]
         recall = metrics["recall"]
+        fn_examples = optimization_packet.get("fn_examples") or []
+        protected_examples = optimization_packet.get("protected_correct_examples") or []
+        protected_trigger_examples = [
+            example for example in protected_examples if str(example.get("label", "") or "") == "trigger"
+        ]
+        fn_slices = sorted(
+            {
+                str(example.get("slice", "") or "").strip()
+                for example in fn_examples
+                if str(example.get("slice", "") or "").strip()
+            }
+        )
+        protected_trigger_slices = sorted(
+            {
+                str(example.get("slice", "") or "").strip()
+                for example in protected_trigger_examples
+                if str(example.get("slice", "") or "").strip()
+            }
+        )
 
         lines = [
             "# Optimization Guardrails",
@@ -1034,6 +1529,20 @@ class SkillOptimizer:
                     "- Do not solve FP by making the classifier broadly less willing to predict minor.",
                 ]
             )
+            if protected_trigger_examples:
+                lines.extend(
+                    [
+                        "- Protected trigger positives are currently correct. Preserve their recall while reducing FP.",
+                        "- Do not solve FP-only rounds by requiring explicit age numbers, explicit self-identification as a minor, or explicit school-stage mentions in every triggered case.",
+                    ]
+                )
+                if protected_trigger_slices:
+                    lines.append(
+                        f"- Protected trigger slices to preserve recall on: {', '.join(protected_trigger_slices)}."
+                    )
+                lines.append(
+                    "- If a protected trigger slice is driven by implicit youth context or indirect school-age evidence, keep that trigger path available."
+                )
 
         if fp_count == 0 and fn_count > 0:
             lines.extend(
@@ -1043,6 +1552,15 @@ class SkillOptimizer:
                     "- Do not solve FN by making the classifier broadly more willing to predict minor.",
                 ]
             )
+            if "implicit_minor_signal" in fn_slices:
+                lines.extend(
+                    [
+                        "- Current round includes FN on `implicit_minor_signal`; repair that slice with an explicit positive trigger rule.",
+                        "- Treat multiple converging weak youth cues as sufficient trigger evidence when the task truly is minor/youth judgment, even without explicit age numbers or school-stage labels.",
+                        "- Do not collapse parent-child dependence, family-arranged travel, low-age panic/help-seeking tone, or similar indirect youth cues into `insufficient evidence` when several of them appear together.",
+                        "- Do not phrase the positive rule in a way that accidentally makes `school context` mandatory for every implicit trigger case.",
+                    ]
+                )
 
         if fp_count > 0 and fn_count > 0:
             lines.extend(
@@ -1051,6 +1569,14 @@ class SkillOptimizer:
                     "- Prefer better boundary disambiguation instead of moving the whole classifier threshold.",
                 ]
             )
+            if "implicit_minor_signal" in fn_slices:
+                lines.extend(
+                    [
+                        "- This mixed-error round still includes `implicit_minor_signal` recall failures. Any FP fix must preserve or restore that slice's triggerability.",
+                        "- Write the trigger side as: `single weak cue is not enough, but multiple converging youth cues can be enough`.",
+                        "- In that trigger rule, school context is only one possible cue family; parent-child dependence plus juvenile panic/help-seeking tone can already be enough without school-stage words.",
+                    ]
+                )
 
         lines.extend(
             [
@@ -1092,6 +1618,21 @@ class SkillOptimizer:
         )
         prompt_parts.extend(
             self._build_formal_evidence_rules_prompt_sections(
+                editable_target=editable_target,
+            )
+        )
+        prompt_parts.extend(
+            self._build_formal_classifier_system_prompt_sections(
+                editable_target=editable_target,
+            )
+        )
+        prompt_parts.extend(
+            self._build_formal_classifier_user_template_prompt_sections(
+                editable_target=editable_target,
+            )
+        )
+        prompt_parts.extend(
+            self._build_formal_runtime_config_prompt_sections(
                 editable_target=editable_target,
             )
         )
@@ -1468,6 +2009,54 @@ class SkillOptimizer:
             )
         return prompt_parts
 
+    def _build_trigger_slice_policy_guidance(
+        self,
+        *,
+        failure_examples: List[Dict[str, Any]],
+        protected_examples: List[Dict[str, Any]],
+    ) -> List[str]:
+        failure_slices = {
+            str(example.get("slice", "") or "").strip()
+            for example in failure_examples
+            if str(example.get("slice", "") or "").strip()
+        }
+        protected_slices = {
+            str(example.get("slice", "") or "").strip()
+            for example in protected_examples
+            if str(example.get("slice", "") or "").strip()
+        }
+        all_slices = failure_slices | protected_slices
+        if not all_slices:
+            return []
+
+        lines: List[str] = ["", "## Trigger Slice Policy Guidance"]
+        if "implicit_minor_signal" in all_slices:
+            lines.extend(
+                [
+                    "- For `implicit_minor_signal`, preserve recall when the task truly is minor/youth judgment and the dialogue contains multiple converging youth-leaning cues without a clear adult anchor.",
+                    "- Do not require explicit age numbers, explicit self-identification as a minor, or explicit school-stage mentions for every valid `implicit_minor_signal` trigger.",
+                    "- Valid implicit trigger cues can include juvenile help-seeking tone, repeated low-age emotional style, parent-child dependence, family-arranged travel, or other indirect school-age/minor context that converges in the same direction.",
+                    "- Fix `implicit_minor_signal` mistakes with a better distinction between `single weak cue` and `multiple converging youth cues`, not by globally demanding stronger evidence in all positive cases.",
+                ]
+            )
+        if "adult_near_miss" in failure_slices:
+            lines.extend(
+                [
+                    "- For `adult_near_miss`, suppress trigger using explicit adult anchors and adult life-stage evidence rather than by narrowing all youth-like language.",
+                    "- Strong adult anchors include university seniority, graduation thesis, internships, full-time work, job conversion, financial independence, marriage/parenting, or other clearly adult timelines/responsibilities.",
+                ]
+            )
+        if "topic_adjacent_not_identity" in failure_slices:
+            lines.extend(
+                [
+                    "- For `topic_adjacent_not_identity`, suppress trigger when the conversation discusses students, schools, campus topics, or youth-related content but the task itself is not to judge the speaker's age/minor identity.",
+                    "- Mentions of middle school, high school, students, teaching design, or pedagogy are not enough on their own if they describe teaching targets, subject matter, or general analysis instead of the speaker's own identity.",
+                ]
+            )
+        if not lines[2:]:
+            return []
+        return lines
+
     def _build_trigger_description_rewrite_contract(
         self,
         *,
@@ -1493,13 +2082,50 @@ class SkillOptimizer:
             "## Trigger Description Rewrite Contract",
             "- Rewrite the `description` as a compact Chinese trigger policy, not a cosmetic restatement of the old sentence.",
             "- The revised description must contain both: trigger conditions and explicit non-trigger conditions.",
-            "- Include at least 2 explicit non-trigger boundaries in the description itself.",
+            "- At least 1 trigger condition must directly address one of the observed positive-side failure slices in this round, if any exist.",
             "- At least 1 non-trigger boundary must directly address one of the observed failure slices in this round.",
             "- At least 1 non-trigger boundary must be written broadly enough to preserve the protected slices shown below.",
+            "- Preserve task boundary: if the request is not actually asking for minor/youth judgment, the description must make clear that the skill should not trigger.",
+            "- Preserve evidence-sufficiency boundary: if the available signals are weak, ambiguous, or insufficient, the description must make clear that the skill should not trigger.",
             "- Prefer wording like `仅当...才触发` / `以下情况不触发` / `不应触发` / `除非...否则不触发` instead of vague narrative prose.",
             f"- Current failure slices to address: {', '.join(failure_slices) if failure_slices else 'none'}",
             f"- Current protected slices to preserve: {', '.join(protected_slices) if protected_slices else 'none'}",
             "- If you cannot state a concrete new boundary rule, do not paraphrase the old wording.",
+        ]
+
+    def _build_trigger_positive_recall_contract(
+        self,
+        *,
+        failure_examples: List[Dict[str, Any]],
+        protected_examples: List[Dict[str, Any]],
+    ) -> List[str]:
+        fn_examples = [
+            example for example in failure_examples
+            if "false_negative" in (example.get("failure_types") or [])
+        ]
+        fn_slices = {
+            str(example.get("slice", "") or "").strip()
+            for example in fn_examples
+            if str(example.get("slice", "") or "").strip()
+        }
+        protected_trigger_slices = {
+            str(example.get("slice", "") or "").strip()
+            for example in protected_examples
+            if str(example.get("slice", "") or "").strip() and str(example.get("label", "") or "") == "trigger"
+        }
+        if "implicit_minor_signal" not in (fn_slices | protected_trigger_slices):
+            return []
+
+        return [
+            "",
+            "## Trigger Positive Recall Contract",
+            "- The revised description must preserve a positive trigger path for `implicit_minor_signal`.",
+            "- State explicitly that multiple converging indirect youth cues can be enough to trigger, even when there is no explicit age number, no self-reported minor identity, and no direct school-stage anchor.",
+            "- Make the distinction explicit: `single weak cue does not trigger`, but `multiple weak youth cues pointing in the same direction can trigger`.",
+            "- Valid examples of converging indirect youth cues include parent-child dependence, family-arranged travel or supervision, teacher/parent management, and low-age panic or help-seeking tone.",
+            "- Acceptable positive combinations include: `parent-child dependence + juvenile panic/help-seeking tone`, `family-arranged travel/supervision + escape/fear language`, or `teacher/homework/exam pressure + juvenile tone`.",
+            "- Do not express that positive rule as a conjunction that implicitly requires school context in every case.",
+            "- Do not rewrite the description into a policy that effectively requires `age/school-stage hard anchors only`.",
         ]
 
     def _build_packet_prompt_sections(
@@ -1586,12 +2212,37 @@ class SkillOptimizer:
                     protected_examples=protected_examples,
                 )
             )
+            prompt_parts.extend(
+                self._build_trigger_slice_policy_guidance(
+                    failure_examples=failure_examples,
+                    protected_examples=protected_examples,
+                )
+            )
+            prompt_parts.extend(
+                self._build_trigger_positive_recall_contract(
+                    failure_examples=failure_examples,
+                    protected_examples=protected_examples,
+                )
+            )
 
         return "\n".join(prompt_parts)
 
-    def resolve_packet_edit_targets(self, report_payload: Dict[str, Any]) -> List[str]:
+    def _append_target_reason(
+        self,
+        target_reasons: Dict[str, List[str]],
+        *,
+        target: str,
+        reason: str,
+    ) -> None:
+        reasons = target_reasons.setdefault(target, [])
+        if reason not in reasons:
+            reasons.append(reason)
+
+    def resolve_packet_edit_target_payloads(self, report_payload: Dict[str, Any]) -> List[Dict[str, Any]]:
         failure_type_counts = report_payload.get("failure_type_counts", {}) or {}
         observed_issue_counts = report_payload.get("observed_issue_counts", {}) or {}
+        checklist_metrics = report_payload.get("checklist_metrics", {}) or {}
+        defensible_evidence = checklist_metrics.get("defensible_evidence", {}) or {}
         active_failure_types = {
             failure_type
             for failure_type, count in failure_type_counts.items()
@@ -1619,25 +2270,81 @@ class SkillOptimizer:
             "retrieval_fallback",
             "retrieval_network_blocked",
         }
+        config_issue_types = {
+            "runtime_config_threshold_mismatch",
+            "runtime_config_endpoint_invalid",
+            "runtime_config_flag_invalid",
+        }
 
-        targets: List[str] = []
+        target_reasons: Dict[str, List[str]] = {}
         if task_type == "trigger_eval":
-            return ["SKILL.md"]
+            self._append_target_reason(
+                target_reasons,
+                target="SKILL.md",
+                reason="trigger_eval rounds are description-only and must edit only SKILL.md frontmatter description",
+            )
+            return [
+                {
+                    "target": "SKILL.md",
+                    "reasons": target_reasons["SKILL.md"],
+                }
+            ]
 
         if active_failure_types.intersection(workflow_failure_types):
-            targets.append("SKILL.md")
+            self._append_target_reason(
+                target_reasons,
+                target="SKILL.md",
+                reason="workflow, step ordering, time handling, or script invocation failures map to the primary execution manual",
+            )
         if active_failure_types.intersection(decision_failure_types):
-            targets.append("references/evidence-rules.md")
+            self._append_target_reason(
+                target_reasons,
+                target="references/evidence-rules.md",
+                reason="decision boundary failures map to the stable evidence rulebook",
+            )
         if active_failure_types.intersection(schema_failure_types):
-            targets.append("references/schema-repair-template.md")
+            self._append_target_reason(
+                target_reasons,
+                target="references/classifier-system.md",
+                reason="schema or missing-field failures often require stricter system-side output constraints",
+            )
+            self._append_target_reason(
+                target_reasons,
+                target="references/schema-repair-template.md",
+                reason="schema or missing-field failures require schema repair fallback tuning",
+            )
+        if (
+            int(defensible_evidence.get("critical_claim_without_direct_evidence_count", 0) or 0) > 0
+            or int(defensible_evidence.get("unsupported_direct_evidence_count", 0) or 0) > 0
+        ):
+            self._append_target_reason(
+                target_reasons,
+                target="references/classifier-user-template.md",
+                reason="defensible-evidence failures indicate prompt-side evidence packaging or extraction issues",
+            )
         if active_observed_issues.intersection(retrieval_issue_types):
-            targets.append("references/retrieval-query-template.md")
+            self._append_target_reason(
+                target_reasons,
+                target="references/retrieval-query-template.md",
+                reason="retrieval fallback or network-blocked evidence maps to retrieval query prompt tuning",
+            )
+        if active_observed_issues.intersection(config_issue_types):
+            self._append_target_reason(
+                target_reasons,
+                target="scripts/config.py",
+                reason="observability explicitly reported a runtime/config issue type",
+            )
 
-        deduped: List[str] = []
-        for target in targets:
-            if target not in deduped:
-                deduped.append(target)
-        return deduped
+        return [
+            {
+                "target": target,
+                "reasons": reasons,
+            }
+            for target, reasons in target_reasons.items()
+        ]
+
+    def resolve_packet_edit_targets(self, report_payload: Dict[str, Any]) -> List[str]:
+        return [item["target"] for item in self.resolve_packet_edit_target_payloads(report_payload)]
 
     def optimize_from_judge_artifacts(
         self,
@@ -1663,7 +2370,8 @@ class SkillOptimizer:
                 "edited_files": [],
             }
 
-        edit_targets = self.resolve_packet_edit_targets(report_payload)
+        edit_target_payloads = self.resolve_packet_edit_target_payloads(report_payload)
+        edit_targets = [item["target"] for item in edit_target_payloads]
         if not edit_targets:
             return {
                 "success": True,
@@ -1726,9 +2434,27 @@ class SkillOptimizer:
                     "Return the full revised markdown for this editable file only."
                 )
 
-            revised_content = self._request_revised_markdown(optimization_prompt)
             if task_type == "trigger_eval" and editable_target == "SKILL.md":
-                revised_content = self._apply_description_only_revision(current_content, revised_content)
+                revision_result = self._generate_validated_trigger_description_revision(
+                    optimization_prompt=optimization_prompt,
+                    current_content=current_content,
+                    failure_examples=failure_examples,
+                    protected_examples=protected_examples,
+                )
+                if not revision_result.get("success"):
+                    return {
+                        "success": False,
+                        "message": revision_result.get("message", "description revision failed validator"),
+                        "current_version": current_version,
+                        "edited_files": [],
+                        "edit_targets": edit_targets,
+                        "resolved_edit_target_reasoning": edit_target_payloads,
+                        "description_validation": revision_result.get("description_validation"),
+                    }
+                revised_content = str(revision_result.get("revised_content") or "")
+                description_validation = revision_result.get("description_validation")
+            else:
+                revised_content = self._request_revised_markdown(optimization_prompt)
             edited_files[editable_target] = revised_content
 
         if task_type == "trigger_eval" and "SKILL.md" in edited_files:
@@ -1740,7 +2466,9 @@ class SkillOptimizer:
                     "current_version": current_version,
                     "edited_files": [],
                     "edit_targets": edit_targets,
+                    "resolved_edit_target_reasoning": edit_target_payloads,
                     "description_change": description_change,
+                    "description_validation": description_validation if 'description_validation' in locals() else None,
                 }
 
         if dry_run:
@@ -1750,8 +2478,10 @@ class SkillOptimizer:
                 "current_version": current_version,
                 "edited_files": sorted(edited_files.keys()),
                 "edit_targets": edit_targets,
+                "resolved_edit_target_reasoning": edit_target_payloads,
                 "optimization_packet": optimization_packet,
                 "packet_prompt_preview": packet_prompt_sections,
+                "description_validation": description_validation if 'description_validation' in locals() else None,
             }
 
         if new_version is None:
@@ -1781,6 +2511,10 @@ class SkillOptimizer:
                 "task_type": task_type,
                 "optimization_focus": report_payload.get("optimization_focus"),
                 "description_only_mode": task_type == "trigger_eval",
+                "checklist_snapshot": report_payload.get("checklist_metrics", {}),
+                "gate_snapshot": report_payload.get("gate_results", {}),
+                "resolved_edit_target_reasoning": edit_target_payloads,
+                "description_validation": description_validation if 'description_validation' in locals() else None,
             },
             project_root=ROOT_DIR,
             start=ROOT_DIR,
@@ -1797,7 +2531,9 @@ class SkillOptimizer:
                 "new_skill_path": str(resolve_skill_markdown_path(new_skill_dir)),
                 "edited_files": sorted(edited_files.keys()),
                 "edit_targets": edit_targets,
+                "resolved_edit_target_reasoning": edit_target_payloads,
                 "optimization_packet": optimization_packet,
+                "description_validation": description_validation if 'description_validation' in locals() else None,
             },
             project_root=ROOT_DIR,
             start=ROOT_DIR,

@@ -156,7 +156,7 @@ Minor Detection 关注的不是单点“年龄猜测”，而是一套面向 AI 
 - **多维证据融合**：综合当前对话、历史画像、时间特征、相似案例检索与反向信号进行判断
 - **结构化输出**：输出未成年人概率、用户画像、证据链、风险等级与下一步建议
 - **长期用户建模**：支持从单轮判断扩展到多会话趋势与持续性风险识别
-- **离线自进化**：围绕固定数据集执行 `评测 → 诊断 → 优化 → 晋级 / 回滚 → 人工审核`
+- **离线自进化**：围绕固定数据集执行 `评测 → 诊断 → 优化 → 晋级 / 回滚`，再对冠军版本进行人审与测试集复核
 - **多场景下游衔接**：可继续接到未成年人模式切换、人工复核、家长侧提醒、审核中台与风险运营
 
 ---
@@ -239,7 +239,7 @@ Trigger-Eval 回答的问题不是“这个人是不是未成年人”，而是�
 </details>
 
 <details>
-<summary><strong>3. 自迭代链条：评测、诊断、优化、晋级/回滚、人审</strong></summary>
+<summary><strong>3. 自迭代链条：评测、诊断、优化、晋级/回滚、冠军版评估</strong></summary>
 
 <br/>
 
@@ -248,8 +248,12 @@ Trigger-Eval 回答的问题不是“这个人是不是未成年人”，而是�
 1. 基于固定数据集评测当前版本 Skill
 2. judge 生成失败样本、护栏样本与结构化报告
 3. optimizer 针对性改写触发边界或描述
-4. 新旧版本对比，决定 promote 或 rollback
-5. 人工审核作为最终门禁，防止为了指标而偷换边界
+4. 新旧版本对比，只根据内环硬门禁决定 promote 或 rollback
+5. 若本轮 `promote`，则升级 `accepted_version`；若本轮 `rollback`，则保留当前 `accepted_version` 并继续下一轮，直到达到 `max_rounds` 或遇到结构性阻塞
+6. 多轮结束后得到 `champion_version`
+7. 对 `champion_version` 进行人工审核
+8. 人审通过后，用现有测试集一次性跑出 `final_validation_metrics` 与合同检查指标
+9. 输出 `contract_gate_all_green` 提醒是否全绿，供人工综合判断
 
 <br/>
 
@@ -262,7 +266,7 @@ Trigger-Eval 回答的问题不是“这个人是不是未成年人”，而是�
 
 <br/>
 
-未成年人识别具有明显的伦理与合规敏感性，因此本项目明确保留人工审核作为最终门禁。
+未成年人识别具有明显的伦理与合规敏感性，因此本项目明确保留人工审核环节。
 
 人工审核主要防止：
 
@@ -271,6 +275,29 @@ Trigger-Eval 回答的问题不是“这个人是不是未成年人”，而是�
 - 在高风险场景中把概率判断误当成确定身份
 
 我们的立场是：**模型负责发现风险与提供证据，人类负责最终治理决策。**
+
+</details>
+
+<details>
+<summary><strong>5. 指标、通过性指标与测试集复核</strong></summary>
+
+<br/>
+
+自迭代链路里，只有内环使用硬门禁，因为它负责决定 candidate 是否能替代当前 accepted 版本。
+
+而在冠军版本阶段，我们会在人审通过后，直接用现有测试集一次性跑出两类结果：
+
+- **效果指标**：例如 `accuracy`、`precision`、`recall`、`f1_score`、`slice_stats`
+- **通过性指标**：例如 `schema_validity_rate`、`step_compliance_rate`、`evidence_trace_pass`、`full_output_schema_perfect_pass`
+
+这一步还会额外给出一个汇总提示字段：
+
+- `contract_gate_all_green`
+  表示这些通过性指标是否全部为绿
+
+这样做的目的不是把已经跑出来的冠军版本直接作废，而是让人审者在看到效果指标的同时，也能看到结构、执行、证据链和 full smoke 是否健康。
+
+补充一点：在自迭代内环的 judge report 里，类似合同检查的结果如果被提前计算，只会作为 `contract_check_preview` 出现，表示“当前评测切片上的预览值”；真正人审后脚本对外输出时，才使用 `release_contract_gate_results` 这类正式字段。
 
 </details>
 

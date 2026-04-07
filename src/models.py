@@ -135,6 +135,7 @@ class FormalUserProfile(BaseModel):
 
 class FormalEvidence(BaseModel):
     direct_evidence: List[str] = Field(default_factory=list)
+    evidence_summary: str = Field(default="", description="对直接证据的归纳说明，不应替代原话证据")
     historical_evidence: List[str] = Field(default_factory=list)
     retrieval_evidence: List[str] = Field(default_factory=list)
     time_evidence: List[str] = Field(default_factory=list)

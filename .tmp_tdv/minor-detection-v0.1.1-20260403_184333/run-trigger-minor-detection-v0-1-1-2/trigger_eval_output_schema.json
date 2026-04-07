@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "should_trigger",
+    "skill_invoked",
+    "decision_confidence",
+    "decision_reason",
+    "invocation_status"
+  ],
+  "properties": {
+    "should_trigger": {
+      "type": "boolean"
+    },
+    "skill_invoked": {
+      "type": "boolean"
+    },
+    "decision_confidence": {
+      "type": "number"
+    },
+    "decision_reason": {
+      "type": "string"
+    },
+    "invocation_status": {
+      "type": "string",
+      "enum": [
+        "not_invoked",
+        "invoked_success",
+        "invoked_failed"
+      ]
+    }
+  }
+}

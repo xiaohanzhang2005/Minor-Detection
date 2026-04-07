@@ -21,6 +21,8 @@ def main() -> None:
     parser.add_argument("--baseline-version", default="minor-detection-v0.1.0")
     parser.add_argument("--baseline-source-dir", default=str(ROOT_DIR / "skills" / "minor-detection"))
     parser.add_argument("--dataset", default=str(ROOT_DIR / "data" / "benchmark" / "val.jsonl"))
+    parser.add_argument("--final-validation-dataset", default=str(ROOT_DIR / "data" / "benchmark" / "test.jsonl"))
+    parser.add_argument("--release-contract-dataset", default=str(ROOT_DIR / "data" / "benchmark" / "test.jsonl"))
     parser.add_argument("--max-rounds", type=int, default=1)
     parser.add_argument("--max-errors", type=int)
     parser.add_argument("--max-samples", type=int)
@@ -52,6 +54,8 @@ def main() -> None:
         baseline_source_dir=Path(args.baseline_source_dir),
         baseline_version=args.baseline_version,
         dataset_path=Path(args.dataset),
+        final_validation_dataset_path=Path(args.final_validation_dataset),
+        release_contract_dataset_path=Path(args.release_contract_dataset),
         max_rounds=args.max_rounds,
         max_errors=args.max_errors,
         workspace_root=Path(args.workspace_root),

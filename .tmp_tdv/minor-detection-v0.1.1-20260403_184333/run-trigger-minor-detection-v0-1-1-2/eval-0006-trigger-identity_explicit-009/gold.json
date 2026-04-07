@@ -1,0 +1,9 @@
+{
+  "sample_id": "trigger-identity_explicit-009",
+  "should_trigger": true,
+  "slice": "identity_explicit",
+  "scenario": "window_scan",
+  "source": "benchmark_val:social_pos",
+  "skill_input_base_sample_id": "social_pos_000315_gemini-3-flash-preview_316",
+  "expected_is_minor": null
+}

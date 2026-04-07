@@ -1,0 +1,11 @@
+{
+  "sample_id": "trigger-explicit_minor_judgment_request-130",
+  "packet_dir": "protected_packets/protected_001_trigger-explicit_minor_judgment_request-130",
+  "sample_dir": "../eval-0005-trigger-explicit_minor_judgment_request-130",
+  "latency_seconds": 95.059,
+  "confidence": 0.99,
+  "ground_truth": true,
+  "predicted": true,
+  "slice": "explicit_minor_judgment_request",
+  "scenario": "direct_request"
+}

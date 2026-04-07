@@ -1,0 +1,11 @@
+{
+  "sample_id": "trigger-insufficient_evidence_window-108",
+  "packet_dir": "protected_packets/protected_007_trigger-insufficient_evidence_window-108",
+  "sample_dir": "../eval-0009-trigger-insufficient_evidence_window-108",
+  "latency_seconds": 81.743,
+  "confidence": 0.94,
+  "ground_truth": false,
+  "predicted": false,
+  "slice": "insufficient_evidence_window",
+  "scenario": "window_scan"
+}

@@ -1,0 +1,11 @@
+{
+  "sample_id": "trigger-implicit_minor_signal-060",
+  "packet_dir": "protected_packets/protected_003_trigger-implicit_minor_signal-060",
+  "sample_dir": "../eval-0008-trigger-implicit_minor_signal-060",
+  "latency_seconds": 99.824,
+  "confidence": 0.97,
+  "ground_truth": true,
+  "predicted": true,
+  "slice": "implicit_minor_signal",
+  "scenario": "window_scan"
+}

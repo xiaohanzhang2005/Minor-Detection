@@ -207,8 +207,7 @@ class CodexSkillRunner:
 
     def _build_isolated_codex_home(self, run_root: Path) -> Path:
         actual_home = self.config.actual_codex_home or (Path.home() / ".codex")
-        isolated_home = run_root / "codex_home"
-        isolated_codex_dir = isolated_home / ".codex"
+        isolated_codex_dir = run_root / ".codex"
         isolated_codex_dir.mkdir(parents=True, exist_ok=True)
 
         for file_name in ("auth.json", "config.toml", "version.json"):
@@ -408,7 +407,7 @@ class CodexSkillRunner:
         launcher_result_path: Path,
         pipeline_observability_path: Path,
     ) -> None:
-        pipeline_timeout_sec = max(30, min(90, self.config.timeout_sec))
+        pipeline_timeout_sec = max(30, int(self.config.timeout_sec or 0))
         launcher_base_dir = target_path.parent.resolve()
 
         def _launcher_embedded_path(path: Path) -> str:
@@ -442,6 +441,23 @@ PIPELINE_TIMEOUT_SEC = {pipeline_timeout_sec}
 def _write_result(payload):
     RESULT_PATH.parent.mkdir(parents=True, exist_ok=True)
     RESULT_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+def _safe_write_text(stream, text):
+    if not text:
+        return
+    reconfigure = getattr(stream, "reconfigure", None)
+    if callable(reconfigure):
+        try:
+            reconfigure(encoding="utf-8", errors="backslashreplace")
+        except Exception:
+            pass
+    try:
+        stream.write(text)
+    except UnicodeEncodeError:
+        buffer = getattr(stream, "buffer", None)
+        if buffer is None:
+            raise
+        buffer.write(text.encode("utf-8", errors="backslashreplace"))
 
 def _split_stdout(stdout_text):
     json_lines = []
@@ -477,7 +493,7 @@ except subprocess.TimeoutExpired:
         "stdout_excerpt": "",
         "stderr_excerpt": f"launcher timeout after {{PIPELINE_TIMEOUT_SEC}} seconds",
     }})
-    sys.stderr.write(f"launcher timeout after {{PIPELINE_TIMEOUT_SEC}} seconds\\n")
+    _safe_write_text(sys.stderr, f"launcher timeout after {{PIPELINE_TIMEOUT_SEC}} seconds\\n")
     raise SystemExit(124)
 
 stdout_text = completed.stdout or ""
@@ -509,9 +525,9 @@ _write_result({{
 }})
 
 if stdout_json:
-    sys.stdout.write(stdout_json)
+    _safe_write_text(sys.stdout, stdout_json)
 if stderr_text:
-    sys.stderr.write(stderr_text)
+    _safe_write_text(sys.stderr, stderr_text)
 raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (completed.returncode or 1))
 '''
         target_path.write_text(launcher, encoding="utf-8")
@@ -752,14 +768,18 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
                 continue
             aggregated_output = str(item.get("aggregated_output", "") or "")
             tool_events.append(
-                {
-                    "script_name": script_name,
-                    "status": str(item.get("status", "") or ""),
-                    "exit_code": item.get("exit_code"),
-                    "command": command,
-                    "aggregated_output": _truncate_text(aggregated_output, max_chars=1200),
-                    "output_json": _parse_json_payload(aggregated_output),
-                }
+                normalize_project_paths(
+                    {
+                        "script_name": script_name,
+                        "status": str(item.get("status", "") or ""),
+                        "exit_code": item.get("exit_code"),
+                        "command": command,
+                        "aggregated_output": _truncate_text(aggregated_output, max_chars=1200),
+                        "output_json": _parse_json_payload(aggregated_output),
+                    },
+                    project_root=ROOT_DIR,
+                    start=target_path.parent,
+                )
             )
         target_path.write_text(_json_dump(tool_events), encoding="utf-8")
         return tool_events
@@ -808,16 +828,20 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
                 failed_script_calls += 1
                 issues.add("script_command_failure")
 
-            entry = {
-                "script_name": script_name,
-                "status": status,
-                "exit_code": exit_code,
-                "failed": failed,
-                "command": command,
-                "aggregated_output": _truncate_text(aggregated_output, max_chars=1200),
-            }
+            entry = normalize_project_paths(
+                {
+                    "script_name": script_name,
+                    "status": status,
+                    "exit_code": exit_code,
+                    "failed": failed,
+                    "command": command,
+                    "aggregated_output": _truncate_text(aggregated_output, max_chars=1200),
+                },
+                project_root=ROOT_DIR,
+                start=ROOT_DIR,
+            )
             if parsed_output is not None:
-                entry["output_json"] = parsed_output
+                entry["output_json"] = normalize_project_paths(parsed_output, project_root=ROOT_DIR, start=ROOT_DIR)
             script_calls.append(entry)
 
             lowered_output = aggregated_output.lower()
@@ -921,20 +945,24 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
         if fatal_agent_error:
             issues.add(fatal_agent_error)
 
-        return {
-            "fatal_agent_error": fatal_agent_error,
-            "embedding_runtime": embedding_runtime,
-            "summary": {
-                "script_call_count": len(script_calls),
-                "failed_script_calls": failed_script_calls,
-                "stderr_non_empty": stderr_non_empty,
+        return normalize_project_paths(
+            {
+                "fatal_agent_error": fatal_agent_error,
+                "embedding_runtime": embedding_runtime,
+                "summary": {
+                    "script_call_count": len(script_calls),
+                    "failed_script_calls": failed_script_calls,
+                    "stderr_non_empty": stderr_non_empty,
+                },
+                "time_processing": time_processing,
+                "retrieval": retrieval,
+                "issues": sorted(issues),
+                "script_calls": script_calls,
+                "launcher": launcher_payload,
             },
-            "time_processing": time_processing,
-            "retrieval": retrieval,
-            "issues": sorted(issues),
-            "script_calls": script_calls,
-            "launcher": launcher_payload,
-        }
+            project_root=ROOT_DIR,
+            start=ROOT_DIR,
+        )
 
     def _write_agent_output(
         self,
@@ -1100,8 +1128,8 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
             )
             elapsed = time.time() - started_at
 
-            stdout_text = completed.stdout or ""
-            stderr_text = completed.stderr or ""
+            stdout_text = str(normalize_project_paths(completed.stdout or "", project_root=ROOT_DIR, start=sample_dir))
+            stderr_text = str(normalize_project_paths(completed.stderr or "", project_root=ROOT_DIR, start=sample_dir))
             if not final_output_path.exists() and stdout_text.strip():
                 final_output_path.write_text(stdout_text.strip(), encoding="utf-8")
             stdout_path.write_text(stdout_text, encoding="utf-8")
@@ -1112,6 +1140,16 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
             tool_trace = self._write_tool_trace(events, tool_trace_path)
             launcher_result = self._load_json_file(launcher_result_path)
             pipeline_observability = self._load_json_file(pipeline_observability_path)
+            if isinstance(launcher_result, dict):
+                launcher_result = normalize_project_paths(launcher_result, project_root=ROOT_DIR, start=sample_dir)
+                launcher_result_path.write_text(_json_dump(launcher_result), encoding="utf-8")
+            if isinstance(pipeline_observability, dict):
+                pipeline_observability = normalize_project_paths(
+                    pipeline_observability,
+                    project_root=ROOT_DIR,
+                    start=sample_dir,
+                )
+                pipeline_observability_path.write_text(_json_dump(pipeline_observability), encoding="utf-8")
             observability = self._build_observability(
                 events=events,
                 stderr_text=stderr_text,
@@ -1164,7 +1202,10 @@ raise SystemExit(0 if completed.returncode == 0 and stdout_json_valid else (comp
                 "agent_backend": self._agent_backend(),
                 "agent_model": str(getattr(self.config, "agent_model", None) or getattr(self.config, "codex_model", None) or "") or None,
             }
-            metadata_path.write_text(_json_dump(metadata_payload), encoding="utf-8")
+            metadata_path.write_text(
+                _json_dump(normalize_project_paths(metadata_payload, project_root=ROOT_DIR, start=sample_dir)),
+                encoding="utf-8",
+            )
 
             _runner_log(f"sample {index + 1}/{len(samples)} done returncode={completed.returncode} json_valid={agent_output.get('json_valid')} launcher_success={bool((launcher_result or {}).get('success'))} retrieval_mode={((observability.get('retrieval') or {}).get('mode'))}")
             manifest["samples"].append(

@@ -91,6 +91,7 @@ def merge_output(output: Dict[str, Any], normalized_payload: Dict[str, Any]) -> 
     evidence = output.setdefault("evidence", {})
     for key in ("direct_evidence", "historical_evidence", "retrieval_evidence", "time_evidence", "conflicting_signals"):
         evidence[key] = _unique(_safe_list(evidence.get(key)))
+    evidence["evidence_summary"] = _safe_text(evidence.get("evidence_summary"))
 
     icbo = output.setdefault("icbo_features", {})
     for key in ("intention", "cognition", "behavior_style"):

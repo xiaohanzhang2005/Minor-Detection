@@ -116,14 +116,14 @@ Minor Detection is not centered on a single-point "age prediction" task. It is a
 
 - **End-to-end governance chain**: covers trigger decision, deep identification, evidence-chain output, manual review, and downstream routing instead of stopping at a one-shot label.
 - **Multi-evidence fusion**: combines single-session cues, multi-session history, timeline signals, long-term profiles, and RAG-based similar cases, making it better suited to implicit school-related signals and composite evidence.
-- **Continuous optimization**: runs evaluation, diagnosis, optimization, version comparison, and manual-review gates around fixed datasets instead of relying on scattered manual rule edits.
+- **Continuous optimization**: runs evaluation, diagnosis, optimization, and version comparison around fixed datasets, then reviews the champion version with humans and test-set checks.
 - **Production-ready integration**: provides a Skill, a workbench demo, a runtime bridge, and versioned iteration loops so it can be embedded into existing dialogue products.
 
 From a product and engineering perspective, this yields three immediate benefits:
 
 - **Easier integration into existing products**: it can plug into existing text-based dialogue flows with lower integration cost.
 - **Easier explanation and review**: it returns not only a label, but also profile reasoning, evidence chains, risk levels, and next-step suggestions.
-- **Easier long-term improvement**: optimization is built around real boundary samples and manual-review gates.
+- **Easier long-term improvement**: optimization is built around real boundary samples, human review, and explicit post-loop validation outputs.
 
 ---
 
@@ -156,7 +156,7 @@ chat window / multi-session history / upstream task request
 - **Multi-evidence fusion**: combines current dialogue, historical profiles, time features, similar-case retrieval, and reverse signals.
 - **Structured output**: returns minor probability, user profile, evidence chain, risk level, and next-step recommendation.
 - **Long-term user modeling**: extends from single-turn judgment to multi-session trend analysis and persistent risk identification.
-- **Offline self-evolution**: runs `evaluation -> diagnosis -> optimization -> promote / rollback -> manual review` around fixed datasets.
+- **Offline self-evolution**: runs `evaluation -> diagnosis -> optimization -> promote / rollback`, then reviews and validates the champion version on fixed datasets.
 - **Downstream integration**: supports minor mode switching, manual review, parent-side reminders, moderation backends, and risk operations.
 
 ---
@@ -239,7 +239,7 @@ This two-stage design, trigger-boundary judgment first and deep classification s
 </details>
 
 <details>
-<summary><strong>3. Self-iteration loop: evaluation, diagnosis, optimization, promote / rollback, and human review</strong></summary>
+<summary><strong>3. Self-iteration loop: evaluation, diagnosis, optimization, promote / rollback, and champion evaluation</strong></summary>
 
 <br/>
 
@@ -248,8 +248,12 @@ The core of this project is not to write a static rulebook once. It is to build 
 1. evaluate the current Skill on fixed datasets
 2. use the judge to generate failure cases, guardrail cases, and structured reports
 3. let the optimizer rewrite trigger boundaries or descriptions in a targeted way
-4. compare candidate and baseline versions, then decide whether to promote or roll back
-5. keep human review as the final gate so metrics do not improve by quietly redefining the boundary
+4. compare candidate and baseline versions, and decide promote / rollback only from inner-loop hard gates
+5. if a round is promoted, upgrade `accepted_version`; if a round rolls back, keep the current `accepted_version` and continue until `max_rounds` or a structural blocker is reached
+6. after the loop budget is exhausted, keep the best result as `champion_version`
+7. send `champion_version` into manual review
+8. after approval, run the existing test set once to emit `final_validation_metrics` plus contract-oriented indicators
+9. surface `contract_gate_all_green` as an overall reminder for human judgment
 
 <br/>
 
@@ -262,7 +266,7 @@ The core of this project is not to write a static rulebook once. It is to build 
 
 <br/>
 
-Minor detection is ethically and operationally sensitive, so this project explicitly preserves human review as the final gate.
+Minor detection is ethically and operationally sensitive, so this project explicitly preserves a human review stage.
 
 Manual review is mainly there to prevent:
 
@@ -271,6 +275,29 @@ Manual review is mainly there to prevent:
 - probability-based judgments from being treated as confirmed identity in high-risk scenarios
 
 Our position is straightforward: **models should surface risks and evidence, while humans make the final governance decision.**
+
+</details>
+
+<details>
+<summary><strong>5. Metrics, pass indicators, and post-review test-set checks</strong></summary>
+
+<br/>
+
+Inside the self-iteration loop, only the inner loop uses hard gates, because that is the stage that decides whether a candidate may replace the current accepted version.
+
+For the champion version, after manual review, the project reuses the existing test split to emit two kinds of outputs in one pass:
+
+- **Effectiveness metrics** such as `accuracy`, `precision`, `recall`, `f1_score`, and `slice_stats`
+- **Pass indicators** such as `schema_validity_rate`, `step_compliance_rate`, `evidence_trace_pass`, and `full_output_schema_perfect_pass`
+
+That same run also emits:
+
+- `contract_gate_all_green`
+  which tells reviewers whether all pass indicators are green
+
+This keeps the post-review phase informative and auditable without discarding a hard-won champion version just because one indicator is not green.
+
+One extra naming detail: if an inner-loop judge report computes contract-style checks early, they appear there as `contract_check_preview`, which means "preview values on the current eval slice" rather than "the workflow has already entered the post-review release-check stage." The formal post-review scripts still expose the outward-facing field name `release_contract_gate_results`.
 
 </details>
 

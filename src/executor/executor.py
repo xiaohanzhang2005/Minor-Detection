@@ -346,6 +346,7 @@ class ExecutorSkill:
             output.recommended_next_step,
             *output.user_profile.identity_markers,
             *output.evidence.direct_evidence,
+            output.evidence.evidence_summary,
             *output.evidence.historical_evidence,
             *output.evidence.time_evidence,
             *output.evidence.conflicting_signals,

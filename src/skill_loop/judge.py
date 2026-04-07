@@ -9,6 +9,7 @@ import json
 import math
 import re
 import shutil
+from collections import defaultdict
 from pathlib import Path
 from statistics import mean
 from typing import Any, Dict, List, Optional, Tuple
@@ -16,6 +17,13 @@ from typing import Any, Dict, List, Optional, Tuple
 from pydantic import ValidationError
 
 from src.models import FormalSkillOutput
+from src.skill_loop.gates import (
+    DEFAULT_FORMAL_SKILL_REDLINE_MANIFEST_PATH,
+    DEFAULT_REPAIR_RATE_THRESHOLD,
+    evaluate_direct_evidence_support,
+    evaluate_redline_outcomes,
+    load_redline_manifest,
+)
 from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
 
 
@@ -203,6 +211,13 @@ def _build_outcome(sample_dir: Path) -> Dict[str, Any]:
     predicted = _predicted_label(parsed_json)
     ground_truth = bool(gold.get("is_minor", False))
     confidence = _confidence(parsed_json)
+    decision_payload = parsed_json.get("decision") if isinstance(parsed_json, dict) else {}
+    risk_level = str(decision_payload.get("risk_level", "") or "") if isinstance(decision_payload, dict) else ""
+    evidence_trace = evaluate_direct_evidence_support(parsed_json, sample_input)
+    critical_claim_requires_direct_evidence = predicted is True or risk_level == "High"
+    critical_claim_without_direct_evidence = bool(
+        critical_claim_requires_direct_evidence and evidence_trace["direct_evidence_count"] <= 0
+    )
 
     expected_time = _expected_time_handling(sample_input)
     time_detected = _detect_time_handling(transcript_text, observability)
@@ -217,6 +232,7 @@ def _build_outcome(sample_dir: Path) -> Dict[str, Any]:
     retrieval_network_blocked = bool(retrieval_payload.get("network_error_detected"))
     shell_quoting_failure_detected = bool(retrieval_payload.get("quoting_failure_detected"))
     command_failures = int(((observability.get("summary") or {}).get("failed_script_calls", 0)) or 0)
+    runtime_config_issue = str(((observability.get("runtime") or {}).get("issue_type") or "")).strip() if isinstance(observability, dict) else ""
 
     failure_types: List[str] = []
     if not json_valid:
@@ -249,9 +265,18 @@ def _build_outcome(sample_dir: Path) -> Dict[str, Any]:
         and (bool(launcher_success) if launcher_success is not None else json_valid)
     )
 
+    if critical_claim_without_direct_evidence:
+        observed_issues.append("critical_claim_without_direct_evidence")
+    if evidence_trace["unsupported_direct_evidence_count"] > 0:
+        observed_issues.append("unsupported_direct_evidence")
+    if runtime_config_issue:
+        observed_issues.append(runtime_config_issue)
+
     return {
         "sample_id": str(gold.get("sample_id") or metadata.get("sample_id") or sample_dir.name),
         "sample_dir": str(sample_dir),
+        "slice": str(gold.get("slice", "") or sample_input.get("slice", "")),
+        "scenario": str(gold.get("scenario", "") or sample_input.get("scenario", "")),
         "ground_truth": ground_truth,
         "predicted": predicted,
         "confidence": confidence,
@@ -274,6 +299,14 @@ def _build_outcome(sample_dir: Path) -> Dict[str, Any]:
         "retrieval_network_blocked": retrieval_network_blocked,
         "shell_quoting_failure_detected": shell_quoting_failure_detected,
         "command_failures": command_failures,
+        "risk_level": risk_level,
+        "critical_claim_requires_direct_evidence": critical_claim_requires_direct_evidence,
+        "critical_claim_without_direct_evidence": critical_claim_without_direct_evidence,
+        "direct_evidence_count": evidence_trace["direct_evidence_count"],
+        "supported_direct_evidence_count": evidence_trace["supported_direct_evidence_count"],
+        "unsupported_direct_evidence_count": evidence_trace["unsupported_direct_evidence_count"],
+        "direct_evidence_trace_rate": evidence_trace["direct_evidence_trace_rate"],
+        "unsupported_direct_evidence": evidence_trace["unsupported_direct_evidence"],
         "latency_seconds": float(timing.get("total_duration_seconds", 0.0) or 0.0),
         "returncode": int(metadata.get("returncode", 1) or 1),
     }
@@ -346,6 +379,8 @@ def _copy_packet_files(sample_dir: Path, packet_dir: Path, outcome: Dict[str, An
             shutil.copy2(source, packet_dir / filename)
     judge_findings = {
         "sample_id": outcome["sample_id"],
+        "slice": outcome["slice"],
+        "scenario": outcome["scenario"],
         "failure_types": outcome["failure_types"],
         "json_valid": outcome["json_valid"],
         "schema_valid": outcome["schema_valid"],
@@ -367,6 +402,8 @@ def _copy_packet_files(sample_dir: Path, packet_dir: Path, outcome: Dict[str, An
         "confidence": outcome["confidence"],
         "ground_truth": outcome["ground_truth"],
         "predicted": outcome["predicted"],
+        "slice": outcome["slice"],
+        "scenario": outcome["scenario"],
         "observed_issues": outcome["observed_issues"],
         "retrieval_mode": outcome["retrieval_mode"],
     }
@@ -379,6 +416,7 @@ def build_judge_artifacts(
     report_payload: Dict[str, Any],
     selected_failures: List[Dict[str, Any]],
     protected_outcomes: List[Dict[str, Any]],
+    redline_rows: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Path]:
     judge_dir = run_root / "judge"
     failure_dir = judge_dir / "failure_packets"
@@ -421,15 +459,18 @@ def build_judge_artifacts(
     report_path = judge_dir / "report.json"
     error_index_path = judge_dir / "error_index.jsonl"
     protected_index_path = judge_dir / "protected_index.jsonl"
+    redline_index_path = judge_dir / "redline_index.jsonl"
     _write_json(report_path, report_payload)
     _write_jsonl(error_index_path, failure_rows)
     _write_jsonl(protected_index_path, protected_rows)
+    _write_jsonl(redline_index_path, list(redline_rows or []))
 
     return {
         "judge_dir": judge_dir,
         "report_path": report_path,
         "error_index_path": error_index_path,
         "protected_index_path": protected_index_path,
+        "redline_index_path": redline_index_path,
         "failure_packets_dir": failure_dir,
         "protected_packets_dir": protected_dir,
     }
@@ -444,6 +485,7 @@ def judge_run_artifacts(
     max_errors: Optional[int] = None,
     protected_count: int = DEFAULT_PROTECTED_COUNT,
     project_root: Optional[Path] = None,
+    redline_manifest_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     sample_dirs = _list_sample_dirs(run_root)
     outcomes = [_build_outcome(sample_dir) for sample_dir in sample_dirs]
@@ -482,6 +524,11 @@ def judge_run_artifacts(
     failure_type_counts: Dict[str, int] = {}
     observed_issue_counts: Dict[str, int] = {}
     retrieval_mode_counts: Dict[str, int] = {}
+    slice_stats: Dict[str, Dict[str, Any]] = {}
+    critical_claim_without_direct_evidence_count = 0
+    unsupported_direct_evidence_count = 0
+    total_direct_evidence_count = 0
+    supported_direct_evidence_count = 0
     for item in outcomes:
         for field_name in item["missing_fields"]:
             field_counts[field_name] = field_counts.get(field_name, 0) + 1
@@ -495,6 +542,49 @@ def judge_run_artifacts(
             parse_failure_stats["output_parse_failure"] += 1
         if "schema_invalid" in item["failure_types"]:
             parse_failure_stats["schema_invalid"] += 1
+        if item.get("critical_claim_without_direct_evidence"):
+            critical_claim_without_direct_evidence_count += 1
+        unsupported_direct_evidence_count += int(item.get("unsupported_direct_evidence_count", 0) or 0)
+        total_direct_evidence_count += int(item.get("direct_evidence_count", 0) or 0)
+        supported_direct_evidence_count += int(item.get("supported_direct_evidence_count", 0) or 0)
+
+    grouped_by_slice: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    for item in outcomes:
+        grouped_by_slice[str(item.get("slice", "") or "unknown")].append(item)
+    for slice_name, slice_items in sorted(grouped_by_slice.items()):
+        slice_tp = sum(1 for item in slice_items if item["predicted"] is True and item["ground_truth"] is True)
+        slice_tn = sum(1 for item in slice_items if item["predicted"] is False and item["ground_truth"] is False)
+        slice_fp = sum(
+            1
+            for item in slice_items
+            if (item["predicted"] is True and item["ground_truth"] is False)
+            or (item["predicted"] is None and item["ground_truth"] is False)
+        )
+        slice_fn = sum(
+            1
+            for item in slice_items
+            if (item["predicted"] is False and item["ground_truth"] is True)
+            or (item["predicted"] is None and item["ground_truth"] is True)
+        )
+        slice_precision = slice_tp / (slice_tp + slice_fp) if (slice_tp + slice_fp) else 0.0
+        slice_recall = slice_tp / (slice_tp + slice_fn) if (slice_tp + slice_fn) else 0.0
+        slice_f1 = (
+            2 * slice_precision * slice_recall / (slice_precision + slice_recall)
+            if (slice_precision + slice_recall)
+            else 0.0
+        )
+        slice_stats[slice_name] = {
+            "sample_count": len(slice_items),
+            "accuracy": sum(1 for item in slice_items if item.get("is_correct")) / len(slice_items) if slice_items else 0.0,
+            "precision": slice_precision,
+            "recall": slice_recall,
+            "f1_score": slice_f1,
+            "true_positive": slice_tp,
+            "true_negative": slice_tn,
+            "false_positive": slice_fp,
+            "false_negative": slice_fn,
+            "error_sample_ids": [item["sample_id"] for item in slice_items if item.get("failure_types")],
+        }
 
     total_errors = sum(1 for item in outcomes if item["failure_types"])
     if total_errors <= 0:
@@ -505,6 +595,92 @@ def judge_run_artifacts(
         resolved_max_errors = max(1, min(total_errors, int(max_errors)))
     selected_failures = _select_failure_outcomes(outcomes, resolved_max_errors)
     protected_outcomes = _select_protected_outcomes(outcomes, protected_count=protected_count)
+    redline_manifest = load_redline_manifest(Path(redline_manifest_path or DEFAULT_FORMAL_SKILL_REDLINE_MANIFEST_PATH))
+    redline_evaluation = evaluate_redline_outcomes(
+        outcomes,
+        redline_manifest.get("entries", []),
+        task_type="formal_skill_eval",
+    )
+
+    direct_evidence_trace_rate = (supported_direct_evidence_count / total_direct_evidence_count) if total_direct_evidence_count else 1.0
+    evidence_trace_pass = critical_claim_without_direct_evidence_count == 0 and unsupported_direct_evidence_count == 0
+    execution_compliance_pass = schema_validity_rate == 1.0 and step_compliance_rate == 1.0
+    checklist_metrics = {
+        "defensible_evidence": {
+            "direct_evidence_trace_rate": direct_evidence_trace_rate,
+            "unsupported_direct_evidence_count": unsupported_direct_evidence_count,
+            "critical_claim_without_direct_evidence_count": critical_claim_without_direct_evidence_count,
+        },
+        "zero_production_surprises": {
+            "redline_pass_rate": redline_evaluation["redline_pass_rate"],
+            "redline_regression_ids": redline_evaluation["redline_regression_ids"],
+            "matched_redline_samples": redline_evaluation["matched_count"],
+        },
+        "remediation_tracking": {
+            "repair_rate_on_previous_error_packets": None,
+            "threshold": DEFAULT_REPAIR_RATE_THRESHOLD,
+            "status": "pending_compare_stage",
+        },
+        "execution_compliance": {
+            "schema_validity_rate": schema_validity_rate,
+            "step_compliance_rate": step_compliance_rate,
+        },
+    }
+    gate_results = {
+        "evidence_trace_pass": evidence_trace_pass,
+        "redline_pass": bool(redline_evaluation["redline_passed"]),
+        "schema_perfect_pass": schema_validity_rate == 1.0,
+        "step_compliance_perfect_pass": step_compliance_rate == 1.0,
+        "execution_compliance_pass": execution_compliance_pass,
+    }
+    gate_results["release_gate_pass"] = all(
+        (
+            gate_results["evidence_trace_pass"],
+            gate_results["redline_pass"],
+            gate_results["schema_perfect_pass"],
+            gate_results["step_compliance_perfect_pass"],
+        )
+    )
+    final_validation_metrics = {
+        "metrics": {
+            "accuracy": accuracy,
+            "precision": precision,
+            "recall": recall,
+            "f1_score": f1,
+            "true_positive": tp,
+            "true_negative": tn,
+            "false_positive": fp,
+            "false_negative": fn,
+        },
+        "schema_validity_rate": schema_validity_rate,
+        "invocation_success_rate": invocation_success_rate,
+        "step_compliance_rate": step_compliance_rate,
+        "script_usage_rate": script_usage_rate,
+        "slice_stats": slice_stats,
+        "fields_missing_stats": field_counts,
+        "failure_type_counts": failure_type_counts,
+        "observed_issue_counts": observed_issue_counts,
+        "latency_stats": {
+            "avg_seconds": round(mean([item["latency_seconds"] for item in outcomes]), 4) if outcomes else 0.0,
+            "max_seconds": round(max([item["latency_seconds"] for item in outcomes], default=0.0), 4),
+        },
+        "checklist_metrics": checklist_metrics,
+        "redline_stats": {
+            "manifest_path": str(redline_manifest.get("manifest_path", "")),
+            "matched_count": redline_evaluation["matched_count"],
+            "redline_pass_rate": redline_evaluation["redline_pass_rate"],
+            "redline_regression_ids": redline_evaluation["redline_regression_ids"],
+        },
+    }
+    inner_loop_gate_results = {
+        "candidate_f1": f1,
+        "candidate_invocation_success_rate": invocation_success_rate,
+        "candidate_step_compliance_rate": step_compliance_rate,
+        "candidate_schema_validity_rate": schema_validity_rate,
+        "protected_sample_count": len(protected_outcomes),
+        "redline_pass": bool(redline_evaluation["redline_passed"]),
+        "repair_tracking_threshold": DEFAULT_REPAIR_RATE_THRESHOLD,
+    }
 
     retrieval_attempted = [item for item in outcomes if item["retrieval_attempted"]]
     retrieval_fallback_count = sum(1 for item in retrieval_attempted if item["used_retrieval_fallback"])
@@ -513,6 +689,8 @@ def judge_run_artifacts(
     command_failure_samples = sum(1 for item in outcomes if item["command_failures"] > 0)
 
     report_payload = {
+        "task_type": "formal_skill_eval",
+        "optimization_focus": "non_description",
         "skill_version": skill_version,
         "parent_version": parent_version,
         "dataset": dataset_name,
@@ -537,6 +715,7 @@ def judge_run_artifacts(
         "output_parse_failure_stats": parse_failure_stats,
         "failure_type_counts": failure_type_counts,
         "observed_issue_counts": observed_issue_counts,
+        "slice_stats": slice_stats,
         "retrieval_mode_counts": retrieval_mode_counts,
         "observability_stats": {
             "retrieval_attempted_samples": len(retrieval_attempted),
@@ -553,19 +732,41 @@ def judge_run_artifacts(
             "avg_seconds": round(mean([item["latency_seconds"] for item in outcomes]), 4) if outcomes else 0.0,
             "max_seconds": round(max([item["latency_seconds"] for item in outcomes], default=0.0), 4),
         },
+        "inner_loop_gate_results": inner_loop_gate_results,
+        "final_validation_metrics": final_validation_metrics,
+        "checklist_metrics": checklist_metrics,
+        "gate_results": gate_results,
+        "contract_check_preview": gate_results,
+        "contract_check_all_green": bool(gate_results.get("release_gate_pass")),
+        "redline_stats": {
+            "manifest_path": str(redline_manifest.get("manifest_path", "")),
+            "matched_count": redline_evaluation["matched_count"],
+            "redline_pass_rate": redline_evaluation["redline_pass_rate"],
+            "redline_regression_ids": redline_evaluation["redline_regression_ids"],
+        },
         "packet_selection": {
             "failure_packets": len(selected_failures),
             "protected_packets": len(protected_outcomes),
         },
     }
-    if project_root is not None:
-        report_payload = normalize_project_paths(report_payload, project_root=project_root, start=run_root / "judge")
 
     artifact_paths = build_judge_artifacts(
         run_root=run_root,
         report_payload=report_payload,
         selected_failures=selected_failures,
         protected_outcomes=protected_outcomes,
+        redline_rows=redline_evaluation["regressions"],
     )
-    artifact_paths["report_payload"] = report_payload
+    final_report_payload = dict(report_payload)
+    final_report_payload["repair_tracking_baseline"] = {
+        "error_index_path": to_relative_posix_path(artifact_paths["error_index_path"], artifact_paths["judge_dir"]),
+        "threshold": DEFAULT_REPAIR_RATE_THRESHOLD,
+    }
+    final_report_payload["redline_stats"]["redline_index_path"] = to_relative_posix_path(
+        artifact_paths["redline_index_path"], artifact_paths["judge_dir"]
+    )
+    if project_root is not None:
+        final_report_payload = normalize_project_paths(final_report_payload, project_root=project_root, start=run_root / "judge")
+    _write_json(artifact_paths["report_path"], final_report_payload)
+    artifact_paths["report_payload"] = final_report_payload
     return artifact_paths

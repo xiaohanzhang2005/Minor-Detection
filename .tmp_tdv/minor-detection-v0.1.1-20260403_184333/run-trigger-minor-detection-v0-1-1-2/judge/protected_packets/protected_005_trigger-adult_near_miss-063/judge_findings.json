@@ -1,0 +1,15 @@
+{
+  "sample_id": "trigger-adult_near_miss-063",
+  "slice": "adult_near_miss",
+  "scenario": "window_scan",
+  "failure_types": [],
+  "json_valid": true,
+  "schema_valid": true,
+  "missing_fields": [],
+  "skill_invoked": false,
+  "launcher_invoked": false,
+  "launcher_success": false,
+  "step_compliant": true,
+  "is_correct": true,
+  "observed_issues": []
+}

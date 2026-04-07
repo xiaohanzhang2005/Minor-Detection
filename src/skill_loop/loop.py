@@ -28,7 +28,6 @@ from .versioning import (
     next_patch_version_name,
     next_available_candidate_version_name,
     parse_version_name,
-    publish_candidate_to_stable,
 )
 
 
@@ -37,6 +36,8 @@ class SkillAgentLoopConfig:
     baseline_source_dir: Path = SKILLS_DIR / "minor-detection"
     baseline_version: str = "minor-detection-v0.1.0"
     dataset_path: Path = ROOT_DIR / "data" / "benchmark" / "val.jsonl"
+    final_validation_dataset_path: Path = ROOT_DIR / "data" / "benchmark" / "test.jsonl"
+    release_contract_dataset_path: Path = ROOT_DIR / "data" / "benchmark" / "test.jsonl"
     max_rounds: int = 1
     max_errors: Optional[int] = None
     protected_count: int = 8
@@ -56,6 +57,14 @@ def _display_path(value: Any) -> str:
 
 def _log(message: str) -> None:
     print(f"[skill-loop] {message}", file=sys.stderr, flush=True)
+
+
+def _command_path(path: Any) -> str:
+    try:
+        path_obj = Path(path)
+    except (TypeError, ValueError):
+        return str(path).replace("\\", "/")
+    return to_relative_posix_path(path_obj, ROOT_DIR) if path_obj.is_absolute() else str(path_obj).replace("\\", "/")
 
 
 class SkillAgentLoop:
@@ -128,6 +137,19 @@ class SkillAgentLoop:
             return f"baseline {runner_label} invocation failed before any valid output; fix runtime/model/skill loading before optimization"
         return None
 
+    def _manual_final_validation_command(self, version_name: str) -> str:
+        runner_mode = str(getattr(self.runner, "runner_mode", "agent") or "agent")
+        dataset_arg = _command_path(self.config.final_validation_dataset_path)
+        return f"python scripts/run_final_test.py --version {version_name} --dataset {dataset_arg} --runner-mode {runner_mode}"
+
+    def _manual_release_contract_gate_command(self, version_name: str) -> str:
+        runner_mode = str(getattr(self.runner, "runner_mode", "agent") or "agent")
+        dataset_arg = _command_path(self.config.release_contract_dataset_path)
+        return (
+            "python scripts/run_formal_release_contract_gate.py "
+            f"--version {version_name} --dataset {dataset_arg} --runner-mode {runner_mode}"
+        )
+
     def run(self) -> Dict[str, Any]:
         loop_started_at = time.time()
         workspace = self._workspace()
@@ -154,13 +176,19 @@ class SkillAgentLoop:
         baseline_eval = accepted_eval
 
         rounds = []
+        champion_version = accepted_version
         final_version = accepted_version
-        next_stable_semantic = next_patch_version_name(accepted_version)
-        next_stable_version = build_stamped_stable_version_name(next_stable_semantic, run_tag)
+        next_stable_semantic = next_patch_version_name(self.config.baseline_version)
+        proposed_stable_version = build_stamped_stable_version_name(next_stable_semantic, run_tag)
+        published_stable_version = None
         review_artifact = None
         manual_review_status = "not_required"
         manual_review_base_version = None
         manual_review_candidate_version = None
+        final_validation_status = "not_required"
+        release_contract_gate_status = "not_required"
+        release_contract_gate_mode = "soft"
+        release_contract_gate_blocking = False
 
         baseline_blocker = self._baseline_runtime_blocker_reason(accepted_eval)
         if baseline_blocker:
@@ -214,6 +242,23 @@ class SkillAgentLoop:
                     )
                     break
 
+                edit_contract_check = self.optimizer.evaluate_candidate_edit_contract(
+                    base_version=accepted_version,
+                    candidate_version=candidate_version,
+                )
+                if not edit_contract_check.get("pass"):
+                    rounds.append(
+                        {
+                            "round": round_index,
+                            "accepted_version": accepted_version,
+                            "candidate_version": candidate_version,
+                            "comparison": self._skip_comparison("candidate violated resolved edit contract"),
+                            "optimize_result": optimize_result,
+                            "edit_contract_check": edit_contract_check,
+                        }
+                    )
+                    break
+
                 _log(f"round {round_index}: evaluate candidate {candidate_version}")
                 candidate_eval = self._evaluate_version(
                     version_name=candidate_version,
@@ -223,8 +268,10 @@ class SkillAgentLoop:
                 comparison = compare_reports(
                     accepted_report_path=accepted_eval["report_path"],
                     candidate_report_path=candidate_eval["report_path"],
+                    accepted_error_index_path=accepted_eval["error_index_path"],
                     accepted_protected_index_path=accepted_eval["protected_index_path"],
                     candidate_error_index_path=candidate_eval["error_index_path"],
+                    candidate_redline_index_path=candidate_eval.get("redline_index_path"),
                 )
 
                 round_payload = {
@@ -233,6 +280,7 @@ class SkillAgentLoop:
                     "candidate_version": candidate_version,
                     "comparison": comparison,
                     "optimize_result": optimize_result,
+                    "edit_contract_check": edit_contract_check,
                     "accepted_runtime": accepted_eval.get("runtime_summary", {}),
                     "accepted_runtime_counts": accepted_eval.get("runtime_counts", {}),
                     "candidate_runtime": candidate_eval.get("runtime_summary", {}),
@@ -241,25 +289,23 @@ class SkillAgentLoop:
 
                 _log(f"round {round_index}: compare decision={comparison.get('decision')}")
                 if comparison["decision"] == "promote":
-                    publish_candidate_to_stable(SKILLS_DIR / candidate_version, SKILLS_DIR / next_stable_version)
-                    round_payload["promoted_to"] = next_stable_version
-                    final_version = next_stable_version
-                    accepted_version = next_stable_version
+                    round_payload["promoted_to"] = candidate_version
+                    champion_version = candidate_version
+                    final_version = candidate_version
+                    accepted_version = candidate_version
                     accepted_eval = candidate_eval
-                    next_stable_semantic = next_patch_version_name(accepted_version)
-                    next_stable_version = build_stamped_stable_version_name(next_stable_semantic, run_tag)
                 rounds.append(round_payload)
-                if comparison["decision"] != "promote":
-                    break
 
-        if final_version != self.config.baseline_version:
+        if champion_version != self.config.baseline_version:
             review_artifact = self.optimizer.create_formal_skill_review_artifact(
                 base_version=self.config.baseline_version,
-                candidate_version=final_version,
+                candidate_version=champion_version,
             )
             manual_review_status = "pending"
             manual_review_base_version = self.config.baseline_version
-            manual_review_candidate_version = final_version
+            manual_review_candidate_version = champion_version
+            final_validation_status = "pending_manual_review"
+            release_contract_gate_status = "pending_manual_review"
 
         version_inventory_after = build_version_inventory(
             SKILLS_DIR,
@@ -269,12 +315,19 @@ class SkillAgentLoop:
             scope_active_version=True,
         )
         manual_final_test_command = None
+        manual_release_contract_gate_command = None
+        manual_release_contract_gate_script = "scripts/run_formal_release_contract_gate.py"
+        publish_stable_command = None
         manual_review_approve_command = None
         manual_review_reject_command = None
         if manual_review_candidate_version:
-            runner_mode = str(getattr(self.runner, "runner_mode", "agent") or "agent")
-            manual_final_test_command = (
-                f"python scripts/run_final_test.py --version {manual_review_candidate_version} --runner-mode {runner_mode}"
+            manual_final_test_command = self._manual_final_validation_command(manual_review_candidate_version)
+            manual_release_contract_gate_command = self._manual_release_contract_gate_command(manual_review_candidate_version)
+            publish_stable_command = (
+                "python scripts/publish_reviewed_skill_version.py "
+                f"--base-version {manual_review_base_version} "
+                f"--candidate-version {manual_review_candidate_version} "
+                f"--stable-version {proposed_stable_version}"
             )
             manual_review_approve_command = (
                 "python -m src.evolution.optimizer "
@@ -291,8 +344,13 @@ class SkillAgentLoop:
         summary = {
             "runner_mode": str(getattr(self.runner, "runner_mode", "agent") or "agent"),
             "baseline_version": self.config.baseline_version,
+            "champion_version": champion_version,
             "final_version": final_version,
+            "proposed_stable_version": proposed_stable_version if manual_review_candidate_version else None,
+            "published_stable_version": published_stable_version,
             "dataset": to_relative_posix_path(self.config.dataset_path, workspace),
+            "final_validation_set": _command_path(self.config.final_validation_dataset_path),
+            "release_contract_set": _command_path(self.config.release_contract_dataset_path),
             "workspace": ".",
             "baseline_runtime": baseline_eval.get("runtime_summary", {}),
             "baseline_runtime_counts": baseline_eval.get("runtime_counts", {}),
@@ -302,8 +360,22 @@ class SkillAgentLoop:
             "manual_review_status": manual_review_status,
             "manual_review_base_version": manual_review_base_version,
             "manual_review_candidate_version": manual_review_candidate_version,
+            "final_validation_status": final_validation_status,
+            "release_contract_gate_status": release_contract_gate_status,
+            "contract_check_status": release_contract_gate_status,
+            "release_contract_gate_mode": release_contract_gate_mode,
+            "release_contract_gate_blocking": release_contract_gate_blocking,
+            "contract_check_mode": "indicator_only",
+            "contract_check_blocking": False,
+            "post_loop_final_validation_includes_soft_contract_metrics": True,
             "manual_final_test_script": "scripts/run_final_test.py",
             "manual_final_test_command": manual_final_test_command,
+            "post_loop_release_gate_role": "optional_standalone_formal_release_contract_gate",
+            "manual_release_contract_gate_script": manual_release_contract_gate_script,
+            "manual_release_contract_gate_command": manual_release_contract_gate_command,
+            "manual_contract_check_script": manual_release_contract_gate_script,
+            "manual_contract_check_command": manual_release_contract_gate_command,
+            "publish_stable_command": publish_stable_command,
             "manual_review_approve_command": manual_review_approve_command,
             "manual_review_reject_command": manual_review_reject_command,
             "timing": {
@@ -318,12 +390,14 @@ class SkillAgentLoop:
                 "recommended_cleanup_command": f"python scripts/cleanup_skill_versions.py --base-name {base_name} --keep-latest-stable 2 --only-run-tag {run_tag} --dry-run",
             },
         }
-        _log(f"final_version={final_version}")
+        _log(f"champion_version={champion_version}")
         if manual_review_candidate_version:
             _log(
                 "manual review pending: "
                 f"base={manual_review_base_version} candidate={manual_review_candidate_version}"
             )
+            _log(f"recommended final validation (includes contract indicators): {manual_final_test_command}")
+            _log(f"recommended contract indicator check: {manual_release_contract_gate_command}")
         summary_path = workspace / "loop_summary.json"
         with summary_path.open("w", encoding="utf-8") as f:
             json.dump(

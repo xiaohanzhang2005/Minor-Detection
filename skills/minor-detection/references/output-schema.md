@@ -55,12 +55,19 @@
 ```json
 {
   "direct_evidence": [],
+  "evidence_summary": "",
   "historical_evidence": [],
   "retrieval_evidence": [],
   "time_evidence": [],
   "conflicting_signals": []
 }
 ```
+
+约束：
+- `direct_evidence` 只放可在当前对话中直接定位的引用式证据片段，不放总结句或结论句。
+- `direct_evidence` 只能来自当前 `conversation`，不要混入检索案例、历史画像或时间标签中的句子。
+- `direct_evidence` 尽量逐字保留原话，不要为通顺而改写原句。
+- `evidence_summary` 用于概括这些证据如何共同支持判断；允许总结，但不要重复充当 `direct_evidence`。
 
 ## trend
 

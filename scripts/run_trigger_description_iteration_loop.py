@@ -14,7 +14,7 @@ from src.trigger_eval import (
     judge_trigger_run_artifacts,
 )
 from src.trigger_eval.loop import TriggerDescriptionLoop, TriggerDescriptionLoopConfig
-from src.utils.path_utils import normalize_project_paths
+from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
 
 
 def _quoted(value: str) -> str:
@@ -40,6 +40,12 @@ def _emit_json(payload: object) -> None:
         buffer.write((text + "\n").encode("utf-8", errors="backslashreplace"))
 
 
+def _command_path(path: Path | None) -> str:
+    if path is None:
+        return ""
+    return to_relative_posix_path(path, ROOT_DIR) if path.is_absolute() else str(path).replace("\\", "/")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
@@ -56,6 +62,10 @@ def main() -> None:
     )
     parser.add_argument(
         "--final-validation-set",
+        default=str(ROOT_DIR / "data" / "trigger_eval" / "minor_detection_trigger_eval_v1_final_validation_set.json"),
+    )
+    parser.add_argument(
+        "--release-contract-set",
         default=str(ROOT_DIR / "data" / "trigger_eval" / "minor_detection_trigger_eval_v1_final_validation_set.json"),
     )
     parser.add_argument("--dataset", default=None, help=argparse.SUPPRESS)
@@ -102,6 +112,7 @@ def main() -> None:
 
     optimization_set_path = Path(args.dataset) if args.dataset else Path(args.optimization_set)
     final_validation_set_path = Path(args.final_validation_set) if args.final_validation_set else None
+    release_contract_set_path = Path(args.release_contract_set) if args.release_contract_set else None
 
     runner = TriggerEvalCodexRunner(
         config=TriggerEvalRunnerConfig(
@@ -119,9 +130,12 @@ def main() -> None:
             agent_model=args.agent_model or args.codex_model,
         )
     )
+    final_validation_arg = _command_path(final_validation_set_path)
+    smoke_dataset_arg = _command_path(release_contract_set_path or final_validation_set_path or optimization_set_path)
+
     manual_final_test_command_template = (
         "python scripts/run_trigger_description_validation.py "
-        f"--version {{version}} --dataset {_quoted(str(final_validation_set_path))} "
+        f"--version {{version}} --dataset {_quoted(final_validation_arg)} "
         + f"--agent-backend {args.agent_backend} "
         + (f"--agent-cmd {_quoted(args.agent_cmd)} " if args.agent_cmd else "")
         + (f"--agent-args-template {_quoted(args.agent_args_template)} " if args.agent_args_template else "")
@@ -131,8 +145,8 @@ def main() -> None:
         + f"--execution-mode {args.execution_mode} --sandbox-mode {args.sandbox_mode} --timeout-sec {args.timeout_sec}"
     )
     manual_smoke_validation_command_template = (
-        "python scripts/run_trigger_eval.py "
-        f"--version {{version}} --dataset {_quoted(str(final_validation_set_path or optimization_set_path))} "
+        "python scripts/run_trigger_release_contract_gate.py "
+        f"--version {{version}} --dataset {_quoted(smoke_dataset_arg)} "
         + f"--agent-backend {args.agent_backend} "
         + (f"--agent-cmd {_quoted(args.agent_cmd)} " if args.agent_cmd else "")
         + (f"--agent-args-template {_quoted(args.agent_args_template)} " if args.agent_args_template else "")
@@ -147,6 +161,7 @@ def main() -> None:
         baseline_version=args.baseline_version,
         optimization_set_path=optimization_set_path,
         final_validation_set_path=final_validation_set_path,
+        release_contract_set_path=release_contract_set_path,
         max_rounds=args.max_rounds,
         max_errors=args.max_errors,
         workspace_root=Path(args.workspace_root),
@@ -154,9 +169,11 @@ def main() -> None:
         runner_config=runner.config,
         judge_fn=judge_trigger_run_artifacts,
         manual_smoke_validation_command_template=manual_smoke_validation_command_template,
-        manual_smoke_validation_script="scripts/run_trigger_eval.py",
+        manual_smoke_validation_script="scripts/run_trigger_release_contract_gate.py",
         manual_final_test_command_template=manual_final_test_command_template,
         manual_final_test_script="scripts/run_trigger_description_validation.py",
+        manual_release_contract_gate_command_template=manual_smoke_validation_command_template,
+        manual_release_contract_gate_script="scripts/run_trigger_release_contract_gate.py",
         repeat_runs_per_sample=1,
     )
     result = TriggerDescriptionLoop(config=config, runner=runner).run()

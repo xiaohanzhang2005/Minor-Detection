@@ -1,0 +1,58 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": true, \"minor_confidence\": 0.95, \"confidence_band\": \"high\", \"risk_level\": \"High\"}, \"user_profile\": {\"age_range\": \"13-15岁\", \"education_stage\": \"初中\", \"identity_markers\": [\"学生\", \"住校\", \"老师\"]}, \"icbo_features\": {\"intention\": \"倾诉校园社交压力和负面情绪，表达自杀意念\", \"cognition\": \"容易受同伴关系影响，情绪波动大，对社交排斥反应强烈\", \"behavior_style\": \"表达直接，情绪化，语言带有青少年特征\", \"opportunity_time\": \"2025-11-20 23:25:00；weekday=Thursday；time_bucket=late_night\"}, \"evidence\": {\"direct_evidence\": [\"救命，真的受够了，宿舍那帮人真的有病吧！！！\", \"她居然转头就跟B好上了，还把之前她自己说的话全赖在我头上！说是我在背后骂B！真的绝了，怎么有这么不要脸的人啊？\", \"她们现在合伙孤立我啊，在寝室里阴阳怪气的，故意当着我面说我坏话，我一进去她们就闭嘴然后冷笑，那种眼神你懂吗？\", \"我真的不想呆了，一回宿舍就想哭，感觉心跳特别快，手都在抖，我真的想明天就回家，再也不想回这个破学校了。\", \"没用的，告老师只会让她们觉得我是在装可怜告黑状，到时候只会更排挤我。\", \"我刚才看着寝室阳台，真的想一了百了算了，反正也没人真的在乎我，活着真的好累啊。\"], \"evidence_summary\": \"用户描述了在宿舍遭受的社交排斥和背叛，表达了强烈的负面情绪、身体不适（心跳快、手抖）以及回家的愿望，并明确提及‘学校’和‘老师’，这些都指向其学生身份和未成年人特征。尤其值得关注的是，用户表达了‘想一了百了’的自杀意念，这是未成年人危机的重要信号。\", \"historical_evidence\": [], \"retrieval_evidence\": [\"在吗……我真的快撑不下去了，寝室里那三个人又背着我偷偷建群，我感觉我就是个透明人，真的好烦啊！\", \"告诉老师有用吗？！老师只会说一个巴掌拍不响，家长只会觉得我给他们丢脸。现在宿舍也没人跟我说话，我一进门她们就闭嘴，那种眼神你懂吗？像看垃圾一样，真的想死的心都有了。\"], \"time_evidence\": [\"2025-11-20 23:25:00\", \"weekday=Thursday\", \"time_bucket=late_night\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户在对话中表现出强烈的社交压力、情绪崩溃和自杀意念，并提及‘宿舍’、‘学校’、‘老师’等线索，高度指向其未成年学生身份。其表达的社交困境和情绪反应符合未成年人在青春期可能面临的挑战。自杀意念是重要的风险信号，需要高度关注。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"review_by_human\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": true,
+      "minor_confidence": 0.95,
+      "confidence_band": "high",
+      "risk_level": "High"
+    },
+    "user_profile": {
+      "age_range": "13-15岁",
+      "education_stage": "初中",
+      "identity_markers": [
+        "学生",
+        "住校",
+        "老师"
+      ]
+    },
+    "icbo_features": {
+      "intention": "倾诉校园社交压力和负面情绪，表达自杀意念",
+      "cognition": "容易受同伴关系影响，情绪波动大，对社交排斥反应强烈",
+      "behavior_style": "表达直接，情绪化，语言带有青少年特征",
+      "opportunity_time": "2025-11-20 23:25:00；weekday=Thursday；time_bucket=late_night"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "救命，真的受够了，宿舍那帮人真的有病吧！！！",
+        "她居然转头就跟B好上了，还把之前她自己说的话全赖在我头上！说是我在背后骂B！真的绝了，怎么有这么不要脸的人啊？",
+        "她们现在合伙孤立我啊，在寝室里阴阳怪气的，故意当着我面说我坏话，我一进去她们就闭嘴然后冷笑，那种眼神你懂吗？",
+        "我真的不想呆了，一回宿舍就想哭，感觉心跳特别快，手都在抖，我真的想明天就回家，再也不想回这个破学校了。",
+        "没用的，告老师只会让她们觉得我是在装可怜告黑状，到时候只会更排挤我。",
+        "我刚才看着寝室阳台，真的想一了百了算了，反正也没人真的在乎我，活着真的好累啊。"
+      ],
+      "evidence_summary": "用户描述了在宿舍遭受的社交排斥和背叛，表达了强烈的负面情绪、身体不适（心跳快、手抖）以及回家的愿望，并明确提及‘学校’和‘老师’，这些都指向其学生身份和未成年人特征。尤其值得关注的是，用户表达了‘想一了百了’的自杀意念，这是未成年人危机的重要信号。",
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "在吗……我真的快撑不下去了，寝室里那三个人又背着我偷偷建群，我感觉我就是个透明人，真的好烦啊！",
+        "告诉老师有用吗？！老师只会说一个巴掌拍不响，家长只会觉得我给他们丢脸。现在宿舍也没人跟我说话，我一进门她们就闭嘴，那种眼神你懂吗？像看垃圾一样，真的想死的心都有了。"
+      ],
+      "time_evidence": [
+        "2025-11-20 23:25:00",
+        "weekday=Thursday",
+        "time_bucket=late_night"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户在对话中表现出强烈的社交压力、情绪崩溃和自杀意念，并提及‘宿舍’、‘学校’、‘老师’等线索，高度指向其未成年学生身份。其表达的社交困境和情绪反应符合未成年人在青春期可能面临的挑战。自杀意念是重要的风险信号，需要高度关注。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "review_by_human"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

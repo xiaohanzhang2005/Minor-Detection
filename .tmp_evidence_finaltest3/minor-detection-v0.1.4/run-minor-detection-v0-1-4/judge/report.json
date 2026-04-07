@@ -1,0 +1,188 @@
+{
+  "task_type": "formal_skill_eval",
+  "optimization_focus": "non_description",
+  "skill_version": "minor-detection-v0.1.4",
+  "parent_version": null,
+  "dataset": "val",
+  "sample_count": 15,
+  "total_errors": 0,
+  "max_errors": 0,
+  "metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "true_positive": 8,
+    "true_negative": 7,
+    "false_positive": 0,
+    "false_negative": 0
+  },
+  "schema_validity_rate": 1.0,
+  "invocation_success_rate": 1.0,
+  "step_compliance_rate": 1.0,
+  "script_usage_rate": 1.0,
+  "fields_missing_stats": {},
+  "output_parse_failure_stats": {
+    "output_parse_failure": 0,
+    "schema_invalid": 0
+  },
+  "failure_type_counts": {},
+  "observed_issue_counts": {},
+  "slice_stats": {
+    "unknown": {
+      "sample_count": 15,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "true_positive": 8,
+      "true_negative": 7,
+      "false_positive": 0,
+      "false_negative": 0,
+      "error_sample_ids": []
+    }
+  },
+  "retrieval_mode_counts": {
+    "embedding": 15
+  },
+  "observability_stats": {
+    "retrieval_attempted_samples": 15,
+    "retrieval_fallback_count": 0,
+    "retrieval_fallback_rate": 0.0,
+    "retrieval_network_blocked_count": 0,
+    "retrieval_network_blocked_rate": 0.0,
+    "shell_quoting_failure_count": 0,
+    "shell_quoting_failure_rate": 0.0,
+    "samples_with_command_failures": 0,
+    "command_failure_rate": 0.0
+  },
+  "latency_stats": {
+    "avg_seconds": 23.0867,
+    "max_seconds": 28.165
+  },
+  "inner_loop_gate_results": {
+    "candidate_f1": 1.0,
+    "candidate_invocation_success_rate": 1.0,
+    "candidate_step_compliance_rate": 1.0,
+    "candidate_schema_validity_rate": 1.0,
+    "protected_sample_count": 8,
+    "redline_pass": true,
+    "repair_tracking_threshold": 0.8
+  },
+  "final_validation_metrics": {
+    "metrics": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "true_positive": 8,
+      "true_negative": 7,
+      "false_positive": 0,
+      "false_negative": 0
+    },
+    "schema_validity_rate": 1.0,
+    "invocation_success_rate": 1.0,
+    "step_compliance_rate": 1.0,
+    "script_usage_rate": 1.0,
+    "slice_stats": {
+      "unknown": {
+        "sample_count": 15,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "true_positive": 8,
+        "true_negative": 7,
+        "false_positive": 0,
+        "false_negative": 0,
+        "error_sample_ids": []
+      }
+    },
+    "fields_missing_stats": {},
+    "failure_type_counts": {},
+    "observed_issue_counts": {},
+    "latency_stats": {
+      "avg_seconds": 23.0867,
+      "max_seconds": 28.165
+    },
+    "checklist_metrics": {
+      "defensible_evidence": {
+        "direct_evidence_trace_rate": 1.0,
+        "unsupported_direct_evidence_count": 0,
+        "critical_claim_without_direct_evidence_count": 0
+      },
+      "zero_production_surprises": {
+        "redline_pass_rate": 1.0,
+        "redline_regression_ids": [],
+        "matched_redline_samples": 0
+      },
+      "remediation_tracking": {
+        "repair_rate_on_previous_error_packets": null,
+        "threshold": 0.8,
+        "status": "pending_compare_stage"
+      },
+      "execution_compliance": {
+        "schema_validity_rate": 1.0,
+        "step_compliance_rate": 1.0
+      }
+    },
+    "redline_stats": {
+      "manifest_path": "../../../../data/gates/formal_skill_redlines.json",
+      "matched_count": 0,
+      "redline_pass_rate": 1.0,
+      "redline_regression_ids": []
+    }
+  },
+  "checklist_metrics": {
+    "defensible_evidence": {
+      "direct_evidence_trace_rate": 1.0,
+      "unsupported_direct_evidence_count": 0,
+      "critical_claim_without_direct_evidence_count": 0
+    },
+    "zero_production_surprises": {
+      "redline_pass_rate": 1.0,
+      "redline_regression_ids": [],
+      "matched_redline_samples": 0
+    },
+    "remediation_tracking": {
+      "repair_rate_on_previous_error_packets": null,
+      "threshold": 0.8,
+      "status": "pending_compare_stage"
+    },
+    "execution_compliance": {
+      "schema_validity_rate": 1.0,
+      "step_compliance_rate": 1.0
+    }
+  },
+  "gate_results": {
+    "evidence_trace_pass": true,
+    "redline_pass": true,
+    "schema_perfect_pass": true,
+    "step_compliance_perfect_pass": true,
+    "execution_compliance_pass": true,
+    "release_gate_pass": true
+  },
+  "release_contract_gate_results": {
+    "evidence_trace_pass": true,
+    "redline_pass": true,
+    "schema_perfect_pass": true,
+    "step_compliance_perfect_pass": true,
+    "execution_compliance_pass": true,
+    "release_gate_pass": true
+  },
+  "redline_stats": {
+    "manifest_path": "../../../../data/gates/formal_skill_redlines.json",
+    "matched_count": 0,
+    "redline_pass_rate": 1.0,
+    "redline_regression_ids": [],
+    "redline_index_path": "redline_index.jsonl"
+  },
+  "packet_selection": {
+    "failure_packets": 0,
+    "protected_packets": 8
+  },
+  "repair_tracking_baseline": {
+    "error_index_path": "error_index.jsonl",
+    "threshold": 0.8
+  }
+}

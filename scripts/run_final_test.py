@@ -12,8 +12,19 @@ from src.skill_loop import CodexRunnerConfig, CodexSkillRunner, DirectRunnerConf
 from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
 
 
+def _resolved_contract_gate_results(report: dict) -> dict:
+    return (
+        report.get("release_contract_gate_results")
+        or report.get("contract_check_preview")
+        or report.get("gate_results")
+        or {}
+    )
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run the manual final test flow on test.jsonl for a selected skill version.")
+    parser = argparse.ArgumentParser(
+        description="Run standalone formal final-validation metrics on a holdout dataset for a selected skill version."
+    )
     parser.add_argument(
         "--version",
         required=True,
@@ -85,11 +96,22 @@ def main() -> None:
         dataset_name=Path(args.dataset).stem,
         project_root=ROOT_DIR,
     )
+    report = judged["report_payload"]
+    release_contract_gate_results = _resolved_contract_gate_results(report)
     payload = {
+        "evaluation_role": "standalone_formal_final_validation",
+        "optimization_feedback_enabled": False,
         "runner_mode": args.runner_mode,
         "report_path": to_relative_posix_path(judged["report_path"], ROOT_DIR),
         "run_root": to_relative_posix_path(run_root, ROOT_DIR),
         "skill_source_dir": to_relative_posix_path(version_dir, ROOT_DIR),
+        "final_validation_metrics": report.get("final_validation_metrics", {}),
+        "release_contract_gate_results": release_contract_gate_results,
+        "contract_check_indicators": release_contract_gate_results,
+        "contract_check_all_green": bool(release_contract_gate_results.get("release_gate_pass")),
+        "release_contract_gate_mode": "soft",
+        "release_contract_gate_blocking": False,
+        "contract_gate_all_green": bool(release_contract_gate_results.get("release_gate_pass")),
     }
     print(json.dumps(normalize_project_paths(payload, project_root=ROOT_DIR, start=ROOT_DIR), ensure_ascii=False, indent=2))
 

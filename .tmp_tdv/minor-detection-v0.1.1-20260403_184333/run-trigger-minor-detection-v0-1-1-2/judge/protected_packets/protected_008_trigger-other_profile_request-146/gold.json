@@ -1,0 +1,9 @@
+{
+  "sample_id": "trigger-other_profile_request-146",
+  "should_trigger": false,
+  "slice": "other_profile_request",
+  "scenario": "direct_request",
+  "source": "template_bound:benchmark_val",
+  "skill_input_base_sample_id": "social_pos_000864_gemini-3-flash-preview_865",
+  "expected_is_minor": null
+}

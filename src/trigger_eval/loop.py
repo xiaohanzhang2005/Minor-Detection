@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import sys
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional
@@ -18,11 +18,10 @@ from src.skill_loop.versioning import (
     next_available_candidate_version_name,
     next_patch_version_name,
     parse_version_name,
-    publish_candidate_to_stable,
 )
 from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
 
-from .judge import judge_trigger_run_artifacts
+from .judge import judge_trigger_full_smoke_artifacts, judge_trigger_run_artifacts
 from .runner import TriggerEvalCodexRunner, TriggerEvalRunnerConfig
 
 
@@ -56,6 +55,7 @@ class TriggerDescriptionLoopConfig:
     baseline_version: str = "minor-detection-v0.1.0"
     optimization_set_path: Path = ROOT_DIR / "data" / "trigger_eval" / "minor_detection_trigger_eval_v1_optimization_set.json"
     final_validation_set_path: Optional[Path] = ROOT_DIR / "data" / "trigger_eval" / "minor_detection_trigger_eval_v1_final_validation_set.json"
+    release_contract_set_path: Optional[Path] = ROOT_DIR / "data" / "trigger_eval" / "minor_detection_trigger_eval_v1_final_validation_set.json"
     max_rounds: int = 1
     max_errors: Optional[int] = None
     protected_count: int = 8
@@ -68,6 +68,8 @@ class TriggerDescriptionLoopConfig:
     manual_smoke_validation_command_template: Optional[str] = None
     manual_final_test_script: str = "scripts/run_trigger_description_validation.py"
     manual_final_test_command_template: Optional[str] = None
+    manual_release_contract_gate_script: str = "scripts/run_trigger_release_contract_gate.py"
+    manual_release_contract_gate_command_template: Optional[str] = None
     repeat_runs_per_sample: int = 1
 
 
@@ -82,6 +84,16 @@ class TriggerDescriptionLoop:
         self.config = config or TriggerDescriptionLoopConfig()
         self.runner = runner or TriggerEvalCodexRunner(config=self.config.runner_config)
         self.optimizer = optimizer or SkillOptimizer()
+
+    def _runner_with_skill_execution_mode(self, skill_execution_mode: str) -> TriggerEvalCodexRunner:
+        base_config = getattr(self.runner, "config", None)
+        if not isinstance(base_config, TriggerEvalRunnerConfig):
+            base_config = self.config.runner_config
+        runner_config = replace(base_config, skill_execution_mode=skill_execution_mode)
+        return TriggerEvalCodexRunner(
+            config=runner_config,
+            command_runner=getattr(self.runner, "command_runner", None),
+        )
 
     def _workspace(self) -> Path:
         workspace = self.config.workspace_root / datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -124,6 +136,63 @@ class TriggerDescriptionLoop:
         judged["runtime_counts"] = run_manifest.get("counts", {}) if isinstance(run_manifest, dict) else {}
         return judged
 
+    def _run_release_validations(
+        self,
+        *,
+        version_name: str,
+        workspace: Path,
+    ) -> Dict[str, Any]:
+        if not self.config.final_validation_set_path:
+            return {
+                "pass": True,
+                "status": "skipped_no_final_validation_set",
+                "description_validation": None,
+                "full_smoke": None,
+            }
+
+        skill_source_dir = self._skill_source_dir(version_name)
+        description_run_root = self.runner.run_dataset(
+            project_root=ROOT_DIR,
+            skill_source_dir=skill_source_dir,
+            skill_version=version_name,
+            dataset_path=self.config.final_validation_set_path,
+            workspace_dir=workspace / "desc",
+        )
+        description_validation = judge_trigger_run_artifacts(
+            run_root=description_run_root,
+            skill_version=version_name,
+            parent_version=None,
+            dataset_name=self.config.final_validation_set_path.stem,
+            max_errors=self.config.max_errors,
+            protected_count=self.config.protected_count,
+            project_root=ROOT_DIR,
+        )
+        full_smoke_runner = self._runner_with_skill_execution_mode("full")
+        full_smoke_run_root = full_smoke_runner.run_dataset(
+            project_root=ROOT_DIR,
+            skill_source_dir=skill_source_dir,
+            skill_version=version_name,
+            dataset_path=self.config.final_validation_set_path,
+            workspace_dir=workspace / "smoke",
+        )
+        full_smoke = judge_trigger_full_smoke_artifacts(
+            run_root=full_smoke_run_root,
+            skill_version=version_name,
+            dataset_name=self.config.final_validation_set_path.stem,
+            project_root=ROOT_DIR,
+        )
+        description_gate_results = (description_validation.get("report_payload") or {}).get("gate_results") or {}
+        full_smoke_gate_results = (full_smoke.get("report_payload") or {}).get("gate_results") or {}
+        passed = bool(description_gate_results.get("release_gate_pass")) and bool(
+            full_smoke_gate_results.get("full_smoke_release_pass")
+        )
+        return {
+            "pass": passed,
+            "status": "passed" if passed else "failed",
+            "description_validation": normalize_project_paths(description_validation, project_root=ROOT_DIR, start=workspace),
+            "full_smoke": normalize_project_paths(full_smoke, project_root=ROOT_DIR, start=workspace),
+        }
+
     def _skip_comparison(self, reason: str) -> Dict[str, Any]:
         return {
             "decision": "skipped",
@@ -146,14 +215,21 @@ class TriggerDescriptionLoop:
         if not template:
             script = self.config.manual_smoke_validation_script
             template = f"python {script} --version {{version}}"
-        return template.format(version=version_name)
+        return str(normalize_project_paths(template.format(version=version_name), project_root=ROOT_DIR, start=ROOT_DIR))
 
     def _manual_final_validation_command(self, version_name: str) -> str:
         template = self.config.manual_final_test_command_template
         if not template:
             script = self.config.manual_final_test_script
             template = f"python {script} --version {{version}}"
-        return template.format(version=version_name)
+        return str(normalize_project_paths(template.format(version=version_name), project_root=ROOT_DIR, start=ROOT_DIR))
+
+    def _manual_release_contract_gate_command(self, version_name: str) -> str:
+        template = self.config.manual_release_contract_gate_command_template
+        if not template:
+            script = self.config.manual_release_contract_gate_script
+            template = f"python {script} --version {{version}}"
+        return str(normalize_project_paths(template.format(version=version_name), project_root=ROOT_DIR, start=ROOT_DIR))
 
     def run(self) -> Dict[str, Any]:
         loop_started_at = time.time()
@@ -181,13 +257,19 @@ class TriggerDescriptionLoop:
         baseline_eval = accepted_eval
 
         rounds = []
+        champion_version = accepted_version
         final_version = accepted_version
-        next_stable_semantic = next_patch_version_name(accepted_version)
-        next_stable_version = build_stamped_stable_version_name(next_stable_semantic, run_tag)
+        next_stable_semantic = next_patch_version_name(self.config.baseline_version)
+        proposed_stable_version = build_stamped_stable_version_name(next_stable_semantic, run_tag)
+        published_stable_version = None
         review_artifact = None
         manual_review_status = "not_required"
         manual_review_base_version = None
         manual_review_candidate_version = None
+        final_validation_status = "not_required"
+        release_contract_gate_status = "not_required"
+        release_contract_gate_mode = "soft"
+        release_contract_gate_blocking = False
 
         baseline_blocker = self._baseline_runtime_blocker_reason(accepted_eval)
         if baseline_blocker:
@@ -243,6 +325,23 @@ class TriggerDescriptionLoop:
                     )
                     break
 
+                edit_contract_check = self.optimizer.evaluate_candidate_edit_contract(
+                    base_version=accepted_version,
+                    candidate_version=candidate_version,
+                )
+                if not edit_contract_check.get("pass"):
+                    rounds.append(
+                        {
+                            "round": round_index,
+                            "accepted_version": accepted_version,
+                            "candidate_version": candidate_version,
+                            "comparison": self._skip_comparison("candidate violated resolved edit contract"),
+                            "optimize_result": optimize_result,
+                            "edit_contract_check": edit_contract_check,
+                        }
+                    )
+                    break
+
                 _log(f"round {round_index}: evaluate candidate {candidate_version}")
                 candidate_eval = self._evaluate_version(
                     version_name=candidate_version,
@@ -252,8 +351,10 @@ class TriggerDescriptionLoop:
                 comparison = self.config.compare_fn(
                     accepted_report_path=accepted_eval["report_path"],
                     candidate_report_path=candidate_eval["report_path"],
+                    accepted_error_index_path=accepted_eval["error_index_path"],
                     accepted_protected_index_path=accepted_eval["protected_index_path"],
                     candidate_error_index_path=candidate_eval["error_index_path"],
+                    candidate_redline_index_path=candidate_eval.get("redline_index_path"),
                 )
 
                 round_payload = {
@@ -262,6 +363,7 @@ class TriggerDescriptionLoop:
                     "candidate_version": candidate_version,
                     "comparison": comparison,
                     "optimize_result": optimize_result,
+                    "edit_contract_check": edit_contract_check,
                     "accepted_runtime": accepted_eval.get("runtime_summary", {}),
                     "accepted_runtime_counts": accepted_eval.get("runtime_counts", {}),
                     "candidate_runtime": candidate_eval.get("runtime_summary", {}),
@@ -270,25 +372,23 @@ class TriggerDescriptionLoop:
 
                 _log(f"round {round_index}: compare decision={comparison.get('decision')}")
                 if comparison["decision"] == "promote":
-                    publish_candidate_to_stable(SKILLS_DIR / candidate_version, SKILLS_DIR / next_stable_version)
-                    round_payload["promoted_to"] = next_stable_version
-                    final_version = next_stable_version
-                    accepted_version = next_stable_version
+                    round_payload["promoted_to"] = candidate_version
+                    champion_version = candidate_version
+                    final_version = candidate_version
+                    accepted_version = candidate_version
                     accepted_eval = candidate_eval
-                    next_stable_semantic = next_patch_version_name(accepted_version)
-                    next_stable_version = build_stamped_stable_version_name(next_stable_semantic, run_tag)
                 rounds.append(round_payload)
-                if comparison["decision"] != "promote":
-                    break
 
-        if final_version != self.config.baseline_version:
+        if champion_version != self.config.baseline_version:
             review_artifact = self.optimizer.create_formal_skill_review_artifact(
                 base_version=self.config.baseline_version,
-                candidate_version=final_version,
+                candidate_version=champion_version,
             )
             manual_review_status = "pending"
             manual_review_base_version = self.config.baseline_version
-            manual_review_candidate_version = final_version
+            manual_review_candidate_version = champion_version
+            final_validation_status = "pending_manual_review"
+            release_contract_gate_status = "pending_manual_review"
 
         version_inventory_after = build_version_inventory(
             SKILLS_DIR,
@@ -298,13 +398,23 @@ class TriggerDescriptionLoop:
             scope_active_version=True,
         )
         manual_smoke_validation_command = None
-        manual_smoke_validation_script = self.config.manual_smoke_validation_script
+        manual_smoke_validation_script = self.config.manual_release_contract_gate_script
         manual_final_test_command = None
+        manual_release_contract_gate_command = None
+        manual_release_contract_gate_script = self.config.manual_release_contract_gate_script
+        publish_stable_command = None
         manual_review_approve_command = None
         manual_review_reject_command = None
         if manual_review_candidate_version:
-            manual_smoke_validation_command = self._manual_smoke_validation_command(manual_review_candidate_version)
+            manual_smoke_validation_command = self._manual_release_contract_gate_command(manual_review_candidate_version)
             manual_final_test_command = self._manual_final_validation_command(manual_review_candidate_version)
+            manual_release_contract_gate_command = manual_smoke_validation_command
+            publish_stable_command = (
+                "python scripts/publish_reviewed_skill_version.py "
+                f"--base-version {manual_review_base_version} "
+                f"--candidate-version {manual_review_candidate_version} "
+                f"--stable-version {proposed_stable_version}"
+            )
             manual_review_approve_command = (
                 "python -m src.evolution.optimizer "
                 f"--review-base-version {manual_review_base_version} "
@@ -324,12 +434,18 @@ class TriggerDescriptionLoop:
             "optimization_target": "SKILL.md frontmatter description",
             "evaluation_contract": "trigger_decision_and_skill_invocation_success_only",
             "optimizer_feedback_enabled": True,
-            "post_loop_validation_role": "standalone_description_validation",
+            "post_loop_validation_role": "standalone_trigger_final_validation",
             "baseline_version": self.config.baseline_version,
+            "champion_version": champion_version,
             "final_version": final_version,
+            "proposed_stable_version": proposed_stable_version if manual_review_candidate_version else None,
+            "published_stable_version": published_stable_version,
             "optimization_set": _relative_or_display(self.config.optimization_set_path, workspace),
             "final_validation_set": _relative_or_display(self.config.final_validation_set_path, workspace)
             if self.config.final_validation_set_path
+            else None,
+            "release_contract_set": _relative_or_display(self.config.release_contract_set_path, workspace)
+            if self.config.release_contract_set_path
             else None,
             "dataset": _relative_or_display(self.config.optimization_set_path, workspace),
             "workspace": ".",
@@ -342,10 +458,24 @@ class TriggerDescriptionLoop:
             "manual_review_status": manual_review_status,
             "manual_review_base_version": manual_review_base_version,
             "manual_review_candidate_version": manual_review_candidate_version,
+            "final_validation_status": final_validation_status,
+            "release_contract_gate_status": release_contract_gate_status,
+            "contract_check_status": release_contract_gate_status,
+            "release_contract_gate_mode": release_contract_gate_mode,
+            "release_contract_gate_blocking": release_contract_gate_blocking,
+            "contract_check_mode": "indicator_only",
+            "contract_check_blocking": False,
+            "post_loop_final_validation_includes_soft_contract_metrics": True,
             "manual_smoke_validation_script": manual_smoke_validation_script,
             "manual_smoke_validation_command": manual_smoke_validation_command,
             "manual_final_test_script": self.config.manual_final_test_script,
             "manual_final_test_command": manual_final_test_command,
+            "post_loop_release_gate_role": "optional_standalone_trigger_release_contract_gate",
+            "manual_release_contract_gate_script": manual_release_contract_gate_script,
+            "manual_release_contract_gate_command": manual_release_contract_gate_command,
+            "manual_contract_check_script": manual_release_contract_gate_script,
+            "manual_contract_check_command": manual_release_contract_gate_command,
+            "publish_stable_command": publish_stable_command,
             "manual_review_approve_command": manual_review_approve_command,
             "manual_review_reject_command": manual_review_reject_command,
             "timing": {
@@ -360,19 +490,19 @@ class TriggerDescriptionLoop:
                 "recommended_cleanup_command": f"python scripts/cleanup_skill_versions.py --base-name {base_name} --keep-latest-stable 2 --only-run-tag {run_tag} --dry-run",
             },
         }
-        _log(f"final_version={final_version}")
+        _log(f"champion_version={champion_version}")
         if manual_review_candidate_version:
             _log(
                 "manual review pending: "
                 f"base={manual_review_base_version} candidate={manual_review_candidate_version}"
             )
             _log(
-                "recommended final validation on final_validation_set: "
+                "recommended final validation on final_validation_set (includes contract indicators): "
                 f"{manual_final_test_command}"
             )
             _log(
-                "recommended standalone full smoke: "
-                f"{manual_smoke_validation_command}"
+                "recommended contract indicator check: "
+                f"{manual_release_contract_gate_command}"
             )
         summary_path = workspace / "loop_summary.json"
         with summary_path.open("w", encoding="utf-8") as f:

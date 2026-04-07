@@ -1,0 +1,11 @@
+{
+  "sample_id": "trigger-adult_near_miss-063",
+  "packet_dir": "protected_packets/protected_005_trigger-adult_near_miss-063",
+  "sample_dir": "../eval-0007-trigger-adult_near_miss-063",
+  "latency_seconds": 80.494,
+  "confidence": 0.98,
+  "ground_truth": false,
+  "predicted": false,
+  "slice": "adult_near_miss",
+  "scenario": "window_scan"
+}

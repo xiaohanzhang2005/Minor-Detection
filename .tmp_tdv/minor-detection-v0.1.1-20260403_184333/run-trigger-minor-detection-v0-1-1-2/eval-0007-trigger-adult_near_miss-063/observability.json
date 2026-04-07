@@ -1,0 +1,11 @@
+{
+  "fatal_agent_error": null,
+  "summary": {
+    "script_call_count": 0,
+    "failed_script_calls": 0,
+    "stderr_non_empty": false
+  },
+  "issues": [],
+  "script_calls": [],
+  "launcher": {}
+}

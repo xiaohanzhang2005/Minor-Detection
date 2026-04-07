@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from src.config import ROOT_DIR
 from src.runtime import build_formal_single_session_payload
 from src.skill_loop.runner import (
     LAUNCHER_OBSERVABILITY_FILENAME,
@@ -69,7 +70,9 @@ class TriggerEvalRunnerConfig:
     prompt_template: str = (
         "The installed `minor-detection` skill is available in this workspace.\n"
         "Your task is to decide whether this user request should trigger the `minor-detection` skill.\n"
-        "The request is already prepared at `{query_file}`. Read that file before deciding.\n"
+        "The request is already prepared at `{query_file}` and that file is UTF-8 encoded.\n"
+        "Read `{query_file}` with explicit UTF-8 decoding before deciding, and do not rely on default shell text decoding.\n"
+        "If you need a command, use `python -c \"from pathlib import Path; print(Path(r'{query_file}').read_text(encoding='utf-8'))\"`.\n"
         "A prepared launcher script is already available locally at `{launcher_file}`.\n"
         "If and only if the request should trigger `minor-detection`, run `python {launcher_file}` exactly once.\n"
         "If the request should not trigger the skill, do not run the launcher.\n"
@@ -213,10 +216,18 @@ print(json.dumps(payload, ensure_ascii=False))
             launcher_file=launcher_path.name,
         )
 
-    def _write_skill_output(self, *, events, target_path: Path, launcher_invoked: bool) -> Dict[str, Any]:
+    def _write_skill_output(
+        self,
+        *,
+        events,
+        target_path: Path,
+        launcher_invoked: bool,
+        launcher_result: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
         raw_text = ""
         parsed_json: Optional[Dict[str, Any]] = None
         parsed_source: Optional[str] = None
+        launcher_payload = launcher_result if isinstance(launcher_result, dict) else {}
         if launcher_invoked:
             for item in reversed(self._extract_command_execution_items(events)):
                 command = str(item.get("command", "") or "")
@@ -228,6 +239,12 @@ print(json.dumps(payload, ensure_ascii=False))
                     raw_text = aggregated_output
                     parsed_source = "launcher_aggregated_output"
                 break
+            if parsed_json is None:
+                launcher_stdout = _strip_observability_marker_lines(str(launcher_payload.get("stdout_excerpt", "") or "").strip())
+                parsed_json = _parse_json_payload(launcher_stdout)
+                if parsed_json is not None:
+                    raw_text = launcher_stdout
+                    parsed_source = "launcher_result.stdout_excerpt"
         payload = {
             "raw_text": raw_text,
             "parsed_json": parsed_json,
@@ -272,15 +289,19 @@ print(json.dumps(payload, ensure_ascii=False))
                 failed_script_calls += 1
                 issues.add("script_command_failure")
             script_calls.append(
-                {
-                    "script_name": script_name,
-                    "status": status,
-                    "exit_code": exit_code,
-                    "failed": failed,
-                    "command": command,
-                    "aggregated_output": _truncate_text(aggregated_output, max_chars=1200),
-                    "output_json": _parse_json_payload(aggregated_output),
-                }
+                normalize_project_paths(
+                    {
+                        "script_name": script_name,
+                        "status": status,
+                        "exit_code": exit_code,
+                        "failed": failed,
+                        "command": command,
+                        "aggregated_output": _truncate_text(aggregated_output, max_chars=1200),
+                        "output_json": _parse_json_payload(aggregated_output),
+                    },
+                    project_root=ROOT_DIR,
+                    start=ROOT_DIR,
+                )
             )
 
         launcher_payload = launcher_result if isinstance(launcher_result, dict) else {}
@@ -299,7 +320,7 @@ print(json.dumps(payload, ensure_ascii=False))
         if fatal_agent_error:
             issues.add(fatal_agent_error)
 
-        return {
+        return normalize_project_paths({
             "fatal_agent_error": fatal_agent_error,
             "summary": {
                 "script_call_count": len(script_calls),
@@ -309,7 +330,7 @@ print(json.dumps(payload, ensure_ascii=False))
             "issues": sorted(issues),
             "script_calls": script_calls,
             "launcher": launcher_payload,
-        }
+        }, project_root=ROOT_DIR, start=ROOT_DIR)
 
     def _write_agent_output(self, final_output_path: Path, target_path: Path, *, launcher_result: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         raw_text = final_output_path.read_text(encoding="utf-8").strip() if final_output_path.exists() else ""
@@ -477,8 +498,8 @@ print(json.dumps(payload, ensure_ascii=False))
             )
             elapsed = time.time() - started_at
 
-            stdout_text = completed.stdout or ""
-            stderr_text = completed.stderr or ""
+            stdout_text = str(normalize_project_paths(completed.stdout or "", project_root=project_root, start=sample_dir))
+            stderr_text = str(normalize_project_paths(completed.stderr or "", project_root=project_root, start=sample_dir))
             if not final_output_path.exists() and stdout_text.strip():
                 final_output_path.write_text(stdout_text.strip(), encoding="utf-8")
             stdout_path.write_text(stdout_text, encoding="utf-8")
@@ -495,12 +516,21 @@ print(json.dumps(payload, ensure_ascii=False))
             pipeline_observability = self._load_json_file(pipeline_observability_path) if pipeline_observability_path else None
             if isinstance(launcher_result, dict):
                 launcher_result["invoked"] = True
+                launcher_result = normalize_project_paths(launcher_result, project_root=project_root, start=sample_dir)
+                launcher_result_path.write_text(_json_dump(launcher_result), encoding="utf-8")
             elif launcher_invoked:
                 launcher_result = {
                     "invoked": True,
                     "success": False,
                     "status": "process_error",
                 }
+            if isinstance(pipeline_observability, dict) and pipeline_observability:
+                pipeline_observability = normalize_project_paths(
+                    pipeline_observability,
+                    project_root=project_root,
+                    start=sample_dir,
+                )
+                pipeline_observability_path.write_text(_json_dump(pipeline_observability), encoding="utf-8")
             observability = self._build_observability(events=events, stderr_text=stderr_text, launcher_result=launcher_result)
             if isinstance(pipeline_observability, dict) and pipeline_observability:
                 observability["pipeline_observability"] = pipeline_observability
@@ -516,7 +546,12 @@ print(json.dumps(payload, ensure_ascii=False))
             launcher_invoked = bool((launcher_result or {}).get("invoked"))
             launcher_success = bool((launcher_result or {}).get("success"))
             skill_output = (
-                self._write_skill_output(events=events, target_path=skill_output_path, launcher_invoked=launcher_invoked)
+                self._write_skill_output(
+                    events=events,
+                    target_path=skill_output_path,
+                    launcher_invoked=launcher_invoked,
+                    launcher_result=launcher_result,
+                )
                 if skill_output_path is not None
                 else {"json_valid": False}
             )
@@ -560,7 +595,10 @@ print(json.dumps(payload, ensure_ascii=False))
                 "skill_execution_mode": self.config.skill_execution_mode,
                 "skill_output_json_valid": bool(skill_output.get("json_valid")),
             }
-            metadata_path.write_text(_json_dump(metadata_payload), encoding="utf-8")
+            metadata_path.write_text(
+                _json_dump(normalize_project_paths(metadata_payload, project_root=project_root, start=sample_dir)),
+                encoding="utf-8",
+            )
             _trigger_runner_log(
                 "sample "
                 f"{index + 1}/{len(samples)} done "

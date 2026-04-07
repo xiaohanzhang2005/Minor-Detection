@@ -144,6 +144,41 @@ class SkillLoopRunnerTests(unittest.TestCase):
         self.assertIn("--dangerously-bypass-approvals-and-sandbox", command)
         self.assertNotIn("--sandbox", command)
 
+    def test_skill_launcher_uses_configured_timeout_without_ninety_second_cap(self):
+        root = make_test_dir(self)
+        launcher_path = root / "run_skill_once.py"
+        runner = CodexSkillRunner(config=CodexRunnerConfig(timeout_sec=600))
+
+        runner._write_skill_launcher(
+            target_path=launcher_path,
+            pipeline_script_path=root / "run_minor_detection_pipeline.py",
+            payload_path=root / "payload.json",
+            launcher_result_path=root / "launcher_result.json",
+            pipeline_observability_path=root / "pipeline_observability.json",
+        )
+
+        launcher_text = launcher_path.read_text(encoding="utf-8")
+        self.assertIn("PIPELINE_TIMEOUT_SEC = 600", launcher_text)
+        self.assertNotIn("PIPELINE_TIMEOUT_SEC = 90", launcher_text)
+
+    def test_skill_launcher_uses_utf8_safe_stream_writes(self):
+        root = make_test_dir(self)
+        launcher_path = root / "run_skill_once.py"
+        runner = CodexSkillRunner(config=CodexRunnerConfig(timeout_sec=600))
+
+        runner._write_skill_launcher(
+            target_path=launcher_path,
+            pipeline_script_path=root / "run_minor_detection_pipeline.py",
+            payload_path=root / "payload.json",
+            launcher_result_path=root / "launcher_result.json",
+            pipeline_observability_path=root / "pipeline_observability.json",
+        )
+
+        launcher_text = launcher_path.read_text(encoding="utf-8")
+        self.assertIn("def _safe_write_text(stream, text):", launcher_text)
+        self.assertIn('_safe_write_text(sys.stdout, stdout_json)', launcher_text)
+        self.assertIn('_safe_write_text(sys.stderr, stderr_text)', launcher_text)
+
     def test_build_prompt_points_agent_to_prepared_launcher(self):
         runner = CodexSkillRunner(config=CodexRunnerConfig())
         prompt = runner._build_prompt(
@@ -609,6 +644,92 @@ class SkillLoopRunnerTests(unittest.TestCase):
 
 
 class DirectSkillRunnerTests(unittest.TestCase):
+    def test_direct_runner_invokes_pipeline_with_sample_local_payload_path(self):
+        root = make_test_dir(self)
+        skill_dir = root / "skills" / "minor-detection-v0.1.0"
+        scripts_dir = skill_dir / "scripts"
+        references_dir = skill_dir / "references"
+        scripts_dir.mkdir(parents=True, exist_ok=True)
+        references_dir.mkdir(parents=True, exist_ok=True)
+        (scripts_dir / "run_minor_detection_pipeline.py").write_text("# placeholder\n", encoding="utf-8")
+        (references_dir / "output-schema.md").write_text(
+            (ROOT_DIR / "skills" / "minor-detection" / "references" / "output-schema.md").read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
+
+        dataset_path = root / "dataset.jsonl"
+        dataset_path.write_text(
+            json.dumps(
+                {
+                    "sample_id": "sample_001",
+                    "is_minor": True,
+                    "source": "social",
+                    "conversation": [{"role": "user", "content": "2025-11-20 23:20 test"}],
+                },
+                ensure_ascii=False,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        captured: Dict[str, Any] = {}
+
+        def fake_run(command, **kwargs):
+            captured["command"] = list(command)
+            captured["cwd"] = kwargs.get("cwd")
+            return subprocess.CompletedProcess(
+                args=command,
+                returncode=0,
+                stdout=json.dumps(
+                    {
+                        "decision": {
+                            "is_minor": True,
+                            "minor_confidence": 0.91,
+                            "confidence_band": "high",
+                            "risk_level": "Low",
+                        },
+                        "user_profile": {"age_range": "13-15岁", "education_stage": "初中", "identity_markers": []},
+                        "icbo_features": {
+                            "intention": "support",
+                            "cognition": "peer-focused",
+                            "behavior_style": "emotional",
+                            "opportunity_time": "2025-11-20 23:20",
+                        },
+                        "evidence": {
+                            "direct_evidence": ["test"],
+                            "historical_evidence": [],
+                            "retrieval_evidence": [],
+                            "time_evidence": [],
+                            "conflicting_signals": [],
+                        },
+                        "reasoning_summary": "ok",
+                        "trend": {"trajectory": [], "trend_summary": "stable"},
+                        "uncertainty_notes": [],
+                        "recommended_next_step": "safe_to_continue",
+                    },
+                    ensure_ascii=False,
+                ),
+                stderr="",
+            )
+
+        runner = DirectSkillRunner(
+            config=DirectRunnerConfig(timeout_sec=30, max_samples=1, sample_strategy="stratified", sample_seed=42),
+            command_runner=fake_run,
+        )
+        run_root = runner.run_dataset(
+            project_root=root,
+            skill_source_dir=skill_dir,
+            skill_version="minor-detection-v0.1.0",
+            dataset_path=dataset_path,
+            workspace_dir=root / "workspace",
+        )
+
+        sample_dir = next(path for path in run_root.iterdir() if path.is_dir())
+        command = captured["command"]
+        self.assertEqual(captured["cwd"], str(sample_dir))
+        self.assertEqual(command[-2:], ["--payload-file", "payload.json"])
+        self.assertNotEqual(command[1], str(sample_dir / "payload.json"))
+
     def test_direct_runner_writes_judge_compatible_artifacts(self):
         root = make_test_dir(self)
         skill_dir = root / "skills" / "minor-detection-v0.1.0"
@@ -872,6 +993,21 @@ class SkillLoopJudgeTests(unittest.TestCase):
         self.assertGreater(report["failure_type_counts"]["missing_time_handling"], 0)
         self.assertGreater(report["failure_type_counts"]["missing_script_usage"], 0)
 
+    def test_judge_writes_contract_check_preview_instead_of_release_gate_alias(self):
+        run_root = make_test_dir(self)
+        self._make_sample_dir(run_root, "sample_minor_ok", is_minor=True, predicted=True)
+        judged = judge_run_artifacts(
+            run_root=run_root,
+            skill_version="minor-detection-v0.1.0",
+            parent_version=None,
+            dataset_name="val",
+            max_errors=4,
+        )
+        report = json.loads(judged["report_path"].read_text(encoding="utf-8"))
+        self.assertIn("contract_check_preview", report)
+        self.assertIn("contract_check_all_green", report)
+        self.assertNotIn("release_contract_gate_results", report)
+
     def test_judge_tracks_observed_log_issues_without_turning_them_into_main_errors(self):
         run_root = make_test_dir(self)
         self._make_sample_dir(
@@ -981,15 +1117,64 @@ class SkillLoopCompareTests(unittest.TestCase):
         )
         protected_index = root / "protected.jsonl"
         protected_index.write_text(json.dumps({"sample_id": "s1"}) + "\n", encoding="utf-8")
+        accepted_error_index = root / "accepted_errors.jsonl"
+        accepted_error_index.write_text("", encoding="utf-8")
         candidate_error_index = root / "errors.jsonl"
         candidate_error_index.write_text(json.dumps({"sample_id": "s1"}) + "\n", encoding="utf-8")
         result = compare_reports(
             accepted_report_path=accepted_report,
             candidate_report_path=candidate_report,
+            accepted_error_index_path=accepted_error_index,
             accepted_protected_index_path=protected_index,
             candidate_error_index_path=candidate_error_index,
         )
         self.assertEqual(result["decision"], "rollback")
+
+    def test_compare_reports_surfaces_contract_check_preview(self):
+        root = make_test_dir(self)
+        accepted_report = root / "accepted.json"
+        candidate_report = root / "candidate.json"
+        accepted_report.write_text(
+            json.dumps(
+                {
+                    "metrics": {"f1_score": 0.7},
+                    "schema_validity_rate": 1.0,
+                    "invocation_success_rate": 0.8,
+                    "step_compliance_rate": 0.8,
+                }
+            ),
+            encoding="utf-8",
+        )
+        candidate_report.write_text(
+            json.dumps(
+                {
+                    "metrics": {"f1_score": 0.8},
+                    "schema_validity_rate": 1.0,
+                    "invocation_success_rate": 0.8,
+                    "step_compliance_rate": 0.9,
+                    "contract_check_preview": {"release_gate_pass": False, "evidence_trace_pass": False},
+                }
+            ),
+            encoding="utf-8",
+        )
+        protected_index = root / "protected.jsonl"
+        protected_index.write_text("", encoding="utf-8")
+        accepted_error_index = root / "accepted_errors.jsonl"
+        accepted_error_index.write_text("", encoding="utf-8")
+        candidate_error_index = root / "errors.jsonl"
+        candidate_error_index.write_text("", encoding="utf-8")
+
+        result = compare_reports(
+            accepted_report_path=accepted_report,
+            candidate_report_path=candidate_report,
+            accepted_error_index_path=accepted_error_index,
+            accepted_protected_index_path=protected_index,
+            candidate_error_index_path=candidate_error_index,
+        )
+
+        self.assertEqual(result["decision"], "promote")
+        self.assertEqual(result["contract_check_preview"]["release_gate_pass"], False)
+        self.assertFalse(result["contract_check_preview_summary"]["all_green"])
 
     def test_compare_reports_allows_invocation_improvement_without_f1_gain(self):
         root = make_test_dir(self)
@@ -1019,12 +1204,15 @@ class SkillLoopCompareTests(unittest.TestCase):
         )
         protected_index = root / "protected.jsonl"
         protected_index.write_text("", encoding="utf-8")
+        accepted_error_index = root / "accepted_errors.jsonl"
+        accepted_error_index.write_text("", encoding="utf-8")
         candidate_error_index = root / "errors.jsonl"
         candidate_error_index.write_text("", encoding="utf-8")
 
         result = compare_reports(
             accepted_report_path=accepted_report,
             candidate_report_path=candidate_report,
+            accepted_error_index_path=accepted_error_index,
             accepted_protected_index_path=protected_index,
             candidate_error_index_path=candidate_error_index,
         )
@@ -1062,12 +1250,15 @@ class SkillLoopCompareTests(unittest.TestCase):
         )
         protected_index = root / "protected.jsonl"
         protected_index.write_text("", encoding="utf-8")
+        accepted_error_index = root / "accepted_errors.jsonl"
+        accepted_error_index.write_text("", encoding="utf-8")
         candidate_error_index = root / "errors.jsonl"
         candidate_error_index.write_text("", encoding="utf-8")
 
         result = compare_reports(
             accepted_report_path=accepted_report,
             candidate_report_path=candidate_report,
+            accepted_error_index_path=accepted_error_index,
             accepted_protected_index_path=protected_index,
             candidate_error_index_path=candidate_error_index,
         )
@@ -1104,18 +1295,165 @@ class SkillLoopCompareTests(unittest.TestCase):
         )
         protected_index = root / "protected.jsonl"
         protected_index.write_text("", encoding="utf-8")
+        accepted_error_index = root / "accepted_errors.jsonl"
+        accepted_error_index.write_text("", encoding="utf-8")
         candidate_error_index = root / "errors.jsonl"
         candidate_error_index.write_text("", encoding="utf-8")
 
         result = compare_reports(
             accepted_report_path=accepted_report,
             candidate_report_path=candidate_report,
+            accepted_error_index_path=accepted_error_index,
             accepted_protected_index_path=protected_index,
             candidate_error_index_path=candidate_error_index,
         )
 
         self.assertEqual(result["decision"], "rollback")
         self.assertFalse(result["gates"]["core_metric_improved"])
+
+    def test_compare_reports_allows_trigger_promotion_with_redline_warning(self):
+        root = make_test_dir(self)
+        accepted_report = root / "accepted.json"
+        candidate_report = root / "candidate.json"
+        accepted_report.write_text(
+            json.dumps(
+                {
+                    "task_type": "trigger_eval",
+                    "metrics": {"f1_score": 0.80},
+                    "schema_validity_rate": 1.0,
+                    "invocation_success_rate": 0.8,
+                    "step_compliance_rate": 0.8,
+                }
+            ),
+            encoding="utf-8",
+        )
+        candidate_report.write_text(
+            json.dumps(
+                {
+                    "task_type": "trigger_eval",
+                    "metrics": {"f1_score": 0.90},
+                    "schema_validity_rate": 1.0,
+                    "invocation_success_rate": 0.8,
+                    "step_compliance_rate": 0.9,
+                }
+            ),
+            encoding="utf-8",
+        )
+        protected_index = root / "protected.jsonl"
+        protected_index.write_text(json.dumps({"sample_id": "protected-1", "slice": "identity_explicit"}) + "\n", encoding="utf-8")
+        accepted_error_index = root / "accepted_errors.jsonl"
+        accepted_error_index.write_text("", encoding="utf-8")
+        candidate_error_index = root / "candidate_errors.jsonl"
+        candidate_error_index.write_text("", encoding="utf-8")
+        candidate_redline_index = root / "redline.jsonl"
+        candidate_redline_index.write_text(json.dumps({"sample_id": "trigger-implicit_minor_signal-999"}) + "\n", encoding="utf-8")
+
+        result = compare_reports(
+            accepted_report_path=accepted_report,
+            candidate_report_path=candidate_report,
+            accepted_error_index_path=accepted_error_index,
+            accepted_protected_index_path=protected_index,
+            candidate_error_index_path=candidate_error_index,
+            candidate_redline_index_path=candidate_redline_index,
+        )
+
+        self.assertEqual(result["decision"], "promote")
+        self.assertFalse(result["gates"]["redline_non_regression"])
+
+
+class SkillAgentLoopRoundControlTests(unittest.TestCase):
+    def test_loop_continues_after_rollback_until_max_rounds(self):
+        root = make_test_dir(self)
+        skills_root = root / "skills"
+        source_dir = skills_root / "minor-detection"
+        baseline_dir = skills_root / "minor-detection-v0.1.0"
+        source_dir.mkdir(parents=True, exist_ok=True)
+        baseline_dir.mkdir(parents=True, exist_ok=True)
+
+        config = mock.Mock()
+        config.baseline_source_dir = source_dir
+        config.baseline_version = "minor-detection-v0.1.0"
+        config.dataset_path = root / "data" / "val.jsonl"
+        config.max_rounds = 2
+        config.max_errors = None
+        config.protected_count = 8
+        config.workspace_root = root / "workspace"
+        config.packages_root = root / "packages"
+        config.refresh_baseline_version = False
+        config.runner_config = CodexRunnerConfig()
+
+        baseline_eval = {
+            "report_path": root / "baseline-report.json",
+            "failure_packets_dir": root / "failure_packets",
+            "protected_packets_dir": root / "protected_packets",
+            "error_index_path": root / "baseline_error_index.jsonl",
+            "protected_index_path": root / "protected_index.jsonl",
+            "runtime_summary": {},
+            "runtime_counts": {},
+            "report_payload": {"sample_count": 2, "invocation_success_rate": 1.0},
+        }
+        candidate_eval_1 = {
+            "report_path": root / "candidate-1-report.json",
+            "error_index_path": root / "candidate_1_error_index.jsonl",
+            "runtime_summary": {},
+            "runtime_counts": {},
+        }
+        candidate_eval_2 = {
+            "report_path": root / "candidate-2-report.json",
+            "error_index_path": root / "candidate_2_error_index.jsonl",
+            "runtime_summary": {},
+            "runtime_counts": {},
+        }
+
+        optimizer = mock.Mock()
+
+        def optimize_side_effect(**kwargs):
+            candidate_version = kwargs["new_version"]
+            (skills_root / candidate_version).mkdir(parents=True, exist_ok=True)
+            return {
+                "success": True,
+                "current_version": kwargs["current_version"],
+                "new_version": candidate_version,
+                "edited_files": ["references/evidence-rules.md"],
+            }
+
+        optimizer.optimize_from_judge_artifacts.side_effect = optimize_side_effect
+        optimizer.evaluate_candidate_edit_contract.return_value = {
+            "pass": True,
+            "description_only_check": {"expected": False},
+            "edit_contract_check": {"passed": True},
+        }
+        optimizer.create_formal_skill_review_artifact.return_value = {
+            "base_version": "minor-detection-v0.1.0",
+            "candidate_version": "minor-detection-v0.1.1-rc002-20260322_120000",
+            "review_diff_path": "skills/minor-detection-v0.1.1-rc002-20260322_120000/review/diff.md",
+        }
+
+        loop = SkillAgentLoop(config=config, runner=mock.Mock(runner_mode="direct"), optimizer=optimizer)
+        workspace = root / "workspace" / "20260322_120000"
+        workspace.mkdir(parents=True, exist_ok=True)
+
+        with (
+            mock.patch("src.skill_loop.loop.SKILLS_DIR", skills_root),
+            mock.patch("src.skill_loop.loop.ensure_version_snapshot"),
+            mock.patch("src.skill_loop.loop.get_active_skill_version", return_value="minor-detection"),
+            mock.patch.object(loop, "_workspace", return_value=workspace),
+            mock.patch.object(loop, "_evaluate_version", side_effect=[baseline_eval, candidate_eval_1, candidate_eval_2]),
+            mock.patch(
+                "src.skill_loop.loop.compare_reports",
+                side_effect=[
+                    {"decision": "rollback", "accepted_f1": 0.9, "candidate_f1": 0.8, "f1_delta": -0.1},
+                    {"decision": "promote", "accepted_f1": 0.9, "candidate_f1": 1.0, "f1_delta": 0.1},
+                ],
+            ),
+        ):
+            summary = loop.run()
+
+        self.assertEqual(len(summary["rounds"]), 2)
+        self.assertEqual(summary["rounds"][0]["comparison"]["decision"], "rollback")
+        self.assertEqual(summary["rounds"][1]["comparison"]["decision"], "promote")
+        self.assertEqual(summary["rounds"][1]["promoted_to"], "minor-detection-v0.1.1-rc002-20260322_120000")
+        self.assertEqual(summary["champion_version"], "minor-detection-v0.1.1-rc002-20260322_120000")
 
 
 class PacketOptimizerTests(unittest.TestCase):
@@ -1331,12 +1669,488 @@ class PacketOptimizerTests(unittest.TestCase):
             )
 
         self.assertFalse(result["success"])
-        self.assertEqual(result["message"], "description revision is not substantive")
-        self.assertEqual(
-            result["description_change"]["trivial_change_reason"],
-            "punctuation_or_format_only",
-        )
+        self.assertEqual(result["message"], "description revision failed validator")
+        self.assertEqual(len(result["description_validation"]["attempts"]), 3)
         self.assertFalse((skills_root / "minor-detection-v0.1.1-rc001-20260330_190000").exists())
+
+    def test_trigger_description_validator_accepts_complete_boundary_policy(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 仅当上层任务目标是判断聊天记录中的说话者是否为未成年人、青少年，或需要输出年龄倾向、学生画像、未成年人风险与证据分析时，才触发此技能；如果任务目标不是做未成年人/青少年判断，则不触发；如果当前只有零散、模糊或单一弱线索、信息仍不足，也不触发。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["errors"], [])
+        self.assertTrue(result["signals"]["has_task_boundary"])
+        self.assertTrue(result["signals"]["has_evidence_sufficiency_boundary"])
+
+    def test_extract_frontmatter_description_supports_multiline_yaml_block(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        skill_text = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: |\n"
+            "  仅当任务目标是判断未成年人时才触发。\n"
+            "  如果任务目标不是未成年人判断或证据不足，则不触发。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        description = optimizer._extract_frontmatter_description(skill_text)
+
+        self.assertIn("仅当任务目标是判断未成年人时才触发。", description)
+        self.assertIn("如果任务目标不是未成年人判断或证据不足，则不触发。", description)
+
+    def test_apply_description_only_revision_replaces_multiline_yaml_description_block(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        current_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        revised_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: |\n"
+            "  仅当上层任务目标是判断聊天记录中的说话者是否为未成年人、青少年时，才触发此技能。\n"
+            "  如果任务目标不是未成年人判断，或当前证据不足、线索模糊，则不触发。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        updated = optimizer._apply_description_only_revision(current_skill, revised_skill)
+        updated_description = optimizer._extract_frontmatter_description(updated)
+
+        self.assertIn("仅当上层任务目标是判断聊天记录中的说话者是否为未成年人、青少年时，才触发此技能。", updated_description)
+        self.assertIn("如果任务目标不是未成年人判断，或当前证据不足、线索模糊，则不触发。", updated_description)
+        self.assertNotIn("# Minor Detection", updated_description)
+
+    def test_trigger_description_validator_rejects_truncated_and_boundary_missing_draft(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当需要判断说话者是否可能是未成年人/青少年/学生时触发此技能。包括以下情况：\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertFalse(result["passed"])
+        self.assertIn("truncated_ending", result["errors"])
+        self.assertIn("missing_non_trigger_boundary", result["errors"])
+        self.assertIn("missing_task_boundary", result["errors"])
+        self.assertIn("missing_evidence_sufficiency_boundary", result["errors"])
+
+    def test_trigger_description_validator_rejects_missing_task_boundary(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当需要判断说话者是否可能是未成年人、青少年，或分析年龄倾向、校园倾向、学生画像时应触发此技能；如果信息不足或仅凭单一弱线索，不触发。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertFalse(result["passed"])
+        self.assertIn("missing_task_boundary", result["errors"])
+
+    def test_trigger_description_validator_accepts_natural_evidence_sufficiency_boundary_phrasing(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当且仅当请求核心任务是判断说话者是否为未成年人、青少年，且证据充分性达到分析要求时才触发此技能；如果任务目标不是未成年人判断，则不触发；如果证据窗口不足、信息仍然模糊，也不触发。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertTrue(result["signals"]["has_evidence_sufficiency_boundary"])
+
+    def test_trigger_description_validator_accepts_natural_task_boundary_phrasing(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 仅当请求核心任务是判断说话者是否为未成年人、青少年时才触发此技能；如果仅讨论未成年人相关话题但无身份判断需求，或请求本质是其他分析如情绪画像、危机干预，则不触发；如果证据不足，也不触发。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertTrue(result["signals"]["has_task_boundary"])
+
+    def test_trigger_description_validator_accepts_general_analysis_task_boundary_phrasing(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当请求核心任务是判断说话者是否为未成年人、青少年时才触发此技能；如果请求仅涉及一般分析而不含年龄判断意图，则不触发；如果虽有学生身份提及但无明确未成年证据，也不触发。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertTrue(result["signals"]["has_task_boundary"])
+        self.assertTrue(result["signals"]["has_evidence_sufficiency_boundary"])
+
+    def test_trigger_description_validator_accepts_other_profile_analysis_boundary_phrasing(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当且仅当请求核心任务是判断说话者是否为未成年人、青少年，且证据充分时才触发此技能；以下情况不触发：1) 请求本质为其他画像分析（如情绪/关系）；2) 存在明确成人反证；3) 仅含单一模糊线索、证据窗口不足。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertTrue(result["signals"]["has_task_boundary"])
+
+    def test_trigger_description_validator_accepts_request_goal_irrelevant_boundary_phrasing(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当且仅当请求本质是判断说话者是否可能为未成年人，且证据充分时触发此技能；以下情况不应触发：1) 请求目标与未成年人判断无关（如情绪分析、关系画像）；2) 存在明确成人信号；3) 仅有单一模糊信号且无收敛证据。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertTrue(result["signals"]["has_task_boundary"])
+
+    def test_trigger_description_validator_accepts_request_goal_not_minor_identification_boundary(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 仅当请求本质是判断说话者是否为未成年人且证据充分时触发此技能；以下情况不触发：1) 请求目标不是未成年人识别，如普通情绪分析；2) 存在明确成人反证；3) 仅有单一弱线索且证据不足。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertTrue(result["signals"]["has_task_boundary"])
+
+    def test_trigger_description_validator_accepts_request_purpose_irrelevant_boundary(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 仅当请求本质是判断说话者是否为未成年人且证据充分时触发此技能；以下情况不触发：1) 请求目的与未成年人识别无关；2) 仅有单一弱线索且无收敛证据；3) 存在明确成人反证。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertTrue(result["signals"]["has_task_boundary"])
+
+    def test_trigger_eval_optimizer_retries_until_description_validator_passes(self):
+        root = make_test_dir(self)
+        skills_root = root / "skills"
+        current_dir = skills_root / "minor-detection-v0.1.0"
+        current_dir.mkdir(parents=True, exist_ok=True)
+        skill_text = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        (current_dir / "SKILL.md").write_text(skill_text, encoding="utf-8")
+        report_path = root / "report.json"
+        report_path.write_text(
+            json.dumps(
+                {
+                    "task_type": "trigger_eval",
+                    "optimization_focus": "description",
+                    "total_errors": 1,
+                    "max_errors": 1,
+                    "failure_type_counts": {"false_positive": 1},
+                    "metrics": {
+                        "accuracy": 0.8,
+                        "precision": 0.7,
+                        "recall": 1.0,
+                        "f1_score": 0.82,
+                    },
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        failure_packets_dir = root / "failure_packets"
+        protected_packets_dir = root / "protected_packets"
+        failure_packets_dir.mkdir(parents=True, exist_ok=True)
+        protected_packets_dir.mkdir(parents=True, exist_ok=True)
+
+        optimizer = SkillOptimizer(skills_dir=str(skills_root), llm_client=DummyLLMClient())
+        invalid_draft = "当需要判断说话者是否可能是未成年人/青少年/学生时触发此技能。包括以下情况："
+        valid_draft = (
+            "仅当上层任务目标是判断聊天记录中的说话者是否为未成年人、青少年，"
+            "或需要输出年龄倾向、学生画像、未成年人风险与证据分析时，才触发此技能；"
+            "如果任务目标不是做未成年人/青少年判断，则不触发；"
+            "如果当前信息不足、线索模糊或仅凭单一弱线索，也不触发。"
+        )
+        failure_examples = [
+            {
+                "packet_id": "failure_001",
+                "sample_id": "trigger-001",
+                "ground_truth": "adult",
+                "predicted": "unknown",
+                "label": "adult",
+                "confidence": 0.9,
+                "slice": "adult_near_miss",
+                "scenario": "window_scan",
+                "failure_types": ["false_positive"],
+                "reasoning": "fake reasoning",
+                "missing_fields": [],
+            }
+        ]
+
+        with (
+            mock.patch.object(optimizer, "_load_packet_examples", side_effect=[failure_examples, []]),
+            mock.patch.object(optimizer, "_load_reference_materials", return_value={}),
+            mock.patch.object(optimizer, "_request_revised_markdown", side_effect=[invalid_draft, valid_draft]) as request_mock,
+        ):
+            result = optimizer.optimize_from_judge_artifacts(
+                report_path=report_path,
+                failure_packets_dir=failure_packets_dir,
+                protected_packets_dir=protected_packets_dir,
+                current_version="minor-detection-v0.1.0",
+                dry_run=True,
+            )
+
+        self.assertTrue(result["success"])
+        self.assertEqual(request_mock.call_count, 2)
+        self.assertEqual(len(result["description_validation"]["attempts"]), 2)
+        self.assertFalse(result["description_validation"]["attempts"][0]["passed"])
+        self.assertTrue(result["description_validation"]["attempts"][1]["passed"])
+        self.assertIn("SKILL.md", result["edited_files"])
+
+    def test_trigger_eval_optimizer_fails_when_description_validator_never_passes(self):
+        root = make_test_dir(self)
+        skills_root = root / "skills"
+        current_dir = skills_root / "minor-detection-v0.1.0"
+        current_dir.mkdir(parents=True, exist_ok=True)
+        skill_text = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        (current_dir / "SKILL.md").write_text(skill_text, encoding="utf-8")
+        report_path = root / "report.json"
+        report_path.write_text(
+            json.dumps(
+                {
+                    "task_type": "trigger_eval",
+                    "optimization_focus": "description",
+                    "total_errors": 1,
+                    "max_errors": 1,
+                    "failure_type_counts": {"false_positive": 1},
+                    "metrics": {
+                        "accuracy": 0.8,
+                        "precision": 0.7,
+                        "recall": 1.0,
+                        "f1_score": 0.82,
+                    },
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        failure_packets_dir = root / "failure_packets"
+        protected_packets_dir = root / "protected_packets"
+        failure_packets_dir.mkdir(parents=True, exist_ok=True)
+        protected_packets_dir.mkdir(parents=True, exist_ok=True)
+
+        optimizer = SkillOptimizer(skills_dir=str(skills_root), llm_client=DummyLLMClient())
+        invalid_draft = "当需要判断说话者是否可能是未成年人/青少年/学生时触发此技能。包括以下情况："
+        failure_examples = [
+            {
+                "packet_id": "failure_001",
+                "sample_id": "trigger-001",
+                "ground_truth": "adult",
+                "predicted": "unknown",
+                "label": "adult",
+                "confidence": 0.9,
+                "slice": "adult_near_miss",
+                "scenario": "window_scan",
+                "failure_types": ["false_positive"],
+                "reasoning": "fake reasoning",
+                "missing_fields": [],
+            }
+        ]
+
+        with (
+            mock.patch.object(optimizer, "_load_packet_examples", side_effect=[failure_examples, []]),
+            mock.patch.object(optimizer, "_load_reference_materials", return_value={}),
+            mock.patch.object(optimizer, "_request_revised_markdown", side_effect=[invalid_draft, invalid_draft, invalid_draft]) as request_mock,
+        ):
+            result = optimizer.optimize_from_judge_artifacts(
+                report_path=report_path,
+                failure_packets_dir=failure_packets_dir,
+                protected_packets_dir=protected_packets_dir,
+                current_version="minor-detection-v0.1.0",
+                new_version="minor-detection-v0.1.1-rc001-20260405_000000",
+                dry_run=False,
+            )
+
+        self.assertFalse(result["success"])
+        self.assertEqual(result["message"], "description revision failed validator")
+        self.assertEqual(request_mock.call_count, 3)
+        self.assertEqual(len(result["description_validation"]["attempts"]), 3)
+        self.assertFalse((skills_root / "minor-detection-v0.1.1-rc001-20260405_000000").exists())
 
     def test_trigger_eval_packet_prompt_includes_rewrite_contract_and_slice_contrast(self):
         optimizer = SkillOptimizer(llm_client=DummyLLMClient())
@@ -1371,11 +2185,170 @@ class PacketOptimizerTests(unittest.TestCase):
         )
 
         self.assertIn("## Trigger Description Rewrite Contract", prompt)
-        self.assertIn("Include at least 2 explicit non-trigger boundaries", prompt)
         self.assertIn("Current failure slices to address: topic_adjacent_not_identity", prompt)
         self.assertIn("Current protected slices to preserve: topic_adjacent_not_identity", prompt)
+        self.assertIn("Preserve task boundary", prompt)
+        self.assertIn("Preserve evidence-sufficiency boundary", prompt)
         self.assertIn("## Trigger Slice Contrast Checks", prompt)
         self.assertIn("Failure sample IDs to fix: trigger-topic_adjacent_not_identity-102", prompt)
         self.assertIn("Protected sample IDs to preserve: trigger-topic_adjacent_not_identity-104", prompt)
+        self.assertIn("## Trigger Slice Policy Guidance", prompt)
+        self.assertIn("topic_adjacent_not_identity", prompt)
+
+    def test_trigger_eval_prompt_guardrails_preserve_protected_trigger_recall_in_fp_only_round(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+
+        prompt = optimizer.generate_optimization_prompt(
+            current_skill=(
+                "---\n"
+                "name: minor-detection\n"
+                "description: demo\n"
+                "---\n\n"
+                "# Minor Detection\n"
+            ),
+            optimization_packet={
+                "task_type": "trigger_eval",
+                "total_errors": 3,
+                "analyzed_errors": 3,
+                "max_errors": 3,
+                "fp_count": 3,
+                "fn_count": 0,
+                "fp_examples": [{"confidence": 0.9, "reasoning": "adult false positive"}],
+                "fn_examples": [],
+                "error_selection": {"strategy": "judge_failure_packets", "budget": 3, "selected_count": 3, "total_count": 3},
+                "protected_correct_examples": [
+                    {
+                        "sample_id": "trigger-implicit_minor_signal-058",
+                        "label": "trigger",
+                        "confidence": 0.95,
+                        "slice": "implicit_minor_signal",
+                        "scenario": "window_scan",
+                        "reasoning": "protected trigger recall case",
+                    }
+                ],
+                "metrics": {
+                    "accuracy": 0.85,
+                    "precision": 0.75,
+                    "recall": 1.0,
+                    "f1": 0.8571,
+                },
+            },
+            editable_target="SKILL.md",
+            reference_materials={},
+        )
+
+        self.assertIn("Baseline FN is zero. Preserve recall and avoid introducing new FN.", prompt)
+        self.assertIn("Do not solve FP-only rounds by requiring explicit age numbers", prompt)
+        self.assertIn("Protected trigger slices to preserve recall on: implicit_minor_signal.", prompt)
+        self.assertIn("keep that trigger path available", prompt)
+
+    def test_trigger_eval_prompt_guardrails_require_explicit_implicit_minor_recall_rule_when_fn_present(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+
+        prompt = optimizer.generate_optimization_prompt(
+            current_skill=(
+                "---\n"
+                "name: minor-detection\n"
+                "description: demo\n"
+                "---\n\n"
+                "# Minor Detection\n"
+            ),
+            optimization_packet={
+                "task_type": "trigger_eval",
+                "total_errors": 3,
+                "analyzed_errors": 3,
+                "max_errors": 3,
+                "fp_count": 1,
+                "fn_count": 2,
+                "fp_examples": [{"confidence": 0.9, "reasoning": "adult false positive", "slice": "topic_adjacent_not_identity"}],
+                "fn_examples": [
+                    {"confidence": 0.92, "reasoning": "implicit fn", "slice": "implicit_minor_signal"},
+                    {"confidence": 0.9, "reasoning": "implicit fn 2", "slice": "implicit_minor_signal"},
+                ],
+                "error_selection": {"strategy": "judge_failure_packets", "budget": 3, "selected_count": 3, "total_count": 3},
+                "protected_correct_examples": [
+                    {
+                        "sample_id": "trigger-identity_explicit-011",
+                        "label": "trigger",
+                        "confidence": 0.99,
+                        "slice": "identity_explicit",
+                        "scenario": "window_scan",
+                        "reasoning": "protected trigger case",
+                    }
+                ],
+                "metrics": {
+                    "accuracy": 0.85,
+                    "precision": 0.875,
+                    "recall": 0.7778,
+                    "f1": 0.8235,
+                },
+            },
+            editable_target="SKILL.md",
+            reference_materials={},
+        )
+
+        self.assertIn("implicit_minor_signal", prompt)
+        self.assertIn("multiple converging youth cues can be enough", prompt)
+        self.assertIn("single weak cue is not enough, but multiple converging youth cues can be enough", prompt)
+        self.assertIn("school context is only one possible cue family", prompt)
+
+    def test_trigger_slice_policy_guidance_calls_out_implicit_and_adult_boundary_tradeoff(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+
+        guidance = optimizer._build_trigger_slice_policy_guidance(
+            failure_examples=[
+                {
+                    "sample_id": "trigger-adult_near_miss-069",
+                    "slice": "adult_near_miss",
+                    "scenario": "window_scan",
+                },
+                {
+                    "sample_id": "trigger-topic_adjacent_not_identity-098",
+                    "slice": "topic_adjacent_not_identity",
+                    "scenario": "window_scan",
+                },
+                {
+                    "sample_id": "trigger-implicit_minor_signal-057",
+                    "slice": "implicit_minor_signal",
+                    "scenario": "window_scan",
+                },
+            ],
+            protected_examples=[
+                {
+                    "sample_id": "trigger-implicit_minor_signal-058",
+                    "slice": "implicit_minor_signal",
+                    "scenario": "window_scan",
+                }
+            ],
+        )
+        joined = "\n".join(guidance)
+
+        self.assertIn("multiple converging youth-leaning cues", joined)
+        self.assertIn("Do not require explicit age numbers", joined)
+        self.assertIn("university seniority, graduation thesis, internships, full-time work", joined)
+        self.assertIn("teaching targets, subject matter, or general analysis", joined)
+
+    def test_trigger_positive_recall_contract_requires_explicit_implicit_positive_path(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+
+        guidance = optimizer._build_trigger_positive_recall_contract(
+            failure_examples=[
+                {
+                    "sample_id": "trigger-implicit_minor_signal-057",
+                    "slice": "implicit_minor_signal",
+                    "scenario": "window_scan",
+                    "failure_types": ["false_negative"],
+                }
+            ],
+            protected_examples=[],
+        )
+        joined = "\n".join(guidance)
+
+        self.assertIn("Trigger Positive Recall Contract", joined)
+        self.assertIn("multiple converging indirect youth cues can be enough to trigger", joined)
+        self.assertIn("single weak cue does not trigger", joined)
+        self.assertIn("parent-child dependence + juvenile panic/help-seeking tone", joined)
+        self.assertIn("Do not express that positive rule as a conjunction", joined)
+        self.assertIn("age/school-stage hard anchors only", joined)
 
 

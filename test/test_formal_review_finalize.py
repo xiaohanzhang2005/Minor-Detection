@@ -22,7 +22,7 @@ def make_test_dir(test_case: unittest.TestCase) -> Path:
 
 
 class FormalReviewFinalizeTests(unittest.TestCase):
-    def test_approve_adopts_candidate_version_directly_without_syncing_base_dir(self):
+    def test_approve_records_review_decision_without_publishing_or_syncing(self):
         root = make_test_dir(self)
         skills_root = root / "skills"
         base_dir = skills_root / "minor-detection-v0.1.0"
@@ -39,16 +39,16 @@ class FormalReviewFinalizeTests(unittest.TestCase):
 
         optimizer = SkillOptimizer(skills_dir=str(skills_root))
 
-        with mock.patch("src.evolution.optimizer.set_active_skill_version") as set_active:
-            result = optimizer.finalize_formal_skill_review(
-                base_version="minor-detection-v0.1.0",
-                candidate_version="minor-detection-v0.1.1-20260322_165515",
-                decision="approve",
-            )
+        result = optimizer.finalize_formal_skill_review(
+            base_version="minor-detection-v0.1.0",
+            candidate_version="minor-detection-v0.1.1-20260322_165515",
+            decision="approve",
+        )
 
-        set_active.assert_called_once_with("minor-detection-v0.1.1-20260322_165515")
-        self.assertEqual(result["adopted_version"], "minor-detection-v0.1.1-20260322_165515")
-        self.assertTrue(result["candidate_adopted_directly"])
+        self.assertIsNone(result["adopted_version"])
+        self.assertEqual(result["review_status"], "approved")
+        self.assertIsNone(result["published_stable_version"])
+        self.assertFalse(result["candidate_adopted_directly"])
         self.assertFalse(result["candidate_synced_to_base"])
         self.assertEqual(
             (base_dir / "references" / "evidence-rules.md").read_text(encoding="utf-8"),
@@ -57,8 +57,10 @@ class FormalReviewFinalizeTests(unittest.TestCase):
         decision_path = candidate_dir / "review" / "review_decision_vs_minor-detection-v0.1.0.json"
         self.assertTrue(decision_path.exists())
         decision_payload = json.loads(decision_path.read_text(encoding="utf-8"))
-        self.assertEqual(decision_payload["adopted_version"], "minor-detection-v0.1.1-20260322_165515")
-        self.assertTrue(decision_payload["candidate_adopted_directly"])
+        self.assertIsNone(decision_payload["adopted_version"])
+        self.assertEqual(decision_payload["review_status"], "approved")
+        self.assertIsNone(decision_payload["published_stable_version"])
+        self.assertFalse(decision_payload["candidate_adopted_directly"])
         self.assertFalse(decision_payload["candidate_synced_to_base"])
 
     def test_approve_blocks_non_substantive_trigger_description_candidate(self):

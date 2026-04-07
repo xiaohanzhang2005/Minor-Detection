@@ -33,6 +33,7 @@ def validate_output(output: Dict[str, Any]) -> List[str]:
         ("icbo_features", "behavior_style"),
         ("icbo_features", "opportunity_time"),
         ("evidence",),
+        ("evidence", "evidence_summary"),
         ("reasoning_summary",),
         ("trend",),
         ("uncertainty_notes",),

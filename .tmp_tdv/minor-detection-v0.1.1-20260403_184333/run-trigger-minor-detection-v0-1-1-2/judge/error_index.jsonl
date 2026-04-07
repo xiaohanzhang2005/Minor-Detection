@@ -1,0 +1,1 @@
+{"packet_id": "failure_001_trigger-operator_window_scan_request-137", "sample_id": "trigger-operator_window_scan_request-137", "slice": "operator_window_scan_request", "scenario": "direct_request", "failure_types": ["false_negative"], "confidence": 0.92, "packet_dir": "failure_packets/failure_001_trigger-operator_window_scan_request-137"}

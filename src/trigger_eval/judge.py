@@ -10,6 +10,13 @@ from typing import Any, Dict, List, Optional, Tuple
 from pydantic import ValidationError
 
 from src.models import FormalSkillOutput
+from src.skill_loop.gates import (
+    DEFAULT_REPAIR_RATE_THRESHOLD,
+    DEFAULT_TRIGGER_DESCRIPTION_REDLINE_MANIFEST_PATH,
+    evaluate_redline_outcomes,
+    load_redline_manifest,
+    slice_key,
+)
 from src.skill_loop.judge import DEFAULT_PROTECTED_COUNT, calc_default_max_errors
 from src.utils.path_utils import normalize_project_paths, to_relative_posix_path
 
@@ -236,8 +243,43 @@ def _select_failure_outcomes(outcomes: List[Dict[str, Any]], max_errors: int) ->
 
 def _select_protected_outcomes(outcomes: List[Dict[str, Any]], protected_count: int) -> List[Dict[str, Any]]:
     correct = [item for item in outcomes if item.get("is_correct") and item.get("step_compliant")]
-    correct.sort(key=lambda row: (abs(float(row.get("confidence", 0.5)) - 0.5), row["sample_id"]))
-    return correct[:protected_count]
+    if not correct:
+        return []
+
+    grouped: Dict[Tuple[bool, str, str], List[Dict[str, Any]]] = defaultdict(list)
+    for item in correct:
+        key = (
+            bool(item.get("ground_truth")),
+            str(item.get("slice", "") or "").strip(),
+            str(item.get("scenario", "") or "").strip(),
+        )
+        grouped[key].append(item)
+
+    for items in grouped.values():
+        items.sort(key=lambda row: (abs(float(row.get("confidence", 0.5)) - 0.5), row["sample_id"]))
+
+    def _round_robin(keys: List[Tuple[bool, str, str]], limit: int) -> List[Dict[str, Any]]:
+        picked: List[Dict[str, Any]] = []
+        while len(picked) < limit and any(grouped[key] for key in keys):
+            for key in keys:
+                if len(picked) >= limit:
+                    break
+                if grouped[key]:
+                    picked.append(grouped[key].pop(0))
+        return picked
+
+    trigger_keys = sorted((key for key in grouped if key[0] is True), key=lambda item: (item[1], item[2]))
+    no_trigger_keys = sorted((key for key in grouped if key[0] is False), key=lambda item: (item[1], item[2]))
+    quota = max(1, protected_count // 2)
+
+    protected: List[Dict[str, Any]] = []
+    protected.extend(_round_robin(trigger_keys, min(quota, protected_count)))
+    remaining_slots = max(0, protected_count - len(protected))
+    protected.extend(_round_robin(no_trigger_keys, remaining_slots))
+    if len(protected) < protected_count:
+        remaining_keys = sorted(grouped.keys(), key=lambda item: (item[0], item[1], item[2]))
+        protected.extend(_round_robin(remaining_keys, protected_count - len(protected)))
+    return protected[:protected_count]
 
 
 def _copy_packet_files(sample_dir: Path, packet_dir: Path, outcome: Dict[str, Any], *, run_root: Path) -> None:
@@ -297,6 +339,7 @@ def build_trigger_judge_artifacts(
     report_payload: Dict[str, Any],
     selected_failures: List[Dict[str, Any]],
     protected_outcomes: List[Dict[str, Any]],
+    redline_rows: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Path]:
     judge_dir = run_root / "judge"
     failure_dir = judge_dir / "failure_packets"
@@ -339,15 +382,18 @@ def build_trigger_judge_artifacts(
     report_path = judge_dir / "report.json"
     error_index_path = judge_dir / "error_index.jsonl"
     protected_index_path = judge_dir / "protected_index.jsonl"
+    redline_index_path = judge_dir / "redline_index.jsonl"
     _write_json(report_path, report_payload)
     _write_jsonl(error_index_path, failure_rows)
     _write_jsonl(protected_index_path, protected_rows)
+    _write_jsonl(redline_index_path, list(redline_rows or []))
 
     return {
         "judge_dir": judge_dir,
         "report_path": report_path,
         "error_index_path": error_index_path,
         "protected_index_path": protected_index_path,
+        "redline_index_path": redline_index_path,
         "failure_packets_dir": failure_dir,
         "protected_packets_dir": protected_dir,
     }
@@ -386,7 +432,8 @@ def _build_full_smoke_outcome(sample_dir: Path) -> Dict[str, Any]:
             and not trigger_outcome.get("launcher_invoked")
         )
 
-    failure_types = list(trigger_outcome.get("failure_types") or [])
+    trigger_failure_types = list(trigger_outcome.get("failure_types") or [])
+    failure_types = [failure_type for failure_type in trigger_failure_types if failure_type != "step_compliance_failure"]
     if should_trigger and not trigger_outcome.get("launcher_success"):
         failure_types.append("full_smoke_invocation_failure")
     if should_trigger and not full_json_valid:
@@ -400,6 +447,7 @@ def _build_full_smoke_outcome(sample_dir: Path) -> Dict[str, Any]:
 
     return {
         **trigger_outcome,
+        "trigger_failure_types": trigger_failure_types,
         "expected_is_minor": expected_is_minor,
         "full_output_json_valid": full_json_valid,
         "full_output_schema_valid": full_schema_valid,
@@ -500,7 +548,37 @@ def judge_trigger_full_smoke_artifacts(
         "end_to_end_success_rate": end_to_end_success_rate,
         "failure_type_counts": failure_type_counts,
         "slice_stats": slice_stats,
+        "final_validation_metrics": {
+            "trigger_metrics": {
+                "accuracy": (trigger_tp + trigger_tn) / total if total else 0.0,
+                "precision": trigger_precision,
+                "recall": trigger_recall,
+                "f1_score": trigger_f1,
+                "true_positive": trigger_tp,
+                "true_negative": trigger_tn,
+                "false_positive": trigger_fp,
+                "false_negative": trigger_fn,
+            },
+            "full_output_json_valid_rate_on_invoked": full_json_valid_rate,
+            "full_output_schema_valid_rate_on_invoked": full_schema_valid_rate,
+            "final_minor_accuracy_rate_on_invoked": final_accuracy_rate,
+            "positive_path_end_to_end_success_rate": positive_path_success_rate,
+            "end_to_end_success_rate": end_to_end_success_rate,
+            "failure_type_counts": failure_type_counts,
+            "slice_stats": slice_stats,
+        },
+        "gate_results": {
+            "full_output_json_perfect_pass": full_json_valid_rate == 1.0,
+            "full_output_schema_perfect_pass": full_schema_valid_rate == 1.0,
+            "positive_path_end_to_end_pass": positive_path_success_rate == 1.0,
+            "full_smoke_release_pass": (
+                full_json_valid_rate == 1.0
+                and full_schema_valid_rate == 1.0
+                and positive_path_success_rate == 1.0
+            ),
+        },
     }
+    report_payload["release_contract_gate_results"] = dict(report_payload["gate_results"])
     judge_dir = run_root / "full_smoke_judge"
     report_path = judge_dir / "report.json"
     error_index_path = judge_dir / "error_index.jsonl"
@@ -533,6 +611,43 @@ def judge_trigger_full_smoke_artifacts(
     }
 
 
+def _build_trigger_boundary_metrics(
+    outcomes: List[Dict[str, Any]],
+    protected_outcomes: List[Dict[str, Any]],
+    selected_failures: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    high_risk_overtrigger_slices = sorted(
+        {
+            str(item.get("slice", "") or "").strip()
+            for item in outcomes
+            if "false_positive" in (item.get("failure_types") or [])
+            and str(item.get("slice", "") or "").strip()
+        }
+    )
+    key_recall_failure_slices = sorted(
+        {
+            str(item.get("slice", "") or "").strip()
+            for item in outcomes
+            if "false_negative" in (item.get("failure_types") or [])
+            and str(item.get("slice", "") or "").strip()
+        }
+    )
+    protected_slice_keys = {slice_key(item) for item in protected_outcomes if slice_key(item)[0]}
+    failure_slice_keys = {slice_key(item) for item in selected_failures if slice_key(item)[0]}
+    shared_conflicts = [
+        {
+            "slice": slice_name,
+            "scenario": scenario_name,
+        }
+        for slice_name, scenario_name in sorted(protected_slice_keys.intersection(failure_slice_keys))
+    ]
+    return {
+        "high_risk_overtrigger_slices": high_risk_overtrigger_slices,
+        "key_recall_failure_slices": key_recall_failure_slices,
+        "shared_slice_conflicts": shared_conflicts,
+    }
+
+
 def judge_trigger_run_artifacts(
     *,
     run_root: Path,
@@ -542,6 +657,7 @@ def judge_trigger_run_artifacts(
     max_errors: Optional[int] = None,
     protected_count: int = DEFAULT_PROTECTED_COUNT,
     project_root: Optional[Path] = None,
+    redline_manifest_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     sample_dirs = _list_sample_dirs(run_root)
     outcomes = [_build_outcome(sample_dir) for sample_dir in sample_dirs]
@@ -607,6 +723,82 @@ def judge_trigger_run_artifacts(
         resolved_max_errors = max(1, min(total_errors, int(max_errors)))
     selected_failures = _select_failure_outcomes(outcomes, resolved_max_errors)
     protected_outcomes = _select_protected_outcomes(outcomes, protected_count=protected_count)
+    redline_manifest = load_redline_manifest(Path(redline_manifest_path or DEFAULT_TRIGGER_DESCRIPTION_REDLINE_MANIFEST_PATH))
+    redline_evaluation = evaluate_redline_outcomes(
+        outcomes,
+        redline_manifest.get("entries", []),
+        task_type="trigger_eval",
+    )
+    trigger_boundary_metrics = _build_trigger_boundary_metrics(outcomes, protected_outcomes, selected_failures)
+    gate_results = {
+        "redline_pass": bool(redline_evaluation["redline_passed"]),
+        "trigger_schema_perfect_pass": schema_validity_rate == 1.0,
+        "trigger_step_compliance_perfect_pass": step_compliance_rate == 1.0,
+        "execution_compliance_pass": schema_validity_rate == 1.0 and step_compliance_rate == 1.0,
+    }
+    gate_results["release_gate_pass"] = all(
+        (
+            gate_results["redline_pass"],
+            gate_results["trigger_schema_perfect_pass"],
+            gate_results["trigger_step_compliance_perfect_pass"],
+        )
+    )
+    final_validation_metrics = {
+        "metrics": {
+            "accuracy": accuracy,
+            "precision": precision,
+            "recall": recall,
+            "f1_score": f1,
+            "true_positive": tp,
+            "true_negative": tn,
+            "false_positive": fp,
+            "false_negative": fn,
+        },
+        "schema_validity_rate": schema_validity_rate,
+        "invocation_success_rate": invocation_success_rate,
+        "step_compliance_rate": step_compliance_rate,
+        "fields_missing_stats": fields_missing_stats,
+        "failure_type_counts": failure_type_counts,
+        "observed_issue_counts": observed_issue_counts,
+        "slice_stats": slice_stats,
+        "scenario_counts": scenario_counts,
+        "trigger_boundary_metrics": trigger_boundary_metrics,
+        "checklist_metrics": {
+            "zero_production_surprises": {
+                "redline_pass_rate": redline_evaluation["redline_pass_rate"],
+                "redline_regression_ids": redline_evaluation["redline_regression_ids"],
+                "matched_redline_samples": redline_evaluation["matched_count"],
+            },
+            "remediation_tracking": {
+                "repair_rate_on_previous_error_packets": None,
+                "threshold": DEFAULT_REPAIR_RATE_THRESHOLD,
+                "status": "pending_compare_stage",
+            },
+            "execution_compliance": {
+                "trigger_schema_validity_rate": schema_validity_rate,
+                "trigger_step_compliance_rate": step_compliance_rate,
+            },
+        },
+        "redline_stats": {
+            "manifest_path": str(redline_manifest.get("manifest_path", "")),
+            "matched_count": redline_evaluation["matched_count"],
+            "redline_pass_rate": redline_evaluation["redline_pass_rate"],
+            "redline_regression_ids": redline_evaluation["redline_regression_ids"],
+        },
+        "latency_stats": {
+            "avg_seconds": round(mean([item["latency_seconds"] for item in outcomes]), 4) if outcomes else 0.0,
+            "max_seconds": round(max([item["latency_seconds"] for item in outcomes], default=0.0), 4),
+        },
+    }
+    inner_loop_gate_results = {
+        "candidate_f1": f1,
+        "candidate_invocation_success_rate": invocation_success_rate,
+        "candidate_step_compliance_rate": step_compliance_rate,
+        "candidate_schema_validity_rate": schema_validity_rate,
+        "protected_sample_count": len(protected_outcomes),
+        "protected_slice_count": len({slice_key(item) for item in protected_outcomes if slice_key(item)[0]}),
+        "redline_pass": bool(redline_evaluation["redline_passed"]),
+    }
 
     report_payload = {
         "task_type": "trigger_eval",
@@ -637,6 +829,33 @@ def judge_trigger_run_artifacts(
         "observed_issue_counts": observed_issue_counts,
         "slice_stats": slice_stats,
         "scenario_counts": scenario_counts,
+        "trigger_boundary_metrics": trigger_boundary_metrics,
+        "inner_loop_gate_results": inner_loop_gate_results,
+        "final_validation_metrics": final_validation_metrics,
+        "checklist_metrics": {
+            "zero_production_surprises": {
+                "redline_pass_rate": redline_evaluation["redline_pass_rate"],
+                "redline_regression_ids": redline_evaluation["redline_regression_ids"],
+                "matched_redline_samples": redline_evaluation["matched_count"],
+            },
+            "remediation_tracking": {
+                "repair_rate_on_previous_error_packets": None,
+                "threshold": DEFAULT_REPAIR_RATE_THRESHOLD,
+                "status": "pending_compare_stage",
+            },
+            "execution_compliance": {
+                "trigger_schema_validity_rate": schema_validity_rate,
+                "trigger_step_compliance_rate": step_compliance_rate,
+            },
+        },
+        "gate_results": gate_results,
+        "release_contract_gate_results": gate_results,
+        "redline_stats": {
+            "manifest_path": str(redline_manifest.get("manifest_path", "")),
+            "matched_count": redline_evaluation["matched_count"],
+            "redline_pass_rate": redline_evaluation["redline_pass_rate"],
+            "redline_regression_ids": redline_evaluation["redline_regression_ids"],
+        },
         "latency_stats": {
             "avg_seconds": round(mean([item["latency_seconds"] for item in outcomes]), 4) if outcomes else 0.0,
             "max_seconds": round(max([item["latency_seconds"] for item in outcomes], default=0.0), 4),
@@ -646,14 +865,24 @@ def judge_trigger_run_artifacts(
             "protected_packets": len(protected_outcomes),
         },
     }
-    if project_root is not None:
-        report_payload = normalize_project_paths(report_payload, project_root=project_root, start=run_root / "judge")
 
     artifact_paths = build_trigger_judge_artifacts(
         run_root=run_root,
         report_payload=report_payload,
         selected_failures=selected_failures,
         protected_outcomes=protected_outcomes,
+        redline_rows=redline_evaluation["regressions"],
     )
-    artifact_paths["report_payload"] = report_payload
+    final_report_payload = dict(report_payload)
+    final_report_payload["repair_tracking_baseline"] = {
+        "error_index_path": to_relative_posix_path(artifact_paths["error_index_path"], artifact_paths["judge_dir"]),
+        "threshold": DEFAULT_REPAIR_RATE_THRESHOLD,
+    }
+    final_report_payload["redline_stats"]["redline_index_path"] = to_relative_posix_path(
+        artifact_paths["redline_index_path"], artifact_paths["judge_dir"]
+    )
+    if project_root is not None:
+        final_report_payload = normalize_project_paths(final_report_payload, project_root=project_root, start=run_root / "judge")
+    _write_json(artifact_paths["report_path"], final_report_payload)
+    artifact_paths["report_payload"] = final_report_payload
     return artifact_paths

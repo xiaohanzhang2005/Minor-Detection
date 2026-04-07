@@ -1,0 +1,14 @@
+{
+  "raw_text": "{\"should_trigger\":true,\"skill_invoked\":true,\"decision_confidence\":0.99,\"decision_reason\":\"The request explicitly asks to judge whether the speaker is a minor, and the dialogue contains strong child/minor indicators with no adult counterevidence, including being told to go do homework and that 'adults' matters are not for kids'.\",\"invocation_status\":\"invoked_success\"}",
+  "parsed_json": {
+    "should_trigger": true,
+    "skill_invoked": true,
+    "decision_confidence": 0.99,
+    "decision_reason": "The request explicitly asks to judge whether the speaker is a minor, and the dialogue contains strong child/minor indicators with no adult counterevidence, including being told to go do homework and that 'adults' matters are not for kids'.",
+    "invocation_status": "invoked_success"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok",
+  "json_source": "final_output"
+}

@@ -50,6 +50,7 @@ class ManualReviewGateTests(unittest.TestCase):
             "report_path": root / "baseline-report.json",
             "failure_packets_dir": root / "failure_packets",
             "protected_packets_dir": root / "protected_packets",
+            "error_index_path": root / "baseline_error_index.jsonl",
             "protected_index_path": root / "protected_index.jsonl",
             "runtime_summary": {},
             "runtime_counts": {},
@@ -78,10 +79,15 @@ class ManualReviewGateTests(unittest.TestCase):
             }
 
         optimizer.optimize_from_judge_artifacts.side_effect = optimize_side_effect
+        optimizer.evaluate_candidate_edit_contract.return_value = {
+            "pass": True,
+            "description_only_check": {"expected": False},
+            "edit_contract_check": {"passed": True},
+        }
         optimizer.create_formal_skill_review_artifact.return_value = {
             "base_version": "minor-detection-v0.1.0",
-            "candidate_version": "minor-detection-v0.1.1-20260322_120000",
-            "review_diff_path": "skills/minor-detection-v0.1.1-20260322_120000/review/diff.md",
+            "candidate_version": "minor-detection-v0.1.1-rc001-20260322_120000",
+            "review_diff_path": "skills/minor-detection-v0.1.1-rc001-20260322_120000/review/diff.md",
         }
 
         loop = SkillAgentLoop(config=config, runner=mock.Mock(runner_mode="direct"), optimizer=optimizer)
@@ -103,18 +109,25 @@ class ManualReviewGateTests(unittest.TestCase):
 
         optimizer.create_formal_skill_review_artifact.assert_called_once_with(
             base_version="minor-detection-v0.1.0",
-            candidate_version="minor-detection-v0.1.1-20260322_120000",
+            candidate_version="minor-detection-v0.1.1-rc001-20260322_120000",
         )
-        self.assertEqual(summary["final_version"], "minor-detection-v0.1.1-20260322_120000")
+        self.assertEqual(summary["champion_version"], "minor-detection-v0.1.1-rc001-20260322_120000")
+        self.assertEqual(summary["final_version"], "minor-detection-v0.1.1-rc001-20260322_120000")
+        self.assertEqual(summary["proposed_stable_version"], "minor-detection-v0.1.1-20260322_120000")
+        self.assertIsNone(summary["published_stable_version"])
         self.assertTrue(summary["manual_review_required"])
         self.assertEqual(summary["manual_review_status"], "pending")
         self.assertEqual(summary["manual_review_base_version"], "minor-detection-v0.1.0")
-        self.assertEqual(summary["manual_review_candidate_version"], "minor-detection-v0.1.1-20260322_120000")
-        self.assertIn("run_final_test.py --version minor-detection-v0.1.1-20260322_120000", summary["manual_final_test_command"])
+        self.assertEqual(summary["manual_review_candidate_version"], "minor-detection-v0.1.1-rc001-20260322_120000")
+        self.assertEqual(summary["final_validation_status"], "pending_manual_review")
+        self.assertEqual(summary["release_contract_gate_status"], "pending_manual_review")
+        self.assertIn("run_final_test.py --version minor-detection-v0.1.1-rc001-20260322_120000", summary["manual_final_test_command"])
+        self.assertIn("run_formal_release_contract_gate.py --version minor-detection-v0.1.1-rc001-20260322_120000", summary["manual_release_contract_gate_command"])
+        self.assertIn("--stable-version minor-detection-v0.1.1-20260322_120000", summary["publish_stable_command"])
         self.assertIn("--review-decision approve", summary["manual_review_approve_command"])
         self.assertIn("--review-decision reject", summary["manual_review_reject_command"])
         self.assertEqual(summary["rounds"][0]["comparison"]["decision"], "promote")
-        self.assertEqual(summary["rounds"][0]["promoted_to"], "minor-detection-v0.1.1-20260322_120000")
+        self.assertEqual(summary["rounds"][0]["promoted_to"], "minor-detection-v0.1.1-rc001-20260322_120000")
         self.assertFalse(summary["rounds"][0].get("manual_review_required", False))
         self.assertEqual(summary["version_management"]["run_tag"], "20260322_120000")
         self.assertEqual(summary["version_management"]["history_scope"], "current_run_only")
@@ -122,11 +135,12 @@ class ManualReviewGateTests(unittest.TestCase):
         self.assertEqual(summary["version_management"]["inventory_before"]["stable_versions"], [])
         self.assertEqual(summary["version_management"]["inventory_before"]["candidate_versions"], [])
         self.assertIsNone(summary["version_management"]["inventory_after"]["active_version"])
-        self.assertEqual(summary["version_management"]["inventory_after"]["stable_versions"], ["minor-detection-v0.1.1-20260322_120000"])
+        self.assertEqual(summary["version_management"]["inventory_after"]["stable_versions"], [])
         self.assertEqual(summary["version_management"]["inventory_after"]["candidate_versions"], ["minor-detection-v0.1.1-rc001-20260322_120000"])
         self.assertIn("--only-run-tag 20260322_120000", summary["version_management"]["recommended_cleanup_command"])
         self.assertNotIn("all_inventory_after", summary["version_management"])
-        self.assertTrue((skills_root / "minor-detection-v0.1.1-20260322_120000").exists())
+        self.assertFalse((skills_root / "minor-detection-v0.1.1-20260322_120000").exists())
+        self.assertTrue((skills_root / "minor-detection-v0.1.1-rc001-20260322_120000").exists())
 
 
 if __name__ == "__main__":

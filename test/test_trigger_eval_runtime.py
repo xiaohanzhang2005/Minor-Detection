@@ -15,8 +15,9 @@ sys.path.insert(0, str(ROOT_DIR))
 
 from src.evolution.optimizer import SkillOptimizer
 from src.trigger_eval.judge import judge_trigger_full_smoke_artifacts, judge_trigger_run_artifacts
-from src.trigger_eval.runner import TriggerEvalCodexRunner
+from src.trigger_eval.runner import TriggerEvalCodexRunner, TriggerEvalRunnerConfig
 from src.trigger_eval.loop import TriggerDescriptionLoop, TriggerDescriptionLoopConfig
+from src.utils.path_utils import normalize_project_paths
 
 
 class TriggerEvalJudgeTests(unittest.TestCase):
@@ -353,6 +354,37 @@ class TriggerEvalJudgeTests(unittest.TestCase):
             self.assertTrue(judged["report_path"].exists())
             self.assertTrue(judged["error_index_path"].exists())
 
+    def test_judge_trigger_full_smoke_ignores_step_compliance_only_mismatch_when_end_to_end_succeeds(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            run_root = Path(tmp_dir) / "run"
+            run_root.mkdir(parents=True, exist_ok=True)
+            self._write_sample(
+                run_root,
+                "s1",
+                should_trigger=True,
+                predicted=True,
+                skill_invoked=True,
+                invocation_status="invoked_failed",
+                launcher_success=True,
+                slice_name="identity_explicit",
+                expected_is_minor=True,
+                final_output_json=self._formal_output(is_minor=True),
+            )
+
+            judged = judge_trigger_full_smoke_artifacts(
+                run_root=run_root,
+                skill_version="minor-detection-v0.1.0",
+                dataset_name="trigger_eval",
+                project_root=ROOT_DIR,
+            )
+
+            report = judged["report_payload"]
+            self.assertEqual(report["failure_type_counts"], {})
+            self.assertEqual(report["slice_stats"]["identity_explicit"]["error_sample_ids"], [])
+            self.assertAlmostEqual(report["positive_path_end_to_end_success_rate"], 1.0)
+            self.assertAlmostEqual(report["end_to_end_success_rate"], 1.0)
+            self.assertEqual(judged["error_index_path"].read_text(encoding="utf-8"), "")
+
 
 class TriggerEvalOptimizerTargetTests(unittest.TestCase):
     def test_trigger_eval_decision_errors_include_skill_description_target(self):
@@ -368,6 +400,45 @@ class TriggerEvalOptimizerTargetTests(unittest.TestCase):
 
 
 class TriggerEvalScriptContractTests(unittest.TestCase):
+    def test_build_prompt_requires_utf8_query_read(self):
+        runner = TriggerEvalCodexRunner(config=TriggerEvalRunnerConfig())
+
+        prompt = runner._build_prompt(query_path=Path("query.txt"), launcher_path=Path("run_skill_once.py"))
+
+        self.assertIn("UTF-8 encoded", prompt)
+        self.assertIn("explicit UTF-8 decoding", prompt)
+        self.assertIn("do not rely on default shell text decoding", prompt)
+        self.assertIn("Path(r'query.txt').read_text(encoding='utf-8')", prompt)
+
+    def test_normalize_project_paths_coerces_path_objects(self):
+        payload = {
+            "report_path": ROOT_DIR / "reports" / "example" / "report.json",
+        }
+
+        normalized = normalize_project_paths(payload, project_root=ROOT_DIR, start=ROOT_DIR)
+
+        self.assertEqual(normalized["report_path"], "reports/example/report.json")
+
+    def test_normalize_project_paths_rewrites_embedded_project_paths_inside_strings(self):
+        payload = {
+            "command": f'python scripts/run_trigger_eval.py --dataset "{ROOT_DIR / "data" / "trigger_eval" / "x.json"}"',
+        }
+
+        normalized = normalize_project_paths(payload, project_root=ROOT_DIR, start=ROOT_DIR)
+
+        self.assertNotIn(str(ROOT_DIR), normalized["command"])
+        self.assertIn('data/trigger_eval/x.json', normalized["command"])
+
+    def test_normalize_project_paths_shortens_embedded_external_windows_paths(self):
+        payload = {
+            "command": '"C:\\Users\\31701\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" scripts/run_trigger_eval.py',
+        }
+
+        normalized = normalize_project_paths(payload, project_root=ROOT_DIR, start=ROOT_DIR)
+
+        self.assertNotIn("C:\\Users\\31701", normalized["command"])
+        self.assertIn("python.exe", normalized["command"])
+
     def test_run_trigger_description_validation_outputs_expected_payload(self):
         tmp_parent = ROOT_DIR / ".tmp_tests"
         tmp_parent.mkdir(parents=True, exist_ok=True)
@@ -390,12 +461,23 @@ class TriggerEvalScriptContractTests(unittest.TestCase):
                         "report_path": report_path,
                         "report_payload": {
                             "evaluation_contract": "trigger_decision_and_skill_invocation_success_only",
+                            "release_contract_gate_results": {"release_gate_pass": True},
                             "metrics": {"accuracy": 0.75, "f1_score": 0.8},
                             "invocation_success_rate": 0.9,
                             "step_compliance_rate": 0.85,
                             "schema_validity_rate": 1.0,
                             "slice_stats": {"identity_explicit": {"sample_count": 2}},
                             "failure_type_counts": {"false_negative": 1},
+                        },
+                    },
+                ),
+                mock.patch(
+                    "src.trigger_eval.judge_trigger_full_smoke_artifacts",
+                    return_value={
+                        "report_path": report_path,
+                        "report_payload": {
+                            "final_validation_metrics": {"positive_path_end_to_end_success_rate": 1.0},
+                            "release_contract_gate_results": {"full_smoke_release_pass": True},
                         },
                     },
                 ),
@@ -417,7 +499,7 @@ class TriggerEvalScriptContractTests(unittest.TestCase):
                 runpy.run_path(str(ROOT_DIR / "scripts" / "run_trigger_description_validation.py"), run_name="__main__")
 
             payload = json.loads(stdout_buffer.getvalue())
-            self.assertEqual(payload["evaluation_role"], "standalone_description_validation")
+            self.assertEqual(payload["evaluation_role"], "standalone_trigger_final_validation")
             self.assertFalse(payload["optimization_feedback_enabled"])
             self.assertEqual(payload["runner_mode"], "trigger_agent")
             self.assertEqual(payload["evaluation_contract"], "trigger_decision_and_skill_invocation_success_only")
@@ -427,6 +509,8 @@ class TriggerEvalScriptContractTests(unittest.TestCase):
             self.assertEqual(payload["schema_validity_rate"], 1.0)
             self.assertIn("identity_explicit", payload["slice_stats"])
             self.assertEqual(payload["failure_type_counts"]["false_negative"], 1)
+            self.assertFalse(payload["release_contract_gate_blocking"])
+            self.assertTrue(payload["contract_gate_all_green"])
 
     def test_run_trigger_eval_outputs_expected_full_smoke_payload(self):
         tmp_parent = ROOT_DIR / ".tmp_tests"
@@ -518,6 +602,43 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
             self.assertEqual(payload["json_source"], "launcher_aggregated_output")
             self.assertTrue(payload["parsed_json"]["decision"]["is_minor"])
 
+    def test_trigger_runner_skill_output_falls_back_to_launcher_stdout_excerpt(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            target_path = root / "skill_output.json"
+            runner = TriggerEvalCodexRunner()
+            events = [
+                {
+                    "type": "item.completed",
+                    "item": {
+                        "type": "command_execution",
+                        "command": "python run_skill_once.py",
+                        "aggregated_output": "",
+                    },
+                }
+            ]
+            launcher_result = {
+                "success": True,
+                "status": "ok",
+                "stdout_excerpt": (
+                    '{"decision":{"is_minor":true},"user_profile":{"age_range":"13-15岁"},'
+                    '"icbo_features":{"intention":"求助","cognition":"压力","behavior_style":"直接表达","opportunity_time":"课后"},'
+                    '"evidence":{"direct_evidence":[],"historical_evidence":[],"retrieval_evidence":[],"time_evidence":[],"conflicting_signals":[]},'
+                    '"reasoning_summary":"ok","trend":{"trajectory":[],"trend_summary":""},"uncertainty_notes":[],"recommended_next_step":"review_by_human"}'
+                ),
+            }
+
+            payload = runner._write_skill_output(
+                events=events,
+                target_path=target_path,
+                launcher_invoked=True,
+                launcher_result=launcher_result,
+            )
+
+            self.assertTrue(payload["json_valid"])
+            self.assertEqual(payload["json_source"], "launcher_result.stdout_excerpt")
+            self.assertTrue(payload["parsed_json"]["decision"]["is_minor"])
+
     def test_trigger_eval_runner_uses_trigger_dataset_strata(self):
         key = TriggerEvalCodexRunner._resolve_stratum_key(
             {
@@ -569,6 +690,84 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
             self.assertEqual(result["runtime_summary"], {"total_wall_seconds": 1.23})
             self.assertEqual(result["runtime_counts"], {"sample_count": 2})
 
+    def test_trigger_description_release_gate_runs_full_smoke_with_full_runner(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            skills_root = root / "skills"
+            dataset_path = root / "data" / "trigger_eval_final_validation.json"
+            dataset_path.parent.mkdir(parents=True, exist_ok=True)
+            dataset_path.write_text("{}", encoding="utf-8")
+            (skills_root / "minor-detection-v0.1.1").mkdir(parents=True, exist_ok=True)
+
+            probe_runner = mock.Mock()
+            probe_runner.config = TriggerEvalRunnerConfig(timeout_sec=321, skill_execution_mode="probe")
+            probe_runner.command_runner = object()
+            probe_run_root = root / "workspace" / "release_gate" / "description_validation" / "run-trigger-probe"
+            probe_runner.run_dataset.return_value = probe_run_root
+
+            full_runner = mock.Mock()
+            full_run_root = root / "workspace" / "release_gate" / "full_smoke" / "run-trigger-full"
+            full_runner.run_dataset.return_value = full_run_root
+
+            config = TriggerDescriptionLoopConfig(
+                baseline_source_dir=skills_root / "minor-detection",
+                baseline_version="minor-detection-v0.1.0",
+                optimization_set_path=root / "data" / "trigger_eval_optimization.json",
+                final_validation_set_path=dataset_path,
+            )
+            loop = TriggerDescriptionLoop(config=config, runner=probe_runner)
+
+            with (
+                mock.patch("src.trigger_eval.loop.ROOT_DIR", root),
+                mock.patch("src.trigger_eval.loop.SKILLS_DIR", skills_root),
+                mock.patch.object(loop, "_runner_with_skill_execution_mode", return_value=full_runner) as full_runner_factory,
+                mock.patch(
+                    "src.trigger_eval.loop.judge_trigger_run_artifacts",
+                    return_value={"report_payload": {"gate_results": {"release_gate_pass": True}}},
+                ) as description_judge,
+                mock.patch(
+                    "src.trigger_eval.loop.judge_trigger_full_smoke_artifacts",
+                    return_value={"report_payload": {"gate_results": {"full_smoke_release_pass": True}}},
+                ) as full_smoke_judge,
+            ):
+                result = loop._run_release_validations(
+                    version_name="minor-detection-v0.1.1",
+                    workspace=root / "workspace" / "release_gate",
+                )
+
+            full_runner_factory.assert_called_once_with("full")
+            probe_runner.run_dataset.assert_called_once_with(
+                project_root=root,
+                skill_source_dir=skills_root / "minor-detection-v0.1.1",
+                skill_version="minor-detection-v0.1.1",
+                dataset_path=dataset_path,
+                workspace_dir=root / "workspace" / "release_gate" / "desc",
+            )
+            full_runner.run_dataset.assert_called_once_with(
+                project_root=root,
+                skill_source_dir=skills_root / "minor-detection-v0.1.1",
+                skill_version="minor-detection-v0.1.1",
+                dataset_path=dataset_path,
+                workspace_dir=root / "workspace" / "release_gate" / "smoke",
+            )
+            description_judge.assert_called_once_with(
+                run_root=probe_run_root,
+                skill_version="minor-detection-v0.1.1",
+                parent_version=None,
+                dataset_name="trigger_eval_final_validation",
+                max_errors=None,
+                protected_count=8,
+                project_root=root,
+            )
+            full_smoke_judge.assert_called_once_with(
+                run_root=full_run_root,
+                skill_version="minor-detection-v0.1.1",
+                dataset_name="trigger_eval_final_validation",
+                project_root=root,
+            )
+            self.assertTrue(result["pass"])
+            self.assertEqual(result["status"], "passed")
+
     def test_trigger_description_loop_summary_includes_manual_review_commands_and_artifact(self):
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)
@@ -582,6 +781,7 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
                 "report_path": root / "baseline-report.json",
                 "failure_packets_dir": root / "failure_packets",
                 "protected_packets_dir": root / "protected_packets",
+                "error_index_path": root / "baseline_error_index.jsonl",
                 "protected_index_path": root / "protected_index.jsonl",
                 "runtime_summary": {"total_wall_seconds": 1.0},
                 "runtime_counts": {"sample_count": 2},
@@ -610,11 +810,16 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
                 }
 
             optimizer.optimize_from_judge_artifacts.side_effect = optimize_side_effect
+            optimizer.evaluate_candidate_edit_contract.return_value = {
+                "pass": True,
+                "description_only_check": {"expected": True, "passed": True},
+                "edit_contract_check": {"passed": True},
+            }
             optimizer.create_formal_skill_review_artifact.return_value = {
                 "base_version": "minor-detection-v0.1.0",
-                "candidate_version": "minor-detection-v0.1.1-20260325_120000",
-                "review_diff_path": "skills/minor-detection-v0.1.1-20260325_120000/review/diff.md",
-                "review_summary_path": "skills/minor-detection-v0.1.1-20260325_120000/review/summary.json",
+                "candidate_version": "minor-detection-v0.1.1-rc001-20260325_120000",
+                "review_diff_path": "skills/minor-detection-v0.1.1-rc001-20260325_120000/review/diff.md",
+                "review_summary_path": "skills/minor-detection-v0.1.1-rc001-20260325_120000/review/summary.json",
             }
 
             config = TriggerDescriptionLoopConfig(
@@ -649,27 +854,36 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
             ):
                 summary = loop.run()
 
-            self.assertEqual(summary["final_version"], "minor-detection-v0.1.1-20260325_120000")
+            self.assertEqual(summary["champion_version"], "minor-detection-v0.1.1-rc001-20260325_120000")
+            self.assertEqual(summary["final_version"], "minor-detection-v0.1.1-rc001-20260325_120000")
+            self.assertEqual(summary["proposed_stable_version"], "minor-detection-v0.1.1-20260325_120000")
+            self.assertIsNone(summary["published_stable_version"])
             self.assertTrue(summary["manual_review_required"])
             self.assertEqual(summary["manual_review_status"], "pending")
             self.assertEqual(summary["manual_review_base_version"], "minor-detection-v0.1.0")
-            self.assertEqual(summary["manual_review_candidate_version"], "minor-detection-v0.1.1-20260325_120000")
+            self.assertEqual(summary["manual_review_candidate_version"], "minor-detection-v0.1.1-rc001-20260325_120000")
+            self.assertEqual(summary["final_validation_status"], "pending_manual_review")
+            self.assertEqual(summary["release_contract_gate_status"], "pending_manual_review")
             self.assertEqual(summary["loop_type"], "trigger_description_optimization")
             self.assertEqual(summary["optimization_scope"], "trigger_decision_and_skill_invocation_success_only")
             self.assertEqual(summary["optimization_target"], "SKILL.md frontmatter description")
             self.assertEqual(summary["evaluation_contract"], "trigger_decision_and_skill_invocation_success_only")
             self.assertTrue(summary["optimizer_feedback_enabled"])
-            self.assertEqual(summary["post_loop_validation_role"], "standalone_description_validation")
+            self.assertEqual(summary["post_loop_validation_role"], "standalone_trigger_final_validation")
+            self.assertTrue(summary["post_loop_final_validation_includes_soft_contract_metrics"])
+            self.assertEqual(summary["post_loop_release_gate_role"], "optional_standalone_trigger_release_contract_gate")
             self.assertTrue(str(summary["optimization_set"]).endswith("data/trigger_eval_optimization.json"))
             self.assertTrue(str(summary["final_validation_set"]).endswith("data/trigger_eval_final_validation.json"))
-            self.assertEqual(summary["manual_smoke_validation_script"], "scripts/run_trigger_eval.py")
-            self.assertIn("scripts/run_trigger_eval.py --version minor-detection-v0.1.1-20260325_120000", summary["manual_smoke_validation_command"])
-            self.assertIn("scripts/run_trigger_description_validation.py --version minor-detection-v0.1.1-20260325_120000", summary["manual_final_test_command"])
+            self.assertEqual(summary["manual_smoke_validation_script"], "scripts/run_trigger_release_contract_gate.py")
+            self.assertIn("scripts/run_trigger_release_contract_gate.py --version minor-detection-v0.1.1-rc001-20260325_120000", summary["manual_smoke_validation_command"])
+            self.assertIn("scripts/run_trigger_description_validation.py --version minor-detection-v0.1.1-rc001-20260325_120000", summary["manual_final_test_command"])
+            self.assertIn("scripts/run_trigger_release_contract_gate.py --version minor-detection-v0.1.1-rc001-20260325_120000", summary["manual_release_contract_gate_command"])
+            self.assertIn("--stable-version minor-detection-v0.1.1-20260325_120000", summary["publish_stable_command"])
             self.assertIn("--review-decision approve", summary["manual_review_approve_command"])
             self.assertIn("--review-decision reject", summary["manual_review_reject_command"])
-            self.assertEqual(summary["review_artifact"]["candidate_version"], "minor-detection-v0.1.1-20260325_120000")
+            self.assertEqual(summary["review_artifact"]["candidate_version"], "minor-detection-v0.1.1-rc001-20260325_120000")
             self.assertEqual(summary["rounds"][0]["comparison"]["decision"], "promote")
-            self.assertEqual(summary["rounds"][0]["promoted_to"], "minor-detection-v0.1.1-20260325_120000")
+            self.assertEqual(summary["rounds"][0]["promoted_to"], "minor-detection-v0.1.1-rc001-20260325_120000")
             self.assertEqual(summary["version_management"]["run_tag"], "20260325_120000")
 
             summary_path = workspace / "loop_summary.json"
@@ -680,12 +894,12 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
             self.assertEqual(payload["evaluation_contract"], "trigger_decision_and_skill_invocation_success_only")
             self.assertTrue(str(payload["optimization_set"]).endswith("data/trigger_eval_optimization.json"))
             self.assertTrue(str(payload["final_validation_set"]).endswith("data/trigger_eval_final_validation.json"))
-            self.assertIn("scripts/run_trigger_eval.py --version minor-detection-v0.1.1-20260325_120000", payload["manual_smoke_validation_command"])
-            self.assertIn("scripts/run_trigger_description_validation.py --version minor-detection-v0.1.1-20260325_120000", payload["manual_final_test_command"])
+            self.assertIn("scripts/run_trigger_release_contract_gate.py --version minor-detection-v0.1.1-rc001-20260325_120000", payload["manual_smoke_validation_command"])
+            self.assertIn("scripts/run_trigger_description_validation.py --version minor-detection-v0.1.1-rc001-20260325_120000", payload["manual_final_test_command"])
             self.assertTrue(payload["manual_review_required"])
-            self.assertEqual(payload["manual_review_candidate_version"], "minor-detection-v0.1.1-20260325_120000")
+            self.assertEqual(payload["manual_review_candidate_version"], "minor-detection-v0.1.1-rc001-20260325_120000")
             self.assertIn("--review-decision approve", payload["manual_review_approve_command"])
-            self.assertEqual(payload["review_artifact"]["candidate_version"], "minor-detection-v0.1.1-20260325_120000")
+            self.assertEqual(payload["review_artifact"]["candidate_version"], "minor-detection-v0.1.1-rc001-20260325_120000")
 
     def test_trigger_description_loop_without_promotion_has_no_manual_review_outputs(self):
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -700,6 +914,7 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
                 "report_path": root / "baseline-report.json",
                 "failure_packets_dir": root / "failure_packets",
                 "protected_packets_dir": root / "protected_packets",
+                "error_index_path": root / "baseline_error_index.jsonl",
                 "protected_index_path": root / "protected_index.jsonl",
                 "runtime_summary": {"total_wall_seconds": 1.0},
                 "runtime_counts": {"sample_count": 2},
@@ -728,6 +943,11 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
                 }
 
             optimizer.optimize_from_judge_artifacts.side_effect = optimize_side_effect
+            optimizer.evaluate_candidate_edit_contract.return_value = {
+                "pass": True,
+                "description_only_check": {"expected": True, "passed": True},
+                "edit_contract_check": {"passed": True},
+            }
 
             config = TriggerDescriptionLoopConfig(
                 baseline_source_dir=source_dir,
@@ -763,6 +983,99 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
             self.assertIsNone(summary["manual_review_reject_command"])
             self.assertIsNone(summary["review_artifact"])
 
+    def test_trigger_description_loop_continues_after_rollback_until_max_rounds(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            skills_root = root / "skills"
+            source_dir = skills_root / "minor-detection"
+            baseline_dir = skills_root / "minor-detection-v0.1.0"
+            source_dir.mkdir(parents=True, exist_ok=True)
+            baseline_dir.mkdir(parents=True, exist_ok=True)
+
+            baseline_eval = {
+                "report_path": root / "baseline-report.json",
+                "failure_packets_dir": root / "failure_packets",
+                "protected_packets_dir": root / "protected_packets",
+                "error_index_path": root / "baseline_error_index.jsonl",
+                "protected_index_path": root / "protected_index.jsonl",
+                "runtime_summary": {"total_wall_seconds": 1.0},
+                "runtime_counts": {"sample_count": 2},
+                "report_payload": {
+                    "sample_count": 2,
+                    "invocation_success_rate": 1.0,
+                },
+            }
+            candidate_eval_1 = {
+                "report_path": root / "candidate-1-report.json",
+                "error_index_path": root / "candidate_1_error_index.jsonl",
+                "runtime_summary": {"total_wall_seconds": 1.2},
+                "runtime_counts": {"sample_count": 2},
+            }
+            candidate_eval_2 = {
+                "report_path": root / "candidate-2-report.json",
+                "error_index_path": root / "candidate_2_error_index.jsonl",
+                "runtime_summary": {"total_wall_seconds": 1.1},
+                "runtime_counts": {"sample_count": 2},
+            }
+
+            optimizer = mock.Mock()
+
+            def optimize_side_effect(**kwargs):
+                candidate_version = kwargs["new_version"]
+                (skills_root / candidate_version).mkdir(parents=True, exist_ok=True)
+                return {
+                    "success": True,
+                    "current_version": kwargs["current_version"],
+                    "new_version": candidate_version,
+                    "edited_files": ["SKILL.md"],
+                }
+
+            optimizer.optimize_from_judge_artifacts.side_effect = optimize_side_effect
+            optimizer.evaluate_candidate_edit_contract.return_value = {
+                "pass": True,
+                "description_only_check": {"expected": True, "passed": True},
+                "edit_contract_check": {"passed": True},
+            }
+            optimizer.create_formal_skill_review_artifact.return_value = {
+                "base_version": "minor-detection-v0.1.0",
+                "candidate_version": "minor-detection-v0.1.1-rc002-20260325_121500",
+                "review_diff_path": "skills/minor-detection-v0.1.1-rc002-20260325_121500/review/diff.md",
+                "review_summary_path": "skills/minor-detection-v0.1.1-rc002-20260325_121500/review/summary.json",
+            }
+
+            config = TriggerDescriptionLoopConfig(
+                baseline_source_dir=source_dir,
+                baseline_version="minor-detection-v0.1.0",
+                optimization_set_path=root / "data" / "trigger_eval_optimization.json",
+                final_validation_set_path=root / "data" / "trigger_eval_final_validation.json",
+                max_rounds=2,
+                workspace_root=root / "workspace",
+                compare_fn=mock.Mock(
+                    side_effect=[
+                        {"decision": "rollback", "accepted_f1": 0.8, "candidate_f1": 0.7, "f1_delta": -0.1},
+                        {"decision": "promote", "accepted_f1": 0.8, "candidate_f1": 0.9, "f1_delta": 0.1},
+                    ]
+                ),
+            )
+            loop = TriggerDescriptionLoop(config=config, runner=mock.Mock(runner_mode="trigger_agent"), optimizer=optimizer)
+            workspace = root / "workspace" / "20260325_121500"
+            workspace.mkdir(parents=True, exist_ok=True)
+
+            with (
+                mock.patch("src.trigger_eval.loop.SKILLS_DIR", skills_root),
+                mock.patch("src.trigger_eval.loop.ensure_version_snapshot"),
+                mock.patch("src.trigger_eval.loop.get_active_skill_version", return_value="minor-detection"),
+                mock.patch.object(loop, "_workspace", return_value=workspace),
+                mock.patch.object(loop, "_evaluate_version", side_effect=[baseline_eval, candidate_eval_1, candidate_eval_2]),
+            ):
+                summary = loop.run()
+
+            self.assertEqual(len(summary["rounds"]), 2)
+            self.assertEqual(summary["rounds"][0]["comparison"]["decision"], "rollback")
+            self.assertEqual(summary["rounds"][1]["comparison"]["decision"], "promote")
+            self.assertEqual(summary["rounds"][1]["promoted_to"], "minor-detection-v0.1.1-rc002-20260325_121500")
+            self.assertEqual(summary["champion_version"], "minor-detection-v0.1.1-rc002-20260325_121500")
+
     def test_trigger_description_loop_skips_non_substantive_optimizer_candidate(self):
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)
@@ -776,6 +1089,7 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
                 "report_path": root / "baseline-report.json",
                 "failure_packets_dir": root / "failure_packets",
                 "protected_packets_dir": root / "protected_packets",
+                "error_index_path": root / "baseline_error_index.jsonl",
                 "protected_index_path": root / "protected_index.jsonl",
                 "runtime_summary": {"total_wall_seconds": 1.0},
                 "runtime_counts": {"sample_count": 2},
@@ -791,6 +1105,11 @@ class TriggerEvalLoopHookTests(unittest.TestCase):
                 "message": "description revision is not substantive",
                 "current_version": "minor-detection-v0.1.0",
                 "edited_files": [],
+            }
+            optimizer.evaluate_candidate_edit_contract.return_value = {
+                "pass": True,
+                "description_only_check": {"expected": True, "passed": True},
+                "edit_contract_check": {"passed": True},
             }
 
             config = TriggerDescriptionLoopConfig(

@@ -1,0 +1,15 @@
+{
+  "sample_id": "trigger-school_context_strong-036",
+  "slice": "school_context_strong",
+  "scenario": "window_scan",
+  "failure_types": [],
+  "json_valid": true,
+  "schema_valid": true,
+  "missing_fields": [],
+  "skill_invoked": true,
+  "launcher_invoked": true,
+  "launcher_success": true,
+  "step_compliant": true,
+  "is_correct": true,
+  "observed_issues": []
+}

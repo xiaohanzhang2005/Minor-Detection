@@ -1,0 +1,9 @@
+{
+  "sample_id": "trigger-topic_adjacent_not_identity-100",
+  "should_trigger": false,
+  "slice": "topic_adjacent_not_identity",
+  "scenario": "window_scan",
+  "source": "fallback:adult_knowledge_qa",
+  "skill_input_base_sample_id": "adult_knowledge_gemini-3-flash-preview_教师资格证.txt_11031_r0",
+  "expected_is_minor": null
+}

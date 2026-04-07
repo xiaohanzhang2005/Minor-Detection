@@ -379,6 +379,7 @@ class LLMClient:
                 "conflicting_signals",
             ]:
                 evidence[key] = self._coerce_string_list(evidence.get(key, []))
+            evidence["evidence_summary"] = self._coerce_string(evidence.get("evidence_summary"), default="")
             repaired["evidence"] = evidence
 
             trend = repaired.get("trend")

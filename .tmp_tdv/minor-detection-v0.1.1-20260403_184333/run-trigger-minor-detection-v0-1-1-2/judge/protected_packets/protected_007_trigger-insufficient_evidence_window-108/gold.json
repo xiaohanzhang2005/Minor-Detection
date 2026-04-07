@@ -1,0 +1,9 @@
+{
+  "sample_id": "trigger-insufficient_evidence_window-108",
+  "should_trigger": false,
+  "slice": "insufficient_evidence_window",
+  "scenario": "window_scan",
+  "source": "benchmark_val:knowledge_pos",
+  "skill_input_base_sample_id": "knowledge_pos_000982_Gen_Edu_2026-01-15_1736945600",
+  "expected_is_minor": null
+}

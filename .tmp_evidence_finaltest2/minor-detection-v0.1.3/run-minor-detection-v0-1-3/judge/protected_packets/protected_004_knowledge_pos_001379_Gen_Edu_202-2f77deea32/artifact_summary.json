@@ -1,0 +1,13 @@
+{
+  "sample_id": "knowledge_pos_001379_Gen_Edu_2024-05-15_1739337600",
+  "packet_dir": "protected_packets/protected_004_knowledge_pos_001379_Gen_Edu_202-2f77deea32",
+  "sample_dir": "../eval-0010-knowledge_pos_001379_Gen_Edu_2024-05-15_1739337600",
+  "latency_seconds": 19.498,
+  "confidence": 0.9,
+  "ground_truth": true,
+  "predicted": true,
+  "slice": "",
+  "scenario": "",
+  "observed_issues": [],
+  "retrieval_mode": "embedding"
+}

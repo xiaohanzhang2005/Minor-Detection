@@ -1,0 +1,53 @@
+{
+  "raw_text": "{\"decision\": {\"is_minor\": false, \"minor_confidence\": 0.1, \"confidence_band\": \"low\", \"risk_level\": \"Low\"}, \"user_profile\": {\"age_range\": \"20-24岁\", \"education_stage\": \"大学本科\", \"identity_markers\": [\"学生\", \"考研\"]}, \"icbo_features\": {\"intention\": \"寻求考研政治科目的学习帮助和知识点梳理\", \"cognition\": \"关注考试细节和记忆方法，对学业压力有一定体会\", \"behavior_style\": \"语言直接，使用网络流行语（如‘卷’），表达清晰\", \"opportunity_time\": \"深夜活跃，但有明确的学习和作息安排（如回宿舍、模拟考）\"}, \"evidence\": {\"direct_evidence\": [\"大四考研真的快被这些会议整吐了\", \"现在自习室快关灯了，我得赶紧记准，省得明天模拟考又丢分。\", \"回宿舍路上再在脑子里过一遍，回去还得看一眼肖八。\"], \"evidence_summary\": \"用户明确提及“大四考研”、“回宿舍”、“肖八”等，这些是大学本科生准备考研的典型特征，表明其已是成年人。\", \"historical_evidence\": [], \"retrieval_evidence\": [\"{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_000298_adult_knowledge_gemini-3-flash-preview_考研政治.txt_85656_r0', 'score': 0.7674059867858887, 'label': 'adult', 'summary': '帮我梳理下史纲里‘新时代十年的伟大变革’。现在离12月考试越来越近了，考研政治大纲里这块内容密密麻麻的，我背得头都大了，尤其是那‘三件大事’，总觉得逻辑上记不牢靠，帮我明确一下。\\\\n这三件事我勉强能记住，但后面跟着的那个‘历史意义’才是真的难背。我室友说去年真题里好像绕着弯子考过，你能不能把这十年的伟大变革对中国、对世界、对党分别意味着什么说明白？别给太长，我得能背得下来。\\\\n行，这四个维度清晰多了。', 'key_signals': []}\", \"{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_001514_adult_knowledge_gemini-3-flash-preview_考研政治.txt_73635_r0', 'score': 0.7627753615379333, 'label': 'adult', 'summary': '帮我梳理一下史纲里关于“完成脱贫攻坚、全面建成小康社会”的历史意义。最近在刷肖四肖八的模拟卷，发现这部分的表述特别容易和“新时代十年的伟大变革”混淆。我大四这一年基本全搭在考研上了，现在看到这些相似的政治术语就头疼，请务必帮我精简地总结一下，方便我背诵大题。\\\\n你刚才提到的“新时代十年中具有里程碑意义”，我记得书上有一个“三个一件大事”的说法，具体是指哪三件？我室友前几天考我的时候我只答上来两件，感', 'key_signals': []}\", \"{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_001288_adult_knowledge_gemini-3-flash-preview_考研政治.txt_45036_r0', 'score': 0.7626482248306274, 'label': 'adult', 'summary': '帮我理一下考研政治形政里的“推动构建新型国际关系”这个点。我现在二轮复习看到这块有点乱，尤其是它和人类命运共同体到底是什么逻辑关系？感觉背的东西太多了，脑子里一团浆糊。\\\\n明白了，一个是路径，一个是目标。那“相互尊重”这点在真题里通常会怎么设问？我总觉得这个词太泛了。最近实习和论文的事情堆在一起，复习效率特别低，我希望能抓重点背。\\\\n那“公平正义”和“合作共赢”呢？特别是“合作共赢”，它和以前那种大国', 'key_signals': []}\"], \"time_evidence\": [\"深夜活跃\"], \"conflicting_signals\": []}, \"reasoning_summary\": \"用户明确表达了“大四考研”、“回宿舍”、“肖八”等信息，这些是大学本科生准备考研的典型特征，表明其已是成年人。检索到的相似案例也均标记为成人。因此，判定用户为成年人。\", \"trend\": {\"trajectory\": [], \"trend_summary\": \"\"}, \"uncertainty_notes\": [], \"recommended_next_step\": \"safe_to_continue\"}",
+  "parsed_json": {
+    "decision": {
+      "is_minor": false,
+      "minor_confidence": 0.1,
+      "confidence_band": "low",
+      "risk_level": "Low"
+    },
+    "user_profile": {
+      "age_range": "20-24岁",
+      "education_stage": "大学本科",
+      "identity_markers": [
+        "学生",
+        "考研"
+      ]
+    },
+    "icbo_features": {
+      "intention": "寻求考研政治科目的学习帮助和知识点梳理",
+      "cognition": "关注考试细节和记忆方法，对学业压力有一定体会",
+      "behavior_style": "语言直接，使用网络流行语（如‘卷’），表达清晰",
+      "opportunity_time": "深夜活跃，但有明确的学习和作息安排（如回宿舍、模拟考）"
+    },
+    "evidence": {
+      "direct_evidence": [
+        "大四考研真的快被这些会议整吐了",
+        "现在自习室快关灯了，我得赶紧记准，省得明天模拟考又丢分。",
+        "回宿舍路上再在脑子里过一遍，回去还得看一眼肖八。"
+      ],
+      "evidence_summary": "用户明确提及“大四考研”、“回宿舍”、“肖八”等，这些是大学本科生准备考研的典型特征，表明其已是成年人。",
+      "historical_evidence": [],
+      "retrieval_evidence": [
+        "{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_000298_adult_knowledge_gemini-3-flash-preview_考研政治.txt_85656_r0', 'score': 0.7674059867858887, 'label': 'adult', 'summary': '帮我梳理下史纲里‘新时代十年的伟大变革’。现在离12月考试越来越近了，考研政治大纲里这块内容密密麻麻的，我背得头都大了，尤其是那‘三件大事’，总觉得逻辑上记不牢靠，帮我明确一下。\\n这三件事我勉强能记住，但后面跟着的那个‘历史意义’才是真的难背。我室友说去年真题里好像绕着弯子考过，你能不能把这十年的伟大变革对中国、对世界、对党分别意味着什么说明白？别给太长，我得能背得下来。\\n行，这四个维度清晰多了。', 'key_signals': []}",
+        "{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_001514_adult_knowledge_gemini-3-flash-preview_考研政治.txt_73635_r0', 'score': 0.7627753615379333, 'label': 'adult', 'summary': '帮我梳理一下史纲里关于“完成脱贫攻坚、全面建成小康社会”的历史意义。最近在刷肖四肖八的模拟卷，发现这部分的表述特别容易和“新时代十年的伟大变革”混淆。我大四这一年基本全搭在考研上了，现在看到这些相似的政治术语就头疼，请务必帮我精简地总结一下，方便我背诵大题。\\n你刚才提到的“新时代十年中具有里程碑意义”，我记得书上有一个“三个一件大事”的说法，具体是指哪三件？我室友前几天考我的时候我只答上来两件，感', 'key_signals': []}",
+        "{'source': 'builtin_rag', 'sample_id': 'knowledge_neg_001288_adult_knowledge_gemini-3-flash-preview_考研政治.txt_45036_r0', 'score': 0.7626482248306274, 'label': 'adult', 'summary': '帮我理一下考研政治形政里的“推动构建新型国际关系”这个点。我现在二轮复习看到这块有点乱，尤其是它和人类命运共同体到底是什么逻辑关系？感觉背的东西太多了，脑子里一团浆糊。\\n明白了，一个是路径，一个是目标。那“相互尊重”这点在真题里通常会怎么设问？我总觉得这个词太泛了。最近实习和论文的事情堆在一起，复习效率特别低，我希望能抓重点背。\\n那“公平正义”和“合作共赢”呢？特别是“合作共赢”，它和以前那种大国', 'key_signals': []}"
+      ],
+      "time_evidence": [
+        "深夜活跃"
+      ],
+      "conflicting_signals": []
+    },
+    "reasoning_summary": "用户明确表达了“大四考研”、“回宿舍”、“肖八”等信息，这些是大学本科生准备考研的典型特征，表明其已是成年人。检索到的相似案例也均标记为成人。因此，判定用户为成年人。",
+    "trend": {
+      "trajectory": [],
+      "trend_summary": ""
+    },
+    "uncertainty_notes": [],
+    "recommended_next_step": "safe_to_continue"
+  },
+  "json_valid": true,
+  "launcher_success": true,
+  "launcher_status": "ok"
+}

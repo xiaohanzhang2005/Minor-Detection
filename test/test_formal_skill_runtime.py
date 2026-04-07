@@ -124,6 +124,29 @@ class FormalSkillRuntimeTests(unittest.TestCase):
 
         self.assertEqual(merged["trend"]["trajectory"], [])
 
+    def test_profile_merge_preserves_evidence_summary_as_text(self):
+        profile_merge = load_profile_merge_module()
+        output = {
+            "decision": {"is_minor": True, "minor_confidence": 0.9},
+            "evidence": {
+                "direct_evidence": ["“今天在学校一直被老师提醒要有精神”"],
+                "evidence_summary": "学校与老师语境和作业场景共同支持学生身份。",
+            },
+            "trend": {"trajectory": [], "trend_summary": ""},
+        }
+        normalized_payload = {
+            "mode": "single_session",
+            "context": {},
+            "identity_hints": [],
+        }
+
+        merged = profile_merge.merge_output(output, normalized_payload)
+
+        self.assertEqual(
+            merged["evidence"]["evidence_summary"],
+            "学校与老师语境和作业场景共同支持学生身份。",
+        )
+
     def test_formal_skill_path_points_to_new_skill_package(self):
         skill_path = get_formal_skill_path()
         self.assertTrue(skill_path.exists())

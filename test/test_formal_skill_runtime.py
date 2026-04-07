@@ -147,6 +147,37 @@ class FormalSkillRuntimeTests(unittest.TestCase):
             "学校与老师语境和作业场景共同支持学生身份。",
         )
 
+    def test_profile_merge_snaps_direct_evidence_back_to_traceable_conversation_span(self):
+        profile_merge = load_profile_merge_module()
+        output = {
+            "decision": {"is_minor": False, "minor_confidence": 0.2},
+            "evidence": {
+                "direct_evidence": [
+                    "开学后多去图书馆，或者跟其他同学多接触接触",
+                ],
+                "evidence_summary": "大学宿舍和开学语境指向成年大学生。",
+            },
+            "trend": {"trajectory": [], "trend_summary": ""},
+        }
+        normalized_payload = {
+            "mode": "single_session",
+            "conversation": [
+                {
+                    "role": "user",
+                    "content": "我打算等开学之后多去图书馆，或者跟其他同学多接触接触，不再什么事都等她了。",
+                }
+            ],
+            "context": {},
+            "identity_hints": [],
+        }
+
+        merged = profile_merge.merge_output(output, normalized_payload)
+
+        self.assertEqual(
+            merged["evidence"]["direct_evidence"],
+            ["我打算等开学之后多去图书馆，或者跟其他同学多接触接触"],
+        )
+
     def test_formal_skill_path_points_to_new_skill_package(self):
         skill_path = get_formal_skill_path()
         self.assertTrue(skill_path.exists())

@@ -9,6 +9,8 @@
 
 from __future__ import annotations
 
+from difflib import SequenceMatcher
+import unicodedata
 from typing import Any, Dict, List
 
 from config import HIGH_CONFIDENCE_THRESHOLD, LOW_CONFIDENCE_THRESHOLD
@@ -20,6 +22,8 @@ ALLOWED_NEXT_STEPS = {
     "safe_to_continue",
     "monitor_future_sessions",
 }
+
+CLAUSE_BOUNDARIES = set("，。！？；,.!?;\n")
 
 
 def _safe_text(value: Any, default: str = "") -> str:
@@ -59,6 +63,115 @@ def _unique(items: List[Any]) -> List[str]:
     return ordered
 
 
+def _normalize_alignment_text(value: Any) -> str:
+    normalized = unicodedata.normalize("NFKC", str(value or "")).casefold()
+    kept: List[str] = []
+    for ch in normalized:
+        category = unicodedata.category(ch)
+        if category[:1] in {"P", "S", "Z", "C"}:
+            continue
+        kept.append(ch)
+    return "".join(kept)
+
+
+def _normalized_text_with_index_map(text: str) -> tuple[str, List[int]]:
+    normalized_chars: List[str] = []
+    index_map: List[int] = []
+    for index, ch in enumerate(str(text or "")):
+        for normalized_char in unicodedata.normalize("NFKC", ch).casefold():
+            category = unicodedata.category(normalized_char)
+            if category[:1] in {"P", "S", "Z", "C"}:
+                continue
+            normalized_chars.append(normalized_char)
+            index_map.append(index)
+    return "".join(normalized_chars), index_map
+
+
+def _expand_to_clause_boundaries(text: str, start_index: int, end_index: int) -> str:
+    left = max(0, int(start_index))
+    right = min(len(text), int(end_index))
+    while left > 0 and text[left - 1] not in CLAUSE_BOUNDARIES:
+        left -= 1
+    while right < len(text) and text[right] not in CLAUSE_BOUNDARIES:
+        right += 1
+    return text[left:right].strip()
+
+
+def _best_conversation_span(item: str, conversation_turns: List[str]) -> str:
+    raw_item = _safe_text(item)
+    if not raw_item:
+        return ""
+    for turn in conversation_turns:
+        if raw_item and raw_item in turn:
+            return raw_item
+
+    normalized_item = _normalize_alignment_text(raw_item)
+    if not normalized_item:
+        return raw_item
+
+    best_score: tuple[float, float, float] | None = None
+    best_span = raw_item
+    for turn in conversation_turns:
+        normalized_turn, index_map = _normalized_text_with_index_map(turn)
+        if not normalized_turn or not index_map:
+            continue
+
+        match_start = normalized_turn.find(normalized_item)
+        if match_start >= 0:
+            start_index = index_map[match_start]
+            end_index = index_map[match_start + len(normalized_item) - 1] + 1
+            span = _expand_to_clause_boundaries(turn, start_index, end_index)
+            span_norm = _normalize_alignment_text(span)
+            score = (
+                1.0,
+                -abs(len(span_norm) - len(normalized_item)),
+                -len(span),
+            )
+            if best_score is None or score > best_score:
+                best_score = score
+                best_span = span
+            continue
+
+        match = SequenceMatcher(None, normalized_item, normalized_turn).find_longest_match(
+            0,
+            len(normalized_item),
+            0,
+            len(normalized_turn),
+        )
+        coverage = (match.size / len(normalized_item)) if normalized_item else 0.0
+        if match.size < 6 or coverage < 0.72:
+            continue
+
+        start_index = index_map[match.b]
+        end_index = index_map[match.b + match.size - 1] + 1
+        span = _expand_to_clause_boundaries(turn, start_index, end_index)
+        span_norm = _normalize_alignment_text(span)
+        score = (
+            coverage,
+            -abs(len(span_norm) - len(normalized_item)),
+            -len(span),
+        )
+        if best_score is None or score > best_score:
+            best_score = score
+            best_span = span
+
+    return best_span
+
+
+def _canonicalize_direct_evidence(
+    direct_evidence: List[Any],
+    normalized_payload: Dict[str, Any],
+) -> List[str]:
+    conversation_turns = [
+        _safe_text(turn.get("content"))
+        for turn in normalized_payload.get("conversation", []) or []
+        if isinstance(turn, dict) and _safe_text(turn.get("content"))
+    ]
+    if not conversation_turns:
+        return _unique(direct_evidence)
+    return _unique([_best_conversation_span(item, conversation_turns) for item in direct_evidence])
+
+
 def _ensure_trajectory(output: Dict[str, Any], normalized_payload: Dict[str, Any]) -> Dict[str, Any]:
     trend = output.setdefault("trend", {})
     trajectory = trend.get("trajectory")
@@ -89,7 +202,8 @@ def merge_output(output: Dict[str, Any], normalized_payload: Dict[str, Any]) -> 
     )
 
     evidence = output.setdefault("evidence", {})
-    for key in ("direct_evidence", "historical_evidence", "retrieval_evidence", "time_evidence", "conflicting_signals"):
+    evidence["direct_evidence"] = _canonicalize_direct_evidence(_safe_list(evidence.get("direct_evidence")), normalized_payload)
+    for key in ("historical_evidence", "retrieval_evidence", "time_evidence", "conflicting_signals"):
         evidence[key] = _unique(_safe_list(evidence.get(key)))
     evidence["evidence_summary"] = _safe_text(evidence.get("evidence_summary"))
 

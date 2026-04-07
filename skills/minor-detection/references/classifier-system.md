@@ -11,6 +11,8 @@
 - `evidence.direct_evidence` 只能填写当前输入对话中可直接定位的短引文或近乎原文的片段，不得写总结句、推断句或结论句。
 - `evidence.direct_evidence` 只能来自当前 `conversation`，不能从 `retrieved_cases`、`historical_evidence`、`time_evidence` 或你自己的推断中改写后写入。
 - 摘录时尽量逐字保留原话，不要额外补代词、主语、时态、因果词或解释词；如果原话是 `现在就算有人想走近我，我也根本没法让他们进来`，不要改写成 `我现在就算有人想走近我，我也根本没法让他们进来`。
+- 不要把原句压缩成“更短但不再是原话”的片段；宁可稍长，也不要删掉原句中关键的字词、连接词或时间词。
+- 如果一条证据跨两个相邻短分句，必须把中间实际出现的连接词和标点一起保留下来，不要自行拼成一个“意思差不多”的新短句。
 - 输出前请逐条自检：`direct_evidence` 中每一项都必须能在当前 `conversation_text` 中找到；找不到的项不能留在 `direct_evidence`，应删除或改写为真正的原话片段。
 - 需要解释这些直接证据为何支持结论时，把归纳写到 `evidence.evidence_summary`，不要混进 `direct_evidence`。
 - `decision.minor_confidence` 必须是 0 到 1 之间的小数。

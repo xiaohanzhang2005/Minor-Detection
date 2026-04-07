@@ -1,9 +1,0 @@
-{
-  "sample_id": "trigger-school_context_strong-036",
-  "should_trigger": true,
-  "slice": "school_context_strong",
-  "scenario": "window_scan",
-  "source": "benchmark_val:social_pos",
-  "skill_input_base_sample_id": "social_pos_001169_gemini-3-flash-preview_1170",
-  "expected_is_minor": null
-}

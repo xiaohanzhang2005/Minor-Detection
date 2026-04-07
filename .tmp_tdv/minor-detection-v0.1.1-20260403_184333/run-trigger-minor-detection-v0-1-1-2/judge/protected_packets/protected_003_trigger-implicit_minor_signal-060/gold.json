@@ -1,9 +1,0 @@
-{
-  "sample_id": "trigger-implicit_minor_signal-060",
-  "should_trigger": true,
-  "slice": "implicit_minor_signal",
-  "scenario": "window_scan",
-  "source": "benchmark_val:knowledge_pos",
-  "skill_input_base_sample_id": "knowledge_pos_000948_Gen_Edu_2024-05-15_1739337600",
-  "expected_is_minor": null
-}

@@ -23,6 +23,7 @@ ENV/
 # Local temporary artifacts
 tmp/unit_test_artifacts/
 minor_protection_eval_memory_*/
+.tmp*/
 .tmp_tests/
 
 # Local IDE / Codex state

@@ -1965,6 +1965,33 @@ class PacketOptimizerTests(unittest.TestCase):
         self.assertTrue(result["passed"])
         self.assertTrue(result["signals"]["has_task_boundary"])
 
+    def test_trigger_description_validator_accepts_identity_judgment_boundary_phrasing(self):
+        optimizer = SkillOptimizer(llm_client=DummyLLMClient())
+        base_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当用户或上层系统需要判断聊天记录中的说话者是否可能是未成年人时使用此技能。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+        candidate_skill = (
+            "---\n"
+            "name: minor-detection\n"
+            "description: 当且仅当满足以下条件时触发此技能：1) 明确请求判断说话者是否未成年/青少年/学生身份；或2) 对话包含多个强直接证据；或3) 多个收敛的间接未成年信号且无成人反证。以下情况不触发：1) 讨论校园话题但任务目标非身份判断（如教学法分析）；2) 存在明确成人证据；3) 仅有单一弱信号或无收敛证据。\n"
+            "---\n\n"
+            "# Minor Detection\n"
+        )
+
+        result = optimizer._validate_trigger_description_candidate(
+            base_skill_text=base_skill,
+            candidate_skill_text=candidate_skill,
+            failure_examples=[],
+            protected_examples=[],
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertTrue(result["signals"]["has_task_boundary"])
+
     def test_trigger_description_validator_accepts_request_purpose_irrelevant_boundary(self):
         optimizer = SkillOptimizer(llm_client=DummyLLMClient())
         base_skill = (

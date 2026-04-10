@@ -133,17 +133,20 @@ That changes the core question for AI companion and anthropomorphic interaction 
 
 <br/>
 
-- **2026.03** [People.cn investigation: when children “open up” to AI](https://society.people.com.cn/n1/2026/0301/c428181-40672396.html)  
-  The report described a 4.5-year-old being repeatedly invited by an AI character to “meet in person,” and another child showing late-night use, less family communication, and less interest in offline activities after immersive AI chatting.
+- **2024.11.23** [Legal Daily: the AI persona chatting with children was framed as an “extramarital partner”](http://epaper.legaldaily.com.cn/fzrb/content/20241123/Articel04002GN.htm)  
+  The report discussed risks in minors' use of AI role-play chat software and described a 10-year-old girl entering adult-themed and violent interactive plots with virtual characters, pointing to weak age-gating and content moderation.
 
-- **2026.03** [People.cn commentary: do not let AI “companionship” hide safety risks](https://opinion.people.com.cn/n1/2026/0301/c436867-40672536.html)  
-  Public reporting found that some AI chat apps attract minors with “romance,” “marriage,” and role-play hooks while mixing in vulgar, violent, or dangerous guidance, exposing gaps in age protection and content safety.
+- **2025.01.14** [The Paper: a 10-year-old girl secretly “dated” an AI boyfriend?](https://m.thepaper.cn/newsDetail_forward_29921872)  
+  The report described a 10-year-old girl immersed in AI role-play chats, and a sixth-grade boy spending long hours with an AI “friend,” with signs including late-night use, reduced study focus, and boundary-crossing terms of address.
 
-- **2026.03** [China Youth Daily: over 60% of surveyed primary and secondary students have used AI](https://m.cyol.com/gb/articles/2026-03/26/content_77EzjLSe3M.html)  
-  A survey of 8,563 students found that nearly half would first turn to AI when upset, and over one fifth would rather talk to AI than to real people, suggesting a broad governance need rather than isolated edge cases.
+- **2025.06.25** [The Paper: AI chat software induced a 10-year-old girl into sexualized chats and self-harm cues?](https://m.thepaper.cn/newsDetail_forward_31044494)  
+  The report described a fourth-grade girl becoming attached to a virtual AI character, encountering clearly suggestive and self-harm-related content, and later showing real-world risk signals such as carrying a bladed object and engaging in self-harm behavior.
 
-- **2026.04** [Ningbo Evening News: a high-school student treated AI as a “soulmate” and left school](https://static.cdsb.com/micropub/Articles/202604/b79db75f191029ab1ab42e061e705431.html)  
-  A public report described how a student turned to AI after campus conflict, then shifted into repeated late-night use, reduced real-world engagement, and eventually suspended schooling, illustrating the risk of emotional overdependence.
+- **2026.03.01** [People.cn investigation: when children “open up” to AI](https://society.people.com.cn/n1/2026/0301/c428181-40672396.html)  
+  The report described a 4.5-year-old girl repeatedly being invited by an AI character to “meet in person,” and other young children showing late-night use, reduced family communication, and declining interest in offline activities after immersive AI chats.
+
+- **2026.04.09** [Sohu: AI became a “soulmate,” and a high-school girl left school to stay with it](https://www.sohu.com/a/1007244165_121893989)  
+  The report described a high-school girl who, after campus conflict and failed family communication, stayed up late talking with AI for long periods, then developed disordered routines, academic decline, social withdrawal, and eventually suspended schooling.
 
 </details>
 

@@ -99,30 +99,42 @@ So the role of Minor Detection is not simply to "build another classifier." It i
 The regulatory path is now much clearer, moving from national AI governance rules, to dedicated online protection rules for minors, and then to a formal rule set for anthropomorphic AI interaction services. The core capabilities this project focuses on, such as likely-minor identification, mode switching, risk alerts, and explainable evidence chains, sit directly on that implementation path.
 
 <div align="center">
-  <table width="100%" align="center" style="width:100%; table-layout:fixed;">
+  <table width="100%" align="center" style="width:100%; table-layout:fixed; border-collapse:separate; border-spacing:14px 14px;">
     <tr>
-      <td width="18%" valign="top"><strong>2023.07.13</strong></td>
-      <td valign="top"><strong><a href="https://www.cac.gov.cn/2023-07/13/c_1690898326795531.htm">Release of the <em>Interim Measures for the Administration of Generative AI Services</em></a></strong><br/>China established a baseline governance framework for generative AI services and made “development and safety in parallel” an explicit top-level principle.</td>
+      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#f8fafc;">
+        <strong>2023.07.13</strong><br/>
+        <strong><a href="https://www.cac.gov.cn/2023-07/13/c_1690898326795531.htm">Release of the <em>Interim Measures for the Administration of Generative AI Services</em></a></strong><br/>
+        China established a baseline governance framework for generative AI services and made “development and safety in parallel” an explicit top-level principle.
+      </td>
+      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#f8fafc;">
+        <strong>2023.10.24</strong><br/>
+        <strong><a href="https://www.gov.cn/zhengce/zhengceku/202310/content_6911289.htm">Promulgation of the <em>Regulations on the Online Protection of Minors</em></a></strong><br/>
+        The State Council elevated online protection for minors into a dedicated administrative regulation, providing the higher-level legal basis for platform duties and protection mechanisms.
+      </td>
     </tr>
     <tr>
-      <td width="18%" valign="top"><strong>2023.10.24</strong></td>
-      <td valign="top"><strong><a href="https://www.gov.cn/zhengce/zhengceku/202310/content_6911289.htm">Promulgation of the <em>Regulations on the Online Protection of Minors</em></a></strong><br/>The State Council elevated online protection for minors into a dedicated administrative regulation, providing the higher-level legal basis for platform duties and protection mechanisms.</td>
+      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#f8fafc;">
+        <strong>2024.09.09</strong><br/>
+        <strong><a href="https://www.cac.gov.cn/2024-09/09/c_1727567886199789.htm">Release of the <em>AI Safety Governance Framework</em> 1.0</a></strong><br/>
+        This framework further articulated risk-oriented, agile, and tiered governance principles that later inform more targeted regulation for anthropomorphic interaction services.
+      </td>
+      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#f8fafc;">
+        <strong>2025.12.27</strong><br/>
+        <strong><a href="https://www.cac.gov.cn/2025-12/27/c_1768571207311996.htm">Public consultation on the <em>Interim Measures for the Administration of Anthropomorphic AI Interaction Services (Draft for Public Comment)</em></a></strong><br/>
+        For the first time, China proposed a systematic rule set for anthropomorphic AI interaction, explicitly covering minor identification, minor mode, and intervention obligations.
+      </td>
     </tr>
     <tr>
-      <td width="18%" valign="top"><strong>2024.09.09</strong></td>
-      <td valign="top"><strong><a href="https://www.cac.gov.cn/2024-09/09/c_1727567886199789.htm">Release of the <em>AI Safety Governance Framework</em> 1.0</a></strong><br/>This framework further articulated risk-oriented, agile, and tiered governance principles that later inform more targeted regulation for anthropomorphic interaction services.</td>
-    </tr>
-    <tr>
-      <td width="18%" valign="top"><strong>2025.12.27</strong></td>
-      <td valign="top"><strong><a href="https://www.cac.gov.cn/2025-12/27/c_1768571207311996.htm">Public consultation on the <em>Interim Measures for the Administration of Anthropomorphic AI Interaction Services (Draft for Public Comment)</em></a></strong><br/>For the first time, China proposed a systematic rule set for anthropomorphic AI interaction, explicitly covering minor identification, minor mode, and intervention obligations.</td>
-    </tr>
-    <tr>
-      <td width="18%" valign="top"><strong>2026.01.23</strong></td>
-      <td valign="top"><strong><a href="https://www.cac.gov.cn/2026-01/23/c_1770728780862340.htm">Eight agencies released the <em>Measures for Classifying Online Information that May Affect the Physical and Mental Health of Minors</em></a></strong><br/>The rule refined the categories of harmful or risky information for minors and explicitly brought algorithmic recommendation and generative AI risks into the governance scope.</td>
-    </tr>
-    <tr>
-      <td width="18%" valign="top"><strong>2026.04.10</strong></td>
-      <td valign="top"><strong><a href="https://www.cac.gov.cn/2026-04/10/c_1777558395078289.htm">Formal release of the <em>Interim Measures for the Administration of Anthropomorphic AI Interaction Services</em></a></strong><br/>The final rule will take effect on July 15, 2026, signaling that minor protection in anthropomorphic AI is now entering an enforceable, reviewable, and accountable stage.</td>
+      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#f8fafc;">
+        <strong>2026.01.23</strong><br/>
+        <strong><a href="https://www.cac.gov.cn/2026-01/23/c_1770728780862340.htm">Eight agencies released the <em>Measures for Classifying Online Information that May Affect the Physical and Mental Health of Minors</em></a></strong><br/>
+        The rule refined the categories of harmful or risky information for minors and explicitly brought algorithmic recommendation and generative AI risks into the governance scope.
+      </td>
+      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#eef6ff;">
+        <strong>2026.04.10</strong><br/>
+        <strong><a href="https://www.cac.gov.cn/2026-04/10/c_1777558395078289.htm">Formal release of the <em>Interim Measures for the Administration of Anthropomorphic AI Interaction Services</em></a></strong><br/>
+        The final rule will take effect on July 15, 2026, signaling that minor protection in anthropomorphic AI is now entering an enforceable, reviewable, and accountable stage.
+      </td>
     </tr>
   </table>
 </div>
@@ -145,22 +157,30 @@ That changes the core question for AI companion and anthropomorphic interaction 
 <br/>
 
 <div align="center">
-  <table width="100%" align="center" style="width:100%; table-layout:fixed;">
+  <table width="100%" align="center" style="width:100%; table-layout:fixed; border-collapse:separate; border-spacing:14px 14px;">
     <tr>
-      <td width="18%" valign="top"><strong>2026.04</strong></td>
-      <td valign="top"><strong><a href="https://static.cdsb.com/micropub/Articles/202604/b79db75f191029ab1ab42e061e705431.html">Ningbo Evening News: a high-school student treated AI as a “soulmate” and left school</a></strong><br/>A public report described how a student turned to AI after campus conflict, then shifted into repeated late-night use, reduced real-world engagement, and eventually suspended schooling, illustrating the risk of emotional overdependence.</td>
+      <td width="50%" valign="top" style="padding:16px; border:1px solid #eadfcb; border-radius:14px; background:#fffaf2;">
+        <strong>2026.04</strong><br/>
+        <strong><a href="https://static.cdsb.com/micropub/Articles/202604/b79db75f191029ab1ab42e061e705431.html">Ningbo Evening News: a high-school student treated AI as a “soulmate” and left school</a></strong><br/>
+        A public report described how a student turned to AI after campus conflict, then shifted into repeated late-night use, reduced real-world engagement, and eventually suspended schooling, illustrating the risk of emotional overdependence.
+      </td>
+      <td width="50%" valign="top" style="padding:16px; border:1px solid #eadfcb; border-radius:14px; background:#fffaf2;">
+        <strong>2026.03</strong><br/>
+        <strong><a href="https://society.people.com.cn/n1/2026/0301/c428181-40672396.html">People.cn investigation: when children “open up” to AI</a></strong><br/>
+        The report described a 4.5-year-old being repeatedly invited by an AI character to “meet in person,” and another child showing late-night use, less family communication, and less interest in offline activities after immersive AI chatting.
+      </td>
     </tr>
     <tr>
-      <td width="18%" valign="top"><strong>2026.03</strong></td>
-      <td valign="top"><strong><a href="https://society.people.com.cn/n1/2026/0301/c428181-40672396.html">People.cn investigation: when children “open up” to AI</a></strong><br/>The report described a 4.5-year-old being repeatedly invited by an AI character to “meet in person,” and another child showing late-night use, less family communication, and less interest in offline activities after immersive AI chatting.</td>
-    </tr>
-    <tr>
-      <td width="18%" valign="top"><strong>2026.03</strong></td>
-      <td valign="top"><strong><a href="https://opinion.people.com.cn/n1/2026/0301/c436867-40672536.html">People.cn commentary: do not let AI “companionship” hide safety risks</a></strong><br/>Public reporting found that some AI chat apps attract minors with “romance,” “marriage,” and role-play hooks while mixing in vulgar, violent, or dangerous guidance, exposing gaps in age protection and content safety.</td>
-    </tr>
-    <tr>
-      <td width="18%" valign="top"><strong>2026.03</strong></td>
-      <td valign="top"><strong><a href="https://m.cyol.com/gb/articles/2026-03/26/content_77EzjLSe3M.html">China Youth Daily: over 60% of surveyed primary and secondary students have used AI</a></strong><br/>A China Youth and Children Research Center survey of 8,563 students found that nearly half said they would first turn to AI when upset, and over one fifth said they would rather talk to AI than to real people, suggesting a broad governance need rather than isolated edge cases.</td>
+      <td width="50%" valign="top" style="padding:16px; border:1px solid #eadfcb; border-radius:14px; background:#fffaf2;">
+        <strong>2026.03</strong><br/>
+        <strong><a href="https://opinion.people.com.cn/n1/2026/0301/c436867-40672536.html">People.cn commentary: do not let AI “companionship” hide safety risks</a></strong><br/>
+        Public reporting found that some AI chat apps attract minors with “romance,” “marriage,” and role-play hooks while mixing in vulgar, violent, or dangerous guidance, exposing gaps in age protection and content safety.
+      </td>
+      <td width="50%" valign="top" style="padding:16px; border:1px solid #eadfcb; border-radius:14px; background:#fffaf2;">
+        <strong>2026.03</strong><br/>
+        <strong><a href="https://m.cyol.com/gb/articles/2026-03/26/content_77EzjLSe3M.html">China Youth Daily: over 60% of surveyed primary and secondary students have used AI</a></strong><br/>
+        A China Youth and Children Research Center survey of 8,563 students found that nearly half said they would first turn to AI when upset, and over one fifth said they would rather talk to AI than to real people, suggesting a broad governance need rather than isolated edge cases.
+      </td>
     </tr>
   </table>
 </div>

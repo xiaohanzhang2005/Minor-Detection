@@ -96,9 +96,7 @@ So the role of Minor Detection is not simply to "build another classifier." It i
 
 ## Regulatory Context and Why It Matters
 
-The regulatory path is now much clearer, moving from national AI governance rules, to dedicated online protection rules for minors, and then to a formal rule set for anthropomorphic AI interaction services. The core capabilities this project focuses on, such as likely-minor identification, mode switching, risk alerts, and explainable evidence chains, sit directly on that implementation path.
-
-### Policy Timeline
+The regulatory path is now much clearer, moving from national AI governance rules, to dedicated online protection rules for minors, and then to a formal rule set for anthropomorphic AI interaction services. The capabilities addressed by this project, including likely-minor identification, mode switching, risk alerts, and explainable evidence chains, fall within the key implementation layer of that regulatory path.
 
 - **2023.07.13** [*Interim Measures for the Administration of Generative AI Services*](https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm)  
   Article 10 requires providers to take effective measures to prevent minors from becoming overly dependent on or addicted to generative AI services.
@@ -118,7 +116,7 @@ The regulatory path is now much clearer, moving from national AI governance rule
 - **2026.04.10** [*Interim Measures for the Administration of Anthropomorphic AI Interaction Services*](https://www.cac.gov.cn/2026-04/10/c_1777558395078289.htm)  
   The final rule will take effect on July 15, 2026, and Articles 13, 14, 18, and 23 make risk identification, minor mode, dynamic reminders, and safety evaluation operational requirements.
 
-The final rule makes the requirements most relevant to this project much more concrete:
+In the final text of the *Interim Measures for the Administration of Anthropomorphic AI Interaction Services*, the requirements most relevant to this project become much more concrete:
 
 - **Article 13**: providers must identify user safety risks in time and intervene in cases involving extreme emotions, major financial harm, self-harm, or suicide risk
 - **Article 14**: providers may not offer virtual relatives, virtual partners, or other virtual intimate relationships to minors, and they must establish a dedicated minor mode
@@ -135,11 +133,6 @@ That changes the core question for AI companion and anthropomorphic interaction 
 
 <br/>
 
-### Case Timeline
-
-- **2026.04** [Ningbo Evening News: a high-school student treated AI as a “soulmate” and left school](https://static.cdsb.com/micropub/Articles/202604/b79db75f191029ab1ab42e061e705431.html)  
-  A public report described how a student turned to AI after campus conflict, then shifted into repeated late-night use, reduced real-world engagement, and eventually suspended schooling, illustrating the risk of emotional overdependence.
-
 - **2026.03** [People.cn investigation: when children “open up” to AI](https://society.people.com.cn/n1/2026/0301/c428181-40672396.html)  
   The report described a 4.5-year-old being repeatedly invited by an AI character to “meet in person,” and another child showing late-night use, less family communication, and less interest in offline activities after immersive AI chatting.
 
@@ -148,6 +141,9 @@ That changes the core question for AI companion and anthropomorphic interaction 
 
 - **2026.03** [China Youth Daily: over 60% of surveyed primary and secondary students have used AI](https://m.cyol.com/gb/articles/2026-03/26/content_77EzjLSe3M.html)  
   A survey of 8,563 students found that nearly half would first turn to AI when upset, and over one fifth would rather talk to AI than to real people, suggesting a broad governance need rather than isolated edge cases.
+
+- **2026.04** [Ningbo Evening News: a high-school student treated AI as a “soulmate” and left school](https://static.cdsb.com/micropub/Articles/202604/b79db75f191029ab1ab42e061e705431.html)  
+  A public report described how a student turned to AI after campus conflict, then shifted into repeated late-night use, reduced real-world engagement, and eventually suspended schooling, illustrating the risk of emotional overdependence.
 
 </details>
 

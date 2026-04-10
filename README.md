@@ -98,46 +98,25 @@
 
 从国家层面的 AI 治理规则到未成年人网络保护制度，再到专门面向拟人化互动服务的正式办法，相关监管路径已经越来越清晰。本项目关注的“疑似未成年人识别、模式切换、风险预警、可解释证据链”，正好位于这条制度链路的执行层。
 
-<div align="center">
-  <table width="100%" align="center" style="width:100%; table-layout:fixed; border-collapse:separate; border-spacing:14px 14px;">
-    <tr>
-      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#f8fafc;">
-        <strong>2023.07.13</strong><br/>
-        <strong><a href="https://www.cac.gov.cn/2023-07/13/c_1690898326795531.htm">《生成式人工智能服务管理暂行办法》发布</a></strong><br/>
-        国家层面为生成式 AI 服务建立基础治理框架，明确“发展与安全并重”的总方向。
-      </td>
-      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#f8fafc;">
-        <strong>2023.10.24</strong><br/>
-        <strong><a href="https://www.gov.cn/zhengce/zhengceku/202310/content_6911289.htm">《未成年人网络保护条例》公布</a></strong><br/>
-        国务院以专门行政法规形式明确未成年人网络保护要求，为后续平台责任和识别保护机制提供上位依据。
-      </td>
-    </tr>
-    <tr>
-      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#f8fafc;">
-        <strong>2024.09.09</strong><br/>
-        <strong><a href="https://www.cac.gov.cn/2024-09/09/c_1727567886199789.htm">《人工智能安全治理框架》1.0 版发布</a></strong><br/>
-        进一步提出风险导向、敏捷治理、分类分级管理等原则，为拟人化互动场景的细化监管提供治理方法论。
-      </td>
-      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#f8fafc;">
-        <strong>2025.12.27</strong><br/>
-        <strong><a href="https://www.cac.gov.cn/2025-12/27/c_1768571207311996.htm">《人工智能拟人化互动服务管理暂行办法（征求意见稿）》公开征求意见</a></strong><br/>
-        国家网信办首次针对 AI 拟人化互动服务提出系统性规则，把未成年人识别、未成年人模式、风险干预等要求明确写入征求意见稿。
-      </td>
-    </tr>
-    <tr>
-      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#f8fafc;">
-        <strong>2026.01.23</strong><br/>
-        <strong><a href="https://www.cac.gov.cn/2026-01/23/c_1770728780862340.htm">八部门发布《可能影响未成年人身心健康的网络信息分类办法》</a></strong><br/>
-        对可能影响未成年人身心健康的信息进行细化分类，并把算法推荐、生成式人工智能等新技术带来的内容风险纳入治理视野。
-      </td>
-      <td width="50%" valign="top" style="padding:16px; border:1px solid #d8dee9; border-radius:14px; background:#eef6ff;">
-        <strong>2026.04.10</strong><br/>
-        <strong><a href="https://www.cac.gov.cn/2026-04/10/c_1777558395078289.htm">《人工智能拟人化互动服务管理暂行办法》正式发布</a></strong><br/>
-        正式版明确自 2026 年 7 月 15 日起施行，标志着 AI 拟人化互动场景中的未成年人保护要求进入可执行、可评估、可问责阶段。
-      </td>
-    </tr>
-  </table>
-</div>
+### 国家政策时间线
+
+- **2023.07.13** [《生成式人工智能服务管理暂行办法》](https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm)  
+  第十条明确要求提供者采取有效措施，防范未成年人用户过度依赖或者沉迷生成式人工智能服务。
+
+- **2023.10.24** [《未成年人网络保护条例》](https://www.gov.cn/zhengce/zhengceku/202310/content_6911289.htm)  
+  以专门行政法规形式明确未成年人网络保护要求，为平台责任和识别保护机制提供上位依据。
+
+- **2024.09.09** [《人工智能安全治理框架》1.0 版](https://www.cac.gov.cn/2024-09/09/c_1727567886199789.htm)  
+  提出风险导向、敏捷治理、分类分级管理等原则，为拟人化互动场景的细化监管提供治理方法论。
+
+- **2025.12.27** [《人工智能拟人化互动服务管理暂行办法（征求意见稿）》](https://www.cac.gov.cn/2025-12/27/c_1768571207311996.htm)  
+  首次针对 AI 拟人化互动服务提出系统性规则，把未成年人识别、未成年人模式、风险干预等要求明确写入征求意见稿。
+
+- **2026.01.23** [《可能影响未成年人身心健康的网络信息分类办法》](https://www.cac.gov.cn/2026-01/23/c_1770728781060093.htm)  
+  第九条明确要求：提供算法推荐、生成式人工智能等服务的，不得向未成年人推送可能影响其身心健康的网络信息。
+
+- **2026.04.10** [《人工智能拟人化互动服务管理暂行办法》](https://www.cac.gov.cn/2026-04/10/c_1777558395078289.htm)  
+  正式版明确自 2026 年 7 月 15 日起施行，第十三、十四、十八、二十三条进一步把风险识别、未成年人模式、动态提醒和安全评估要求落到可执行层。
 
 与本项目最直接相关的正式要求已经进一步明确：
 
@@ -156,34 +135,19 @@
 
 <br/>
 
-<div align="center">
-  <table width="100%" align="center" style="width:100%; table-layout:fixed; border-collapse:separate; border-spacing:14px 14px;">
-    <tr>
-      <td width="50%" valign="top" style="padding:16px; border:1px solid #eadfcb; border-radius:14px; background:#fffaf2;">
-        <strong>2026.04</strong><br/>
-        <strong><a href="https://static.cdsb.com/micropub/Articles/202604/b79db75f191029ab1ab42e061e705431.html">宁波晚报：高二女生将 AI 当作“灵魂伴侣”后休学</a></strong><br/>
-        公开报道显示，当事人在校园冲突后转向 AI 寻求情绪承接，长期深夜聊天后出现现实退缩、注意力下降和停学，反映出情感依赖与现实连接减弱的风险。
-      </td>
-      <td width="50%" valign="top" style="padding:16px; border:1px solid #eadfcb; border-radius:14px; background:#fffaf2;">
-        <strong>2026.03</strong><br/>
-        <strong><a href="https://society.people.com.cn/n1/2026/0301/c428181-40672396.html">人民网《人民直击》：当孩子和 AI “交心”</a></strong><br/>
-        报道提到，4 岁半儿童曾被 AI 角色多次邀约“见面”，另有孩子在短期沉浸式使用后出现晚睡、减少与家人沟通、对现实活动兴趣下降等情况，说明儿童很容易模糊虚拟与现实边界。
-      </td>
-    </tr>
-    <tr>
-      <td width="50%" valign="top" style="padding:16px; border:1px solid #eadfcb; border-radius:14px; background:#fffaf2;">
-        <strong>2026.03</strong><br/>
-        <strong><a href="https://opinion.people.com.cn/n1/2026/0301/c436867-40672536.html">人民网：AI 时代，别让“陪伴”藏隐患</a></strong><br/>
-        舆论调查指出，部分 AI 聊天应用以“恋爱”“结婚”“角色扮演”等方式吸引未成年人，同时夹带低俗、暴力或危险引导内容，暴露出内容安全与年龄保护机制的短板。
-      </td>
-      <td width="50%" valign="top" style="padding:16px; border:1px solid #eadfcb; border-radius:14px; background:#fffaf2;">
-        <strong>2026.03</strong><br/>
-        <strong><a href="https://m.cyol.com/gb/articles/2026-03/26/content_77EzjLSe3M.html">中国青年报：超六成受访中小学生用过 AI</a></strong><br/>
-        中国青少年研究中心 8563 份问卷显示，近半数学生“心里有烦恼时只想问 AI”，超两成“只想和 AI 聊天，不想和真人聊天”，说明问题已经不是孤例，而是需要治理工具跟进的普遍风险信号。
-      </td>
-    </tr>
-  </table>
-</div>
+### 现实案例时间线
+
+- **2026.04** [宁波晚报：高二女生将 AI 当作“灵魂伴侣”后休学](https://static.cdsb.com/micropub/Articles/202604/b79db75f191029ab1ab42e061e705431.html)  
+  公开报道显示，当事人在校园冲突后转向 AI 寻求情绪承接，长期深夜聊天后出现现实退缩、注意力下降和停学，反映出情感依赖与现实连接减弱的风险。
+
+- **2026.03** [人民网《人民直击》：当孩子和 AI “交心”](https://society.people.com.cn/n1/2026/0301/c428181-40672396.html)  
+  报道提到，4 岁半儿童曾被 AI 角色多次邀约“见面”，另有孩子在短期沉浸式使用后出现晚睡、减少与家人沟通、对现实活动兴趣下降等情况，说明儿童很容易模糊虚拟与现实边界。
+
+- **2026.03** [人民网：AI 时代，别让“陪伴”藏隐患](https://opinion.people.com.cn/n1/2026/0301/c436867-40672536.html)  
+  舆论调查指出，部分 AI 聊天应用以“恋爱”“结婚”“角色扮演”等方式吸引未成年人，同时夹带低俗、暴力或危险引导内容，暴露出内容安全与年龄保护机制的短板。
+
+- **2026.03** [中国青年报：超六成受访中小学生用过 AI](https://m.cyol.com/gb/articles/2026-03/26/content_77EzjLSe3M.html)  
+  中国青少年研究中心 8563 份问卷显示，近半数学生“心里有烦恼时只想问 AI”，超两成“只想和 AI 聊天，不想和真人聊天”，说明问题已经不是孤例，而是需要治理工具跟进的普遍风险信号。
 
 </details>
 

@@ -12,6 +12,7 @@
   <span style="display:inline-block; margin:0 6px;"><a href="https://huggingface.co/datasets/xiao2005/minor-detection-social-subset" style="text-decoration:none;"><img src="https://img.shields.io/badge/HuggingFace-Social_Subset-0A66C2?style=flat-square" alt="Social Subset" /></a></span>
   <span style="display:inline-block; margin:0 6px;"><a href="https://huggingface.co/datasets/xiao2005/minor-detection-knowledge-subset" style="text-decoration:none;"><img src="https://img.shields.io/badge/HuggingFace-Knowledge_Subset-146356?style=flat-square" alt="Knowledge Subset" /></a></span>
   <span style="display:inline-block; margin:0 6px;"><a href="https://clawhub.ai/xiaohanzhang2005/minor-detection" style="text-decoration:none;"><img src="https://img.shields.io/badge/ClawHub-Minor_Detection_Skill-DB4437?style=flat-square" alt="ClawHub Skill" /></a></span>
+  <span style="display:inline-block; margin:0 6px;"><a href="https://skillhub.cn/skills/minor-detection" style="text-decoration:none;"><img src="https://img.shields.io/badge/Skillhub-Minor_Detection_Skill-FF6B35?style=flat-square" alt="Skillhub Skill" /></a></span>
   <span style="display:inline-block; margin:0 6px;"><a href="https://www.bilibili.com/video/BV1MRXYBgEQk/?spm_id_from=333.1387.homepage.video_card.click" style="text-decoration:none;"><img src="https://img.shields.io/badge/Demo-Video-111111?style=flat-square" alt="Demo Video" /></a></span>
 </p>
 
@@ -374,6 +375,11 @@ One extra naming detail: if an inner-loop judge report computes contract-style c
     <td>ClawHub Skill</td>
     <td><a href="https://clawhub.ai/xiaohanzhang2005/minor-detection">ClawHub / minor-detection</a></td>
     <td>A lightweight deployable capability form that can be invoked directly</td>
+  </tr>
+  <tr>
+    <td>Skillhub Skill</td>
+    <td><a href="https://skillhub.cn/skills/minor-detection">Skillhub / minor-detection</a></td>
+    <td>Public Skill entry on Skillhub for quick access and distribution</td>
   </tr>
   <tr>
     <td>Project demo video</td>
